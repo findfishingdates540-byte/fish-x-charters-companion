@@ -14,16 +14,305 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      boats: {
+        Row: {
+          capacity: number
+          captain_id: string
+          created_at: string
+          description: string | null
+          hero_image_url: string | null
+          home_port: string | null
+          id: string
+          is_active: boolean
+          length_ft: number | null
+          make: string | null
+          model: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number
+          captain_id: string
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          home_port?: string | null
+          id?: string
+          is_active?: boolean
+          length_ft?: number | null
+          make?: string | null
+          model?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number
+          captain_id?: string
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          home_port?: string | null
+          id?: string
+          is_active?: boolean
+          length_ft?: number | null
+          make?: string | null
+          model?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          boat_id: string | null
+          captain_id: string
+          created_at: string
+          customer_id: string | null
+          deposit_cents: number
+          id: string
+          notes: string | null
+          party_size: number
+          payout_cents: number
+          start_time: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          template_id: string | null
+          total_cents: number
+          trip_date: string
+          updated_at: string
+        }
+        Insert: {
+          boat_id?: string | null
+          captain_id: string
+          created_at?: string
+          customer_id?: string | null
+          deposit_cents?: number
+          id?: string
+          notes?: string | null
+          party_size?: number
+          payout_cents?: number
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          template_id?: string | null
+          total_cents?: number
+          trip_date: string
+          updated_at?: string
+        }
+        Update: {
+          boat_id?: string | null
+          captain_id?: string
+          created_at?: string
+          customer_id?: string | null
+          deposit_cents?: number
+          id?: string
+          notes?: string | null
+          party_size?: number
+          payout_cents?: number
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          template_id?: string | null
+          total_cents?: number
+          trip_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "trip_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          captain_id: string
+          created_at: string
+          email: string | null
+          fishx_user_id: string | null
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          captain_id: string
+          created_at?: string
+          email?: string | null
+          fishx_user_id?: string | null
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          captain_id?: string
+          created_at?: string
+          email?: string | null
+          fishx_user_id?: string | null
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trip_templates: {
+        Row: {
+          base_price_cents: number
+          boat_id: string | null
+          captain_id: string
+          created_at: string
+          departure_location: string | null
+          description: string | null
+          duration_hours: number
+          hero_image_url: string | null
+          id: string
+          includes: string[]
+          is_published: boolean
+          max_anglers: number
+          slug: string | null
+          target_species: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          base_price_cents?: number
+          boat_id?: string | null
+          captain_id: string
+          created_at?: string
+          departure_location?: string | null
+          description?: string | null
+          duration_hours?: number
+          hero_image_url?: string | null
+          id?: string
+          includes?: string[]
+          is_published?: boolean
+          max_anglers?: number
+          slug?: string | null
+          target_species?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          base_price_cents?: number
+          boat_id?: string | null
+          captain_id?: string
+          created_at?: string
+          departure_location?: string | null
+          description?: string | null
+          duration_hours?: number
+          hero_image_url?: string | null
+          id?: string
+          includes?: string[]
+          is_published?: boolean
+          max_anglers?: number
+          slug?: string | null
+          target_species?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_templates_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "captain" | "admin"
+      booking_status:
+        | "inquiry"
+        | "pending_deposit"
+        | "confirmed"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+        | "no_show"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +439,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["captain", "admin"],
+      booking_status: [
+        "inquiry",
+        "pending_deposit",
+        "confirmed",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "no_show",
+      ],
+    },
   },
 } as const
