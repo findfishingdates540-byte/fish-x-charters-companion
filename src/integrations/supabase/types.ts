@@ -138,6 +138,38 @@ export type Database = {
           },
         ]
       }
+      business_buddies: {
+        Row: {
+          angler_id: string
+          business_id: string
+          created_at: string
+          id: string
+          status: string
+        }
+        Insert: {
+          angler_id: string
+          business_id: string
+          created_at?: string
+          id?: string
+          status?: string
+        }
+        Update: {
+          angler_id?: string
+          business_id?: string
+          created_at?: string
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_buddies_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_categories: {
         Row: {
           created_at: string
@@ -165,6 +197,64 @@ export type Database = {
         }
         Relationships: []
       }
+      business_conversations: {
+        Row: {
+          angler_id: string
+          business_id: string
+          created_at: string
+          id: string
+          last_message_at: string
+        }
+        Insert: {
+          angler_id: string
+          business_id: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+        }
+        Update: {
+          angler_id?: string
+          business_id?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_conversations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_followers: {
+        Row: {
+          business_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_followers_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_members: {
         Row: {
           business_id: string
@@ -190,6 +280,91 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "business_members_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_messages: {
+        Row: {
+          body: string | null
+          conversation_id: string
+          created_at: string
+          id: string
+          media_json: Json
+          read_at: string | null
+          sender_id: string
+          sender_side: string
+        }
+        Insert: {
+          body?: string | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          media_json?: Json
+          read_at?: string | null
+          sender_id: string
+          sender_side: string
+        }
+        Update: {
+          body?: string | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          media_json?: Json
+          read_at?: string | null
+          sender_id?: string
+          sender_side?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "business_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_posts: {
+        Row: {
+          author_id: string
+          body: string
+          business_id: string
+          created_at: string
+          id: string
+          linked_challenge_id: string | null
+          media_json: Json
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          business_id: string
+          created_at?: string
+          id?: string
+          linked_challenge_id?: string | null
+          media_json?: Json
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          business_id?: string
+          created_at?: string
+          id?: string
+          linked_challenge_id?: string | null
+          media_json?: Json
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_posts_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
@@ -327,6 +502,118 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      fishx_link: {
+        Row: {
+          fishx_user_id: string
+          id: string
+          linked_at: string
+          scopes: string[]
+          user_id: string
+        }
+        Insert: {
+          fishx_user_id: string
+          id?: string
+          linked_at?: string
+          scopes?: string[]
+          user_id: string
+        }
+        Update: {
+          fishx_user_id?: string
+          id?: string
+          linked_at?: string
+          scopes?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      fishx_webhook_events: {
+        Row: {
+          created_at: string
+          error: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json
+          processed_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payload: Json
+          processed_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+        }
+        Relationships: []
+      }
+      post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "business_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "business_posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
