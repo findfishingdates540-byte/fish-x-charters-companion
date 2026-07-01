@@ -16,14 +16,16 @@ function LandingPage() {
 
   useEffect(() => {
     if (!hostRef.current) return;
-    // The DC script targets `#fishx-root` inside document — it's rendered
-    // inside our host, so it will find it via getElementById.
+    document.body.classList.add("dc-body");
     const dispose = runDcScript(script, {
       palette: "Sand Gold",
       animate: true,
       showMarquee: true,
     });
-    return dispose;
+    return () => {
+      dispose();
+      document.body.classList.remove("dc-body");
+    };
   }, [script]);
 
   return (
