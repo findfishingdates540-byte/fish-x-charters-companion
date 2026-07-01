@@ -237,3 +237,7 @@
 .dc-auth input::placeholder { color:#9aa7b2; }
 .dc-auth input:-webkit-autofill { -webkit-text-fill-color:#0d2236; -webkit-box-shadow:0 0 0 40px #fff inset; }
 body.dc-body { margin:0; background:#0a2236; }
+@media (max-width: 900px) {
+  .dc-landing .fx-hero-grid { grid-template-columns: 1fr !important; }
+}
+
