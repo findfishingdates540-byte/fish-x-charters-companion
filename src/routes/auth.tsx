@@ -403,7 +403,7 @@ function AuthPage() {
                   <span style={{ fontSize: 13, lineHeight: 1.5, color: "var(--tmut)" }}>I agree to the <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Terms</a> and <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Privacy Policy</a>.</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
-                <button type="submit" style={primaryBtn}>Create account →</button>
+                <button type="submit" disabled={isSubmitting} style={{ ...primaryBtn, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}>{isSubmitting ? "Creating account…" : "Create account →"}</button>
               </form>
             </div>
           )}
