@@ -337,7 +337,7 @@ function AuthPage() {
                   <span style={{ fontSize: 13.5, color: "var(--tmut)" }}>Keep me signed in</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
-                <button type="submit" style={primaryBtn}>Sign in →</button>
+                <button type="submit" disabled={isSubmitting} style={{ ...primaryBtn, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}>{isSubmitting ? "Signing in…" : "Sign in →"}</button>
               </form>
               <div style={{ textAlign: "center", marginTop: 22, fontSize: 14, color: "var(--tmut)" }}>
                 New to Fish-X?{" "}
@@ -403,7 +403,7 @@ function AuthPage() {
                   <span style={{ fontSize: 13, lineHeight: 1.5, color: "var(--tmut)" }}>I agree to the <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Terms</a> and <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Privacy Policy</a>.</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
-                <button type="submit" style={primaryBtn}>Create account →</button>
+                <button type="submit" disabled={isSubmitting} style={{ ...primaryBtn, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}>{isSubmitting ? "Creating account…" : "Create account →"}</button>
               </form>
             </div>
           )}
@@ -460,7 +460,7 @@ function AuthPage() {
                   <span style={{ fontSize: 13, lineHeight: 1.5, color: "var(--tmut)" }}>I agree to the <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Terms</a>, <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Privacy Policy</a> and seller agreement.</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
-                <button type="submit" style={primaryBtn}>Create workspace →</button>
+                <button type="submit" disabled={isSubmitting} style={{ ...primaryBtn, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}>{isSubmitting ? "Creating workspace…" : "Create workspace →"}</button>
               </form>
             </div>
           )}
