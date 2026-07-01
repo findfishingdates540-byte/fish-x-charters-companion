@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          meta_json: Json
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta_json?: Json
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta_json?: Json
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: []
+      }
       boats: {
         Row: {
           capacity: number
@@ -62,53 +92,183 @@ export type Database = {
         }
         Relationships: []
       }
+      bookable_services: {
+        Row: {
+          base_price_cents: number
+          business_id: string
+          capacity: number
+          created_at: string
+          departure_location: string | null
+          deposit_cents: number
+          description: string | null
+          duration_minutes: number | null
+          hero_url: string | null
+          id: string
+          includes: string[]
+          is_published: boolean
+          kind: Database["public"]["Enums"]["service_kind"]
+          policies_json: Json
+          pricing_json: Json
+          slug: string | null
+          target_species: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          base_price_cents?: number
+          business_id: string
+          capacity?: number
+          created_at?: string
+          departure_location?: string | null
+          deposit_cents?: number
+          description?: string | null
+          duration_minutes?: number | null
+          hero_url?: string | null
+          id?: string
+          includes?: string[]
+          is_published?: boolean
+          kind: Database["public"]["Enums"]["service_kind"]
+          policies_json?: Json
+          pricing_json?: Json
+          slug?: string | null
+          target_species?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          base_price_cents?: number
+          business_id?: string
+          capacity?: number
+          created_at?: string
+          departure_location?: string | null
+          deposit_cents?: number
+          description?: string | null
+          duration_minutes?: number | null
+          hero_url?: string | null
+          id?: string
+          includes?: string[]
+          is_published?: boolean
+          kind?: Database["public"]["Enums"]["service_kind"]
+          policies_json?: Json
+          pricing_json?: Json
+          slug?: string | null
+          target_species?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookable_services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_messages: {
+        Row: {
+          body: string | null
+          booking_id: string
+          created_at: string
+          id: string
+          media_json: Json
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body?: string | null
+          booking_id: string
+          created_at?: string
+          id?: string
+          media_json?: Json
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string | null
+          booking_id?: string
+          created_at?: string
+          id?: string
+          media_json?: Json
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
+          angler_id: string | null
           boat_id: string | null
+          business_id: string | null
+          cancellation_policy: Json
           captain_id: string
           created_at: string
           customer_id: string | null
           deposit_cents: number
+          escrow_state: string
           id: string
           notes: string | null
           party_size: number
           payout_cents: number
+          service_id: string | null
           start_time: string | null
           status: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id: string | null
           template_id: string | null
           total_cents: number
           trip_date: string
           updated_at: string
         }
         Insert: {
+          angler_id?: string | null
           boat_id?: string | null
+          business_id?: string | null
+          cancellation_policy?: Json
           captain_id: string
           created_at?: string
           customer_id?: string | null
           deposit_cents?: number
+          escrow_state?: string
           id?: string
           notes?: string | null
           party_size?: number
           payout_cents?: number
+          service_id?: string | null
           start_time?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
           template_id?: string | null
           total_cents?: number
           trip_date: string
           updated_at?: string
         }
         Update: {
+          angler_id?: string | null
           boat_id?: string | null
+          business_id?: string | null
+          cancellation_policy?: Json
           captain_id?: string
           created_at?: string
           customer_id?: string | null
           deposit_cents?: number
+          escrow_state?: string
           id?: string
           notes?: string | null
           party_size?: number
           payout_cents?: number
+          service_id?: string | null
           start_time?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
           template_id?: string | null
           total_cents?: number
           trip_date?: string
@@ -123,10 +283,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bookings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "bookable_services"
             referencedColumns: ["id"]
           },
           {
@@ -372,6 +546,50 @@ export type Database = {
           },
         ]
       }
+      business_subscriptions: {
+        Row: {
+          business_id: string
+          created_at: string
+          current_period_end: string | null
+          id: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier?: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_subscriptions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string | null
@@ -557,6 +775,81 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          stripe_event_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          payload: Json
+          processed_at?: string | null
+          stripe_event_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          stripe_event_id?: string
+        }
+        Relationships: []
+      }
+      payouts: {
+        Row: {
+          amount_cents: number
+          booking_id: string | null
+          business_id: string
+          created_at: string
+          id: string
+          paid_at: string | null
+          status: string
+          stripe_payout_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          booking_id?: string | null
+          business_id: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          status?: string
+          stripe_payout_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          booking_id?: string | null
+          business_id?: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          status?: string
+          stripe_payout_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_comments: {
         Row: {
           author_id: string
@@ -644,6 +937,154 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          angler_id: string
+          body: string | null
+          booking_id: string
+          business_id: string
+          created_at: string
+          id: string
+          rating: number
+          response_body: string | null
+          updated_at: string
+        }
+        Insert: {
+          angler_id: string
+          body?: string | null
+          booking_id: string
+          business_id: string
+          created_at?: string
+          id?: string
+          rating: number
+          response_body?: string | null
+          updated_at?: string
+        }
+        Update: {
+          angler_id?: string
+          body?: string | null
+          booking_id?: string
+          business_id?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          response_body?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_availability: {
+        Row: {
+          created_at: string
+          ends_at: string
+          id: string
+          is_blackout: boolean
+          seats_available: number
+          service_id: string
+          starts_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          id?: string
+          is_blackout?: boolean
+          seats_available?: number
+          service_id: string
+          starts_at: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          id?: string
+          is_blackout?: boolean
+          seats_available?: number
+          service_id?: string
+          starts_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_availability_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "bookable_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsored_challenges: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_by: string
+          ends_at: string
+          fishx_challenge_id: string | null
+          id: string
+          prize_value_cents: number
+          region_json: Json | null
+          signed_at: string | null
+          species: string | null
+          starts_at: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_by: string
+          ends_at: string
+          fishx_challenge_id?: string | null
+          id?: string
+          prize_value_cents?: number
+          region_json?: Json | null
+          signed_at?: string | null
+          species?: string | null
+          starts_at: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          created_by?: string
+          ends_at?: string
+          fishx_challenge_id?: string | null
+          id?: string
+          prize_value_cents?: number
+          region_json?: Json | null
+          signed_at?: string | null
+          species?: string | null
+          starts_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsored_challenges_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trip_templates: {
         Row: {
@@ -814,7 +1255,18 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "no_show"
+        | "refunded"
+        | "disputed"
+        | "weather_cancelled"
       business_member_role: "owner" | "manager" | "staff"
+      service_kind:
+        | "charter_trip"
+        | "guided_trip"
+        | "slip_rental"
+        | "lodging"
+        | "workshop"
+        | "rental"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -957,8 +1409,20 @@ export const Constants = {
         "completed",
         "cancelled",
         "no_show",
+        "refunded",
+        "disputed",
+        "weather_cancelled",
       ],
       business_member_role: ["owner", "manager", "staff"],
+      service_kind: [
+        "charter_trip",
+        "guided_trip",
+        "slip_rental",
+        "lodging",
+        "workshop",
+        "rental",
+        "other",
+      ],
     },
   },
 } as const
