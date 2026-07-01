@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#0a2236;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  #fishx-root input::placeholder{color:#8fa4b4}
+  @keyframes fx-floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  @keyframes fx-floatY2{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+  @keyframes fx-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  @keyframes fx-sheen{0%{transform:translateX(-120%) skewX(-18deg)}55%,100%{transform:translateX(320%) skewX(-18deg)}}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.55}70%{opacity:0}100%{transform:scale(2.1);opacity:0}}
+  @keyframes fx-rise{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes fx-shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><circle cx="200" cy="172" r="92" fill="none" stroke="#e3c089" stroke-width="5"/><text x="200" y="196" font-family="Georgia,serif" font-size="84" fill="#e3c089" text-anchor="middle">F·X</text><text x="200" y="300" font-family="Georgia,serif" font-size="34" letter-spacing="10" fill="#eaf1f6" text-anchor="middle">FISH—X</text></svg></template>
+</helmet>
+<div id="fishx-root" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--navy2:#0c2a42;--deep:#06151f;--paper:#f4f6f8;--paper2:#e9edf1;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f1ddbd;--goldtext:#b88c46;--cyan:#27c0e2;--ond:#eaf1f6;--ondmut:#9bb0c0;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.13);background:var(--paper);color:var(--ink);font-family:var(--sans);overflow-x:hidden">
+
+  <header data-header style="position:sticky;top:0;z-index:60;background:rgba(9,27,44,.94);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid rgba(255,255,255,.1);transition:box-shadow .4s ease">
+    <div style="max-width:1280px;margin:0 auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <a data-wm href="#top" style="display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ond);transition:color .4s ease">
+        <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+        <span style="font-family:var(--serif);font-weight:600;font-size:21px;letter-spacing:.02em">Fish-X Charters</span>
+      </a>
+      <nav style="display:flex;align-items:center;gap:34px">
+        <a data-navlink href="#charters" style="color:var(--ond);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.01em;opacity:.92;transition:color .4s ease,opacity .2s">Charters</a>
+        <a data-navlink href="#destinations" style="color:var(--ond);text-decoration:none;font-size:14px;font-weight:500;opacity:.92;transition:color .4s ease,opacity .2s">Marketplace</a>
+        <a data-navlink href="#captains" style="color:var(--ond);text-decoration:none;font-size:14px;font-weight:500;opacity:.92;transition:color .4s ease,opacity .2s">Operators</a>
+        <a data-navlink href="#how" style="color:var(--ond);text-decoration:none;font-size:14px;font-weight:500;opacity:.92;transition:color .4s ease,opacity .2s">How it works</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:20px">
+        <a data-navlink href="#" style="color:var(--ond);text-decoration:none;font-size:14px;font-weight:600;opacity:.92;transition:color .4s ease">Sign in</a>
+        <a href="#charters" style="display:inline-flex;align-items:center;gap:8px;background:var(--sand);color:#1c1303;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:12px 20px;border-radius:30px">Find a charter</a>
+      </div>
+    </div>
+  </header>
+
+  <a id="top"></a>
+  <!-- ============ HERO ============ -->
+  <section data-screen-label="Hero" style="position:relative;background:radial-gradient(120% 90% at 12% 0%, #0e2c44 0%, #0a2236 46%, #081c2e 100%);color:var(--ond);overflow:hidden;padding:36px 0 86px">
+    <div data-scroll-sentinel style="position:absolute;top:0;left:0;width:1px;height:72px;pointer-events:none"></div>
+    <div data-hero-glow style="position:absolute;top:-160px;right:-120px;width:620px;height:620px;background:radial-gradient(circle, rgba(227,192,137,.16), rgba(227,192,137,0) 62%);pointer-events:none"></div>
+    <div data-hero-glow2 style="position:absolute;bottom:-180px;left:-140px;width:560px;height:560px;background:radial-gradient(circle, rgba(39,192,226,.10), rgba(39,192,226,0) 60%);pointer-events:none"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:54px;align-items:center;min-height:560px">
+
+      <div style="max-width:600px">
+        <div style="display:inline-flex;align-items:center;gap:10px;border:1px solid var(--lined);border-radius:40px;padding:8px 15px 8px 12px;margin-bottom:26px;animation:fx-rise .8s both">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)"></span>
+          <span style="font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ondmut)">Charters &middot; Tackle &middot; Marinas &middot; Wholesale</span>
+        </div>
+        <h1 style="font-family:var(--serif);font-weight:600;font-size:clamp(42px,5.4vw,74px);line-height:1.04;letter-spacing:-.012em;margin:0 0 22px;color:#fbfdff">
+          <span style="display:block;animation:fx-rise .8s .05s both">One platform for the</span>
+          <span style="display:block;animation:fx-rise .8s .14s both">entire fishing industry &mdash; <span style="font-style:italic;color:var(--sand)">every deal<br>secured by escrow.</span></span>
+        </h1>
+        <p style="font-size:18px;line-height:1.6;color:var(--ondmut);max-width:498px;margin:0 0 32px;animation:fx-rise .8s .22s both">
+          From charter captains and guides to tackle shops, marinas, gear makers and apparel brands &mdash; buy, book and sell across the fishing industry, with every payment held in escrow until it&rsquo;s delivered.
+        </p>
+
+        <!-- SEARCH WIDGET -->
+        <div data-reveal style="background:rgba(255,255,255,.06);border:1px solid var(--lined);border-radius:18px;padding:10px;backdrop-filter:blur(8px);box-shadow:0 24px 60px -28px rgba(0,0,0,.6);max-width:560px">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px" data-cats>
+            <button type="button" data-cat="charters" style="background:var(--sand);border:1px solid var(--sand);color:#1c1303;border-radius:30px;padding:8px 15px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s">Charters</button>
+            <button type="button" data-cat="tackle" style="background:transparent;border:1px solid var(--lined);color:var(--ond);border-radius:30px;padding:8px 15px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s">Tackle &amp; Gear</button>
+            <button type="button" data-cat="marinas" style="background:transparent;border:1px solid var(--lined);color:var(--ond);border-radius:30px;padding:8px 15px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s">Marinas</button>
+            <button type="button" data-cat="wholesale" style="background:transparent;border:1px solid var(--lined);color:var(--ond);border-radius:30px;padding:8px 15px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s">Wholesale</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1.6fr 1fr auto;gap:4px;align-items:stretch">
+            <label style="display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-radius:12px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ondmut)">Search</span>
+              <input data-search-input type="text" placeholder="Find charters, guides &amp; operators" style="background:transparent;border:0;color:#fff;font-family:var(--sans);font-size:15px;font-weight:600;outline:none;width:100%">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-radius:12px;border-left:1px solid var(--lined)">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ondmut)">Location</span>
+              <input data-loc-input type="text" placeholder="Anywhere" style="background:transparent;border:0;color:#fff;font-family:var(--sans);font-size:15px;font-weight:600;outline:none;width:100%">
+            </label>
+            <button data-search-btn style="position:relative;overflow:hidden;background:var(--sand);color:#1c1303;border:0;border-radius:13px;padding:0 24px;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:9px" style-hover="filter:brightness(1.05)">
+              Search
+              <span style="font-size:16px">&rarr;</span>
+              <span data-sheen style="position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:fx-sheen 5.5s ease-in-out 1.5s infinite"></span>
+            </button>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;margin-top:22px;animation:fx-rise .8s .35s both">
+          <span style="font-size:13px;color:var(--ondmut)"><b style="color:#fff">12,000+</b> verified operators</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:var(--ondmut);opacity:.5"></span>
+          <span style="font-size:13px;color:var(--ondmut)"><b style="color:#fff">6</b> industry categories</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:var(--ondmut);opacity:.5"></span>
+          <span style="font-size:13px;color:var(--ondmut)"><b style="color:var(--sand)">4.96&#9733;</b> avg rating</span>
+        </div>
+      </div>
+
+      <!-- COLLAGE -->
+      <div style="position:relative;height:540px">
+        <div data-parallax="-0.03" style="position:absolute;top:8px;right:6px;width:322px;height:438px;border-radius:18px;overflow:hidden;border:6px solid #fff;box-shadow:0 40px 80px -34px rgba(0,0,0,.75)">
+          <img src="assets/seascape.jpg" alt="Golden-hour open water" style="width:100%;height:100%;object-fit:cover;object-position:50% 35%">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,34,54,0) 55%,rgba(10,34,54,.28))"></div>
+        </div>
+        <div data-parallax="0.05" style="position:absolute;left:0;bottom:18px;width:296px;height:206px;border-radius:16px;overflow:hidden;border:6px solid #fff;box-shadow:0 34px 64px -30px rgba(0,0,0,.7)">
+          <img src="assets/yacht-coast.png" alt="Charter vessel on the coast" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div data-parallax="0.09" style="position:absolute;left:-6px;top:40px;display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.96);border-radius:14px;padding:11px 16px 11px 12px;box-shadow:0 20px 44px -20px rgba(0,0,0,.55);animation:fx-floatY 6s ease-in-out infinite">
+          <span style="width:34px;height:34px;border-radius:50%;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext);font-size:16px">&#10003;</span>
+          <span style="line-height:1.15"><span style="display:block;font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--goldtext)">Verified Captain</span><span style="display:block;font-size:13px;font-weight:600;color:#16303f">Licensed &amp; checked</span></span>
+        </div>
+        <div data-parallax="0.07" style="position:absolute;right:-14px;bottom:84px;display:flex;align-items:center;gap:10px;background:var(--navy);border:1px solid var(--lined);border-radius:13px;padding:11px 15px;box-shadow:0 18px 40px -18px rgba(0,0,0,.6);animation:fx-floatY2 7s ease-in-out infinite">
+          <span style="font-family:var(--serif);font-size:26px;font-weight:600;color:var(--sand);line-height:1">4.96</span>
+          <span style="line-height:1.2"><span style="display:block;font-size:11px;color:var(--sand)">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span style="display:block;font-size:11px;color:var(--ondmut)">12,400 trips</span></span>
+        </div>
+        <div data-parallax="0.11" style="position:absolute;right:30px;top:-6px;display:inline-flex;align-items:center;gap:8px;background:rgba(6,21,31,.66);border:1px solid var(--lined);border-radius:30px;padding:8px 14px;backdrop-filter:blur(4px);animation:fx-floatY 8s ease-in-out infinite">
+          <span style="width:8px;height:8px;border-radius:2px;background:var(--cyan)"></span>
+          <span style="font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--ond)">Secured by escrow</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section style="background:var(--paper);border-bottom:1px solid var(--line)">
+    <div data-stats style="max-width:1280px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+      <div data-reveal style="padding:40px 28px 38px;border-right:1px solid var(--line)">
+        <div style="font-family:var(--serif);font-weight:600;font-size:46px;letter-spacing:-.02em;color:var(--ink);line-height:1"><span data-count="12000" data-suffix="+">0</span></div>
+        <div style="margin-top:8px;font-size:13.5px;color:var(--tmut)">Verified operators</div>
+      </div>
+      <div data-reveal data-delay="80" style="padding:40px 28px 38px;border-right:1px solid var(--line)">
+        <div style="font-family:var(--serif);font-weight:600;font-size:46px;letter-spacing:-.02em;color:var(--ink);line-height:1"><span data-count="6">0</span></div>
+        <div style="margin-top:8px;font-size:13.5px;color:var(--tmut)">Industry categories</div>
+      </div>
+      <div data-reveal data-delay="160" style="padding:40px 28px 38px;border-right:1px solid var(--line)">
+        <div style="font-family:var(--serif);font-weight:600;font-size:46px;letter-spacing:-.02em;color:var(--ink);line-height:1">$0</div>
+        <div style="margin-top:8px;font-size:13.5px;color:var(--tmut)">Held in escrow until delivered</div>
+      </div>
+      <div data-reveal data-delay="240" style="padding:40px 28px 38px">
+        <div style="font-family:var(--serif);font-weight:600;font-size:46px;letter-spacing:-.02em;color:var(--ink);line-height:1"><span data-count="4.96" data-dec="2">0</span><span style="color:var(--sand);font-size:30px"> &#9733;</span></div>
+        <div style="margin-top:8px;font-size:13.5px;color:var(--tmut)">Average operator rating</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DESTINATIONS MARQUEE ============ -->
+  <section id="destinations" data-marquee style="background:var(--navy);color:var(--ond);padding:22px 0;overflow:hidden;border-bottom:1px solid var(--lined)">
+    <div data-marquee-track style="display:flex;width:max-content;gap:0;animation:fx-marquee 42s linear infinite;will-change:transform">
+      <div style="display:flex;align-items:center;gap:0">
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Islamorada</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Porto Cervo</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Cabo San Lucas</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Montauk</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Key West</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Monaco</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Kona</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Tropea</span><span style="color:var(--sand)">&#9670;</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0" aria-hidden="true">
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Islamorada</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Porto Cervo</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Cabo San Lucas</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Montauk</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Key West</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Monaco</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Kona</span><span style="color:var(--sand)">&#9670;</span>
+        <span style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ondmut);padding:0 34px">Tropea</span><span style="color:var(--sand)">&#9670;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="how" data-screen-label="How it works" style="background:var(--paper);padding:104px 0 96px">
+    <div style="max-width:1280px;margin:0 auto;padding:0 40px">
+      <div data-reveal style="text-align:center;max-width:660px;margin:0 auto 64px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--goldtext)">How Fish-X works</span>
+        <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(31px,3.6vw,48px);letter-spacing:-.015em;line-height:1.08;margin:16px 0 14px;color:var(--ink)">No risky deposits.<br>No chasing payments.</h2>
+        <p style="font-size:17px;line-height:1.6;color:var(--tmut);margin:0">Three steps from handshake to payout &mdash; on every trip, order and booking across the platform.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px">
+        <div data-reveal data-step-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:36px 32px;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 30px 60px -36px rgba(13,34,54,.4)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:26px">
+            <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext)">01</span>
+            <span style="width:48px;height:48px;border-radius:13px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2" fill="currentColor" stroke="none"/></svg>
+            </span>
+          </div>
+          <h3 style="font-family:var(--serif);font-weight:600;font-size:25px;margin:0 0 10px;color:var(--ink)">Find &amp; agree</h3>
+          <p style="font-size:15px;line-height:1.62;color:var(--tmut);margin:0">Discover a verified operator &mdash; a charter, gear order, slip or wholesale deal &mdash; and agree the terms right in the platform.</p>
+        </div>
+        <div data-reveal data-delay="100" data-step-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:36px 32px;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 30px 60px -36px rgba(13,34,54,.4)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:26px">
+            <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext)">02</span>
+            <span style="width:48px;height:48px;border-radius:13px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg>
+            </span>
+          </div>
+          <h3 style="font-family:var(--serif);font-weight:600;font-size:25px;margin:0 0 10px;color:var(--ink)">Funds held in escrow</h3>
+          <p style="font-size:15px;line-height:1.62;color:var(--tmut);margin:0">The moment both sides confirm, payment moves into a secure, segregated escrow account &mdash; never the seller&rsquo;s pocket.</p>
+        </div>
+        <div data-reveal data-delay="200" data-step-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:36px 32px;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 30px 60px -36px rgba(13,34,54,.4)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:26px">
+            <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext)">03</span>
+            <span style="width:48px;height:48px;border-radius:13px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.6 2.6L16 9.5"/></svg>
+            </span>
+          </div>
+          <h3 style="font-family:var(--serif);font-weight:600;font-size:25px;margin:0 0 10px;color:var(--ink)">Delivered, then paid</h3>
+          <p style="font-size:15px;line-height:1.62;color:var(--tmut);margin:0">Funds release only after the trip, order or booking is delivered. Something goes wrong? You&rsquo;re protected, no debate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED CHARTERS ============ -->
+  <section id="charters" data-screen-label="Featured charters" style="background:var(--paper);padding:24px 0 104px">
+    <div style="max-width:1280px;margin:0 auto;padding:0 40px">
+      <div data-reveal style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:40px">
+        <div>
+          <span style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--goldtext)">Featured charters</span>
+          <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(31px,3.6vw,48px);letter-spacing:-.015em;line-height:1.05;margin:14px 0 0;color:var(--ink)">Days worth clearing the calendar for.</h2>
+        </div>
+        <a href="#" style="flex:none;display:inline-flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;font-size:14px;font-weight:600;border-bottom:1px solid var(--sand);padding-bottom:3px">Browse all 1,200 charters <span style="color:var(--goldtext)">&rarr;</span></a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px">
+
+        <article data-reveal data-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-8px);box-shadow:0 40px 70px -40px rgba(13,34,54,.5)">
+          <div style="position:relative;height:212px;overflow:hidden">
+            <img data-cardimg src="assets/yacht-coast.png" alt="Offshore charter" style="width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)">
+            <span style="position:absolute;top:14px;left:14px;display:inline-flex;align-items:center;gap:6px;background:rgba(6,21,31,.72);backdrop-filter:blur(4px);color:var(--ond);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 11px;border-radius:30px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></span>Secure escrow</span>
+          </div>
+          <div style="padding:22px 22px 24px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--tmut);margin-bottom:9px"><span style="color:var(--sand)">&#9733;</span><b style="color:var(--ink)">4.96</b><span style="opacity:.5">&middot;</span> Islamorada, Florida Keys</div>
+            <h3 style="font-family:var(--serif);font-weight:600;font-size:23px;line-height:1.12;margin:0 0 14px;color:var(--ink)">Offshore Tarpon &amp; Sailfish</h3>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">8 hrs</span>
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">Up to 4 anglers</span>
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">Tackle incl.</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <img src="assets/james.jpg" alt="Captain James" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:50% 30%">
+                <span style="font-size:13px;color:var(--tmut)">Capt. James Sterling</span>
+              </div>
+              <div style="text-align:right;line-height:1"><span style="font-size:11px;color:var(--tmut)">from </span><span style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--goldtext)">$850</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article data-reveal data-delay="100" data-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-8px);box-shadow:0 40px 70px -40px rgba(13,34,54,.5)">
+          <div style="position:relative;height:212px;overflow:hidden">
+            <img data-cardimg src="assets/seraphina.jpg" alt="The Seraphina day charter" style="width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)">
+            <span style="position:absolute;top:14px;left:14px;display:inline-flex;align-items:center;gap:6px;background:rgba(6,21,31,.72);backdrop-filter:blur(4px);color:var(--ond);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 11px;border-radius:30px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></span>Secure escrow</span>
+          </div>
+          <div style="padding:22px 22px 24px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--tmut);margin-bottom:9px"><span style="color:var(--sand)">&#9733;</span><b style="color:var(--ink)">4.98</b><span style="opacity:.5">&middot;</span> Porto Cervo, Sardinia</div>
+            <h3 style="font-family:var(--serif);font-weight:600;font-size:23px;line-height:1.12;margin:0 0 14px;color:var(--ink)">The Seraphina Day Charter</h3>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">Full day</span>
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">Up to 12</span>
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">Private chef</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <img src="assets/cap-alessandro.png" alt="Captain Alessandro" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:50% 28%">
+                <span style="font-size:13px;color:var(--tmut)">Capt. Alessandro</span>
+              </div>
+              <div style="text-align:right;line-height:1"><span style="font-size:11px;color:var(--tmut)">from </span><span style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--goldtext)">$850</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article data-reveal data-delay="200" data-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-8px);box-shadow:0 40px 70px -40px rgba(13,34,54,.5)">
+          <div style="position:relative;height:212px;overflow:hidden">
+            <img data-cardimg src="assets/seascape.jpg" alt="Bluewater sunset run" style="width:100%;height:100%;object-fit:cover;object-position:50% 60%;transition:transform .7s cubic-bezier(.2,.7,.2,1)">
+            <span style="position:absolute;top:14px;left:14px;display:inline-flex;align-items:center;gap:6px;background:rgba(6,21,31,.72);backdrop-filter:blur(4px);color:var(--ond);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 11px;border-radius:30px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></span>Secure escrow</span>
+          </div>
+          <div style="padding:22px 22px 24px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--tmut);margin-bottom:9px"><span style="color:var(--sand)">&#9733;</span><b style="color:var(--ink)">4.92</b><span style="opacity:.5">&middot;</span> Cabo San Lucas</div>
+            <h3 style="font-family:var(--serif);font-weight:600;font-size:23px;line-height:1.12;margin:0 0 14px;color:var(--ink)">Bluewater Sunset Run</h3>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">5 hrs</span>
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">Up to 6</span>
+              <span style="font-size:11.5px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px">Marlin &amp; dorado</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <img src="assets/robert.jpg" alt="Captain Robert" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:50% 24%">
+                <span style="font-size:13px;color:var(--tmut)">Capt. Robert Vance</span>
+              </div>
+              <div style="text-align:right;line-height:1"><span style="font-size:11px;color:var(--tmut)">from </span><span style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--goldtext)">$720</span></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ESCROW BAND ============ -->
+  <section data-screen-label="Escrow guarantee" style="position:relative;background:var(--navy);color:var(--ond);overflow:hidden">
+    <img src="assets/seascape.jpg" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 42%;opacity:.22">
+    <div style="position:absolute;inset:0;background:linear-gradient(100deg,#06151f 8%,rgba(8,28,46,.86) 48%,rgba(8,28,46,.5) 100%)"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto;padding:104px 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:64px;align-items:center">
+      <div data-reveal>
+        <span style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--sand)">The Fish-X guarantee</span>
+        <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(32px,3.8vw,50px);line-height:1.06;letter-spacing:-.015em;margin:18px 0 18px;color:#fbfdff">Your money never leaves the dock unprotected.</h2>
+        <p style="font-size:17px;line-height:1.64;color:var(--ondmut);max-width:520px;margin:0 0 30px">Every booking is backed by segregated escrow and bank-level encryption. Captains only get paid after you&rsquo;ve had your day on the water &mdash; the way it should be.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;font-size:13px;color:var(--ond)"><span style="color:var(--cyan)">&#10003;</span> Segregated escrow accounts</span>
+          <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;font-size:13px;color:var(--ond)"><span style="color:var(--cyan)">&#10003;</span> Bank-level encryption</span>
+          <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;font-size:13px;color:var(--ond)"><span style="color:var(--cyan)">&#10003;</span> Free cancellation 48h</span>
+        </div>
+      </div>
+      <div data-reveal data-delay="120" style="background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:22px;padding:34px 32px;backdrop-filter:blur(6px)">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:30px">
+          <span style="position:relative;width:50px;height:50px;border-radius:50%;background:rgba(39,192,226,.12);display:grid;place-items:center;color:var(--cyan)">
+            <span data-sonar style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan);animation:fx-sonar 3.2s ease-out infinite"></span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </span>
+          <div><div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand)">Live booking</div><div style="font-family:var(--serif);font-size:20px;color:#fff">The Seraphina &middot; $875.00</div></div>
+        </div>
+        <div data-escrow-track style="position:relative;display:flex;justify-content:space-between;margin-bottom:8px">
+          <div style="position:absolute;left:7px;right:7px;top:7px;height:2px;background:var(--lined)"></div>
+          <div data-escrow-fill style="position:absolute;left:7px;top:7px;height:2px;width:0;background:linear-gradient(90deg,var(--cyan),var(--sand));transition:width 1.6s cubic-bezier(.4,0,.1,1)"></div>
+          <span data-esc-dot style="position:relative;width:16px;height:16px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(39,192,226,.18)"></span>
+          <span data-esc-dot style="position:relative;width:16px;height:16px;border-radius:50%;background:var(--navy2);border:2px solid var(--lined)"></span>
+          <span data-esc-dot style="position:relative;width:16px;height:16px;border-radius:50%;background:var(--navy2);border:2px solid var(--lined)"></span>
+          <span data-esc-dot style="position:relative;width:16px;height:16px;border-radius:50%;background:var(--navy2);border:2px solid var(--lined)"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ondmut);letter-spacing:.02em">
+          <span style="width:25%">Reserved</span><span style="width:25%;text-align:center">Held in escrow</span><span style="width:25%;text-align:center">Trip done</span><span style="width:25%;text-align:right">Captain paid</span>
+        </div>
+        <div style="margin-top:26px;padding-top:22px;border-top:1px solid var(--lined);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:13px;color:var(--ondmut)">Status</span>
+          <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--cyan)"><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)"></span>Funds held securely</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAPTAINS ============ -->
+  <section id="captains" data-screen-label="Captains" style="background:var(--paper);padding:104px 0 100px">
+    <div style="max-width:1280px;margin:0 auto;padding:0 40px">
+      <div data-reveal style="text-align:center;max-width:660px;margin:0 auto 58px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--goldtext)">Meet the captains</span>
+        <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(31px,3.6vw,48px);letter-spacing:-.015em;line-height:1.06;margin:16px 0 14px;color:var(--ink)">Trust the day to people who live on the water.</h2>
+        <p style="font-size:17px;line-height:1.6;color:var(--tmut);margin:0">Every captain is licensed, background-checked and rated by real anglers before they ever take a booking.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px">
+
+        <article data-reveal data-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 34px 64px -38px rgba(13,34,54,.45)">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+            <div style="position:relative;flex:none">
+              <img src="assets/cap-alessandro.png" alt="Captain Alessandro" style="width:74px;height:74px;border-radius:50%;object-fit:cover;object-position:50% 26%;border:1px solid var(--line)">
+              <span style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-radius:50%;background:var(--sand);display:grid;place-items:center;color:#1c1303;font-size:12px;border:2px solid var(--card)">&#10003;</span>
+            </div>
+            <div>
+              <h3 style="font-family:var(--serif);font-weight:600;font-size:22px;margin:0;color:var(--ink)">Capt. Alessandro Greco</h3>
+              <div style="font-size:13px;color:var(--tmut);margin-top:2px">Porto Cervo, Sardinia</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:18px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:18px">
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">12 yrs</div><div style="font-size:11px;color:var(--tmut)">experience</div></div>
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">4.98<span style="color:var(--sand);font-size:14px"> &#9733;</span></div><div style="font-size:11px;color:var(--tmut)">rated</div></div>
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">100GT</div><div style="font-size:11px;color:var(--tmut)">master</div></div>
+          </div>
+          <p style="font-size:14px;line-height:1.55;color:var(--tmut);margin:0">Mediterranean specialist. Speaks EN &middot; IT &middot; FR, with a chef aboard for full-day runs.</p>
+        </article>
+
+        <article data-reveal data-delay="100" data-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 34px 64px -38px rgba(13,34,54,.45)">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+            <div style="position:relative;flex:none">
+              <img src="assets/james.jpg" alt="Captain James" style="width:74px;height:74px;border-radius:50%;object-fit:cover;object-position:50% 32%;border:1px solid var(--line)">
+              <span style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-radius:50%;background:var(--sand);display:grid;place-items:center;color:#1c1303;font-size:12px;border:2px solid var(--card)">&#10003;</span>
+            </div>
+            <div>
+              <h3 style="font-family:var(--serif);font-weight:600;font-size:22px;margin:0;color:var(--ink)">Capt. James Sterling</h3>
+              <div style="font-size:13px;color:var(--tmut);margin-top:2px">Islamorada, Florida Keys</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:18px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:18px">
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">20+ yrs</div><div style="font-size:11px;color:var(--tmut)">experience</div></div>
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">5.0<span style="color:var(--sand);font-size:14px"> &#9733;</span></div><div style="font-size:11px;color:var(--tmut)">rated</div></div>
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">317</div><div style="font-size:11px;color:var(--tmut)">trips</div></div>
+          </div>
+          <p style="font-size:14px;line-height:1.55;color:var(--tmut);margin:0">Tournament-grade offshore captain. Custom-rigged for tarpon, sailfish and mahi.</p>
+        </article>
+
+        <article data-reveal data-delay="200" data-card style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 34px 64px -38px rgba(13,34,54,.45)">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+            <div style="position:relative;flex:none">
+              <img src="assets/robert.jpg" alt="Captain Robert" style="width:74px;height:74px;border-radius:50%;object-fit:cover;object-position:50% 22%;border:1px solid var(--line)">
+              <span style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-radius:50%;background:var(--sand);display:grid;place-items:center;color:#1c1303;font-size:12px;border:2px solid var(--card)">&#10003;</span>
+            </div>
+            <div>
+              <h3 style="font-family:var(--serif);font-weight:600;font-size:22px;margin:0;color:var(--ink)">Capt. Robert Vance</h3>
+              <div style="font-size:13px;color:var(--tmut);margin-top:2px">Cabo San Lucas, MX</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:18px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:18px">
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">9 yrs</div><div style="font-size:11px;color:var(--tmut)">experience</div></div>
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">4.92<span style="color:var(--sand);font-size:14px"> &#9733;</span></div><div style="font-size:11px;color:var(--tmut)">rated</div></div>
+            <div><div style="font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)">EN/ES</div><div style="font-size:11px;color:var(--tmut)">languages</div></div>
+          </div>
+          <p style="font-size:14px;line-height:1.55;color:var(--tmut);margin:0">Bluewater marlin hunter. Sunset and overnight runs out of the Cabo marina.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section data-screen-label="Testimonials" style="background:var(--paper2);padding:96px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div style="max-width:1280px;margin:0 auto;padding:0 40px">
+      <div data-reveal style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:42px">
+        <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(30px,3.6vw,46px);letter-spacing:-.015em;line-height:1.05;margin:0;color:var(--ink);max-width:560px">What anglers say after the lines come in.</h2>
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="font-family:var(--serif);font-size:52px;font-weight:600;color:var(--ink);line-height:1">4.96</span>
+          <div style="line-height:1.4"><div style="color:var(--sand);font-size:16px;letter-spacing:2px">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div style="font-size:13px;color:var(--tmut)">from 4,800+ verified trips</div></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:26px">
+        <figure data-reveal style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 34px 30px;margin:0">
+          <div style="color:var(--sand);font-size:15px;letter-spacing:2px;margin-bottom:16px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote style="font-family:var(--serif);font-size:23px;line-height:1.4;color:var(--ink);margin:0 0 24px;font-weight:500">&ldquo;An unforgettable day. The crew&rsquo;s attention to detail was beyond anything we&rsquo;d had &mdash; and the hidden coves Alessandro ran us to were breathtaking.&rdquo;</blockquote>
+          <figcaption style="display:flex;align-items:center;gap:12px">
+            <img src="assets/rev-julianne.png" alt="Julianne V." style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid var(--line)">
+            <div><div style="font-size:14px;font-weight:600;color:var(--ink)">Julianne V.</div><div style="font-size:12.5px;color:var(--tmut)">Porto Cervo &middot; October 2023</div></div>
+          </figcaption>
+        </figure>
+        <figure data-reveal data-delay="120" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 34px 30px;margin:0">
+          <div style="color:var(--sand);font-size:15px;letter-spacing:2px;margin-bottom:16px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote style="font-family:var(--serif);font-size:23px;line-height:1.4;color:var(--ink);margin:0 0 24px;font-weight:500">&ldquo;Absolute perfection from start to finish. A high-stakes luxury experience that delivered on every promise &mdash; and knowing the payment was protected made booking effortless.&rdquo;</blockquote>
+          <figcaption style="display:flex;align-items:center;gap:12px">
+            <img src="assets/rev-marcus.png" alt="Marcus Thorne" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid var(--line)">
+            <div><div style="font-size:14px;font-weight:600;color:var(--ink)">Marcus Thorne</div><div style="font-size:12.5px;color:var(--tmut)">Islamorada &middot; September 2023</div></div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BECOME A CAPTAIN ============ -->
+  <section data-screen-label="Become a captain" style="background:var(--paper);padding:104px 0">
+    <div style="max-width:1280px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:64px;align-items:center">
+      <div data-reveal>
+        <span style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--goldtext)">For captains</span>
+        <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(31px,3.6vw,48px);letter-spacing:-.015em;line-height:1.06;margin:16px 0 18px;color:var(--ink)">List your boat. Get paid the moment the trip ends.</h2>
+        <p style="font-size:17px;line-height:1.62;color:var(--tmut);max-width:500px;margin:0 0 28px">Reach high-intent anglers, set your own schedule and let escrow handle the money. No chasing deposits, no no-shows &mdash; just confirmed, funded trips.</p>
+        <div style="display:flex;gap:34px;margin-bottom:32px">
+          <div><div style="font-family:var(--serif);font-size:34px;font-weight:600;color:var(--ink)">$12,450</div><div style="font-size:13px;color:var(--tmut)">avg. monthly earnings</div></div>
+          <div style="border-left:1px solid var(--line);padding-left:34px"><div style="font-family:var(--serif);font-size:34px;font-weight:600;color:var(--ink)">98%</div><div style="font-size:13px;color:var(--tmut)">captain response rate</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:20px">
+          <a href="#" style="display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:16px 26px;border-radius:40px;transition:transform .25s" style-hover="transform:translateY(-2px)">Become a Fish-X captain <span>&rarr;</span></a>
+          <a href="#" style="font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--sand);padding-bottom:2px">Already a captain? Sign in</a>
+        </div>
+      </div>
+      <div data-reveal data-delay="120" style="position:relative">
+        <div style="border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:0 40px 80px -44px rgba(13,34,54,.5)">
+          <img src="assets/helm.png" alt="At the helm" style="width:100%;height:420px;object-fit:cover">
+        </div>
+        <div style="position:absolute;right:-16px;bottom:-20px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;box-shadow:0 24px 50px -26px rgba(13,34,54,.5);display:flex;align-items:center;gap:16px">
+          <span style="width:42px;height:42px;border-radius:12px;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 18V8M9 18V5M14 18v-7M19 18v-11"/></svg>
+          </span>
+          <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--goldtext)">This month</div><div style="font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink)">+$3,820 booked</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section data-screen-label="FAQ" style="background:var(--navy);color:var(--ond);padding:100px 0">
+    <div style="max-width:880px;margin:0 auto;padding:0 40px">
+      <div data-reveal style="text-align:center;margin-bottom:50px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--sand)">Questions</span>
+        <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(30px,3.6vw,46px);letter-spacing:-.015em;margin:14px 0 0;color:#fbfdff">Everything you might ask before booking.</h2>
+      </div>
+      <div data-reveal style="border-top:1px solid var(--lined)">
+        <div data-faq style="border-bottom:1px solid var(--lined)">
+          <button data-faq-q style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;background:transparent;border:0;color:#fff;text-align:left;padding:26px 4px;cursor:pointer;font-family:var(--serif);font-size:22px;font-weight:600">How does escrow actually protect my payment?<span data-faq-ic style="flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;font-size:18px;font-weight:400;transition:transform .35s;color:var(--sand)">+</span></button>
+          <div data-faq-a style="max-height:0;overflow:hidden;transition:max-height .4s ease"><p style="font-size:15.5px;line-height:1.64;color:var(--ondmut);margin:0 0 26px;max-width:680px">When your captain confirms, your payment is moved into a segregated escrow account held by our regulated partner &mdash; never the captain&rsquo;s own balance. It only releases after your trip is marked complete, so the funds are protected the entire time.</p></div>
+        </div>
+        <div data-faq style="border-bottom:1px solid var(--lined)">
+          <button data-faq-q style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;background:transparent;border:0;color:#fff;text-align:left;padding:26px 4px;cursor:pointer;font-family:var(--serif);font-size:22px;font-weight:600">When is my captain actually paid?<span data-faq-ic style="flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;font-size:18px;font-weight:400;transition:transform .35s;color:var(--sand)">+</span></button>
+          <div data-faq-a style="max-height:0;overflow:hidden;transition:max-height .4s ease"><p style="font-size:15.5px;line-height:1.64;color:var(--ondmut);margin:0 0 26px;max-width:680px">Payout is released automatically once your trip is completed &mdash; typically the evening you return to the dock. If something goes wrong, our team reviews before any funds move.</p></div>
+        </div>
+        <div data-faq style="border-bottom:1px solid var(--lined)">
+          <button data-faq-q style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;background:transparent;border:0;color:#fff;text-align:left;padding:26px 4px;cursor:pointer;font-family:var(--serif);font-size:22px;font-weight:600">What happens if weather cancels the trip?<span data-faq-ic style="flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;font-size:18px;font-weight:400;transition:transform .35s;color:var(--sand)">+</span></button>
+          <div data-faq-a style="max-height:0;overflow:hidden;transition:max-height .4s ease"><p style="font-size:15.5px;line-height:1.64;color:var(--ondmut);margin:0 0 26px;max-width:680px">If your captain calls it for weather or safety, you&rsquo;re fully refunded from escrow or rebooked at no cost &mdash; your choice. You also get free cancellation up to 48 hours before departure.</p></div>
+        </div>
+        <div data-faq style="border-bottom:1px solid var(--lined)">
+          <button data-faq-q style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;background:transparent;border:0;color:#fff;text-align:left;padding:26px 4px;cursor:pointer;font-family:var(--serif);font-size:22px;font-weight:600">Are all captains really verified?<span data-faq-ic style="flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;font-size:18px;font-weight:400;transition:transform .35s;color:var(--sand)">+</span></button>
+          <div data-faq-a style="max-height:0;overflow:hidden;transition:max-height .4s ease"><p style="font-size:15.5px;line-height:1.64;color:var(--ondmut);margin:0 0 26px;max-width:680px">Yes. Every captain submits their license, vessel insurance and credentials, passes a background check, and maintains a live angler rating. The gold seal on a listing means all checks are current.</p></div>
+        </div>
+        <div data-faq>
+          <button data-faq-q style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;background:transparent;border:0;color:#fff;text-align:left;padding:26px 4px;cursor:pointer;font-family:var(--serif);font-size:22px;font-weight:600">What&rsquo;s included &mdash; and can I bring my own gear?<span data-faq-ic style="flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;font-size:18px;font-weight:400;transition:transform .35s;color:var(--sand)">+</span></button>
+          <div data-faq-a style="max-height:0;overflow:hidden;transition:max-height .4s ease"><p style="font-size:15.5px;line-height:1.64;color:var(--ondmut);margin:0 0 26px;max-width:680px">Most charters include premium tackle, live bait, fuel, safety equipment and catch handling &mdash; each listing spells out exactly what&rsquo;s covered. You&rsquo;re always welcome to bring your own rods; just let your captain know in the booking thread.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section data-screen-label="Final CTA" style="position:relative;overflow:hidden;background:var(--deep);color:var(--ond)">
+    <img src="assets/seascape.jpg" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;opacity:.34">
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,21,31,.62),rgba(6,21,31,.8))"></div>
+    <div data-reveal style="position:relative;max-width:820px;margin:0 auto;padding:118px 40px;text-align:center">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--sand)">Tight lines ahead</span>
+      <h2 style="font-family:var(--serif);font-weight:600;font-size:clamp(40px,6.4vw,66px);line-height:1.02;letter-spacing:-.02em;margin:18px 0 18px;color:#fff">Your next trophy<br>is already biting.</h2>
+      <p style="font-size:18px;line-height:1.6;color:var(--ondmut);max-width:540px;margin:0 auto 34px">Find a verified captain and book in minutes &mdash; protected by escrow, every single time.</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:30px">
+        <a href="#charters" style="position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:10px;background:var(--sand);color:#1c1303;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:18px 32px;border-radius:40px" style-hover="filter:brightness(1.05)">Find a charter <span style="font-size:16px">&rarr;</span><span style="position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:fx-sheen 6s ease-in-out 2s infinite"></span></a>
+        <a href="#how" style="display:inline-flex;align-items:center;gap:9px;border:1px solid var(--lined);color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:18px 28px;border-radius:40px" style-hover="background:rgba(255,255,255,.06)">See how it works</a>
+      </div>
+      <form data-cta-form style="display:flex;gap:8px;max-width:440px;margin:0 auto;background:rgba(255,255,255,.06);border:1px solid var(--lined);border-radius:40px;padding:6px 6px 6px 20px">
+        <input data-cta-email type="email" placeholder="Get new charter drops in your inbox" style="flex:1;background:transparent;border:0;outline:none;color:#fff;font-family:var(--sans);font-size:14px">
+        <button type="submit" data-cta-submit style="flex:none;background:rgba(255,255,255,.1);color:#fff;border:1px solid var(--lined);border-radius:30px;padding:11px 18px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .25s" style-hover="background:rgba(255,255,255,.16)">Notify me</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="background:var(--deep);color:var(--ond);border-top:1px solid var(--lined)">
+    <div style="max-width:1280px;margin:0 auto;padding:72px 40px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:40px">
+      <div>
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px">
+          <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+          <span style="font-family:var(--serif);font-weight:600;font-size:21px;letter-spacing:.02em;color:#fff">Fish-X Charters</span>
+        </div>
+        <p style="font-size:14px;line-height:1.6;color:var(--ondmut);max-width:260px;margin:0 0 20px">Premium charters, secured. Book verified captains worldwide and pay only after you fish.</p>
+        <div style="display:flex;gap:10px">
+          <a href="#" aria-label="Instagram" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;color:var(--ondmut);text-decoration:none;font-size:13px;transition:color .25s,border-color .25s" style-hover="color:#fff;border-color:var(--sand)">IG</a>
+          <a href="#" aria-label="X" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;color:var(--ondmut);text-decoration:none;font-size:13px;transition:color .25s,border-color .25s" style-hover="color:#fff;border-color:var(--sand)">X</a>
+          <a href="#" aria-label="YouTube" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--lined);display:grid;place-items:center;color:var(--ondmut);text-decoration:none;font-size:13px;transition:color .25s,border-color .25s" style-hover="color:#fff;border-color:var(--sand)">YT</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);margin-bottom:16px">Explore</div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="#charters" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Charters</a>
+          <a href="#destinations" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Destinations</a>
+          <a href="#captains" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Captains</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Gift cards</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);margin-bottom:16px">Company</div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">About</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Careers</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Press</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Journal</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);margin-bottom:16px">Trust</div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">How escrow works</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Safety</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Insurance</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Verified program</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);margin-bottom:16px">Legal</div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Terms of service</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Privacy</a>
+          <a href="#" style="font-size:14px;color:var(--ondmut);text-decoration:none;transition:color .2s" style-hover="color:#fff">Cancellation policy</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:1280px;margin:0 auto;padding:28px 40px 36px;margin-top:56px;border-top:1px solid var(--lined);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <span style="font-size:12.5px;color:var(--ondmut)">&copy; 2024 Fish-X Charters. All rights reserved. &middot; Funds held in segregated escrow accounts.</span>
+      <span style="font-size:12.5px;color:var(--ondmut)">&#127758; United States (USD $)</span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:860},&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Sand Gold&quot;,&quot;Bronze&quot;,&quot;Aqua&quot;],&quot;default&quot;:&quot;Sand Gold&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;animate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  renderVals(){ return {}; }
+
+  componentDidMount(){
+    this._root = document.getElementById('fishx-root');
+    this._reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.applyProps();
+    this.setupReveals();
+    this.setupHeader();
+    this.setupParallax();
+    this.setupStepper();
+    this.setupFaq();
+    this.setupForm();
+    this.setupCategories();
+  }
+  componentDidUpdate(){ this.applyProps(); }
+
+  applyProps(){
+    const root = this._root; if(!root) return;
+    const palettes = {
+      'Sand Gold': {sand:'#e3c089', sand2:'#d2a566', sandsoft:'#f1ddbd', goldtext:'#b88c46'},
+      'Bronze':    {sand:'#d8a878', sand2:'#c08e57', sandsoft:'#ecd8c2', goldtext:'#a9764a'},
+      'Aqua':      {sand:'#7fd0dd', sand2:'#46b6c6', sandsoft:'#d4eef2', goldtext:'#2f8fa0'}
+    };
+    const p = palettes[this.props.palette] || palettes['Sand Gold'];
+    root.style.setProperty('--sand', p.sand);
+    root.style.setProperty('--sand2', p.sand2);
+    root.style.setProperty('--sandsoft', p.sandsoft);
+    root.style.setProperty('--goldtext', p.goldtext);
+    const mq = root.querySelector('[data-marquee]');
+    if (mq) mq.style.display = (this.props.showMarquee === false) ? 'none' : '';
+  }
+
+  setupReveals(){
+    const root = this._root; if(!root) return;
+    const els = Array.prototype.slice.call(root.querySelectorAll('[data-reveal]'));
+    const animate = this.props.animate !== false && !this._reduce && ('IntersectionObserver' in window);
+    if(!animate){ els.forEach(function(e){ e.style.opacity=1; e.style.transform='none'; }); return; }
+    els.forEach(function(e){
+      var d = e.getAttribute('data-delay') || 0;
+      e.style.opacity = 0;
+      e.style.transform = 'translateY(30px)';
+      e.style.transition = 'opacity .9s cubic-bezier(.2,.7,.2,1) '+d+'ms, transform .9s cubic-bezier(.2,.7,.2,1) '+d+'ms';
+    });
+    var io = new IntersectionObserver(function(ents){
+      ents.forEach(function(en){
+        if(en.isIntersecting){
+          en.target.style.opacity = 1;
+          en.target.style.transform = 'none';
+          io.unobserve(en.target);
+          if(en.target.hasAttribute('data-stats')) {}
+        }
+      });
+    }, {threshold:0.14, rootMargin:'0px 0px -7% 0px'});
+    els.forEach(function(e){ io.observe(e); });
+
+    // counters
+    var stats = root.querySelector('[data-stats]');
+    if(stats){
+      var self = this;
+      var cio = new IntersectionObserver(function(ents){
+        ents.forEach(function(en){ if(en.isIntersecting){ self.runCounters(); cio.disconnect(); } });
+      }, {threshold:0.4});
+      cio.observe(stats);
+    }
+    // escrow timeline
+    var track = root.querySelector('[data-escrow-fill]');
+    if(track){
+      var dots = root.querySelectorAll('[data-esc-dot]');
+      var eio = new IntersectionObserver(function(ents){
+        ents.forEach(function(en){
+          if(en.isIntersecting){
+            setTimeout(function(){ track.style.width = 'calc(100% - 14px)'; }, 200);
+            dots.forEach(function(d,i){
+              setTimeout(function(){
+                d.style.background = getComputedStyle(root).getPropertyValue('--cyan');
+                d.style.border = '0';
+                d.style.boxShadow = '0 0 0 4px rgba(39,192,226,.18)';
+              }, 300 + i*420);
+            });
+            eio.disconnect();
+          }
+        });
+      }, {threshold:0.5});
+      eio.observe(track);
+    }
+  }
+
+  runCounters(){
+    var root = this._root; if(!root) return;
+    var els = root.querySelectorAll('[data-count]');
+    els.forEach(function(el){
+      var target = parseFloat(el.getAttribute('data-count'));
+      var dec = parseInt(el.getAttribute('data-dec')||'0', 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      var dur = 1500, start = null;
+      function fmt(v){ return (dec>0 ? v.toFixed(dec) : Math.round(v).toLocaleString()) + suffix; }
+      function step(ts){
+        if(!start) start = ts;
+        var t = Math.min((ts-start)/dur, 1);
+        var eased = 1 - Math.pow(1-t, 3);
+        el.textContent = fmt(target*eased);
+        if(t<1) requestAnimationFrame(step); else el.textContent = fmt(target);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  setupHeader(){
+    // Header is a solid navy bar with light text at ALL times (set in the
+    // template) so it stays readable on every section. JS only toggles a
+    // subtle drop shadow once you scroll past the top.
+    var root = this._root; if(!root) return;
+    var header = root.querySelector('[data-header]');
+    if(!header) return;
+    var sentinel = root.querySelector('[data-scroll-sentinel]');
+    function shadow(on){ header.style.boxShadow = on ? '0 12px 30px -22px rgba(0,0,0,.75)' : 'none'; }
+    function check(){ shadow(sentinel ? (sentinel.getBoundingClientRect().top < 6) : false); }
+    check();
+    document.addEventListener('scroll', check, true);
+    window.addEventListener('scroll', check, {passive:true});
+    if(sentinel && ('IntersectionObserver' in window)){
+      new IntersectionObserver(function(ents){
+        ents.forEach(function(en){ shadow(!en.isIntersecting); });
+      }, {threshold:0}).observe(sentinel);
+    }
+    this._onScrollHeader = check;
+  }
+
+  setupParallax(){
+    var root = this._root; if(!root) return;
+    if(this.props.animate === false || this._reduce) return;
+    var layers = Array.prototype.slice.call(root.querySelectorAll('[data-parallax]'));
+    if(!layers.length) return;
+    var hero = layers[0].closest('section');
+    var ticking = false;
+    function update(){
+      var base = hero ? -hero.getBoundingClientRect().top : (window.scrollY || 0);
+      if(base > 1000){ ticking=false; return; }
+      layers.forEach(function(l){
+        var sp = parseFloat(l.getAttribute('data-parallax')) || 0;
+        l.style.transform = 'translateY('+(base*sp)+'px)';
+      });
+      ticking = false;
+    }
+    function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } }
+    document.addEventListener('scroll', onScroll, true);
+    window.addEventListener('scroll', onScroll, {passive:true});
+    this._onScrollPar = onScroll;
+    update();
+  }
+
+  setupStepper(){
+    var root = this._root; if(!root) return;
+    var out = root.querySelector('[data-anglers]');
+    var btns = root.querySelectorAll('[data-step]');
+    if(!out) return;
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var cur = parseInt(out.textContent, 10) || 1;
+        var delta = parseInt(b.getAttribute('data-step'), 10);
+        cur = Math.max(1, Math.min(8, cur + delta));
+        out.textContent = cur;
+        out.animate ? out.animate([{transform:'scale(1.25)'},{transform:'scale(1)'}], {duration:220, easing:'ease-out'}) : null;
+      });
+    });
+  }
+
+  setupFaq(){
+    var root = this._root; if(!root) return;
+    var items = Array.prototype.slice.call(root.querySelectorAll('[data-faq]'));
+    items.forEach(function(item){
+      var q = item.querySelector('[data-faq-q]');
+      var a = item.querySelector('[data-faq-a]');
+      var ic = item.querySelector('[data-faq-ic]');
+      if(!q || !a) return;
+      q.addEventListener('click', function(){
+        var open = a.style.maxHeight && a.style.maxHeight !== '0px';
+        items.forEach(function(other){
+          if(other === item) return;
+          var oa = other.querySelector('[data-faq-a]');
+          var oic = other.querySelector('[data-faq-ic]');
+          if(oa){ oa.style.maxHeight = '0px'; }
+          if(oic){ oic.style.transform = 'rotate(0deg)'; oic.textContent = '+'; }
+        });
+        if(open){ a.style.maxHeight = '0px'; if(ic){ ic.style.transform='rotate(0deg)'; ic.textContent='+'; } }
+        else { a.style.maxHeight = a.scrollHeight + 'px'; if(ic){ ic.style.transform='rotate(180deg)'; ic.textContent='+'; } }
+      });
+    });
+  }
+
+  setupForm(){
+    var root = this._root; if(!root) return;
+    var form = root.querySelector('[data-cta-form]');
+    if(!form) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = root.querySelector('[data-cta-email]');
+      var btn = root.querySelector('[data-cta-submit]');
+      if(email && email.value && email.value.indexOf('@') > 0){
+        if(btn){ btn.textContent = 'On the list \u2713'; btn.style.background = 'rgba(227,192,137,.22)'; }
+        email.value = '';
+        email.placeholder = 'You\u2019re subscribed \u2014 tight lines!';
+      } else if(email){
+        email.style.outline = '1px solid rgba(255,120,120,.6)';
+        setTimeout(function(){ email.style.outline='none'; }, 1200);
+      }
+    });
+    // search button feedback
+    var sb = root.querySelector('[data-search-btn]');
+    if(sb){ sb.addEventListener('click', function(){
+      var dest = root.querySelector('[data-dest]');
+      var ang = root.querySelector('[data-anglers]');
+      sb.animate ? sb.animate([{transform:'scale(.96)'},{transform:'scale(1)'}],{duration:180,easing:'ease-out'}) : null;
+    }); }
+  }
+
+  setupCategories(){
+    var root = this._root; if(!root) return;
+    var cats = root.querySelector('[data-cats]'); if(!cats) return;
+    var input = root.querySelector('[data-search-input]');
+    var ph = { charters:'Find charters, guides & operators', tackle:'Search rods, reels & tackle', marinas:'Find marinas & slips', wholesale:'Browse wholesale & brands' };
+    var sand = (getComputedStyle(root).getPropertyValue('--sand') || '').trim() || '#e3c089';
+    var btns = Array.prototype.slice.call(cats.querySelectorAll('[data-cat]'));
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        btns.forEach(function(x){
+          var on = x === b;
+          x.style.background = on ? sand : 'transparent';
+          x.style.borderColor = on ? sand : 'rgba(255,255,255,.13)';
+          x.style.color = on ? '#1c1303' : '#eaf1f6';
+        });
+        if(input) input.setAttribute('placeholder', ph[b.getAttribute('data-cat')] || 'Search');
+      });
+    });
+  }
+
+  componentWillUnmount(){
+    if(this._onScrollHeader){ window.removeEventListener('scroll', this._onScrollHeader); document.removeEventListener('scroll', this._onScrollHeader, true); }
+    if(this._onScrollPar){ window.removeEventListener('scroll', this._onScrollPar); document.removeEventListener('scroll', this._onScrollPar, true); }
+  }
+}
+</script>
+</body>
+</html>
