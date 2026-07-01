@@ -36,7 +36,7 @@ export const Route = createFileRoute("/api/public/fishx-webhook")({
         // Idempotency: log the event; skip if we've already seen it
         const { error: insertErr } = await supabaseAdmin
           .from("fishx_webhook_events")
-          .insert({ event_id: eventId || `${eventType}-${Date.now()}`, event_type: eventType, payload });
+          .insert({ event_id: eventId || `${eventType}-${Date.now()}`, event_type: eventType, payload: payload as unknown as Record<string, never> });
         if (insertErr && !insertErr.message.includes("duplicate")) {
           return new Response(insertErr.message, { status: 500 });
         }
