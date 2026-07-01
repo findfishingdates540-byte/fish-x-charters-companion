@@ -37,11 +37,8 @@ function AuthenticatedLayout() {
         <nav className="flex-1 px-3 space-y-1">
           {[
             { to: "/dashboard", icon: "dashboard", label: "Dashboard" },
-            { to: "/bookings", icon: "event", label: "Bookings" },
-            { to: "/trips", icon: "sailing", label: "Trips" },
-            { to: "/boats", icon: "directions_boat", label: "Boats" },
-            { to: "/customers", icon: "groups", label: "Customers" },
-            { to: "/messages", icon: "chat", label: "Messages" },
+            { to: "/discover", icon: "explore", label: "Discover" },
+            { to: "/onboarding", icon: "storefront", label: "Set up business" },
           ].map((item) => (
             <Link
               key={item.to}

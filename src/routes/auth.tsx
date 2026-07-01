@@ -70,12 +70,18 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
+        const intendedRole = joinAs === "captain" ? "business_owner" : "angler";
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/dashboard`,
-            data: { full_name: fullName, display_name: fullName, joining_as: joinAs },
+            data: {
+              full_name: fullName,
+              display_name: fullName,
+              joining_as: joinAs,
+              intended_role: intendedRole,
+            },
           },
         });
         if (error) throw error;
