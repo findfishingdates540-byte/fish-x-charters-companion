@@ -198,12 +198,13 @@ function AuthPage() {
         });
         if (e2) throw e2;
       } else {
+        const intendedRole = vertical === "captain" ? "captain" : "business_owner";
         const { error: e2 } = await supabase.auth.signUp({
           email, password: pw,
           options: {
             emailRedirectTo: `${window.location.origin}/onboarding`,
             data: {
-              intended_role: "business_owner", full_name: val("name"),
+              intended_role: intendedRole, full_name: val("name"),
               vertical, business_name: val("bizName"),
               location: val("location"), vertical_detail: val("detail"),
             },
