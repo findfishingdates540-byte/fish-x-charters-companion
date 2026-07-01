@@ -246,7 +246,7 @@ function AuthPage() {
         <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <a href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "var(--ond)" }}>
             <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 21, letterSpacing: ".02em" }}>Fish-X</span>
+            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 21, letterSpacing: ".02em" }}>Fish-X Charters</span>
           </a>
           <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "var(--ondmut)", textDecoration: "none", fontSize: 13, fontWeight: 500, border: "1px solid var(--lined)", borderRadius: 30, padding: "8px 14px" }}>
             <span>←</span> Back to site
