@@ -289,16 +289,10 @@ function AuthPage() {
       <main style={{ position: "relative", background: "var(--paper)", display: "flex", alignItems: "center", justifyContent: "center", padding: "48px 40px", minHeight: "100vh" }}>
         <div style={{ width: "100%", maxWidth: 462 }}>
           {/* Top control */}
-          {isLogin && (
+          {(isLogin || atIntent) && (
             <div style={{ display: "flex", gap: 4, background: "var(--paper2)", border: "1px solid var(--line)", borderRadius: 14, padding: 5, marginBottom: 32 }}>
-              <button onClick={setLogin} style={{ flex: 1, background: "var(--card)", boxShadow: "0 4px 14px -6px rgba(13,34,54,.35)", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>Sign in</button>
-              <button onClick={setSignup} style={{ flex: 1, background: "transparent", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: "var(--tmut)" }}>Create account</button>
-            </div>
-          )}
-          {atIntent && (
-            <div style={{ display: "flex", gap: 4, background: "var(--paper2)", border: "1px solid var(--line)", borderRadius: 14, padding: 5, marginBottom: 32 }}>
-              <button onClick={setLogin} style={{ flex: 1, background: "transparent", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: "var(--tmut)" }}>Sign in</button>
-              <button onClick={setSignup} style={{ flex: 1, background: "var(--card)", boxShadow: "0 4px 14px -6px rgba(13,34,54,.35)", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>Create account</button>
+              <button onClick={setLogin} style={{ flex: 1, background: isLogin ? "var(--card)" : "transparent", boxShadow: isLogin ? "0 4px 14px -6px rgba(13,34,54,.35)" : "none", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: isLogin ? "var(--ink)" : "var(--tmut)", transition: "background .15s, color .15s, box-shadow .15s" }}>Sign in</button>
+              <button onClick={setSignup} style={{ flex: 1, background: isLogin ? "transparent" : "var(--card)", boxShadow: isLogin ? "none" : "0 4px 14px -6px rgba(13,34,54,.35)", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: isLogin ? "var(--tmut)" : "var(--ink)", transition: "background .15s, color .15s, box-shadow .15s" }}>Create account</button>
             </div>
           )}
           {showBack && (
