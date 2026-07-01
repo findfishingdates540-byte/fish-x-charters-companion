@@ -214,3 +214,26 @@
 @utility btn-gold-hover {
   &:hover { transform: translateY(-1px); opacity: .95; }
 }
+
+/* ============================================================
+ * DC template global animations & body override
+ * Used by src/dc-templates/*.html (landing + auth) when mounted
+ * ============================================================ */
+@keyframes fx-floatY  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+@keyframes fx-floatY2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(9px)} }
+@keyframes fx-marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+@keyframes fx-sheen   { 0%{transform:translateX(-120%) skewX(-18deg)} 55%,100%{transform:translateX(320%) skewX(-18deg)} }
+@keyframes fx-sonar   { 0%{transform:scale(.7);opacity:.55} 70%{opacity:0} 100%{transform:scale(2.1);opacity:0} }
+@keyframes fx-rise    { 0%{opacity:0;transform:translateY(24px)} 100%{opacity:1;transform:translateY(0)} }
+@keyframes fx-shimmer { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
+@keyframes fx-spin    { to{transform:rotate(360deg)} }
+@keyframes fx-pop     { 0%{transform:scale(.4)} 60%{transform:scale(1.08)} 100%{transform:scale(1)} }
+@media (prefers-reduced-motion: reduce) { .dc-landing *, .dc-auth * { animation:none !important; transition:none !important; } }
+
+.dc-landing, .dc-auth { font-family:'Hanken Grotesk',system-ui,sans-serif; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+.dc-landing ::selection, .dc-auth ::selection { background:#e3c089; color:#0a2236; }
+.dc-landing img, .dc-auth img { display:block; max-width:100%; }
+.dc-landing #fishx-root input::placeholder { color:#8fa4b4; }
+.dc-auth input::placeholder { color:#9aa7b2; }
+.dc-auth input:-webkit-autofill { -webkit-text-fill-color:#0d2236; -webkit-box-shadow:0 0 0 40px #fff inset; }
+body.dc-body { margin:0; background:#0a2236; }
