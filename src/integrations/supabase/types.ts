@@ -138,6 +138,160 @@ export type Database = {
           },
         ]
       }
+      business_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          key: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          key: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          key?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      business_members: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["business_member_role"]
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["business_member_role"]
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["business_member_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_members_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          address: string | null
+          amenities_json: Json
+          category_key: string
+          city: string | null
+          country: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          email: string | null
+          fishx_business_id: string | null
+          hero_url: string | null
+          hours_json: Json
+          id: string
+          is_published: boolean
+          lat: number | null
+          lng: number | null
+          logo_url: string | null
+          name: string
+          phone: string | null
+          premium_until: string | null
+          region: string | null
+          slug: string
+          tagline: string | null
+          updated_at: string
+          verified_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          amenities_json?: Json
+          category_key: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          email?: string | null
+          fishx_business_id?: string | null
+          hero_url?: string | null
+          hours_json?: Json
+          id?: string
+          is_published?: boolean
+          lat?: number | null
+          lng?: number | null
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          premium_until?: string | null
+          region?: string | null
+          slug: string
+          tagline?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          amenities_json?: Json
+          category_key?: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          email?: string | null
+          fishx_business_id?: string | null
+          hero_url?: string | null
+          hours_json?: Json
+          id?: string
+          is_published?: boolean
+          lat?: number | null
+          lng?: number | null
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          premium_until?: string | null
+          region?: string | null
+          slug?: string
+          tagline?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_category_key_fkey"
+            columns: ["category_key"]
+            isOneToOne: false
+            referencedRelation: "business_categories"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
       customers: {
         Row: {
           captain_id: string
@@ -290,6 +444,53 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_requests: {
+        Row: {
+          business_id: string
+          created_at: string
+          decided_at: string | null
+          doc_urls: string[]
+          id: string
+          notes: string | null
+          reviewer_id: string | null
+          status: string
+          submitted_by: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          decided_at?: string | null
+          doc_urls?: string[]
+          id?: string
+          notes?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submitted_by: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          decided_at?: string | null
+          doc_urls?: string[]
+          id?: string
+          notes?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submitted_by?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -298,6 +499,14 @@ export type Database = {
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_business_member: {
+        Args: {
+          _business_id: string
+          _min_role?: Database["public"]["Enums"]["business_member_role"]
           _user_id: string
         }
         Returns: boolean
@@ -318,6 +527,7 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "no_show"
+      business_member_role: "owner" | "manager" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -461,6 +671,7 @@ export const Constants = {
         "cancelled",
         "no_show",
       ],
+      business_member_role: ["owner", "manager", "staff"],
     },
   },
 } as const
