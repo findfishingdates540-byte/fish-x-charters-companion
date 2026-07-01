@@ -460,7 +460,7 @@ function AuthPage() {
                   <span style={{ fontSize: 13, lineHeight: 1.5, color: "var(--tmut)" }}>I agree to the <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Terms</a>, <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Privacy Policy</a> and seller agreement.</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
-                <button type="submit" style={primaryBtn}>Create workspace →</button>
+                <button type="submit" disabled={isSubmitting} style={{ ...primaryBtn, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}>{isSubmitting ? "Creating workspace…" : "Create workspace →"}</button>
               </form>
             </div>
           )}
