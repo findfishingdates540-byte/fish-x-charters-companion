@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type FormEvent, type PointerEvent } from "react";
+import { flushSync } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveAsset } from "@/lib/dc-template";
 
@@ -126,8 +127,18 @@ function AuthPage() {
   const doneCta = doneKind === "business" ? "Go to dashboard" : "Enter Fish-X";
   const submittingTitle = doneKind === "business" ? "Creating your workspace…" : "Securing your account…";
 
-  const setLogin = () => { setView("login"); setStep("intent"); setError(""); setStatus("idle"); };
-  const setSignup = () => { setView("signup"); setStep("intent"); setError(""); setStatus("idle"); };
+  const switchView = (nextView: View) => {
+    flushSync(() => {
+      setView(nextView);
+      setStep("intent");
+      setError("");
+      setStatus("idle");
+    });
+  };
+  const setLogin = () => switchView("login");
+  const setSignup = () => switchView("signup");
+  const setLoginNow = (event: PointerEvent<HTMLButtonElement>) => { event.preventDefault(); setLogin(); };
+  const setSignupNow = (event: PointerEvent<HTMLButtonElement>) => { event.preventDefault(); setSignup(); };
   const goAngler = () => { setStep("angler"); setError(""); };
   const goBusiness = () => { setStep("vertical"); setError(""); };
   const pickVertical = (v: Exclude<Vertical, "">) => { setVertical(v); setStep("business"); setError(""); };
@@ -291,8 +302,8 @@ function AuthPage() {
           {/* Top control */}
           {(isLogin || atIntent) && (
             <div style={{ display: "flex", gap: 4, background: "var(--paper2)", border: "1px solid var(--line)", borderRadius: 14, padding: 5, marginBottom: 32 }}>
-              <button onClick={setLogin} style={{ flex: 1, background: isLogin ? "var(--card)" : "transparent", boxShadow: isLogin ? "0 4px 14px -6px rgba(13,34,54,.35)" : "none", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: isLogin ? "var(--ink)" : "var(--tmut)", transition: "background .15s, color .15s, box-shadow .15s" }}>Sign in</button>
-              <button onClick={setSignup} style={{ flex: 1, background: isLogin ? "transparent" : "var(--card)", boxShadow: isLogin ? "none" : "0 4px 14px -6px rgba(13,34,54,.35)", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: isLogin ? "var(--tmut)" : "var(--ink)", transition: "background .15s, color .15s, box-shadow .15s" }}>Create account</button>
+              <button type="button" onPointerDown={setLoginNow} onClick={setLogin} style={{ flex: 1, background: isLogin ? "var(--card)" : "transparent", boxShadow: isLogin ? "0 4px 14px -6px rgba(13,34,54,.35)" : "none", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: isLogin ? "var(--ink)" : "var(--tmut)", transition: "none" }}>Sign in</button>
+              <button type="button" onPointerDown={setSignupNow} onClick={setSignup} style={{ flex: 1, background: isLogin ? "transparent" : "var(--card)", boxShadow: isLogin ? "none" : "0 4px 14px -6px rgba(13,34,54,.35)", border: 0, borderRadius: 10, cursor: "pointer", padding: "12px 0", fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600, color: isLogin ? "var(--tmut)" : "var(--ink)", transition: "none" }}>Create account</button>
             </div>
           )}
           {showBack && (
