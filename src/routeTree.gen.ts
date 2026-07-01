@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BSlugRouteImport } from './routes/b.$slug'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
 
@@ -41,6 +42,11 @@ const BSlugRoute = BSlugRouteImport.update({
   path: '/b/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
 }
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
 }
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
 }
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/discover'
     | '/dashboard'
+    | '/onboarding'
     | '/b/$slug'
     | '/api/public/fishx-webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -93,6 +103,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/discover'
     | '/dashboard'
+    | '/onboarding'
     | '/b/$slug'
     | '/api/public/fishx-webhook'
   id:
@@ -102,6 +113,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/discover'
     | '/_authenticated/dashboard'
+    | '/_authenticated/onboarding'
     | '/b/$slug'
     | '/api/public/fishx-webhook'
   fileRoutesById: FileRoutesById
@@ -152,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -171,10 +190,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
