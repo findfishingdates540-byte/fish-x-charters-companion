@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrustRouteImport } from './routes/trust'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
@@ -20,6 +21,11 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
 
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/become-a-captain': typeof BecomeACaptainRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/trust': typeof TrustRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/become-a-captain': typeof BecomeACaptainRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/trust': typeof TrustRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/become-a-captain': typeof BecomeACaptainRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/trust': typeof TrustRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/become-a-captain'
     | '/discover'
     | '/how-it-works'
+    | '/trust'
     | '/dashboard'
     | '/onboarding'
     | '/b/$slug'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/become-a-captain'
     | '/discover'
     | '/how-it-works'
+    | '/trust'
     | '/dashboard'
     | '/onboarding'
     | '/b/$slug'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/become-a-captain'
     | '/discover'
     | '/how-it-works'
+    | '/trust'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/b/$slug'
@@ -149,12 +161,20 @@ export interface RootRouteChildren {
   BecomeACaptainRoute: typeof BecomeACaptainRoute
   DiscoverRoute: typeof DiscoverRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  TrustRoute: typeof TrustRoute
   BSlugRoute: typeof BSlugRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/how-it-works': {
       id: '/how-it-works'
       path: '/how-it-works'
@@ -248,6 +268,7 @@ const rootRouteChildren: RootRouteChildren = {
   BecomeACaptainRoute: BecomeACaptainRoute,
   DiscoverRoute: DiscoverRoute,
   HowItWorksRoute: HowItWorksRoute,
+  TrustRoute: TrustRoute,
   BSlugRoute: BSlugRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
 }
