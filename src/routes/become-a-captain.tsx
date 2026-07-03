@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import captainHero from "@/assets/captain-hero.jpg";
 
 export const Route = createFileRoute("/become-a-captain")({
   component: BecomeCaptainPage,
