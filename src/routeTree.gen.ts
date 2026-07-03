@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as BrandStoryRouteImport } from './routes/brand-story'
 import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -34,6 +35,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const DiscoverRoute = DiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandStoryRoute = BrandStoryRouteImport.update({
+  id: '/brand-story',
+  path: '/brand-story',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BecomeACaptainRoute = BecomeACaptainRouteImport.update({
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/become-a-captain': typeof BecomeACaptainRoute
+  '/brand-story': typeof BrandStoryRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
   '/trust': typeof TrustRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/become-a-captain': typeof BecomeACaptainRoute
+  '/brand-story': typeof BrandStoryRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
   '/trust': typeof TrustRoute
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/become-a-captain': typeof BecomeACaptainRoute
+  '/brand-story': typeof BrandStoryRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
   '/trust': typeof TrustRoute
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/become-a-captain'
+    | '/brand-story'
     | '/discover'
     | '/how-it-works'
     | '/trust'
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/become-a-captain'
+    | '/brand-story'
     | '/discover'
     | '/how-it-works'
     | '/trust'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/become-a-captain'
+    | '/brand-story'
     | '/discover'
     | '/how-it-works'
     | '/trust'
@@ -159,6 +171,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BecomeACaptainRoute: typeof BecomeACaptainRoute
+  BrandStoryRoute: typeof BrandStoryRoute
   DiscoverRoute: typeof DiscoverRoute
   HowItWorksRoute: typeof HowItWorksRoute
   TrustRoute: typeof TrustRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/discover'
       fullPath: '/discover'
       preLoaderRoute: typeof DiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brand-story': {
+      id: '/brand-story'
+      path: '/brand-story'
+      fullPath: '/brand-story'
+      preLoaderRoute: typeof BrandStoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/become-a-captain': {
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BecomeACaptainRoute: BecomeACaptainRoute,
+  BrandStoryRoute: BrandStoryRoute,
   DiscoverRoute: DiscoverRoute,
   HowItWorksRoute: HowItWorksRoute,
   TrustRoute: TrustRoute,
