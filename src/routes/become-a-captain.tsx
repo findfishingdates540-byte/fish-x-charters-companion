@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import captainHero from "@/assets/captain-hero.jpg";
 
 export const Route = createFileRoute("/become-a-captain")({
   component: BecomeCaptainPage,
@@ -124,44 +125,81 @@ function BecomeCaptainPage() {
         </div>
       </header>
 
-      {/* ============ HERO ============ */}
+      {/* ============ HERO — full-bleed image ============ */}
       <section
         id="opportunity"
         style={{
           position: "relative",
-          background:
-            "radial-gradient(120% 90% at 12% 0%, #0e2c44 0%, #0a2236 46%, #081c2e 100%)",
-          color: "var(--ond)",
+          minHeight: "min(921px, 92vh)",
+          display: "flex",
+          alignItems: "center",
           overflow: "hidden",
-          padding: "80px 0 100px",
+          color: "var(--ond)",
         }}
       >
+        <img
+          src={captainHero}
+          alt="Fish-X charter captain at dawn on a luxury vessel"
+          width={1920}
+          height={1280}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+          }}
+        />
+        {/* gradient veil — deep hull left → transparent right */}
         <div
           style={{
             position: "absolute",
-            top: -160,
-            right: -120,
-            width: 620,
-            height: 620,
-            background: "radial-gradient(circle, rgba(227,192,137,.16), rgba(227,192,137,0) 62%)",
-            animation: "bc-glow 6s ease-in-out infinite",
-            pointerEvents: "none",
+            inset: 0,
+            zIndex: 1,
+            background:
+              "linear-gradient(90deg, rgba(6,21,31,.85) 0%, rgba(10,34,54,.55) 40%, rgba(10,34,54,.15) 70%, rgba(10,34,54,0) 100%)",
           }}
         />
+        {/* bottom fade into next section */}
         <div
-          className="bc-hero-grid"
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 140,
+            zIndex: 1,
+            background: "linear-gradient(180deg, rgba(244,246,248,0) 0%, var(--paper) 100%)",
+          }}
+        />
+        {/* sand-gold glow accent */}
+        <div
+          style={{
+            position: "absolute",
+            top: -180,
+            right: -140,
+            width: 620,
+            height: 620,
+            background:
+              "radial-gradient(circle, rgba(227,192,137,.22), rgba(227,192,137,0) 62%)",
+            animation: "bc-glow 6s ease-in-out infinite",
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+
+        <div
           style={{
             position: "relative",
+            zIndex: 2,
+            width: "100%",
             maxWidth: 1280,
             margin: "0 auto",
-            padding: "0 40px",
-            display: "grid",
-            gridTemplateColumns: "1.05fr 1fr",
-            gap: 60,
-            alignItems: "center",
+            padding: "120px 40px",
           }}
         >
-          <div>
+          <div style={{ maxWidth: 640 }}>
             <div
               className="bc-rise"
               style={{
@@ -172,6 +210,8 @@ function BecomeCaptainPage() {
                 borderRadius: 40,
                 padding: "8px 15px 8px 12px",
                 marginBottom: 26,
+                background: "rgba(6,21,31,.35)",
+                backdropFilter: "blur(6px)",
               }}
             >
               <span
@@ -187,9 +227,10 @@ function BecomeCaptainPage() {
                 style={{
                   fontSize: 11.5,
                   fontWeight: 600,
-                  letterSpacing: ".2em",
+                  letterSpacing: ".22em",
                   textTransform: "uppercase",
-                  color: "var(--ondmut)",
+                  color: "var(--ond)",
+                  opacity: 0.9,
                 }}
               >
                 Exclusive Captain Partnership
@@ -200,11 +241,12 @@ function BecomeCaptainPage() {
               style={{
                 fontFamily: "var(--serif)",
                 fontWeight: 600,
-                fontSize: "clamp(44px,4.8vw,72px)",
-                lineHeight: 1.05,
-                letterSpacing: "-.015em",
-                margin: "0 0 22px",
+                fontSize: "clamp(48px,6vw,88px)",
+                lineHeight: 1.02,
+                letterSpacing: "-.02em",
+                margin: "0 0 24px",
                 color: "#fbfdff",
+                textShadow: "0 2px 30px rgba(0,0,0,.35)",
               }}
             >
               Turn your vessel<br />
@@ -213,17 +255,18 @@ function BecomeCaptainPage() {
             <p
               className="bc-rise"
               style={{
-                fontSize: 18,
+                fontSize: 19,
                 lineHeight: 1.6,
-                color: "var(--ondmut)",
+                color: "rgba(234,241,246,.92)",
                 maxWidth: 520,
-                margin: "0 0 34px",
+                margin: "0 0 40px",
+                textShadow: "0 1px 20px rgba(0,0,0,.3)",
               }}
             >
               Join the escrow-secured marketplace built for serious charter captains. Reach discerning anglers, keep full sovereignty over your calendar, and get paid every Tuesday.
             </p>
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <a href="#apply" style={{ ...ctaBtn, padding: "14px 28px", fontSize: 13 }}>
+              <a href="#apply" style={{ ...ctaBtn, padding: "16px 32px", fontSize: 13 }}>
                 Start earning
               </a>
               <a
@@ -232,57 +275,26 @@ function BecomeCaptainPage() {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
-                  border: "1px solid var(--lined)",
+                  border: "1px solid rgba(255,255,255,.4)",
                   color: "var(--ond)",
                   textDecoration: "none",
                   fontSize: 13,
                   fontWeight: 600,
-                  letterSpacing: ".08em",
+                  letterSpacing: ".1em",
                   textTransform: "uppercase",
-                  padding: "14px 26px",
+                  padding: "16px 30px",
                   borderRadius: 30,
+                  backdropFilter: "blur(6px)",
+                  background: "rgba(255,255,255,.06)",
                 }}
               >
                 How it works
               </a>
             </div>
           </div>
-
-          {/* Stat card */}
-          <div
-            className="bc-rise"
-            style={{
-              background: "rgba(255,255,255,.05)",
-              border: "1px solid var(--lined)",
-              borderRadius: 22,
-              padding: 32,
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <div style={{ display: "grid", gap: 24 }}>
-              {[
-                { k: "$1.2M+", v: "Paid to captains last quarter" },
-                { k: "48 hrs", v: "Average application review" },
-                { k: "4.96 ★", v: "Fleet-wide guest rating" },
-              ].map((s) => (
-                <div key={s.k} style={{ borderBottom: "1px solid var(--lined)", paddingBottom: 20 }}>
-                  <div
-                    style={{
-                      fontFamily: "var(--serif)",
-                      fontSize: 42,
-                      color: "var(--sand)",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {s.k}
-                  </div>
-                  <div style={{ color: "var(--ondmut)", fontSize: 14, marginTop: 4 }}>{s.v}</div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
+
 
       {/* ============ EARNINGS CALCULATOR ============ */}
       <section id="earnings" style={{ padding: "100px 40px", background: "var(--paper)" }}>
