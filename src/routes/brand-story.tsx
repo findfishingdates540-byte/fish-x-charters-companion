@@ -123,7 +123,7 @@ function BrandStoryPage() {
           }}
         >
           <Link to="/" className="bs-serif" style={{ fontSize: 28, letterSpacing: "-.02em", color: "var(--ink)", fontWeight: 600 }}>
-            Fish-X
+            Fish-X Charters
           </Link>
           <nav className="bs-nav" style={{ display: "flex", gap: 32, alignItems: "center" }}>
             <Link to="/discover">Charters</Link>
@@ -303,7 +303,7 @@ function BrandStoryPage() {
       {/* Footer */}
       <footer style={{ background: "var(--navy)", padding: "64px 24px", borderTop: "1px solid var(--line)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-          <div className="bs-serif" style={{ fontSize: 32, color: "var(--sand)", letterSpacing: "-.02em" }}>Fish-X</div>
+          <div className="bs-serif" style={{ fontSize: 32, color: "var(--sand)", letterSpacing: "-.02em" }}>Fish-X Charters</div>
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 32 }}>
             <Link to="/trust" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>Trust</Link>
             <Link to="/how-it-works" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>How It Works</Link>

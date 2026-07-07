@@ -46,7 +46,7 @@ function DiscoverPage() {
   return (
     <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#0d2236" }}>
       <header style={{ padding: "40px 48px 24px", borderBottom: "1px solid rgba(13,34,54,.08)" }}>
-        <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: "#0d2236", textDecoration: "none" }}>Fish-X</Link>
+        <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: "#0d2236", textDecoration: "none" }}>Fish-X Charters</Link>
         <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px,5vw,64px)", letterSpacing: "-.02em", margin: "16px 0 8px", fontWeight: 600 }}>
           Discover operators.
         </h1>
