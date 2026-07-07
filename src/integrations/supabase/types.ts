@@ -775,6 +775,69 @@ export type Database = {
         }
         Relationships: []
       }
+      inquiries: {
+        Row: {
+          boat_id: string | null
+          business_id: string
+          created_at: string
+          from_user_id: string | null
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          id: string
+          message: string
+          party_size: number | null
+          preferred_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          boat_id?: string | null
+          business_id: string
+          created_at?: string
+          from_user_id?: string | null
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          id?: string
+          message: string
+          party_size?: number | null
+          preferred_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          boat_id?: string | null
+          business_id?: string
+          created_at?: string
+          from_user_id?: string | null
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          id?: string
+          message?: string
+          party_size?: number | null
+          preferred_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inquiries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_events: {
         Row: {
           created_at: string
