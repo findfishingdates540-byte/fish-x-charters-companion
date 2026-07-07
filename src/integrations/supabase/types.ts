@@ -939,6 +939,48 @@ export type Database = {
           },
         ]
       }
+      domain_events: {
+        Row: {
+          aggregate_id: string | null
+          aggregate_type: string
+          attempts: number
+          available_at: string
+          created_at: string
+          dispatched_at: string | null
+          id: string
+          last_error: string | null
+          payload: Json
+          status: string
+          topic: string
+        }
+        Insert: {
+          aggregate_id?: string | null
+          aggregate_type: string
+          attempts?: number
+          available_at?: string
+          created_at?: string
+          dispatched_at?: string | null
+          id?: string
+          last_error?: string | null
+          payload?: Json
+          status?: string
+          topic: string
+        }
+        Update: {
+          aggregate_id?: string | null
+          aggregate_type?: string
+          attempts?: number
+          available_at?: string
+          created_at?: string
+          dispatched_at?: string | null
+          id?: string
+          last_error?: string | null
+          payload?: Json
+          status?: string
+          topic?: string
+        }
+        Relationships: []
+      }
       fishx_link: {
         Row: {
           fishx_user_id: string
@@ -1085,6 +1127,135 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_impressions: {
+        Row: {
+          angler_id: string | null
+          business_id: string | null
+          created_at: string
+          event_kind: string
+          experiment_key: string | null
+          feature_vector: Json
+          id: string
+          position: number | null
+          query_json: Json
+          service_id: string | null
+          session_id: string | null
+          user_agent: string | null
+          variant: string | null
+        }
+        Insert: {
+          angler_id?: string | null
+          business_id?: string | null
+          created_at?: string
+          event_kind?: string
+          experiment_key?: string | null
+          feature_vector?: Json
+          id?: string
+          position?: number | null
+          query_json?: Json
+          service_id?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          variant?: string | null
+        }
+        Update: {
+          angler_id?: string | null
+          business_id?: string | null
+          created_at?: string
+          event_kind?: string
+          experiment_key?: string | null
+          feature_vector?: Json
+          id?: string
+          position?: number | null
+          query_json?: Json
+          service_id?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          variant?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_impressions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_impressions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "bookable_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_metrics: {
+        Row: {
+          acceptance_rate: number | null
+          avg_rating: number | null
+          booking_velocity_30d: number
+          bookings_30d: number
+          business_id: string
+          cancellation_rate: number | null
+          computed_at: string
+          impressions_30d: number
+          last_availability_at: string | null
+          no_show_rate: number | null
+          response_rate: number | null
+          response_time_ms: number | null
+          review_count: number
+          service_id: string
+        }
+        Insert: {
+          acceptance_rate?: number | null
+          avg_rating?: number | null
+          booking_velocity_30d?: number
+          bookings_30d?: number
+          business_id: string
+          cancellation_rate?: number | null
+          computed_at?: string
+          impressions_30d?: number
+          last_availability_at?: string | null
+          no_show_rate?: number | null
+          response_rate?: number | null
+          response_time_ms?: number | null
+          review_count?: number
+          service_id: string
+        }
+        Update: {
+          acceptance_rate?: number | null
+          avg_rating?: number | null
+          booking_velocity_30d?: number
+          bookings_30d?: number
+          business_id?: string
+          cancellation_rate?: number | null
+          computed_at?: string
+          impressions_30d?: number
+          last_availability_at?: string | null
+          no_show_rate?: number | null
+          response_rate?: number | null
+          response_time_ms?: number | null
+          review_count?: number
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_metrics_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_metrics_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: true
+            referencedRelation: "bookable_services"
             referencedColumns: ["id"]
           },
         ]
@@ -1621,6 +1792,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      emit_domain_event: {
+        Args: {
+          _aggregate_id: string
+          _aggregate_type: string
+          _available_at?: string
+          _payload?: Json
+          _topic: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
