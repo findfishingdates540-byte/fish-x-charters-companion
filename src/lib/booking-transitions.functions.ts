@@ -42,7 +42,7 @@ export const transitionBooking = createServerFn({ method: "POST" })
     const { data: booking, error } = await context.supabase.rpc("transition_booking", {
       _booking_id: data.bookingId,
       _to_status: data.toStatus,
-      _reason: data.reason ?? null,
+      _reason: data.reason,
       _metadata: (data.metadata ?? {}) as never,
     });
     if (error) {

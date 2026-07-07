@@ -21,6 +21,7 @@ import { Route as BSlugRouteImport } from './routes/b.$slug'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
+import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
@@ -81,6 +82,12 @@ const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
   path: '/api/public/fishx-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksDispatchEventsRoute =
+  ApiPublicHooksDispatchEventsRouteImport.update({
+    id: '/api/public/hooks/dispatch-events',
+    path: '/api/public/hooks/dispatch-events',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
+  '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,6 +115,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
+  '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -122,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
+  '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/b/$slug'
     | '/api/public/fishx-webhook'
+    | '/api/public/hooks/dispatch-events'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/b/$slug'
     | '/api/public/fishx-webhook'
+    | '/api/public/hooks/dispatch-events'
   id:
     | '__root__'
     | '/'
@@ -164,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/b/$slug'
     | '/api/public/fishx-webhook'
+    | '/api/public/hooks/dispatch-events'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -177,6 +190,7 @@ export interface RootRouteChildren {
   TrustRoute: typeof TrustRoute
   BSlugRoute: typeof BSlugRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
+  ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -265,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicFishxWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/dispatch-events': {
+      id: '/api/public/hooks/dispatch-events'
+      path: '/api/public/hooks/dispatch-events'
+      fullPath: '/api/public/hooks/dispatch-events'
+      preLoaderRoute: typeof ApiPublicHooksDispatchEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -292,6 +313,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrustRoute: TrustRoute,
   BSlugRoute: BSlugRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
+  ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
