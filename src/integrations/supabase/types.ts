@@ -166,6 +166,51 @@ export type Database = {
           },
         ]
       }
+      booking_holds: {
+        Row: {
+          angler_id: string | null
+          booking_id: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          released_at: string | null
+          slot_id: string
+        }
+        Insert: {
+          angler_id?: string | null
+          booking_id?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          released_at?: string | null
+          slot_id: string
+        }
+        Update: {
+          angler_id?: string | null
+          booking_id?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          released_at?: string | null
+          slot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_holds_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_holds_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "service_availability"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_messages: {
         Row: {
           body: string | null
@@ -204,71 +249,157 @@ export type Database = {
           },
         ]
       }
+      booking_transitions: {
+        Row: {
+          actor_id: string | null
+          actor_kind: string
+          booking_id: string
+          created_at: string
+          from_status: Database["public"]["Enums"]["booking_status"] | null
+          id: string
+          metadata: Json
+          reason: string | null
+          to_status: Database["public"]["Enums"]["booking_status"]
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_kind?: string
+          booking_id: string
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["booking_status"] | null
+          id?: string
+          metadata?: Json
+          reason?: string | null
+          to_status: Database["public"]["Enums"]["booking_status"]
+        }
+        Update: {
+          actor_id?: string | null
+          actor_kind?: string
+          booking_id?: string
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["booking_status"] | null
+          id?: string
+          metadata?: Json
+          reason?: string | null
+          to_status?: Database["public"]["Enums"]["booking_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_transitions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
+          accept_deadline_at: string | null
           angler_id: string | null
+          application_fee_cents: number | null
           boat_id: string | null
           business_id: string | null
           cancellation_policy: Json
           captain_id: string
+          commission_rate: number | null
+          completed_at: string | null
           created_at: string
           customer_id: string | null
           deposit_cents: number
+          dispute_window_ends_at: string | null
           escrow_state: string
+          hold_expires_at: string | null
           id: string
+          idempotency_key: string | null
+          instant_book: boolean
           notes: string | null
           party_size: number
           payout_cents: number
+          payout_released_at: string | null
+          refunded_cents: number
           service_id: string | null
+          slot_id: string | null
           start_time: string | null
           status: Database["public"]["Enums"]["booking_status"]
+          stripe_charge_id: string | null
+          stripe_fee_cents: number | null
           stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
           template_id: string | null
           total_cents: number
           trip_date: string
           updated_at: string
         }
         Insert: {
+          accept_deadline_at?: string | null
           angler_id?: string | null
+          application_fee_cents?: number | null
           boat_id?: string | null
           business_id?: string | null
           cancellation_policy?: Json
           captain_id: string
+          commission_rate?: number | null
+          completed_at?: string | null
           created_at?: string
           customer_id?: string | null
           deposit_cents?: number
+          dispute_window_ends_at?: string | null
           escrow_state?: string
+          hold_expires_at?: string | null
           id?: string
+          idempotency_key?: string | null
+          instant_book?: boolean
           notes?: string | null
           party_size?: number
           payout_cents?: number
+          payout_released_at?: string | null
+          refunded_cents?: number
           service_id?: string | null
+          slot_id?: string | null
           start_time?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_charge_id?: string | null
+          stripe_fee_cents?: number | null
           stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
           template_id?: string | null
           total_cents?: number
           trip_date: string
           updated_at?: string
         }
         Update: {
+          accept_deadline_at?: string | null
           angler_id?: string | null
+          application_fee_cents?: number | null
           boat_id?: string | null
           business_id?: string | null
           cancellation_policy?: Json
           captain_id?: string
+          commission_rate?: number | null
+          completed_at?: string | null
           created_at?: string
           customer_id?: string | null
           deposit_cents?: number
+          dispute_window_ends_at?: string | null
           escrow_state?: string
+          hold_expires_at?: string | null
           id?: string
+          idempotency_key?: string | null
+          instant_book?: boolean
           notes?: string | null
           party_size?: number
           payout_cents?: number
+          payout_released_at?: string | null
+          refunded_cents?: number
           service_id?: string | null
+          slot_id?: string | null
           start_time?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_charge_id?: string | null
+          stripe_fee_cents?: number | null
           stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
           template_id?: string | null
           total_cents?: number
           trip_date?: string
@@ -301,6 +432,13 @@ export type Database = {
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "bookable_services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "service_availability"
             referencedColumns: ["id"]
           },
           {
@@ -595,7 +733,9 @@ export type Database = {
           address: string | null
           amenities_json: Json
           category_key: string
+          charges_enabled: boolean
           city: string | null
+          commission_rate: number
           country: string | null
           created_at: string
           created_by: string
@@ -610,10 +750,15 @@ export type Database = {
           lng: number | null
           logo_url: string | null
           name: string
+          onboarding_completed_at: string | null
+          payout_delay_days: number
+          payouts_enabled: boolean
           phone: string | null
           premium_until: string | null
           region: string | null
           slug: string
+          stripe_account_id: string | null
+          stripe_account_type: string
           tagline: string | null
           updated_at: string
           verified_at: string | null
@@ -623,7 +768,9 @@ export type Database = {
           address?: string | null
           amenities_json?: Json
           category_key: string
+          charges_enabled?: boolean
           city?: string | null
+          commission_rate?: number
           country?: string | null
           created_at?: string
           created_by: string
@@ -638,10 +785,15 @@ export type Database = {
           lng?: number | null
           logo_url?: string | null
           name: string
+          onboarding_completed_at?: string | null
+          payout_delay_days?: number
+          payouts_enabled?: boolean
           phone?: string | null
           premium_until?: string | null
           region?: string | null
           slug: string
+          stripe_account_id?: string | null
+          stripe_account_type?: string
           tagline?: string | null
           updated_at?: string
           verified_at?: string | null
@@ -651,7 +803,9 @@ export type Database = {
           address?: string | null
           amenities_json?: Json
           category_key?: string
+          charges_enabled?: boolean
           city?: string | null
+          commission_rate?: number
           country?: string | null
           created_at?: string
           created_by?: string
@@ -666,10 +820,15 @@ export type Database = {
           lng?: number | null
           logo_url?: string | null
           name?: string
+          onboarding_completed_at?: string | null
+          payout_delay_days?: number
+          payouts_enabled?: boolean
           phone?: string | null
           premium_until?: string | null
           region?: string | null
           slug?: string
+          stripe_account_id?: string | null
+          stripe_account_type?: string
           tagline?: string | null
           updated_at?: string
           verified_at?: string | null
@@ -720,6 +879,65 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      disputes: {
+        Row: {
+          booking_id: string
+          created_at: string
+          description: string | null
+          id: string
+          kind: string
+          metadata: Json
+          opened_by: string | null
+          opened_by_kind: string
+          resolution_note: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          stripe_dispute_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind: string
+          metadata?: Json
+          opened_by?: string | null
+          opened_by_kind: string
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          stripe_dispute_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind?: string
+          metadata?: Json
+          opened_by?: string | null
+          opened_by_kind?: string
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          stripe_dispute_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disputes_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fishx_link: {
         Row: {
@@ -772,6 +990,39 @@ export type Database = {
           id?: string
           payload?: Json
           processed_at?: string | null
+        }
+        Relationships: []
+      }
+      idempotency_keys: {
+        Row: {
+          actor_id: string | null
+          completed_at: string | null
+          created_at: string
+          key: string
+          request_hash: string | null
+          response: Json | null
+          scope: string
+          status: string
+        }
+        Insert: {
+          actor_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          key: string
+          request_hash?: string | null
+          response?: Json | null
+          scope: string
+          status?: string
+        }
+        Update: {
+          actor_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          key?: string
+          request_hash?: string | null
+          response?: Json | null
+          scope?: string
+          status?: string
         }
         Relationships: []
       }
@@ -840,6 +1091,7 @@ export type Database = {
       }
       payment_events: {
         Row: {
+          booking_id: string | null
           created_at: string
           event_type: string
           id: string
@@ -848,6 +1100,7 @@ export type Database = {
           stripe_event_id: string
         }
         Insert: {
+          booking_id?: string | null
           created_at?: string
           event_type: string
           id?: string
@@ -856,6 +1109,7 @@ export type Database = {
           stripe_event_id: string
         }
         Update: {
+          booking_id?: string | null
           created_at?: string
           event_type?: string
           id?: string
@@ -863,14 +1117,25 @@ export type Database = {
           processed_at?: string | null
           stripe_event_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "payment_events_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payouts: {
         Row: {
           amount_cents: number
+          arrival_date: string | null
           booking_id: string | null
           business_id: string
           created_at: string
+          currency: string
+          failure_message: string | null
           id: string
           paid_at: string | null
           status: string
@@ -878,9 +1143,12 @@ export type Database = {
         }
         Insert: {
           amount_cents: number
+          arrival_date?: string | null
           booking_id?: string | null
           business_id: string
           created_at?: string
+          currency?: string
+          failure_message?: string | null
           id?: string
           paid_at?: string | null
           status?: string
@@ -888,9 +1156,12 @@ export type Database = {
         }
         Update: {
           amount_cents?: number
+          arrival_date?: string | null
           booking_id?: string | null
           business_id?: string
           created_at?: string
+          currency?: string
+          failure_message?: string | null
           id?: string
           paid_at?: string | null
           status?: string
@@ -1001,6 +1272,59 @@ export type Database = {
         }
         Relationships: []
       }
+      refunds: {
+        Row: {
+          amount_cents: number
+          booking_id: string
+          created_at: string
+          created_by: string | null
+          failure_message: string | null
+          id: string
+          policy_applied: string | null
+          reason: string | null
+          reverse_transfer: boolean
+          status: string
+          stripe_refund_id: string | null
+          succeeded_at: string | null
+        }
+        Insert: {
+          amount_cents: number
+          booking_id: string
+          created_at?: string
+          created_by?: string | null
+          failure_message?: string | null
+          id?: string
+          policy_applied?: string | null
+          reason?: string | null
+          reverse_transfer?: boolean
+          status?: string
+          stripe_refund_id?: string | null
+          succeeded_at?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          booking_id?: string
+          created_at?: string
+          created_by?: string | null
+          failure_message?: string | null
+          id?: string
+          policy_applied?: string | null
+          reason?: string | null
+          reverse_transfer?: boolean
+          status?: string
+          stripe_refund_id?: string | null
+          succeeded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           angler_id: string
@@ -1054,6 +1378,7 @@ export type Database = {
       }
       service_availability: {
         Row: {
+          booked_booking_id: string | null
           created_at: string
           ends_at: string
           id: string
@@ -1063,6 +1388,7 @@ export type Database = {
           starts_at: string
         }
         Insert: {
+          booked_booking_id?: string | null
           created_at?: string
           ends_at: string
           id?: string
@@ -1072,6 +1398,7 @@ export type Database = {
           starts_at: string
         }
         Update: {
+          booked_booking_id?: string | null
           created_at?: string
           ends_at?: string
           id?: string
@@ -1081,6 +1408,13 @@ export type Database = {
           starts_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "service_availability_booked_booking_id_fkey"
+            columns: ["booked_booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_availability_service_id_fkey"
             columns: ["service_id"]
@@ -1312,14 +1646,19 @@ export type Database = {
         | "business_staff"
       booking_status:
         | "inquiry"
-        | "pending_deposit"
+        | "pending_payment"
+        | "pending_confirmation"
         | "confirmed"
         | "in_progress"
         | "completed"
-        | "cancelled"
+        | "reviewed"
+        | "declined"
+        | "expired"
+        | "cancelled_angler"
+        | "cancelled_captain"
         | "no_show"
-        | "refunded"
         | "disputed"
+        | "refunded"
         | "weather_cancelled"
       business_member_role: "owner" | "manager" | "staff"
       service_kind:
@@ -1466,14 +1805,19 @@ export const Constants = {
       ],
       booking_status: [
         "inquiry",
-        "pending_deposit",
+        "pending_payment",
+        "pending_confirmation",
         "confirmed",
         "in_progress",
         "completed",
-        "cancelled",
+        "reviewed",
+        "declined",
+        "expired",
+        "cancelled_angler",
+        "cancelled_captain",
         "no_show",
-        "refunded",
         "disputed",
+        "refunded",
         "weather_cancelled",
       ],
       business_member_role: ["owner", "manager", "staff"],
