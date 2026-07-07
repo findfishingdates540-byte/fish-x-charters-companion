@@ -1809,6 +1809,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_allowed_booking_transition: {
+        Args: {
+          _from: Database["public"]["Enums"]["booking_status"]
+          _to: Database["public"]["Enums"]["booking_status"]
+        }
+        Returns: boolean
+      }
       is_business_member: {
         Args: {
           _business_id: string
@@ -1816,6 +1823,57 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      transition_booking: {
+        Args: {
+          _booking_id: string
+          _metadata?: Json
+          _reason?: string
+          _to_status: Database["public"]["Enums"]["booking_status"]
+        }
+        Returns: {
+          accept_deadline_at: string | null
+          angler_id: string | null
+          application_fee_cents: number | null
+          boat_id: string | null
+          business_id: string | null
+          cancellation_policy: Json
+          captain_id: string
+          commission_rate: number | null
+          completed_at: string | null
+          created_at: string
+          customer_id: string | null
+          deposit_cents: number
+          dispute_window_ends_at: string | null
+          escrow_state: string
+          hold_expires_at: string | null
+          id: string
+          idempotency_key: string | null
+          instant_book: boolean
+          notes: string | null
+          party_size: number
+          payout_cents: number
+          payout_released_at: string | null
+          refunded_cents: number
+          service_id: string | null
+          slot_id: string | null
+          start_time: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          stripe_charge_id: string | null
+          stripe_fee_cents: number | null
+          stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
+          template_id: string | null
+          total_cents: number
+          trip_date: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
