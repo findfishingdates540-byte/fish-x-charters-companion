@@ -123,7 +123,7 @@ function BrandStoryPage() {
           }}
         >
           <Link to="/" className="bs-serif" style={{ fontSize: 28, letterSpacing: "-.02em", color: "var(--ink)", fontWeight: 600 }}>
-            Fish-X
+            Fish-X Charters
           </Link>
           <nav className="bs-nav" style={{ display: "flex", gap: 32, alignItems: "center" }}>
             <Link to="/discover">Charters</Link>
