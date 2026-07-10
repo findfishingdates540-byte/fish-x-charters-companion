@@ -46,12 +46,13 @@ function Dashboard() {
 
   // Route to appropriate dashboard based on role
   if (primaryRole === "angler") {
-    return <AnglerDashboard user={user} />;
+    return <AnglerView user={user} />;
   }
 
   if (primaryRole === "business_owner" || primaryRole === "captain") {
-    return <OperatorDashboard user={user} businesses={businesses} />;
+    return <OperatorView user={user} businesses={businesses} />;
   }
+
 
   // Fallback for users with no recognized role (shouldn't happen)
   return (
