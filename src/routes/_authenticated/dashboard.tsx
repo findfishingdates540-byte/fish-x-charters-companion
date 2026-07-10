@@ -73,7 +73,7 @@ function AnglerView({ user }: { user: any }) {
   return <AnglerDashboard userName={name} userEmail={user.email} />;
 }
 
-const businessTypeMap: Record<string, BusinessType> = {
+const businessTypeMap: Record<string, BusinessType | "captain"> = {
   charter: "captain",
   tackle_shop: "tackle_shop",
   marina: "marina",
@@ -87,7 +87,7 @@ const businessTypeMap: Record<string, BusinessType> = {
 function OperatorView({ user, businesses }: { user: any; businesses: any[] }) {
   const currentBusiness = businesses[0]?.business;
   const name = (user.user_metadata?.full_name as string | undefined) ?? user.email;
-  const businessType: BusinessType = currentBusiness?.category_key
+  const businessType: BusinessType | "captain" = currentBusiness?.category_key
     ? businessTypeMap[currentBusiness.category_key] ?? "captain"
     : "captain";
 
@@ -100,6 +100,7 @@ function OperatorView({ user, businesses }: { user: any; businesses: any[] }) {
       />
     );
   }
+
 
   return <BusinessDashboard businessType={businessType} onSignOut={handleSignOut} />;
 }
