@@ -72,9 +72,9 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
 
   const captain = data.captain;
   const captainName = captain?.display_name ?? captain?.full_name ?? "Your captain";
-  const boatName = b.business?.name ?? "the vessel";
-  const location = [b.business?.city, b.business?.region].filter(Boolean).join(", ");
-  const heroImg = b.service?.hero_url || b.business?.hero_url || "/dashboards/assets/seascape.jpg";
+  const boatName = data.business?.name ?? "the vessel";
+  const location = [data.business?.city, data.business?.region].filter(Boolean).join(", ");
+  const heroImg = data.service?.hero_url || data.business?.hero_url || "/dashboards/assets/seascape.jpg";
   const captainAvatar = captain?.avatar_url || "/dashboards/assets/james.jpg";
 
   const escrowLabel = money(b.total_cents);
@@ -140,7 +140,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
     padding: "7px 13px",
   };
 
-  const included = b.service?.includes ?? [];
+  const included = data.service?.includes ?? [];
   const chips = included.length ? included : ["Tackle & bait included", "Licenses covered", "Catch cleaned & bagged", "Cooler with ice"];
 
   return (
@@ -193,7 +193,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
               Booking {b.id.slice(0, 8).toUpperCase()}
             </div>
             <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 38, letterSpacing: "-.01em", lineHeight: 1.05, margin: "8px 0", color: V.ink }}>
-              {b.service?.title ?? "Charter trip"}
+              {data.service?.title ?? "Charter trip"}
             </h1>
             <div style={{ fontSize: 14, color: V.tmut }}>
               {location ? `${location} · ` : ""}
@@ -225,12 +225,12 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                       {b.start_time ? new Date(`1970-01-01T${b.start_time}`).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "TBD"}
                     </div>
                     <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 2 }}>
-                      {b.service?.duration_minutes ? `${Math.round(b.service.duration_minutes / 60)} hours` : "Duration TBD"}
+                      {data.service?.duration_minutes ? `${Math.round(data.service.duration_minutes / 60)} hours` : "Duration TBD"}
                     </div>
                   </div>
                   <div style={{ border: `1px solid ${V.line}`, borderRadius: 13, padding: "14px 16px" }}>
                     <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 5 }}>Meeting point</div>
-                    <div style={{ fontSize: 14.5, fontWeight: 600, color: V.ink }}>{b.service?.departure_location ?? "Confirmed on booking"}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 600, color: V.ink }}>{data.service?.departure_location ?? "Confirmed on booking"}</div>
                     <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 2 }}>{location}</div>
                   </div>
                 </div>
@@ -387,10 +387,10 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                 </div>
               </div>
               <div style={{ display: "flex", gap: 8 }}>
-                {b.business?.slug && (
+                {data.business?.slug && (
                   <Link
                     to="/b/$slug"
-                    params={{ slug: b.business.slug }}
+                    params={{ slug: data.business.slug }}
                     style={{ flex: 1, textAlign: "center", background: "transparent", border: `1px solid ${V.line}`, borderRadius: 10, padding: 11, fontSize: 12.5, fontWeight: 600, color: V.ink, textDecoration: "none" }}
                   >
                     View profile
