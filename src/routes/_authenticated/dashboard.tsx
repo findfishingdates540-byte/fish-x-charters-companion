@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { getMyRoles, hasPrimaryRole } from "@/lib/auth.functions";
+import { getMyRoles, hasPrimaryRole, getMyProfile } from "@/lib/auth.functions";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { DashboardFrame } from "@/components/DashboardFrame";
 import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
@@ -15,6 +15,21 @@ import {
 import { getCaptainDashboard } from "@/lib/captain-dashboard.functions";
 import { getMarinaOverview } from "@/lib/marina.functions";
 import { getShopOverview } from "@/lib/tackle.functions";
+
+const myRolesQO = queryOptions({
+  queryKey: ["my-roles"],
+  queryFn: () => getMyRoles(),
+});
+
+const myBusinessesQO = queryOptions({
+  queryKey: ["my-businesses"],
+  queryFn: () => getMyBusinesses(),
+});
+
+const myProfileQO = queryOptions({
+  queryKey: ["my-profile"],
+  queryFn: () => getMyProfile(),
+});
 
 const myRolesQO = queryOptions({
   queryKey: ["my-roles"],
