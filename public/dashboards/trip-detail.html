@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><rect x="110" y="120" width="180" height="140" rx="16" fill="none" stroke="#e3c089" stroke-width="8"/><path d="M110 165h180" stroke="#e3c089" stroke-width="8"/><circle cx="150" cy="215" r="10" fill="#27c0e2"/><text x="200" y="330" font-family="Georgia,serif" font-size="30" letter-spacing="3" fill="#eaf1f6" text-anchor="middle">My Trip</text></svg></template>
+</helmet>
+<div id="trip-detail" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--cyansoft:#e2eef2;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--redsoft:#fbe9e8;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.12);min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- NAV -->
+  <header style="position:sticky;top:0;z-index:30;background:var(--navy);color:var(--ond)">
+    <div style="max-width:1100px;margin:0 auto;padding:0 28px;height:62px;display:flex;align-items:center;gap:22px">
+      <a href="Fish-X Angler Dashboard.dc.html" style="display:inline-flex;align-items:center;gap:8px;color:var(--ondmut);text-decoration:none;font-size:13px;font-weight:600" style-hover="color:#fff"><span>&larr;</span> My Trips</a>
+      <div style="display:flex;align-items:center;gap:10px;margin:0 auto">
+        <span style="width:10px;height:10px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+        <span style="font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:.1em">FISH&mdash;X</span>
+      </div>
+      <span style="display:inline-flex;align-items:center;gap:7px;border:1px solid var(--lined);border-radius:30px;padding:8px 14px;font-size:11.5px;font-weight:600;color:var(--ond)"><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan)"></span> Escrow-protected</span>
+    </div>
+  </header>
+
+  <main style="max-width:1100px;margin:0 auto;padding:28px 28px 60px">
+
+    <!-- WEATHER ADVISORY -->
+    <sc-if value="{{ isActive }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:12px;background:var(--sandsoft);border:1px solid rgba(210,165,102,.5);border-radius:14px;padding:13px 18px;margin-bottom:22px">
+        <span style="font-size:16px">&#9888;&#65039;</span>
+        <div style="flex:1;font-size:13.5px;color:var(--ink)"><b>Weather watch:</b> a small-craft advisory is possible for Jul 18. If Capt. Sterling calls it off, your full payment is refunded from escrow &mdash; automatically.</div>
+      </div>
+    </sc-if>
+
+    <!-- CANCELED BANNER -->
+    <sc-if value="{{ isCanceled }}">
+      <div style="display:flex;align-items:center;gap:14px;background:var(--greensoft);border:1px solid rgba(31,138,91,.3);border-radius:14px;padding:16px 18px;margin-bottom:22px">
+        <span style="width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:16px;flex:none">&#10003;</span>
+        <div style="flex:1"><div style="font-size:14.5px;font-weight:700;color:var(--ink)">Trip canceled &mdash; refund issued</div><div style="font-size:13px;color:var(--tmut);margin-top:2px">$918 returned from escrow to your Visa &bull;&bull;&bull;&bull; 4921. Nothing was ever paid to the captain.</div></div>
+        <a href="Fish-X Booking.dc.html" style="flex:none;background:var(--navy);color:#fff;text-decoration:none;border-radius:10px;padding:11px 18px;font-size:12.5px;font-weight:700">Rebook a charter</a>
+      </div>
+    </sc-if>
+
+    <!-- HEADER -->
+    <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px">
+      <div style="flex:1;min-width:280px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--goldtext)">Booking BK-1024</div>
+        <h1 style="font-family:var(--serif);font-weight:600;font-size:38px;letter-spacing:-.01em;line-height:1.05;margin:8px 0 8px;color:var(--ink)">Offshore Tarpon &amp; Sailfish</h1>
+        <div style="font-size:14px;color:var(--tmut)">Islamorada, Florida Keys &middot; Sat, Jul 18, 2026 &middot; 6:00 AM &middot; 2 anglers</div>
+      </div>
+      <span style="font-size:12px;font-weight:700;border-radius:30px;padding:9px 16px;color:{{ statusColor }};background:{{ statusBg }}">{{ statusLabel }}</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start">
+
+      <!-- MAIN COL -->
+      <div style="display:flex;flex-direction:column;gap:22px;min-width:0">
+
+        <!-- MEETING DETAILS -->
+        <section style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+          <div style="position:relative;height:150px">
+            <img src="assets/seascape.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 45%">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,34,54,.1),rgba(10,34,54,.55))"></div>
+            <div style="position:absolute;left:20px;bottom:14px;color:#fff;font-family:var(--serif);font-size:20px;font-weight:600">Aboard &ldquo;Reel Sterling&rdquo; &middot; 38&prime; sportfisher</div>
+          </div>
+          <div style="padding:22px 24px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+              <div style="border:1px solid var(--line);border-radius:13px;padding:14px 16px"><div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:5px">Departure</div><div style="font-size:14.5px;font-weight:600;color:var(--ink)">6:00 AM &middot; arrive 5:45</div><div style="font-size:12.5px;color:var(--tmut);margin-top:2px">8 hours &middot; return ~2:00 PM</div></div>
+              <div style="border:1px solid var(--line);border-radius:13px;padding:14px 16px"><div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:5px">Meeting point</div><div style="font-size:14.5px;font-weight:600;color:var(--ink)">Blue Harbor Marina, Slip 12</div><div style="font-size:12.5px;color:var(--tmut);margin-top:2px">84001 Overseas Hwy, Islamorada</div></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+              <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">&#10003; Tackle &amp; bait included</span>
+              <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">&#10003; Licenses covered</span>
+              <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">&#10003; Catch cleaned &amp; bagged</span>
+              <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">&#10003; Cooler with ice</span>
+            </div>
+            <div style="font-size:13px;color:var(--tmut);line-height:1.6"><b style="color:var(--ink)">Bring:</b> sunscreen, polarized glasses, hat, non-marking shoes, and anything you&rsquo;d like to drink. Motion-sickness tablets recommended the night before.</div>
+          </div>
+        </section>
+
+        <!-- ESCROW TIMELINE -->
+        <section style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:20px">
+            <span style="position:relative;width:36px;height:36px;border-radius:50%;background:var(--cyansoft);display:grid;place-items:center;color:var(--cyan)"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan);animation:fx-sonar 3.2s ease-out infinite"></span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)">Escrow status</div><div style="font-family:var(--serif);font-size:19px;color:var(--ink)">{{ escrowHeadline }}</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <sc-for list="{{ escrowSteps }}" as="e" hint-placeholder-count="4">
+              <div style="display:flex;gap:14px">
+                <div style="display:flex;flex-direction:column;align-items:center;flex:none;width:22px">
+                  <span style="width:16px;height:16px;border-radius:50%;background:{{ e.dotBg }};border:{{ e.dotBorder }};display:grid;place-items:center;color:#fff;font-size:9px;flex:none">{{ e.check }}</span>
+                  <sc-if value="{{ e.hasLine }}"><span style="width:2px;flex:1;min-height:26px;background:{{ e.lineBg }}"></span></sc-if>
+                </div>
+                <div style="padding-bottom:18px;min-width:0"><div style="font-size:13.5px;font-weight:700;color:{{ e.titleColor }}">{{ e.title }}</div><div style="font-size:12.5px;color:var(--tmut);margin-top:2px">{{ e.desc }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- MESSAGES -->
+        <section style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px">
+            <img src="assets/james.jpg" alt="" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:50% 30%">
+            <div><div style="font-size:14px;font-weight:600;color:var(--ink)">Capt. James Sterling</div><div style="font-size:12px;color:var(--green)">Usually replies within an hour</div></div>
+          </div>
+          <div style="padding:20px 22px;display:flex;flex-direction:column;gap:11px;background:var(--paper);max-height:280px;overflow-y:auto">
+            <sc-for list="{{ thread }}" as="m" hint-placeholder-count="3">
+              <div style="align-self:{{ m.align }};max-width:76%;background:{{ m.bg }};color:{{ m.color }};border:1px solid {{ m.border }};border-radius:13px;padding:10px 14px;font-size:13.5px;line-height:1.45">{{ m.text }}</div>
+            </sc-for>
+          </div>
+          <div style="padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px">
+            <input name="reply" placeholder="Message your captain&hellip;" style="flex:1;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)">
+            <button onClick="{{ sendMsg }}" style="background:var(--sand);color:#1c1303;border:0;border-radius:11px;padding:0 20px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer">Send</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- RAIL -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <!-- PAYMENT -->
+        <div style="background:linear-gradient(160deg,#0c2a42,#0a2236);border-radius:20px;padding:24px;color:var(--ond)">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sand);margin-bottom:14px">Payment</div>
+          <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0"><span style="color:var(--ondmut)">Charter (2 anglers)</span><span style="color:#fff;font-weight:600">$850</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0"><span style="color:var(--ondmut)">Service &amp; escrow fee</span><span style="color:#fff;font-weight:600">$68</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:12px 0 0;border-top:1px solid rgba(255,255,255,.12);margin-top:8px"><span style="font-weight:700;color:#fff">Total</span><span style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--sand)">$918</span></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:11px 13px">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--cyan);flex:none"></span>
+            <span style="font-size:12px;color:var(--ond)">{{ paymentNote }}</span>
+          </div>
+        </div>
+
+        <!-- CAPTAIN -->
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px">
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px">
+            <img src="assets/james.jpg" alt="Capt. James Sterling" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:50% 30%;border:1px solid var(--line)">
+            <div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:700;color:var(--ink)">Capt. James Sterling</div><div style="font-size:12.5px;color:var(--tmut)"><span style="color:var(--sand)">&#9733;</span> 4.98 &middot; 317 trips &middot; Verified</div></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <a href="Fish-X Captain Profile.dc.html" style="flex:1;text-align:center;background:transparent;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:12.5px;font-weight:600;color:var(--ink);text-decoration:none" style-hover="border-color:rgba(13,34,54,.25)">View profile</a>
+            <button onClick="{{ focusMsg }}" style="flex:1;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:11px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.15)">Message</button>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <sc-if value="{{ isActive }}" hint-placeholder-val="{{ true }}">
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px 22px">
+            <button onClick="{{ addCal }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);padding:15px 0;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink);text-align:left"><span style="width:32px;height:32px;border-radius:9px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;flex:none">&#128197;</span> Add to calendar</button>
+            <button onClick="{{ changeDate }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);padding:15px 0;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink);text-align:left"><span style="width:32px;height:32px;border-radius:9px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;flex:none">&#8634;</span> Request a date change</button>
+            <a href="Fish-X Resolution Center.dc.html" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border-bottom:1px solid var(--line);padding:15px 0;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink);text-align:left;text-decoration:none"><span style="width:32px;height:32px;border-radius:9px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;flex:none">&#9873;</span> Report an issue</a>
+            <button onClick="{{ openCancel }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;padding:15px 0;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--red);text-align:left"><span style="width:32px;height:32px;border-radius:9px;background:var(--redsoft);display:grid;place-items:center;flex:none;color:var(--red)">&#10005;</span> Cancel trip</button>
+          </div>
+        </sc-if>
+
+        <!-- POLICY -->
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 22px">
+          <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink);margin-bottom:8px">Cancellation policy</div>
+          <div style="font-size:12.5px;line-height:1.6;color:var(--tmut)">Free cancellation until <b style="color:var(--ink)">Jul 16, 6:00 AM</b> (48h before). Weather calls by your captain always refund in full from escrow.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- CANCEL MODAL -->
+  <sc-if value="{{ cancelOpen }}">
+    <div style="position:fixed;inset:0;z-index:70;background:rgba(6,21,31,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="width:100%;max-width:470px;background:var(--card);border-radius:22px;padding:28px;box-shadow:0 40px 90px -30px rgba(0,0,0,.6)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <h2 style="font-family:var(--serif);font-weight:600;font-size:25px;margin:0;color:var(--ink)">Cancel this trip?</h2>
+          <button onClick="{{ closeCancel }}" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--tmut);font-size:14px">&#10005;</button>
+        </div>
+        <p style="font-size:13.5px;color:var(--tmut);margin:0 0 18px;line-height:1.55">You&rsquo;re inside the free window &mdash; your full <b style="color:var(--ink)">$918</b> comes straight back from escrow.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+          <sc-for list="{{ cancelReasons }}" as="r" hint-placeholder-count="4">
+            <button onClick="{{ r.onPick }}" style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:{{ r.bg }};border:1px solid {{ r.border }};border-radius:12px;padding:13px 15px;cursor:pointer;font-family:var(--sans)">
+              <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ r.ringColor }};display:grid;place-items:center;flex:none"><span style="width:8px;height:8px;border-radius:50%;background:{{ r.fill }}"></span></span>
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ r.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;justify-content:space-between;background:var(--greensoft);border:1px solid rgba(31,138,91,.25);border-radius:12px;padding:13px 16px;margin-bottom:18px">
+          <span style="font-size:13px;font-weight:600;color:var(--ink)">Refund to Visa &bull;&bull;&bull;&bull; 4921</span>
+          <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--green)">$918.00</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button onClick="{{ closeCancel }}" style="flex:1;background:transparent;border:1px solid var(--line);border-radius:12px;padding:14px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer">Keep my trip</button>
+          <button onClick="{{ confirmCancel }}" style="flex:1;background:var(--red);color:#fff;border:0;border-radius:12px;padding:14px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.06)">Cancel &amp; refund</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  state = {
+    status:'active', // active | canceled
+    cancelOpen:false, cancelReason:0, toast:'',
+    thread:[
+      { me:false, text:'Morning Alex! We\u2019re rigged for tarpon \u2014 forecast looks fishable so far. I\u2019ll confirm the night before.' },
+      { me:true, text:'Perfect. Two of us, first time offshore \u2014 anything special to bring?' },
+      { me:false, text:'Just sunscreen, glasses and soft-sole shoes. I\u2019ve got everything else. See you at slip 12, 5:45 sharp.' }
+    ]
+  };
+
+  showToast(m){ this.setState({toast:m}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2600); }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var active=s.status==='active';
+    var reasons=['Weather concerns','Plans changed','Booked by mistake','Something else'];
+    var steps=[
+      { title:'Reserved', desc:'Jul 2 \u00b7 booking confirmed by Capt. Sterling', state:'done' },
+      { title:'Held in escrow', desc:'$918 secured \u2014 the captain can\u2019t touch it yet', state: active?'current':'done' },
+      { title:'Trip day', desc:'Jul 18 \u00b7 completes when you\u2019re back at the dock', state: active?'todo':'skip' },
+      { title: active?'Released to captain':'Refunded to you', desc: active?'Payout releases the evening your trip ends':'$918 returned \u2014 refund issued', state: active?'todo':'done' }
+    ];
+    return {
+      isActive:active, isCanceled:!active,
+      statusLabel: active?'Confirmed \u00b7 in escrow':'Canceled \u00b7 refunded',
+      statusColor: active?'#1f9fbe':'#5c6b78',
+      statusBg: active?'#e2eef2':'rgba(13,34,54,.06)',
+      escrowHeadline: active?'$918 held securely':'$918 refunded in full',
+      paymentNote: active?'Held in escrow \u2014 released only after your trip':'Refunded to your card \u00b7 Jul 7',
+      escrowSteps:steps.map(function(e,i){
+        var done=e.state==='done', cur=e.state==='current';
+        return {
+          title:e.title, desc:e.desc,
+          check: done?'\u2713':'',
+          dotBg: done?'#1f8a5b': cur?'#1f9fbe':'#ffffff',
+          dotBorder: (done||cur)?'0':'2px solid rgba(13,34,54,.18)',
+          lineBg: done?'#1f8a5b':'rgba(13,34,54,.12)',
+          titleColor: (done||cur)?'#0d2236':'#5c6b78',
+          hasLine: i<steps.length-1
+        };
+      }),
+      thread:s.thread.map(function(m){ return { text:m.text, align:m.me?'flex-end':'flex-start', bg:m.me?'#0a2236':'#ffffff', color:m.me?'#ffffff':'#0d2236', border:m.me?'#0a2236':'rgba(13,34,54,.10)' }; }),
+      sendMsg:function(){
+        var root=document.getElementById('trip-detail');
+        var inp=root&&root.querySelector('[name=reply]');
+        if(!inp||!inp.value.trim()) return;
+        self.setState({thread:s.thread.concat([{me:true,text:inp.value.trim()}])});
+        inp.value='';
+      },
+      focusMsg:function(){ var root=document.getElementById('trip-detail'); var inp=root&&root.querySelector('[name=reply]'); if(inp) inp.focus(); },
+      addCal:function(){ self.showToast('Added to your calendar \u2014 Jul 18, 6:00 AM'); },
+      changeDate:function(){ self.showToast('Date-change request sent to Capt. Sterling'); },
+      reportIssue:function(){ self.showToast('Issue reported \u2014 our resolution team will reply within 24h'); },
+      openCancel:function(){ self.setState({cancelOpen:true}); },
+      closeCancel:function(){ self.setState({cancelOpen:false}); },
+      cancelOpen:s.cancelOpen,
+      cancelReasons:reasons.map(function(label,i){
+        var on=s.cancelReason===i;
+        return { label:label, bg:on?'rgba(227,192,137,.12)':'transparent', border:on?'#e3c089':'rgba(13,34,54,.12)', ringColor:on?'#a97e3c':'rgba(13,34,54,.25)', fill:on?'#a97e3c':'transparent', onPick:function(){ self.setState({cancelReason:i}); } };
+      }),
+      confirmCancel:function(){ self.setState({status:'canceled',cancelOpen:false}); self.showToast('Trip canceled \u2014 $918 refund issued from escrow'); },
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

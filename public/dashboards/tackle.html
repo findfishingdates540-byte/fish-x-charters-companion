@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(13,34,54,.18);border-radius:10px;border:3px solid transparent;background-clip:content-box}
+  @keyframes fx-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><path d="M255 130 150 235l-1 40 40-1 105-105a20 20 0 0 0-39-39z" fill="none" stroke="#e3c089" stroke-width="10"/><circle cx="170" cy="150" r="12" fill="#e3c089"/><text x="200" y="330" font-family="Georgia,serif" font-size="28" letter-spacing="3" fill="#eaf1f6" text-anchor="middle">Tackle Shop</text></svg></template>
+</helmet>
+<div id="tk-dash" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--navy2:#0c2a42;--deep:#06151f;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--redsoft:#fbe9e8;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.10);display:flex;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="width:256px;flex:none;background:var(--navy);color:var(--ond);display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh;border-right:1px solid rgba(255,255,255,.06)">
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 10px 22px">
+      <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+      <span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:11px 12px;margin-bottom:18px">
+      <span style="width:34px;height:34px;border-radius:9px;background:rgba(227,192,137,.16);display:grid;place-items:center;color:var(--sand);flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16l-1.4 12.2a2 2 0 0 1-2 1.8H7.4a2 2 0 0 1-2-1.8z"/><path d="M8.5 7a3.5 3.5 0 0 1 7 0"/></svg></span>
+      <div style="line-height:1.2;min-width:0"><div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ondmut)">Workspace</div><div style="font-size:13.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Tackle shop</div></div>
+      <span style="margin-left:auto;color:var(--ondmut);font-size:12px">&#9662;</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:3px">
+      <button data-nav="overview" onClick="{{ setOverview }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg> Overview</button>
+      <button data-nav="orders" onClick="{{ setOrders }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 2 3 6v14a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg> Orders <span data-nav-badge style="margin-left:auto;background:var(--sand);color:#1c1303;font-size:11px;font-weight:700;border-radius:20px;padding:1px 8px">{{ fulfilCount }}</span></button>
+      <button data-nav="products" onClick="{{ setProducts }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8 12 3 3 8l9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg> Products</button>
+      <button data-nav="payouts" onClick="{{ setPayouts }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20M6 15h4"/></svg> Payouts</button>
+    </nav>
+    <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--lined)">
+      <div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ondmut);padding:0 12px 8px">Account</div>
+      <button data-nav="settings" onClick="{{ setSettings }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg> Settings</button>
+    </div>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:10px 12px">
+      <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(140deg,var(--sand),var(--sand2));display:grid;place-items:center;font-family:var(--serif);font-size:17px;font-weight:600;color:#1c1303;flex:none">R</div>
+      <div style="line-height:1.25;min-width:0"><div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Reel Deal Tackle</div><div style="font-size:11px;color:var(--sand)">&#9733; 4.9 &middot; Verified seller</div></div>
+      <a href="Fish-X Auth.dc.html" title="Sign out" style="margin-left:auto;color:var(--ondmut);text-decoration:none;flex:none" style-hover="color:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="position:sticky;top:0;z-index:20;background:rgba(238,242,245,.86);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line);padding:18px 34px;display:flex;align-items:center;gap:24px">
+      <div style="min-width:0"><div style="font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.1;color:var(--ink)">{{ pageTitle }}</div><div style="font-size:13px;color:var(--tmut);margin-top:1px">{{ pageSub }}</div></div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <label style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:9px 15px;width:220px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="text" placeholder="Search orders, products&hellip;" style="border:0;outline:none;background:transparent;font-family:var(--sans);font-size:13.5px;color:var(--ink);width:100%"></label>
+        <button data-bell onClick="{{ toggleBell }}" style="position:relative;width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--line);cursor:pointer;display:grid;place-items:center;color:var(--ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 0 0 4 0"/></svg><span style="position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--card)"></span></button>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:5px 6px 5px 14px"><span style="display:flex;align-items:center;gap:7px"><span data-store-dot style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:fx-pulse 2.4s ease-in-out infinite"></span><span data-store-text style="font-size:12.5px;font-weight:600;color:var(--ink)">Store live</span></span><button data-store-toggle onClick="{{ toggleStore }}" style="position:relative;width:40px;height:23px;border-radius:20px;border:0;cursor:pointer;background:var(--green);transition:background .3s;padding:0"><span data-store-knob style="position:absolute;top:2px;left:19px;width:19px;height:19px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></button></div>
+      </div>
+    </header>
+
+    <sc-if value="{{ bellOpen }}">
+      <div style="position:absolute;top:70px;right:34px;z-index:40;width:330px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 60px -30px rgba(13,34,54,.5);overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink)">Notifications</div>
+        <div style="display:flex;gap:11px;padding:14px 18px;border-bottom:1px solid var(--line)"><span style="width:32px;height:32px;border-radius:9px;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext);flex:none">&#128230;</span><div><div style="font-size:13px;color:var(--ink);font-weight:600">3 orders awaiting fulfillment</div><div style="font-size:12px;color:var(--tmut)">Ship today to keep your rating</div></div></div>
+        <div style="display:flex;gap:11px;padding:14px 18px;border-bottom:1px solid var(--line)"><span style="width:32px;height:32px;border-radius:9px;background:var(--redsoft);display:grid;place-items:center;color:var(--red);flex:none">!</span><div><div style="font-size:13px;color:var(--ink);font-weight:600">Low stock: Stealth Popper 90</div><div style="font-size:12px;color:var(--tmut)">4 left</div></div></div>
+        <div style="display:flex;gap:11px;padding:14px 18px"><span style="width:32px;height:32px;border-radius:9px;background:var(--greensoft);display:grid;place-items:center;color:var(--green);flex:none">$</span><div><div style="font-size:13px;color:var(--ink);font-weight:600">Payout released &mdash; $1,540</div><div style="font-size:12px;color:var(--tmut)">Delivered orders &middot; today</div></div></div>
+      </div>
+    </sc-if>
+
+    <main style="flex:1;padding:30px 34px 48px;max-width:1180px;width:100%">
+
+      <!-- ===== OVERVIEW ===== -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Revenue</span><span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:2px 8px">&uarr; 12%</span></div><div style="font-family:var(--serif);font-weight:600;font-size:33px;line-height:1;color:var(--ink)"><span data-count="18240" data-prefix="$">$18,240</span></div><div style="font-size:12.5px;color:var(--tmut);margin-top:6px">This month</div></div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Orders</span><span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:2px 8px">&uarr; 8%</span></div><div style="font-family:var(--serif);font-weight:600;font-size:33px;line-height:1;color:var(--ink)"><span data-count="142">142</span></div><div style="font-size:12.5px;color:var(--tmut);margin-top:6px">This month</div></div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Units sold</span><span style="color:var(--goldtext)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8 12 3 3 8l9 5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></span></div><div style="font-family:var(--serif);font-weight:600;font-size:33px;line-height:1;color:var(--ink)"><span data-count="389">389</span></div><div style="font-size:12.5px;color:var(--tmut);margin-top:6px">This month</div></div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">In escrow</span><span style="position:relative;display:grid;place-items:center;width:18px;height:18px"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan);animation:fx-sonar 3s ease-out infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan)"></span></span></div><div style="font-family:var(--serif);font-weight:600;font-size:33px;line-height:1;color:var(--ink)"><span data-count="2310" data-prefix="$">$2,310</span></div><div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Orders in transit</div></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-bottom:22px">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px"><div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">Sales</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">Last 7 months</div></div><div style="text-align:right"><div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink)">$104,600</div><div style="font-size:12px;color:var(--green);font-weight:600">&uarr; 19% vs last period</div></div></div>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;height:160px">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Dec &middot; $11.2k" style="width:100%;max-width:38px;height:58%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px"></div><span style="font-size:11px;color:var(--tmut)">Dec</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Jan &middot; $9.8k" style="width:100%;max-width:38px;height:50%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px"></div><span style="font-size:11px;color:var(--tmut)">Jan</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Feb &middot; $12.6k" style="width:100%;max-width:38px;height:66%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px"></div><span style="font-size:11px;color:var(--tmut)">Feb</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Mar &middot; $13.9k" style="width:100%;max-width:38px;height:73%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px"></div><span style="font-size:11px;color:var(--tmut)">Mar</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Apr &middot; $15.1k" style="width:100%;max-width:38px;height:80%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px"></div><span style="font-size:11px;color:var(--tmut)">Apr</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="May &middot; $16.4k" style="width:100%;max-width:38px;height:87%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px"></div><span style="font-size:11px;color:var(--tmut)">May</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Jun &middot; $18.24k" style="width:100%;max-width:38px;height:100%;background:linear-gradient(180deg,var(--sand),var(--sand2));border-radius:7px 7px 3px 3px;box-shadow:0 8px 18px -8px rgba(211,165,102,.7)"></div><span style="font-size:11px;color:var(--ink);font-weight:700">Jun</span></div>
+              </div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext);margin-bottom:4px">Top sellers</div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-bottom:16px">This month</div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--ink);font-weight:600">Live Bait Circle Hooks</span><span style="color:var(--tmut)">128</span></div><div style="height:7px;border-radius:6px;background:var(--paper);overflow:hidden"><div style="height:100%;width:92%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:6px"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--ink);font-weight:600">FluoroPro Leader 40lb</span><span style="color:var(--tmut)">94</span></div><div style="height:7px;border-radius:6px;background:var(--paper);overflow:hidden"><div style="height:100%;width:68%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:6px"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--ink);font-weight:600">Stealth Popper 90</span><span style="color:var(--tmut)">61</span></div><div style="height:7px;border-radius:6px;background:var(--paper);overflow:hidden"><div style="height:100%;width:44%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:6px"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--ink);font-weight:600">Offshore Jig 200g</span><span style="color:var(--tmut)">47</span></div><div style="height:7px;border-radius:6px;background:var(--paper);overflow:hidden"><div style="height:100%;width:34%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:6px"></div></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px">
+            <!-- NEEDS FULFILLMENT -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">Action needed</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">Awaiting fulfillment</div></div><span style="font-size:12px;font-weight:700;color:var(--goldtext);background:var(--sandsoft);border-radius:20px;padding:4px 11px">{{ fulfilCount }} to ship</span></div>
+              <sc-if value="{{ hasFulfil }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ fulfil }}" as="o" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:13px;padding:13px 15px">
+                      <div style="width:38px;height:38px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:15px;font-weight:600;color:var(--goldtext);flex:none">{{ o.initial }}</div>
+                      <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ o.id }} &middot; {{ o.customer }}</div><div style="font-size:12px;color:var(--tmut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.items }}</div></div>
+                      <span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink);flex:none">{{ o.total }}</span>
+                      <button onClick="{{ o.onShip }}" style="flex:none;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:9px 14px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.15)">Mark shipped</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noFulfil }}"><div style="text-align:center;padding:28px 10px"><div style="width:52px;height:52px;border-radius:50%;background:var(--greensoft);display:grid;place-items:center;color:var(--green);margin:0 auto 12px;font-size:22px">&#10003;</div><div style="font-family:var(--serif);font-size:19px;color:var(--ink)">All orders shipped</div><div style="font-size:13px;color:var(--tmut);margin-top:2px">Nothing waiting on you right now.</div></div></sc-if>
+            </div>
+            <!-- LOW STOCK -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red)">Restock soon</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">Low stock</div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)"><span style="width:36px;height:36px;border-radius:10px;background:var(--redsoft);display:grid;place-items:center;color:var(--red);flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2 2 20h20z"/><path d="M12 9v5M12 17h.01"/></svg></span><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">Stealth Popper 90</div><div style="font-size:12px;color:var(--tmut)">SKU SP-090</div></div><span style="font-size:12px;font-weight:700;color:var(--red)">4 left</span></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)"><span style="width:36px;height:36px;border-radius:10px;background:var(--redsoft);display:grid;place-items:center;color:var(--red);flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2 2 20h20z"/><path d="M12 9v5M12 17h.01"/></svg></span><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">Offshore Jig 200g</div><div style="font-size:12px;color:var(--tmut)">SKU OJ-200</div></div><span style="font-size:12px;font-weight:700;color:var(--red)">6 left</span></div>
+              <button onClick="{{ setProducts }}" style="margin-top:14px;width:100%;background:transparent;border:1px solid var(--line);border-radius:11px;padding:11px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Manage inventory &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== ORDERS ===== -->
+      <sc-if value="{{ isOrders }}">
+        <div>
+          <div style="display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:20px;width:fit-content">
+            <button data-tab="all" onClick="{{ tabAll }}" style="background:transparent;border:0;border-radius:9px;cursor:pointer;padding:9px 18px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--tmut)">All</button>
+            <button data-tab="toship" onClick="{{ tabToShip }}" style="background:transparent;border:0;border-radius:9px;cursor:pointer;padding:9px 18px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--tmut)">To ship</button>
+            <button data-tab="shipped" onClick="{{ tabShipped }}" style="background:transparent;border:0;border-radius:9px;cursor:pointer;padding:9px 18px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--tmut)">Shipped</button>
+            <button data-tab="delivered" onClick="{{ tabDelivered }}" style="background:transparent;border:0;border-radius:9px;cursor:pointer;padding:9px 18px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--tmut)">Delivered</button>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:.8fr 1.3fr 1fr .8fr auto;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)"><span>Order</span><span>Customer &amp; items</span><span>Total</span><span>Status</span><span></span></div>
+            <sc-for list="{{ orders }}" as="o" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:.8fr 1.3fr 1fr .8fr auto;gap:16px;padding:15px 24px;border-bottom:1px solid var(--line);align-items:center" style-hover="background:var(--paper)">
+                <span style="font-size:13px;font-weight:700;color:var(--ink)">{{ o.id }}</span>
+                <div style="min-width:0"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ o.customer }}</div><div style="font-size:12px;color:var(--tmut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.items }}</div></div>
+                <span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink)">{{ o.total }}</span>
+                <span style="font-size:11px;font-weight:700;border-radius:20px;padding:4px 10px;white-space:nowrap;justify-self:start;color:{{ o.color }};background:{{ o.bg }}">{{ o.statusLabel }}</span>
+                <button onClick="{{ o.onAction }}" style="justify-self:end;background:{{ o.actionBg }};color:{{ o.actionColor }};border:{{ o.actionBorder }};border-radius:9px;padding:8px 14px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer">{{ o.actionLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== PRODUCTS ===== -->
+      <sc-if value="{{ isProducts }}">
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><div style="font-size:13.5px;color:var(--tmut)">{{ productCount }} products &middot; <span style="color:var(--red);font-weight:600">{{ lowCount }} low stock</span></div><button style="background:var(--sand);color:#1c1303;border:0;border-radius:11px;padding:11px 18px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.05)">+ Add product</button></div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:2fr .8fr .7fr .8fr auto;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)"><span>Product</span><span>Price</span><span>Stock</span><span>Status</span><span>Active</span></div>
+            <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:2fr .8fr .7fr .8fr auto;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);align-items:center" style-hover="background:var(--paper)">
+                <div style="display:flex;align-items:center;gap:13px;min-width:0"><span style="width:42px;height:42px;border-radius:11px;background:{{ p.tint }};display:grid;place-items:center;color:{{ p.iconColor }};flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 13.5 12 5V4H5v7h1l8.5 8.5a2 2 0 0 0 2.8 0l3.2-3.2a2 2 0 0 0 0-2.8z"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/></svg></span><div style="min-width:0"><div style="font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</div><div style="font-size:12px;color:var(--tmut)">{{ p.sku }}</div></div></div>
+                <span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink)">{{ p.price }}</span>
+                <span style="font-size:13.5px;font-weight:600;color:{{ p.stockColor }}">{{ p.stock }}</span>
+                <span style="font-size:11px;font-weight:700;border-radius:20px;padding:4px 10px;white-space:nowrap;justify-self:start;color:{{ p.badgeColor }};background:{{ p.badgeBg }}">{{ p.badge }}</span>
+                <button onClick="{{ p.onToggle }}" style="justify-self:end;position:relative;width:42px;height:24px;border-radius:20px;border:0;cursor:pointer;background:{{ p.togBg }};transition:background .3s;padding:0"><span style="position:absolute;top:2px;left:{{ p.knobLeft }};width:20px;height:20px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== PAYOUTS ===== -->
+      <sc-if value="{{ isPayouts }}">
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px">
+            <div style="background:linear-gradient(160deg,#0c2a42,#0a2236);border-radius:18px;padding:22px;color:var(--ond)"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sand)">Available</div><div style="font-family:var(--serif);font-size:32px;font-weight:600;color:#fff;margin-top:8px">$9,120</div><div style="font-size:12px;color:var(--ondmut);margin-top:4px">Ready to withdraw</div></div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tmut)">In escrow</div><div style="font-family:var(--serif);font-size:32px;font-weight:600;color:var(--ink);margin-top:8px">$2,310</div><div style="font-size:12px;color:var(--cyan);margin-top:4px">Held until delivery confirmed</div></div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tmut)">Lifetime</div><div style="font-family:var(--serif);font-size:32px;font-weight:600;color:var(--ink);margin-top:8px">$418,600</div><div style="font-size:12px;color:var(--tmut);margin-top:4px">Since 2021</div></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+            <div style="padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between"><div style="font-family:var(--serif);font-weight:600;font-size:21px;color:var(--ink)">Payout history</div><button onClick="{{ withdraw }}" style="background:var(--sand);color:#1c1303;border:0;border-radius:10px;padding:10px 18px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer">{{ withdrawLabel }}</button></div>
+            <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:16px;padding:13px 24px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)"><span>Batch</span><span>Date</span><span>Amount</span><span>Status</span></div>
+            <sc-for list="{{ payouts }}" as="p" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:16px;padding:15px 24px;border-bottom:1px solid var(--line);align-items:center" style-hover="background:var(--paper)"><span style="font-size:14px;font-weight:600;color:var(--ink)">{{ p.batch }}</span><span style="font-size:13.5px;color:var(--tmut)">{{ p.date }}</span><span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink)">{{ p.amount }}</span><span style="font-size:11px;font-weight:700;border-radius:20px;padding:4px 11px;white-space:nowrap;color:{{ p.color }};background:{{ p.bg }}">{{ p.status }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== SETTINGS ===== -->
+      <sc-if value="{{ isSettings }}">
+        <div style="max-width:640px;display:flex;flex-direction:column;gap:18px">
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+            <div style="font-family:var(--serif);font-weight:600;font-size:21px;color:var(--ink);margin-bottom:18px">Store profile</div>
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px"><div style="width:60px;height:60px;border-radius:14px;background:linear-gradient(140deg,var(--sand),var(--sand2));display:grid;place-items:center;font-family:var(--serif);font-size:26px;font-weight:600;color:#1c1303">R</div><div><div style="font-size:16px;font-weight:600;color:var(--ink)">Reel Deal Tackle</div><div style="font-size:13px;color:var(--tmut)">Marathon, FL &middot; In-store &amp; online</div></div><button style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:10px;padding:9px 16px;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Edit</button></div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--greensoft);border:1px solid rgba(31,138,91,.2);border-radius:12px;padding:13px 16px"><span style="color:var(--green)">&#10003;</span><span style="font-size:13.5px;color:var(--ink);font-weight:600">Verified seller</span><span style="font-size:12.5px;color:var(--tmut)">&middot; Business &amp; payout details confirmed</span></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px 24px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--line)"><div><div style="font-size:14px;font-weight:600;color:var(--ink)">Auto-release on delivery</div><div style="font-size:12.5px;color:var(--tmut)">Release escrow when tracking marks delivered</div></div><button data-set-toggle onClick="{{ toggleSet1 }}" style="position:relative;width:44px;height:25px;border-radius:20px;border:0;cursor:pointer;background:var(--sand);transition:background .3s;padding:0"><span data-set-knob style="position:absolute;top:2px;left:21px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--line)"><div><div style="font-size:14px;font-weight:600;color:var(--ink)">Low-stock alerts</div><div style="font-size:12.5px;color:var(--tmut)">Notify when a product drops below 8 units</div></div><button data-set-toggle2 onClick="{{ toggleSet2 }}" style="position:relative;width:44px;height:25px;border-radius:20px;border:0;cursor:pointer;background:var(--sand);transition:background .3s;padding:0"><span data-set-knob2 style="position:absolute;top:2px;left:21px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0"><div><div style="font-size:14px;font-weight:600;color:var(--ink)">Local pickup</div><div style="font-size:12.5px;color:var(--tmut)">Let anglers collect orders in-store</div></div><button data-set-toggle3 onClick="{{ toggleSet3 }}" style="position:relative;width:44px;height:25px;border-radius:20px;border:0;cursor:pointer;background:var(--line);transition:background .3s;padding:0"><span data-set-knob3 style="position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></button></div>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = {
+    view:'overview', bellOpen:false, ordersTab:'all', toast:'', storeLive:true, withdrawn:false,
+    orders:[
+      { id:'#4821', initial:'M', customer:'Marcus Thorne', items:'Circle Hooks ×3, Leader 40lb', total:'$84', status:'new' },
+      { id:'#4820', initial:'P', customer:'Priya Anand', items:'Stealth Popper 90 ×2', total:'$56', status:'processing' },
+      { id:'#4819', initial:'K', customer:'Kai Nakamura', items:'Offshore Jig 200g ×4', total:'$132', status:'new' },
+      { id:'#4818', initial:'S', customer:'Sofia Marín', items:'FluoroPro Leader ×6', total:'$78', status:'shipped' },
+      { id:'#4817', initial:'D', customer:'The Delgado Family', items:'Rod & Reel Combo', total:'$240', status:'shipped' },
+      { id:'#4816', initial:'J', customer:'Julianne V.', items:'Tackle Box Pro, Pliers', total:'$96', status:'delivered' },
+      { id:'#4815', initial:'R', customer:'Robert Vance', items:'Circle Hooks ×5', total:'$60', status:'delivered' }
+    ],
+    products:[
+      { id:'p1', name:'Live Bait Circle Hooks', sku:'SKU CH-100', price:'$12', stock:210, active:true },
+      { id:'p2', name:'FluoroPro Leader 40lb', sku:'SKU FL-040', price:'$18', stock:88, active:true },
+      { id:'p3', name:'Stealth Popper 90', sku:'SKU SP-090', price:'$24', stock:4, active:true },
+      { id:'p4', name:'Offshore Jig 200g', sku:'SKU OJ-200', price:'$16', stock:6, active:true },
+      { id:'p5', name:'Rod & Reel Combo Pro', sku:'SKU RR-500', price:'$240', stock:22, active:true },
+      { id:'p6', name:'Tackle Box Pro', sku:'SKU TB-010', price:'$45', stock:0, active:false }
+    ],
+    set1:true, set2:true, set3:false
+  };
+
+  componentDidMount(){ this._root=document.getElementById('tk-dash'); this.applyNav(); this.applyTabs(); this.runCounters(); }
+  componentDidUpdate(prev){ this.applyNav(); this.applyTabs(); if(prev && prev.view!==this.state.view && this.state.view==='overview') this.runCounters(); }
+
+  applyNav(){ var root=this._root; if(!root) return; var v=this.state.view; root.querySelectorAll('[data-nav]').forEach(function(b){ var on=b.getAttribute('data-nav')===v; b.style.background=on?'rgba(227,192,137,.14)':'transparent'; b.style.color=on?'#f4e6cd':'#93a7b7'; }); }
+  applyTabs(){ var root=this._root; if(!root) return; var t=this.state.ordersTab; root.querySelectorAll('[data-tab]').forEach(function(b){ var on=b.getAttribute('data-tab')===t; b.style.background=on?'#0a2236':'transparent'; b.style.color=on?'#fff':'#5c6b78'; }); }
+
+  runCounters(){
+    var root=this._root; if(!root) return;
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    root.querySelectorAll('[data-count]').forEach(function(el){
+      var target=parseFloat(el.getAttribute('data-count')); var prefix=el.getAttribute('data-prefix')||''; var dur=1000, start=null;
+      function fmt(v){ return prefix+Math.round(v).toLocaleString(); }
+      function step(ts){ if(!start)start=ts; var t=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-t,3); el.textContent=fmt(target*e); if(t<1) requestAnimationFrame(step); else el.textContent=fmt(target); }
+      requestAnimationFrame(step);
+    });
+  }
+
+  showToast(msg){ this.setState({toast:msg}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2600); }
+  markShipped(id){ var o=this.state.orders.find(function(x){return x.id===id;}); this.setState({ orders:this.state.orders.map(function(x){ return x.id===id?Object.assign({},x,{status:'shipped'}):x; }) }); if(o) this.showToast(o.id+' marked shipped — funds release on delivery'); }
+  toggleProduct(id){ this.setState({ products:this.state.products.map(function(p){ return p.id===id?Object.assign({},p,{active:!p.active}):p; }) }); }
+
+  statusMeta(s){
+    if(s==='new') return { label:'New', color:'#a97e3c', bg:'#f4e6cd' };
+    if(s==='processing') return { label:'Processing', color:'#a97e3c', bg:'#f4e6cd' };
+    if(s==='shipped') return { label:'In transit · escrow', color:'#1f9fbe', bg:'#e2eef2' };
+    return { label:'Delivered · paid', color:'#1f8a5b', bg:'#e2f2ea' };
+  }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var titles={ overview:['Overview','Welcome back, Reel Deal Tackle'], orders:['Orders','Fulfil and track every order'], products:['Products','Your catalog and inventory'], payouts:['Payouts','Balance, escrow and history'], settings:['Settings','Manage your store'] };
+    var t=titles[s.view]||titles.overview;
+    var fulfil=s.orders.filter(function(o){ return o.status==='new'||o.status==='processing'; });
+    var ordersList = s.ordersTab==='toship' ? s.orders.filter(function(o){return o.status==='new'||o.status==='processing';})
+      : s.ordersTab==='shipped' ? s.orders.filter(function(o){return o.status==='shipped';})
+      : s.ordersTab==='delivered' ? s.orders.filter(function(o){return o.status==='delivered';})
+      : s.orders;
+    var lowCount=s.products.filter(function(p){return p.stock>0 && p.stock<=6;}).length;
+
+    return {
+      isOverview:s.view==='overview', isOrders:s.view==='orders', isProducts:s.view==='products', isPayouts:s.view==='payouts', isSettings:s.view==='settings',
+      pageTitle:t[0], pageSub:t[1], bellOpen:s.bellOpen,
+      setOverview:function(){ self.setState({view:'overview',bellOpen:false}); },
+      setOrders:function(){ self.setState({view:'orders',bellOpen:false}); },
+      setProducts:function(){ self.setState({view:'products',bellOpen:false}); },
+      setPayouts:function(){ self.setState({view:'payouts',bellOpen:false}); },
+      setSettings:function(){ self.setState({view:'settings',bellOpen:false}); },
+      toggleBell:function(){ self.setState({bellOpen:!s.bellOpen}); },
+      toggleStore:function(){ self.setState({storeLive:!s.storeLive}); self.afterStore(); },
+      // fulfillment
+      fulfil:fulfil.map(function(o){ return { id:o.id, initial:o.initial, customer:o.customer, items:o.items, total:o.total, onShip:function(){ self.markShipped(o.id); } }; }),
+      fulfilCount:fulfil.length, hasFulfil:fulfil.length>0, noFulfil:fulfil.length===0,
+      // orders table
+      tabAll:function(){ self.setState({ordersTab:'all'}); }, tabToShip:function(){ self.setState({ordersTab:'toship'}); }, tabShipped:function(){ self.setState({ordersTab:'shipped'}); }, tabDelivered:function(){ self.setState({ordersTab:'delivered'}); },
+      orders:ordersList.map(function(o){
+        var m=self.statusMeta(o.status); var canShip=(o.status==='new'||o.status==='processing');
+        return { id:o.id, customer:o.customer, items:o.items, total:o.total, statusLabel:m.label, color:m.color, bg:m.bg,
+          actionLabel:canShip?'Mark shipped':'View', actionBg:canShip?'#0a2236':'transparent', actionColor:canShip?'#ffffff':'#5c6b78', actionBorder:canShip?'0':'1px solid rgba(13,34,54,.14)',
+          onAction:function(){ if(canShip) self.markShipped(o.id); } };
+      }),
+      // products
+      productCount:s.products.length, lowCount:lowCount,
+      products:s.products.map(function(p){
+        var tints=['#e2eef2','#f4e6cd','#e7e2f2','#e2f2ea','#f2e7e2','#eef2e2']; var icons=['#1f9fbe','#a97e3c','#7a6bb0','#1f8a5b','#b07a5a','#7a9a3a'];
+        var idx=parseInt(p.id.replace('p',''),10)-1;
+        var stockColor = p.stock===0?'#d8514a':(p.stock<=6?'#d8514a':'#0d2236');
+        var badge = p.stock===0?{t:'Out of stock',c:'#d8514a',b:'#fbe9e8'}:(p.stock<=6?{t:'Low',c:'#d8514a',b:'#fbe9e8'}:{t:'In stock',c:'#1f8a5b',b:'#e2f2ea'});
+        return { name:p.name, sku:p.sku, price:p.price, stock:String(p.stock),
+          tint:tints[idx%6], iconColor:icons[idx%6], stockColor:stockColor,
+          badge:badge.t, badgeColor:badge.c, badgeBg:badge.b,
+          togBg:p.active?'#1f8a5b':'rgba(13,34,54,.14)', knobLeft:p.active?'20px':'2px',
+          onToggle:function(){ self.toggleProduct(p.id); } };
+      }),
+      // payouts
+      withdraw:function(){ if(!s.withdrawn){ self.setState({withdrawn:true}); self.showToast('Withdrawal of $9,120 is on its way to your bank'); } },
+      withdrawLabel:s.withdrawn?'Withdrawal sent \u2713':'Withdraw $9,120',
+      payouts:[
+        { batch:'Weekly batch · Jun 14', date:'Jun 14', amount:'$1,540', status:'Paid out', color:'#1f8a5b', bg:'#e2f2ea' },
+        { batch:'Weekly batch · Jun 7', date:'Jun 7', amount:'$2,180', status:'Paid out', color:'#1f8a5b', bg:'#e2f2ea' },
+        { batch:'Weekly batch · May 31', date:'May 31', amount:'$1,960', status:'Paid out', color:'#1f8a5b', bg:'#e2f2ea' },
+        { batch:'Orders in transit', date:'Pending', amount:'$2,310', status:'In escrow', color:'#1f9fbe', bg:'#e2eef2' },
+        { batch:'Weekly batch · May 24', date:'May 24', amount:'$2,040', status:'Paid out', color:'#1f8a5b', bg:'#e2f2ea' }
+      ],
+      // settings
+      toggleSet1:function(){ self.setState({set1:!s.set1}); self.afterSet('set1'); },
+      toggleSet2:function(){ self.setState({set2:!s.set2}); self.afterSet('set2'); },
+      toggleSet3:function(){ self.setState({set3:!s.set3}); self.afterSet('set3'); },
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+
+  afterStore(){ var self=this; setTimeout(function(){ var root=self._root; if(!root) return; var on=self.state.storeLive; var d=root.querySelector('[data-store-dot]'),x=root.querySelector('[data-store-text]'),tg=root.querySelector('[data-store-toggle]'),k=root.querySelector('[data-store-knob]'); if(d)d.style.background=on?'#1f8a5b':'#93a7b7'; if(x)x.textContent=on?'Store live':'Paused'; if(tg)tg.style.background=on?'#1f8a5b':'rgba(13,34,54,.2)'; if(k)k.style.left=on?'19px':'2px'; },0); }
+  afterSet(key){ var self=this; setTimeout(function(){ var root=self._root; if(!root) return; var map={set1:['[data-set-toggle]','[data-set-knob]'],set2:['[data-set-toggle2]','[data-set-knob2]'],set3:['[data-set-toggle3]','[data-set-knob3]']}; var on=self.state[key]; var sel=map[key]; var tg=root.querySelector(sel[0]),k=root.querySelector(sel[1]); if(tg)tg.style.background=on?'#e3c089':'rgba(13,34,54,.14)'; if(k)k.style.left=on?'21px':'2px'; },0); }
+}
+</script>
+</body>
+</html>

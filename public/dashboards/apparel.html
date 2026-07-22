@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(13,34,54,.18);border-radius:10px;border:3px solid transparent;background-clip:content-box}
+  @keyframes fx-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><path d="M160 110l-50 36 24 34 26-14v124h80V166l26 14 24-34-50-36-24 22h-32z" fill="none" stroke="#e3c089" stroke-width="10" stroke-linejoin="round"/><text x="200" y="350" font-family="Georgia,serif" font-size="28" letter-spacing="3" fill="#eaf1f6" text-anchor="middle">Apparel</text></svg></template>
+</helmet>
+<div id="app-dash" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--deep:#06151f;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--cyansoft:#e2eef2;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--redsoft:#fbe9e8;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.10);display:flex;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="width:256px;flex:none;background:var(--navy);color:var(--ond);display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh;border-right:1px solid rgba(255,255,255,.06)">
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 10px 22px">
+      <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+      <span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:11px 12px;margin-bottom:18px">
+      <span style="width:34px;height:34px;border-radius:9px;background:rgba(227,192,137,.16);display:grid;place-items:center;color:var(--sand);flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3 4 6l2 3 2-1v10h8V8l2 1 2-3-4-3-2 2h-4z"/></svg></span>
+      <div style="line-height:1.2;min-width:0"><div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ondmut)">Workspace</div><div style="font-size:13.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Tidewater Apparel</div></div>
+      <span style="margin-left:auto;color:var(--ondmut);font-size:12px">&#9662;</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:3px">
+      <button data-nav="overview" onClick="{{ navOverview }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg> Overview</button>
+      <button data-nav="products" onClick="{{ navProducts }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 3 4 6l2 3 2-1v10h8V8l2 1 2-3-4-3-2 2h-4z"/></svg> Products</button>
+      <button data-nav="orders" onClick="{{ navOrders }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 6h15l-1.5 9h-12zM6 6 5 3H2M8 20a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM17 20a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg> Orders <span style="margin-left:auto;background:var(--sand);color:#1c1303;font-size:11px;font-weight:700;border-radius:20px;padding:1px 8px">3</span></button>
+      <button data-nav="drops" onClick="{{ navDrops }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v4M12 22a7 7 0 0 0 7-7c0-4-3.5-6.5-7-11-3.5 4.5-7 7-7 11a7 7 0 0 0 7 7z"/></svg> Drops</button>
+    </nav>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:10px 12px">
+      <span style="width:38px;height:38px;border-radius:50%;background:rgba(227,192,137,.18);display:grid;place-items:center;font-family:var(--serif);font-size:16px;font-weight:600;color:var(--sand);flex:none">T</span>
+      <div style="line-height:1.25;min-width:0"><div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Theo Marsh</div><div style="font-size:11px;color:var(--sand)">Founder &middot; Verified</div></div>
+      <a href="Fish-X Auth.dc.html" title="Sign out" style="margin-left:auto;color:var(--ondmut);text-decoration:none;flex:none" style-hover="color:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="position:sticky;top:0;z-index:20;background:rgba(238,242,245,.86);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line);padding:18px 34px;display:flex;align-items:center;gap:24px">
+      <div style="min-width:0">
+        <div style="font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.1;color:var(--ink)">{{ pageTitle }}</div>
+        <div style="font-size:13px;color:var(--tmut);margin-top:1px">{{ pageSub }}</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <label style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:9px 15px;width:220px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search styles, orders&hellip;" style="border:0;outline:none;background:transparent;font-family:var(--sans);font-size:13.5px;color:var(--ink);width:100%">
+        </label>
+        <button onClick="{{ scheduleDrop }}" style="background:var(--sand);color:#1c1303;border:0;border-radius:30px;padding:11px 20px;font-family:var(--sans);font-size:12.5px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:filter .2s" style-hover="filter:brightness(1.05)">+ Schedule drop</button>
+      </div>
+    </header>
+
+    <main style="flex:1;padding:30px 34px 48px;max-width:1180px;width:100%">
+
+      <!-- ===== OVERVIEW ===== -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Revenue MTD</span><span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:2px 8px">&uarr; 22%</span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">$24,800</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">1,240 units sold</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">In escrow</span><span style="position:relative;display:grid;place-items:center;width:18px;height:18px"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan);animation:fx-sonar 3s ease-out infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan)"></span></span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">$4,120</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Wholesale &amp; pre-orders</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Wholesale share</span><span style="color:var(--goldtext)">&#9670;</span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">38%</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">21 stocking retailers</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Next drop</span><span style="width:8px;height:8px;border-radius:50%;background:var(--sand);animation:fx-pulse 2.4s ease-in-out infinite"></span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">12 days</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">&ldquo;Golden Hour&rdquo; capsule</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px">
+            <!-- BESTSELLERS -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+                <div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">This month</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">Bestsellers</div></div>
+                <button onClick="{{ navProducts }}" style="background:transparent;border:0;color:var(--goldtext);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer">All products &rarr;</button>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ bestsellers }}" as="b" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)">
+                    <span style="width:44px;height:44px;border-radius:11px;background:{{ b.swatch }};flex:none;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700">{{ b.mono }}</span>
+                    <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">{{ b.name }}</div><div style="font-size:12.5px;color:var(--tmut)">{{ b.meta }}</div></div>
+                    <div style="flex:1.2;display:flex;align-items:center;gap:10px"><div style="flex:1;height:7px;border-radius:7px;background:var(--paper);overflow:hidden"><div style="width:{{ b.pct }};height:100%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:7px"></div></div><span style="font-size:12.5px;color:var(--tmut);white-space:nowrap;min-width:64px;text-align:right">{{ b.units }} units</span></div>
+                    <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink);flex:none">{{ b.rev }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:18px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tmut);margin-bottom:10px">Channel mix</div>
+                <div style="display:flex;height:12px;border-radius:12px;overflow:hidden">
+                  <div style="width:62%;background:var(--navy)" title="Direct retail 62%"></div>
+                  <div style="width:38%;background:linear-gradient(90deg,var(--sand),var(--sand2))" title="Wholesale 38%"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:8px"><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tmut)"><span style="width:9px;height:9px;border-radius:3px;background:var(--navy)"></span>Direct retail &middot; 62%</span><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tmut)"><span style="width:9px;height:9px;border-radius:3px;background:var(--sand)"></span>Wholesale &middot; 38%</span></div>
+              </div>
+            </div>
+
+            <!-- NEXT DROP -->
+            <div style="background:linear-gradient(160deg,#0c2a42,#0a2236);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;color:var(--ond);display:flex;flex-direction:column">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sand)">Next drop</div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:26px;color:#fff;margin:8px 0 4px">&ldquo;Golden Hour&rdquo; capsule</div>
+              <div style="font-size:13px;color:var(--ondmut)">Jul 15 &middot; 9:00 AM ET &middot; 6 styles</div>
+              <div style="display:flex;gap:8px;margin:18px 0">
+                <span style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#d2a566,#a97e3c)" title="Sand"></span>
+                <span style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1f9fbe,#0c5b73)" title="Lagoon"></span>
+                <span style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#123049,#0a2236)" title="Midnight"></span>
+                <span style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#e8e2d6,#b8b0a0)" title="Bone"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:var(--ondmut)">Pre-orders (escrowed)</span><span style="color:#fff;font-weight:600">$2,860</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ondmut)">Waitlist</span><span style="color:#fff;font-weight:600">412 anglers</span></div>
+              <button onClick="{{ navDrops }}" style="margin-top:auto;width:100%;background:var(--sand);color:#1c1303;border:0;border-radius:12px;padding:13px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:filter .2s" style-hover="filter:brightness(1.05)">Manage drop</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== PRODUCTS ===== -->
+      <sc-if value="{{ isProducts }}">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+          <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+            <article style="background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .3s,box-shadow .3s" style-hover="transform:translateY(-5px);box-shadow:0 28px 52px -36px rgba(13,34,54,.5)">
+              <div style="position:relative;height:140px;background:{{ p.swatch }};display:grid;place-items:center">
+                <span style="font-family:var(--serif);font-size:34px;font-weight:600;color:rgba(255,255,255,.9)">{{ p.mono }}</span>
+                <span style="position:absolute;top:12px;left:12px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:20px;padding:4px 10px;color:{{ p.stateColor }};background:{{ p.stateBg }}">{{ p.state }}</span>
+              </div>
+              <div style="padding:16px 18px 18px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><h3 style="font-family:var(--serif);font-weight:600;font-size:18px;margin:0;color:var(--ink)">{{ p.name }}</h3><span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext)">{{ p.price }}</span></div>
+                <div style="font-size:12.5px;color:var(--tmut);margin-bottom:12px">{{ p.meta }}</div>
+                <div style="display:flex;gap:6px;margin-bottom:14px">
+                  <span style="width:18px;height:18px;border-radius:50%;background:{{ p.c1 }};border:1px solid var(--line)"></span>
+                  <span style="width:18px;height:18px;border-radius:50%;background:{{ p.c2 }};border:1px solid var(--line)"></span>
+                  <span style="width:18px;height:18px;border-radius:50%;background:{{ p.c3 }};border:1px solid var(--line)"></span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:13px">
+                  <span style="font-size:12.5px;color:{{ p.stockColor }};font-weight:600">{{ p.stock }}</span>
+                  <button onClick="{{ p.onToggle }}" style="background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">{{ p.toggleLabel }}</button>
+                </div>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ===== ORDERS ===== -->
+      <sc-if value="{{ isOrders }}">
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:.7fr 1.3fr 1.2fr .7fr auto auto;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)"><span>Order</span><span>Customer</span><span>Items</span><span>Total</span><span>Status</span><span></span></div>
+          <sc-for list="{{ orders }}" as="o" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:.7fr 1.3fr 1.2fr .7fr auto auto;gap:16px;padding:16px 24px;border-bottom:1px solid var(--line);align-items:center" style-hover="background:var(--paper)">
+              <span style="font-size:13px;font-weight:700;color:var(--ink)">{{ o.id }}</span>
+              <div style="min-width:0"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ o.customer }}</div><div style="font-size:12px;color:var(--tmut)">{{ o.channel }}</div></div>
+              <span style="font-size:13px;color:var(--tmut)">{{ o.items }}</span>
+              <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink)">{{ o.total }}</span>
+              <span style="font-size:11px;font-weight:700;border-radius:20px;padding:4px 11px;white-space:nowrap;color:{{ o.statusColor }};background:{{ o.statusBg }}">{{ o.status }}</span>
+              <sc-if value="{{ o.canFulfill }}"><button onClick="{{ o.onFulfill }}" style="background:var(--navy);color:#fff;border:0;border-radius:9px;padding:9px 15px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(1.15)">Fulfill</button></sc-if>
+              <sc-if value="{{ o.noAction }}"><span style="font-size:12px;color:var(--tmut);text-align:right">{{ o.note }}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ===== DROPS ===== -->
+      <sc-if value="{{ isDrops }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-for list="{{ drops }}" as="d" hint-placeholder-count="3">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;align-items:center;gap:20px" style-hover="box-shadow:0 24px 44px -34px rgba(13,34,54,.5)">
+              <div style="width:64px;text-align:center;flex:none"><div style="font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);line-height:1">{{ d.day }}</div><div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--goldtext);margin-top:2px">{{ d.mon }}</div></div>
+              <div style="width:1px;height:44px;background:var(--line);flex:none"></div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:10px"><h3 style="font-family:var(--serif);font-weight:600;font-size:20px;margin:0;color:var(--ink)">{{ d.name }}</h3><span style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:20px;padding:4px 10px;color:{{ d.stateColor }};background:{{ d.stateBg }}">{{ d.state }}</span></div>
+                <div style="font-size:13px;color:var(--tmut);margin-top:4px">{{ d.meta }}</div>
+              </div>
+              <div style="display:flex;gap:6px;flex:none">
+                <span style="width:26px;height:26px;border-radius:8px;background:{{ d.s1 }}"></span>
+                <span style="width:26px;height:26px;border-radius:8px;background:{{ d.s2 }}"></span>
+                <span style="width:26px;height:26px;border-radius:8px;background:{{ d.s3 }}"></span>
+              </div>
+              <div style="text-align:right;flex:none;min-width:110px"><div style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ d.stat }}</div><div style="font-size:11.5px;color:var(--tmut)">{{ d.statLabel }}</div></div>
+              <button onClick="{{ d.onAction }}" style="flex:none;background:{{ d.btnBg }};color:{{ d.btnColor }};border:{{ d.btnBorder }};border-radius:10px;padding:11px 18px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.05)">{{ d.btnLabel }}</button>
+            </div>
+          </sc-for>
+          <div style="background:transparent;border:1.5px dashed rgba(13,34,54,.2);border-radius:18px;padding:20px;text-align:center">
+            <button onClick="{{ scheduleDrop }}" style="background:transparent;border:0;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--goldtext)">+ Schedule a new drop</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = { view:'overview', toast:'', live:{ p1:true, p2:true, p3:true, p4:false, p5:true, p6:false }, fulfilled:{} };
+
+  componentDidMount(){ this._root=document.getElementById('app-dash'); this.applyNav(); }
+  componentDidUpdate(){ this.applyNav(); }
+  applyNav(){
+    var root=this._root; if(!root) return; var v=this.state.view;
+    root.querySelectorAll('[data-nav]').forEach(function(b){
+      var on=b.getAttribute('data-nav')===v;
+      b.style.background=on?'rgba(227,192,137,.14)':'transparent';
+      b.style.color=on?'#f4e6cd':'#93a7b7';
+    });
+  }
+  showToast(m){ this.setState({toast:m}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2400); }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var titles={ overview:['Overview','Morning, Theo \u2014 the Golden Hour drop is close'], products:['Products','Your line \u2014 live & draft styles'], orders:['Orders','Retail & wholesale, escrow-protected'], drops:['Drops','Capsules & launch calendar'] };
+    var t=titles[s.view]||titles.overview;
+    var swatches={ midnight:'linear-gradient(135deg,#123049,#0a2236)', lagoon:'linear-gradient(135deg,#1f9fbe,#0c5b73)', sandg:'linear-gradient(135deg,#d2a566,#a97e3c)', bone:'linear-gradient(135deg,#c9c2b4,#a89f8d)', reef:'linear-gradient(135deg,#1f8a5b,#0f5537)', storm:'linear-gradient(135deg,#5c6b78,#2c3a46)' };
+    var prods=[
+      { id:'p1', name:'Tidewater Hoodie', meta:'Performance fleece \u00b7 6 sizes', price:'$88', swatch:swatches.midnight, mono:'TH', c1:'#0a2236', c2:'#5c6b78', c3:'#c9c2b4', stockPct:72 },
+      { id:'p2', name:'Golden Hour Tee', meta:'UPF 50 \u00b7 4 colorways', price:'$42', swatch:swatches.sandg, mono:'GT', c1:'#d2a566', c2:'#1f9fbe', c3:'#0a2236', stockPct:58 },
+      { id:'p3', name:'Flats Sun Shirt', meta:'Long sleeve \u00b7 UPF 50', price:'$64', swatch:swatches.lagoon, mono:'FS', c1:'#1f9fbe', c2:'#c9c2b4', c3:'#1f8a5b', stockPct:12 },
+      { id:'p4', name:'Reef Runner Shorts', meta:'Quick-dry \u00b7 8\u2033 inseam', price:'$58', swatch:swatches.reef, mono:'RR', c1:'#1f8a5b', c2:'#0a2236', c3:'#5c6b78', stockPct:100 },
+      { id:'p5', name:'Storm Shell Jacket', meta:'3-layer waterproof', price:'$148', swatch:swatches.storm, mono:'SJ', c1:'#5c6b78', c2:'#0a2236', c3:'#d2a566', stockPct:34 },
+      { id:'p6', name:'Bone Dry Cap', meta:'Snapback \u00b7 one size', price:'$32', swatch:swatches.bone, mono:'BC', c1:'#c9c2b4', c2:'#0a2236', c3:'#1f9fbe', stockPct:100 }
+    ];
+    return {
+      isOverview:s.view==='overview', isProducts:s.view==='products', isOrders:s.view==='orders', isDrops:s.view==='drops',
+      pageTitle:t[0], pageSub:t[1],
+      navOverview:function(){ self.setState({view:'overview'}); },
+      navProducts:function(){ self.setState({view:'products'}); },
+      navOrders:function(){ self.setState({view:'orders'}); },
+      navDrops:function(){ self.setState({view:'drops'}); },
+      scheduleDrop:function(){ self.showToast('New drop draft created \u2014 pick a date & styles'); },
+      bestsellers:[
+        { name:'Golden Hour Tee', meta:'UPF 50 tee', swatch:swatches.sandg, mono:'GT', pct:'92%', units:412, rev:'$17.3k' },
+        { name:'Tidewater Hoodie', meta:'Performance fleece', swatch:swatches.midnight, mono:'TH', pct:'64%', units:287, rev:'$25.3k' },
+        { name:'Flats Sun Shirt', meta:'UPF long sleeve', swatch:swatches.lagoon, mono:'FS', pct:'48%', units:214, rev:'$13.7k' },
+        { name:'Storm Shell Jacket', meta:'3-layer waterproof', swatch:swatches.storm, mono:'SJ', pct:'29%', units:131, rev:'$19.4k' }
+      ],
+      products:prods.map(function(p){
+        var live=!!s.live[p.id];
+        var stockColor = p.stockPct<15 ? '#d8514a' : p.stockPct<40 ? '#a97e3c' : '#1f8a5b';
+        var stock = p.stockPct<15 ? 'Low stock \u00b7 '+p.stockPct+'%' : p.stockPct===100 ? 'Fully stocked' : 'Stock '+p.stockPct+'%';
+        return Object.assign({},p,{
+          state:live?'Live':'Draft', stateColor:live?'#1f8a5b':'#5c6b78', stateBg:live?'#e2f2ea':'rgba(255,255,255,.85)',
+          stock:stock, stockColor:stockColor,
+          toggleLabel:live?'Unpublish':'Publish',
+          onToggle:function(){ var lv=Object.assign({},s.live); lv[p.id]=!lv[p.id]; self.setState({live:lv}); self.showToast(p.name+(lv[p.id]?' is now live in the marketplace':' moved to drafts')); }
+        });
+      }),
+      orders:[
+        { id:'#2481', customer:'Reel Deal Tackle', channel:'Wholesale \u00b7 24 units', items:'Golden Hour Tee \u00d724', total:'$672', st:'escrow' },
+        { id:'#2480', customer:'Marcus Thorne', channel:'Direct \u00b7 retail', items:'Storm Shell \u00b7 L', total:'$148', st:'paid' },
+        { id:'#2479', customer:'Bluewater Outfitters', channel:'Wholesale \u00b7 36 units', items:'Hoodie \u00d720, Cap \u00d716', total:'$1,392', st:'escrow' },
+        { id:'#2478', customer:'Julianne V.', channel:'Direct \u00b7 pre-order', items:'Golden Hour capsule \u00d72', total:'$104', st:'escrow' },
+        { id:'#2476', customer:'A. Chen', channel:'Direct \u00b7 retail', items:'Flats Sun Shirt \u00b7 M', total:'$64', st:'shipped' },
+        { id:'#2474', customer:'Keys Bait & Marine', channel:'Wholesale \u00b7 18 units', items:'Tee \u00d712, Shorts \u00d76', total:'$852', st:'released' }
+      ].map(function(o){
+        var st=s.fulfilled[o.id] ? 'shipped' : o.st;
+        var map={ escrow:{label:'In escrow',c:'#1f9fbe',bg:'#e2eef2'}, paid:{label:'Paid',c:'#1f8a5b',bg:'#e2f2ea'}, shipped:{label:'Shipped',c:'#a97e3c',bg:'#f4e6cd'}, released:{label:'Released',c:'#1f8a5b',bg:'#e2f2ea'} };
+        var m=map[st];
+        return { id:o.id, customer:o.customer, channel:o.channel, items:o.items, total:o.total,
+          status:m.label, statusColor:m.c, statusBg:m.bg,
+          canFulfill: st==='escrow'||st==='paid', noAction: !(st==='escrow'||st==='paid'),
+          note: st==='shipped' ? 'In transit' : 'Complete',
+          onFulfill:function(){ var f=Object.assign({},s.fulfilled); f[o.id]=true; self.setState({fulfilled:f}); self.showToast(o.id+' fulfilled \u2014 escrow releases on delivery'); } };
+      }),
+      drops:[
+        { day:'15', mon:'Jul', name:'\u201cGolden Hour\u201d capsule', meta:'6 styles \u00b7 412 waitlisted \u00b7 pre-orders escrowed', state:'Scheduled', stateColor:'#1f9fbe', stateBg:'#e2eef2', s1:'linear-gradient(135deg,#d2a566,#a97e3c)', s2:'linear-gradient(135deg,#1f9fbe,#0c5b73)', s3:'linear-gradient(135deg,#123049,#0a2236)', stat:'$2,860', statLabel:'pre-ordered', btnLabel:'Edit drop', btnBg:'#0a2236', btnColor:'#fff', btnBorder:'0' },
+        { day:'02', mon:'Jun', name:'\u201cFirst Light\u201d capsule', meta:'4 styles \u00b7 sold through in 9 days', state:'Live', stateColor:'#1f8a5b', stateBg:'#e2f2ea', s1:'linear-gradient(135deg,#c9c2b4,#a89f8d)', s2:'linear-gradient(135deg,#1f8a5b,#0f5537)', s3:'linear-gradient(135deg,#5c6b78,#2c3a46)', stat:'$11,240', statLabel:'revenue', btnLabel:'View', btnBg:'transparent', btnColor:'#0d2236', btnBorder:'1px solid rgba(13,34,54,.12)' },
+        { day:'18', mon:'Apr', name:'\u201cSpring Tide\u201d capsule', meta:'5 styles \u00b7 archived', state:'Sold out', stateColor:'#a97e3c', stateBg:'#f4e6cd', s1:'linear-gradient(135deg,#1f9fbe,#0c5b73)', s2:'linear-gradient(135deg,#d2a566,#a97e3c)', s3:'linear-gradient(135deg,#1f8a5b,#0f5537)', stat:'$9,780', statLabel:'revenue', btnLabel:'Restock', btnBg:'transparent', btnColor:'#0d2236', btnBorder:'1px solid rgba(13,34,54,.12)' }
+      ].map(function(d){ return Object.assign({},d,{ onAction:function(){ self.showToast(d.name+' \u2014 '+d.btnLabel.toLowerCase()+' opened'); } }); }),
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

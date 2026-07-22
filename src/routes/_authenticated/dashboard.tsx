@@ -1,13 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { getMyRoles, hasPrimaryRole } from "@/lib/auth.functions";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
-import { useEffect } from "react";
-import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
-import { CaptainDashboard } from "@/components/dashboard/CaptainDashboard";
-import { BusinessDashboard, type BusinessType } from "@/components/dashboard";
-import { supabase } from "@/integrations/supabase/client";
-
+import { DashboardFrame } from "@/components/DashboardFrame";
 
 const myRolesQO = queryOptions({
   queryKey: ["my-roles"],
@@ -30,78 +26,44 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
+// Map an operator's business category to its DC dashboard template.
+const categoryTemplate: Record<string, string> = {
+  charter: "captain",
+  tackle_shop: "tackle",
+  bait_shop: "tackle",
+  marina: "marina",
+  lodge: "marina",
+  apparel: "apparel",
+  gear_mfg: "manufacturer",
+  guide_service: "guide",
+};
+
 function Dashboard() {
-  const { user } = Route.useRouteContext();
   const { data: roles } = useSuspenseQuery(myRolesQO);
   const { data: businesses } = useSuspenseQuery(myBusinessesQO);
   const navigate = useNavigate();
   const primaryRole = hasPrimaryRole(roles);
 
-  // Redirect business owners without businesses to onboarding
+  // Operators without a business are sent to onboarding.
   useEffect(() => {
-    if ((primaryRole === "business_owner" || primaryRole === "captain") && businesses.length === 0) {
+    if (
+      (primaryRole === "business_owner" || primaryRole === "captain") &&
+      businesses.length === 0
+    ) {
       navigate({ to: "/onboarding", replace: true });
     }
   }, [primaryRole, businesses, navigate]);
 
-  // Route to appropriate dashboard based on role
   if (primaryRole === "angler") {
-    return <AnglerView user={user} />;
+    return <DashboardFrame src="/dashboards/angler.html" title="Angler dashboard" />;
   }
 
   if (primaryRole === "business_owner" || primaryRole === "captain") {
-    return <OperatorView user={user} businesses={businesses} />;
+    const categoryKey = businesses[0]?.business?.category_key as string | undefined;
+    const slug = (categoryKey && categoryTemplate[categoryKey]) || "captain";
+    return <DashboardFrame src={`/dashboards/${slug}.html`} title="Operator dashboard" />;
   }
 
-
-  // Fallback for users with no recognized role (shouldn't happen)
-  return (
-    <div className="px-6 md:px-12 py-10 max-w-6xl">
-      <h1 className="text-display text-4xl">Welcome to Fish-X</h1>
-      <p className="mt-3 text-on-deep-muted">Setting up your account...</p>
-    </div>
-  );
+  // Fallback while roles resolve.
+  return <DashboardFrame src="/dashboards/angler.html" title="Dashboard" />;
 }
-
-async function handleSignOut() {
-  await supabase.auth.signOut();
-  window.location.href = "/auth";
-}
-
-function AnglerView({ user }: { user: any }) {
-  const name = (user.user_metadata?.full_name as string | undefined) ?? user.email;
-  return <AnglerDashboard userName={name} userEmail={user.email} />;
-}
-
-const businessTypeMap: Record<string, BusinessType | "captain"> = {
-  charter: "captain",
-  tackle_shop: "tackle_shop",
-  marina: "marina",
-  apparel: "apparel",
-  gear_mfg: "manufacturer",
-  guide_service: "guide_service",
-  bait_shop: "tackle_shop",
-  lodge: "marina",
-};
-
-function OperatorView({ user, businesses }: { user: any; businesses: any[] }) {
-  const currentBusiness = businesses[0]?.business;
-  const name = (user.user_metadata?.full_name as string | undefined) ?? user.email;
-  const businessType: BusinessType | "captain" = currentBusiness?.category_key
-    ? businessTypeMap[currentBusiness.category_key] ?? "captain"
-    : "captain";
-
-  if (businessType === "captain") {
-    return (
-      <CaptainDashboard
-        userName={name}
-        businessName={currentBusiness?.name}
-        onSignOut={handleSignOut}
-      />
-    );
-  }
-
-
-  return <BusinessDashboard businessType={businessType} onSignOut={handleSignOut} />;
-}
-

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @keyframes fx-pop{0%{transform:scale(.4)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><path d="M200 90l85 40v60c0 55-38 88-85 105-47-17-85-50-85-105v-60z" fill="none" stroke="#e3c089" stroke-width="9"/><path d="M170 195l22 22 40-48" stroke="#27c0e2" stroke-width="10" fill="none" stroke-linecap="round"/><text x="200" y="355" font-family="Georgia,serif" font-size="26" letter-spacing="2" fill="#eaf1f6" text-anchor="middle">Resolution</text></svg></template>
+</helmet>
+<div id="rescenter" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--cyansoft:#e2eef2;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--redsoft:#fbe9e8;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.12);min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- NAV -->
+  <header style="position:sticky;top:0;z-index:30;background:var(--navy);color:var(--ond)">
+    <div style="max-width:980px;margin:0 auto;padding:0 28px;height:62px;display:flex;align-items:center;gap:22px">
+      <a href="Fish-X Trip Detail.dc.html" style="display:inline-flex;align-items:center;gap:8px;color:var(--ondmut);text-decoration:none;font-size:13px;font-weight:600" style-hover="color:#fff"><span>&larr;</span> Back to trip</a>
+      <div style="display:flex;align-items:center;gap:10px;margin:0 auto">
+        <span style="width:10px;height:10px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+        <span style="font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:.1em">FISH&mdash;X</span>
+        <span style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);margin-left:4px">Resolution Center</span>
+      </div>
+      <span style="display:inline-flex;align-items:center;gap:7px;border:1px solid var(--lined);border-radius:30px;padding:8px 14px;font-size:11.5px;font-weight:600;color:var(--ond)"><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan)"></span> Escrow frozen while open</span>
+    </div>
+  </header>
+
+  <main style="max-width:980px;margin:0 auto;padding:28px 28px 64px">
+
+    <!-- CONTEXT CARD -->
+    <div style="display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:24px;flex-wrap:wrap">
+      <img src="assets/seascape.jpg" alt="" style="width:64px;height:52px;border-radius:10px;object-fit:cover;flex:none">
+      <div style="flex:1;min-width:220px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">Booking BK-1024</div>
+        <div style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink);margin-top:2px">Offshore Tarpon &amp; Sailfish &middot; Capt. James Sterling</div>
+        <div style="font-size:12.5px;color:var(--tmut);margin-top:2px">Sat, Jul 18 &middot; 2 anglers &middot; completed early at 9:40 AM</div>
+      </div>
+      <div style="text-align:right;flex:none">
+        <div style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--cyan)">$918</div>
+        <div style="font-size:11.5px;color:var(--tmut)">{{ escrowNote }}</div>
+      </div>
+    </div>
+
+    <!-- ===== WIZARD ===== -->
+    <sc-if value="{{ inWizard }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start">
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px">
+
+          <!-- progress -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+            <span style="width:26px;height:26px;border-radius:50%;background:{{ s1Bg }};color:{{ s1Color }};display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">1</span>
+            <span style="flex:1;height:2px;background:{{ l1Bg }}"></span>
+            <span style="width:26px;height:26px;border-radius:50%;background:{{ s2Bg }};color:{{ s2Color }};display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">2</span>
+            <span style="flex:1;height:2px;background:{{ l2Bg }}"></span>
+            <span style="width:26px;height:26px;border-radius:50%;background:{{ s3Bg }};color:{{ s3Color }};display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">3</span>
+          </div>
+
+          <!-- STEP 1: WHAT HAPPENED -->
+          <sc-if value="{{ atStep1 }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)">What went wrong?</h1>
+              <p style="font-size:14px;color:var(--tmut);margin:0 0 20px">Your money is safe &mdash; it&rsquo;s frozen in escrow while we sort this out.</p>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ issueTypes }}" as="t">
+                  <button onClick="{{ t.onPick }}" style="display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:{{ t.bg }};border:1px solid {{ t.border }};border-radius:13px;padding:15px 16px;cursor:pointer;font-family:var(--sans)">
+                    <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ t.ring }};display:grid;place-items:center;flex:none"><span style="width:8px;height:8px;border-radius:50%;background:{{ t.fill }}"></span></span>
+                    <span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:var(--ink)">{{ t.label }}</span><span style="display:block;font-size:12.5px;color:var(--tmut);margin-top:1px">{{ t.hint }}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+              <button onClick="{{ toStep2 }}" style="width:100%;margin-top:20px;background:var(--navy);color:#fff;border:0;border-radius:12px;padding:15px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer" style-hover="filter:brightness(1.15)">Continue</button>
+            </div>
+          </sc-if>
+
+          <!-- STEP 2: DETAILS + EVIDENCE -->
+          <sc-if value="{{ atStep2 }}">
+            <div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)">Tell us what happened.</h1>
+              <p style="font-size:14px;color:var(--tmut);margin:0 0 18px">The captain sees exactly what you write. Specifics help everyone resolve faster.</p>
+              <textarea name="details" rows="5" placeholder="e.g. We were back at the dock by 9:40 AM — about half the booked 8 hours. No mechanical issue was mentioned&hellip;" style="width:100%;resize:vertical;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:14px 16px;font-family:var(--sans);font-size:14px;line-height:1.55;color:var(--ink);outline:none" style-focus="border-color:var(--sand)"></textarea>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext);margin:18px 0 10px">Evidence &middot; optional</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+                <sc-for list="{{ evidence }}" as="e">
+                  <button onClick="{{ e.onAdd }}" style="aspect-ratio:1.4;border:1.5px dashed {{ e.border }};background:{{ e.bg }};border-radius:13px;cursor:pointer;display:grid;place-items:center;font-family:var(--sans)">
+                    <span style="text-align:center"><span style="display:block;font-size:19px;margin-bottom:4px">{{ e.icon }}</span><span style="display:block;font-size:11.5px;font-weight:600;color:{{ e.color }}">{{ e.label }}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:20px">
+                <button onClick="{{ toStep1 }}" style="flex:none;background:transparent;border:1px solid var(--line);border-radius:12px;padding:15px 22px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer">Back</button>
+                <button onClick="{{ toStep3 }}" style="flex:1;background:var(--navy);color:#fff;border:0;border-radius:12px;padding:15px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer" style-hover="filter:brightness(1.15)">Continue</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 3: OUTCOME -->
+          <sc-if value="{{ atStep3 }}">
+            <div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)">How should we make it right?</h1>
+              <p style="font-size:14px;color:var(--tmut);margin:0 0 20px">Your preference frames the resolution &mdash; the captain can accept it instantly.</p>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ outcomes }}" as="o">
+                  <button onClick="{{ o.onPick }}" style="display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:{{ o.bg }};border:1px solid {{ o.border }};border-radius:13px;padding:15px 16px;cursor:pointer;font-family:var(--sans)">
+                    <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ o.ring }};display:grid;place-items:center;flex:none"><span style="width:8px;height:8px;border-radius:50%;background:{{ o.fill }}"></span></span>
+                    <span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;color:var(--ink)">{{ o.label }}</span><span style="display:block;font-size:12.5px;color:var(--tmut);margin-top:1px">{{ o.hint }}</span></span>
+                    <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext);flex:none">{{ o.amount }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:20px">
+                <button onClick="{{ toStep2 }}" style="flex:none;background:transparent;border:1px solid var(--line);border-radius:12px;padding:15px 22px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer">Back</button>
+                <button onClick="{{ submitCase }}" style="flex:1;background:var(--sand);color:#1c1303;border:0;border-radius:12px;padding:15px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer" style-hover="filter:brightness(1.05)">Open case</button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- SIDE: HOW IT WORKS -->
+        <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:86px">
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="position:relative;width:32px;height:32px;border-radius:50%;background:var(--cyansoft);display:grid;place-items:center;color:var(--cyan)"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan);animation:fx-sonar 3.2s ease-out infinite"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+              <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink)">Why you&rsquo;re protected</div>
+            </div>
+            <div style="font-size:13px;line-height:1.6;color:var(--tmut)">The $918 never reached the captain. It sits frozen in escrow until this case closes &mdash; no chargebacks, no chasing.</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+            <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink);margin-bottom:12px">What happens next</div>
+            <div style="display:flex;gap:10px;padding:7px 0"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--sand);color:var(--goldtext);display:grid;place-items:center;font-size:10.5px;flex:none">1</span><span style="font-size:12.5px;line-height:1.5;color:var(--tmut)">Capt. Sterling gets your case and has <b style="color:var(--ink)">48 hours</b> to respond</span></div>
+            <div style="display:flex;gap:10px;padding:7px 0"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--sand);color:var(--goldtext);display:grid;place-items:center;font-size:10.5px;flex:none">2</span><span style="font-size:12.5px;line-height:1.5;color:var(--tmut)">Most cases settle here &mdash; he can accept your resolution in one tap</span></div>
+            <div style="display:flex;gap:10px;padding:7px 0"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--sand);color:var(--goldtext);display:grid;place-items:center;font-size:10.5px;flex:none">3</span><span style="font-size:12.5px;line-height:1.5;color:var(--tmut)">No agreement? A Fish-X mediator decides within 5 days and escrow releases accordingly</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===== CASE VIEW ===== -->
+    <sc-if value="{{ inCase }}">
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;text-align:center">
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--sandsoft);display:grid;place-items:center;margin:0 auto 14px;animation:fx-pop .5s both"><span style="color:var(--goldtext);font-size:26px">&#9873;</span></div>
+            <h1 style="font-family:var(--serif);font-weight:600;font-size:27px;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)">Case {{ caseId }} is open</h1>
+            <p style="font-size:14px;color:var(--tmut);margin:0">{{ caseSummary }}</p>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext);margin-bottom:16px">Case timeline</div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ caseSteps }}" as="e">
+                <div style="display:flex;gap:14px">
+                  <div style="display:flex;flex-direction:column;align-items:center;flex:none;width:22px">
+                    <span style="width:16px;height:16px;border-radius:50%;background:{{ e.dotBg }};border:{{ e.dotBorder }};display:grid;place-items:center;color:#fff;font-size:9px;flex:none">{{ e.check }}</span>
+                    <sc-if value="{{ e.hasLine }}"><span style="width:2px;flex:1;min-height:24px;background:{{ e.lineBg }}"></span></sc-if>
+                  </div>
+                  <div style="padding-bottom:16px;min-width:0"><div style="font-size:13.5px;font-weight:700;color:{{ e.titleColor }}">{{ e.title }}</div><div style="font-size:12.5px;color:var(--tmut);margin-top:2px">{{ e.desc }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext);margin-bottom:14px">Case thread</div>
+            <div style="display:flex;gap:11px;padding:12px 0;border-top:1px solid var(--line)">
+              <span style="width:34px;height:34px;border-radius:9px;background:var(--navy);display:grid;place-items:center;flex:none"><span style="width:9px;height:9px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span></span>
+              <div><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Fish-X Resolutions <span style="font-weight:500;color:var(--tmut)">&middot; just now</span></div><div style="font-size:13px;line-height:1.55;color:var(--tmut);margin-top:3px">Case opened. Capt. Sterling has been notified and the $918 in escrow is frozen. He has until <b style="color:var(--ink)">Jul 9, 10:02 AM</b> to respond.</div></div>
+            </div>
+            <div style="display:flex;gap:11px;padding:12px 0;border-top:1px solid var(--line)">
+              <span style="width:34px;height:34px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:14px;font-weight:600;color:var(--goldtext);flex:none">A</span>
+              <div><div style="font-size:12.5px;font-weight:700;color:var(--ink)">You <span style="font-weight:500;color:var(--tmut)">&middot; just now</span></div><div style="font-size:13px;line-height:1.55;color:var(--tmut);margin-top:3px">{{ yourStatement }}</div></div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px">
+              <input name="casemsg" placeholder="Add to the thread&hellip;" style="flex:1;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)">
+              <button onClick="{{ addMsg }}" style="background:var(--sand);color:#1c1303;border:0;border-radius:11px;padding:0 20px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer">Send</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASE RAIL -->
+        <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:86px">
+          <div style="background:linear-gradient(160deg,#0c2a42,#0a2236);border-radius:18px;padding:22px;color:var(--ond)">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sand);margin-bottom:12px">Escrow status</div>
+            <div style="font-family:var(--serif);font-size:30px;font-weight:600;color:#fff">$918</div>
+            <div style="display:inline-flex;align-items:center;gap:7px;margin-top:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 12px"><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan)"></span><span style="font-size:11.5px;font-weight:600;color:#fff">Frozen &middot; case open</span></div>
+            <div style="font-size:12px;color:var(--ondmut);margin-top:12px;line-height:1.55">Requested: <b style="color:#fff">{{ requestedOutcome }}</b></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+            <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink);margin-bottom:8px">Change your mind?</div>
+            <div style="font-size:12.5px;line-height:1.6;color:var(--tmut);margin-bottom:12px">If you and the captain work it out on your own, you can withdraw the case any time.</div>
+            <button onClick="{{ withdrawCase }}" style="width:100%;background:transparent;border:1px solid var(--line);border-radius:11px;padding:12px;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Withdraw case</button>
+          </div>
+          <a href="Fish-X Angler Dashboard.dc.html" style="display:block;text-align:center;background:var(--navy);color:#fff;text-decoration:none;border-radius:12px;padding:14px;font-size:12.5px;font-weight:700" style-hover="filter:brightness(1.15)">Back to dashboard</a>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--sand);color:#1c1303;display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:980,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  state = { step:1, issue:0, outcome:1, evidence:[false,false,false], submitted:false, toast:'', statement:'' };
+
+  showToast(m){ this.setState({toast:m}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2400); }
+
+  issueData(){
+    return [
+      { label:'Trip was cut significantly short', hint:'Back at the dock well before the booked hours' },
+      { label:'Captain no-show or couldn\u2019t depart', hint:'Trip never left the dock' },
+      { label:'Boat or gear not as listed', hint:'Materially different from the listing' },
+      { label:'Safety concern', hint:'Unsafe conditions, equipment or conduct' },
+      { label:'Something else', hint:'Tell us in the next step' }
+    ];
+  }
+  outcomeData(){
+    return [
+      { label:'Full refund', hint:'The whole booking back from escrow', amount:'$918' },
+      { label:'Partial refund \u00b7 half', hint:'Fair if roughly half the trip was delivered', amount:'$459' },
+      { label:'Rebook with Capt. Sterling', hint:'Escrow moves to a new date instead', amount:'$0' },
+      { label:'Just flag it', hint:'No money moves \u2014 note goes on record', amount:'\u2014' }
+    ];
+  }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var pill=function(on){ return { bg:on?'rgba(227,192,137,.12)':'transparent', border:on?'#e3c089':'rgba(13,34,54,.12)', ring:on?'#a97e3c':'rgba(13,34,54,.25)', fill:on?'#a97e3c':'transparent' }; };
+    var evLabels=[{icon:'\ud83d\udcf7',label:'Add photos'},{icon:'\ud83e\udde7',label:'Add receipt'},{icon:'\ud83d\udccd',label:'GPS track'}];
+    var outcomes=this.outcomeData();
+    var issues=this.issueData();
+    var caseSteps=[
+      { title:'Case opened', desc:'Today, 10:02 AM \u00b7 escrow frozen at $918', state:'done' },
+      { title:'Captain responds', desc:'Capt. Sterling has until Jul 9, 10:02 AM', state:'current' },
+      { title:'Mediation \u00b7 if needed', desc:'A Fish-X mediator reviews evidence within 5 days', state:'todo' },
+      { title:'Resolution & release', desc:'Escrow splits per the outcome \u2014 instantly', state:'todo' }
+    ];
+    return {
+      escrowNote: s.submitted?'frozen \u00b7 case open':'held in escrow',
+      inWizard:!s.submitted, inCase:s.submitted,
+      atStep1:s.step===1, atStep2:s.step===2, atStep3:s.step===3,
+      s1Bg:'#0a2236', s1Color:'#fff',
+      s2Bg:s.step>=2?'#0a2236':'#e9edf1', s2Color:s.step>=2?'#fff':'#5c6b78',
+      s3Bg:s.step>=3?'#0a2236':'#e9edf1', s3Color:s.step>=3?'#fff':'#5c6b78',
+      l1Bg:s.step>=2?'#0a2236':'rgba(13,34,54,.12)', l2Bg:s.step>=3?'#0a2236':'rgba(13,34,54,.12)',
+      issueTypes:issues.map(function(t,i){
+        var p=pill(s.issue===i);
+        return { label:t.label, hint:t.hint, bg:p.bg, border:p.border, ring:p.ring, fill:p.fill, onPick:function(){ self.setState({issue:i}); } };
+      }),
+      toStep1:function(){ self.setState({step:1}); },
+      toStep2:function(){ self.setState({step:2}); },
+      toStep3:function(){
+        var root=document.getElementById('rescenter');
+        var ta=root&&root.querySelector('[name=details]');
+        self.setState({step:3, statement:(ta&&ta.value.trim())||''});
+      },
+      evidence:s.evidence.map(function(on,i){
+        return { icon:on?'\u2713':evLabels[i].icon, label:on?'Attached':evLabels[i].label,
+          border:on?'#1f8a5b':'rgba(13,34,54,.2)', bg:on?'#e2f2ea':'transparent', color:on?'#1f8a5b':'#5c6b78',
+          onAdd:function(){ var ev=s.evidence.slice(); ev[i]=!ev[i]; self.setState({evidence:ev}); } };
+      }),
+      outcomes:outcomes.map(function(o,i){
+        var p=pill(s.outcome===i);
+        return { label:o.label, hint:o.hint, amount:o.amount, bg:p.bg, border:p.border, ring:p.ring, fill:p.fill, onPick:function(){ self.setState({outcome:i}); } };
+      }),
+      submitCase:function(){ self.setState({submitted:true}); self.showToast('Case opened \u2014 escrow frozen and captain notified'); },
+      // case view
+      caseId:'RC-2214',
+      caseSummary:'\u201c'+issues[s.issue].label+'\u201d \u00b7 requesting '+outcomes[s.outcome].label.toLowerCase(),
+      requestedOutcome:outcomes[s.outcome].label+(outcomes[s.outcome].amount!=='\u2014'?' ('+outcomes[s.outcome].amount+')':''),
+      yourStatement: s.statement || 'We were back at the dock by 9:40 AM \u2014 about half the booked 8 hours, with no mechanical issue mentioned.',
+      caseSteps:caseSteps.map(function(e,i){
+        var done=e.state==='done', cur=e.state==='current';
+        return { title:e.title, desc:e.desc, check:done?'\u2713':'',
+          dotBg:done?'#1f8a5b':cur?'#1f9fbe':'#ffffff',
+          dotBorder:(done||cur)?'0':'2px solid rgba(13,34,54,.18)',
+          lineBg:done?'#1f8a5b':'rgba(13,34,54,.12)',
+          titleColor:(done||cur)?'#0d2236':'#5c6b78',
+          hasLine:i<caseSteps.length-1 };
+      }),
+      addMsg:function(){
+        var root=document.getElementById('rescenter');
+        var inp=root&&root.querySelector('[name=casemsg]');
+        if(inp&&inp.value.trim()){ inp.value=''; self.showToast('Added to the case thread'); }
+      },
+      withdrawCase:function(){ self.setState({submitted:false,step:1}); self.showToast('Case withdrawn \u2014 escrow back to normal hold'); },
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  input::placeholder,textarea::placeholder{color:#9aa7b2}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(13,34,54,.18);border-radius:10px;border:3px solid transparent;background-clip:content-box}
+  @keyframes fx-spin{to{transform:rotate(360deg)}}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-pop{0%{transform:scale(.4)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><circle cx="150" cy="140" r="14" fill="#e3c089"/><circle cx="150" cy="200" r="14" fill="#e3c089"/><circle cx="150" cy="260" r="14" fill="none" stroke="#e3c089" stroke-width="4"/><path d="M144 140l5 5 8-9M144 200l5 5 8-9" stroke="#0a2236" stroke-width="4" fill="none"/><path d="M180 140h80M180 200h80M180 260h60" stroke="#93a7b7" stroke-width="6" stroke-linecap="round"/><text x="200" y="330" font-family="Georgia,serif" font-size="26" letter-spacing="2" fill="#eaf1f6" text-anchor="middle">Get set up</text></svg></template>
+</helmet>
+<div id="ob-flow" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--navy2:#0c2a42;--deep:#06151f;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.12);display:flex;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- ============ LEFT RAIL ============ -->
+  <aside style="width:300px;flex:none;background:var(--navy);color:var(--ond);display:flex;flex-direction:column;padding:26px 24px;position:sticky;top:0;height:100vh">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:26px"><span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span><span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span></div>
+
+    <div style="font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.1;color:#fff">Set up your<br>captain workspace</div>
+    <div style="font-size:13px;color:var(--ondmut);margin-top:8px;margin-bottom:20px">A few steps and you&rsquo;re taking bookings.</div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px"><div style="flex:1;height:6px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden"><div data-progress-bar style="height:100%;width:0%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:6px;transition:width .5s cubic-bezier(.4,0,.1,1)"></div></div><span data-progress-label style="font-size:11.5px;font-weight:700;color:var(--sand)">Step 1 / 5</span></div>
+
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <button data-step-item="0" onClick="{{ step0 }}" style="display:flex;align-items:center;gap:13px;width:100%;background:transparent;border:0;border-radius:12px;padding:12px;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .2s"><span data-step-dot="0" style="width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid rgba(255,255,255,.2);color:var(--ondmut)">1</span><span><span data-step-label="0" style="display:block;font-size:13.5px;font-weight:600;color:var(--ondmut)">Business profile</span><span style="display:block;font-size:11.5px;color:var(--ondmut);opacity:.7">Who you are</span></span></button>
+      <button data-step-item="1" onClick="{{ step1 }}" style="display:flex;align-items:center;gap:13px;width:100%;background:transparent;border:0;border-radius:12px;padding:12px;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .2s"><span data-step-dot="1" style="width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid rgba(255,255,255,.2);color:var(--ondmut)">2</span><span><span data-step-label="1" style="display:block;font-size:13.5px;font-weight:600;color:var(--ondmut)">Verification</span><span style="display:block;font-size:11.5px;color:var(--ondmut);opacity:.7">License &amp; insurance</span></span></button>
+      <button data-step-item="2" onClick="{{ step2 }}" style="display:flex;align-items:center;gap:13px;width:100%;background:transparent;border:0;border-radius:12px;padding:12px;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .2s"><span data-step-dot="2" style="width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid rgba(255,255,255,.2);color:var(--ondmut)">3</span><span><span data-step-label="2" style="display:block;font-size:13.5px;font-weight:600;color:var(--ondmut)">Payouts &amp; escrow</span><span style="display:block;font-size:11.5px;color:var(--ondmut);opacity:.7">How you get paid</span></span></button>
+      <button data-step-item="3" onClick="{{ step3 }}" style="display:flex;align-items:center;gap:13px;width:100%;background:transparent;border:0;border-radius:12px;padding:12px;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .2s"><span data-step-dot="3" style="width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid rgba(255,255,255,.2);color:var(--ondmut)">4</span><span><span data-step-label="3" style="display:block;font-size:13.5px;font-weight:600;color:var(--ondmut)">Your first listing</span><span style="display:block;font-size:11.5px;color:var(--ondmut);opacity:.7">Create a charter</span></span></button>
+      <button data-step-item="4" onClick="{{ step4 }}" style="display:flex;align-items:center;gap:13px;width:100%;background:transparent;border:0;border-radius:12px;padding:12px;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .2s"><span data-step-dot="4" style="width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid rgba(255,255,255,.2);color:var(--ondmut)">5</span><span><span data-step-label="4" style="display:block;font-size:13.5px;font-weight:600;color:var(--ondmut)">Review &amp; publish</span><span style="display:block;font-size:11.5px;color:var(--ondmut);opacity:.7">Go live</span></span></button>
+    </nav>
+
+    <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--lined)">
+      <span style="font-size:12px;color:var(--ondmut)">Need a hand?</span>
+      <a href="Fish-X Captain Dashboard.dc.html" style="font-size:12px;font-weight:600;color:var(--sand);text-decoration:none">Save &amp; exit</a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <sc-if value="{{ notLive }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column">
+        <div style="flex:1;padding:40px 44px;max-width:1000px;width:100%">
+
+          <!-- STEP 0 · PROFILE -->
+          <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--goldtext)">Step 1 of 5</div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1.05;margin:8px 0 6px;color:var(--ink)">Tell us about your operation</h1>
+              <p style="font-size:15px;color:var(--tmut);margin:0 0 28px">This is what anglers see first. You can refine it anytime.</p>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;max-width:720px">
+                <div style="display:flex;align-items:center;gap:18px;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--line)">
+                  <img src="assets/james.jpg" alt="" style="width:66px;height:66px;border-radius:14px;object-fit:cover;object-position:50% 30%">
+                  <div><div style="font-size:14px;font-weight:600;color:var(--ink)">Profile photo</div><div style="font-size:12.5px;color:var(--tmut);margin-bottom:8px">A clear headshot builds trust</div><button style="background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Change photo</button></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                  <label style="display:block"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Charter / business name</span><input type="text" value="Sterling Sportfishing" style="width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)"></label>
+                  <label style="display:block"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Homeport</span><input type="text" value="Islamorada, FL" style="width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)"></label>
+                  <label style="display:block"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Your name</span><input type="text" value="Capt. James Sterling" style="width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)"></label>
+                  <label style="display:block"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Phone</span><input type="text" value="+1 (305) 555-0147" style="width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)"></label>
+                </div>
+                <label style="display:block;margin-top:16px"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Short bio</span><textarea style="width:100%;min-height:88px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;resize:vertical" style-focus="border-color:var(--sand)">Tournament-grade offshore captain with 20+ years running the Islamorada bluewater. Custom-rigged for tarpon, sailfish and mahi.</textarea></label>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 1 · VERIFY -->
+          <sc-if value="{{ isVerify }}">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--goldtext)">Step 2 of 5</div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1.05;margin:8px 0 6px;color:var(--ink)">Get verified</h1>
+              <p style="font-size:15px;color:var(--tmut);margin:0 0 24px">The gold seal on your listing. Anglers only book verified captains &mdash; and escrow requires it.</p>
+              <div style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+                <sc-for list="{{ docs }}" as="d" hint-placeholder-count="3">
+                  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:16px">
+                    <span style="width:44px;height:44px;border-radius:12px;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext);flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+                    <div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600;color:var(--ink)">{{ d.title }}</div><div style="font-size:12.5px;color:var(--tmut)">{{ d.desc }}</div></div>
+                    <sc-if value="{{ d.done }}"><span style="display:inline-flex;align-items:center;gap:8px;background:var(--greensoft);color:var(--green);border-radius:30px;padding:9px 14px;font-size:12.5px;font-weight:700;flex:none"><span style="width:16px;height:16px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:10px">&#10003;</span> Uploaded</span></sc-if>
+                    <sc-if value="{{ d.pending }}"><button onClick="{{ d.onUpload }}" style="flex:none;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.15)">Upload</button></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px;background:#e2eef2;border-radius:12px;padding:14px 16px;max-width:720px;margin-top:16px"><span style="color:var(--cyan);flex:none;margin-top:1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><span style="font-size:12.5px;line-height:1.5;color:var(--ink)">Documents are reviewed within ~24 hours. You can finish setup now &mdash; your listing goes live the moment verification clears.</span></div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 2 · PAYOUTS -->
+          <sc-if value="{{ isPayouts }}">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--goldtext)">Step 3 of 5</div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1.05;margin:8px 0 6px;color:var(--ink)">Get paid through escrow</h1>
+              <p style="font-size:15px;color:var(--tmut);margin:0 0 24px">Anglers pay upfront into secure escrow. You&rsquo;re paid automatically once the trip is done.</p>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:720px;margin-bottom:20px">
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px"><div style="width:34px;height:34px;border-radius:9px;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext);margin-bottom:12px;font-family:var(--serif);font-weight:600">1</div><div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:3px">Angler pays</div><div style="font-size:12.5px;line-height:1.45;color:var(--tmut)">Funds captured at booking.</div></div>
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px"><div style="width:34px;height:34px;border-radius:9px;background:#e2eef2;display:grid;place-items:center;color:var(--cyan);margin-bottom:12px;font-family:var(--serif);font-weight:600">2</div><div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:3px">Held in escrow</div><div style="font-size:12.5px;line-height:1.45;color:var(--tmut)">Safe &mdash; not your balance yet.</div></div>
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px"><div style="width:34px;height:34px;border-radius:9px;background:var(--greensoft);display:grid;place-items:center;color:var(--green);margin-bottom:12px;font-family:var(--serif);font-weight:600">3</div><div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:3px">You&rsquo;re paid</div><div style="font-size:12.5px;line-height:1.45;color:var(--tmut)">Released after the trip.</div></div>
+              </div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;max-width:720px">
+                <sc-if value="{{ payoutOff }}">
+                  <div style="text-align:center;padding:16px 10px"><div style="width:52px;height:52px;border-radius:14px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink);margin:0 auto 14px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20M6 15h4"/></svg></div><div style="font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink)">Connect your payout account</div><p style="font-size:13.5px;color:var(--tmut);margin:6px 0 18px">Link a bank account to receive escrow releases.</p><button onClick="{{ connectPayout }}" style="background:var(--sand);color:#1c1303;border:0;border-radius:11px;padding:13px 24px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer" style-hover="filter:brightness(1.05)">Connect bank account</button></div>
+                </sc-if>
+                <sc-if value="{{ payoutOn }}">
+                  <div>
+                    <div style="display:flex;align-items:center;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--line)"><span style="width:44px;height:44px;border-radius:12px;background:var(--greensoft);display:grid;place-items:center;color:var(--green);flex:none;font-size:18px">&#10003;</span><div style="flex:1"><div style="font-size:14.5px;font-weight:600;color:var(--ink)">Bank connected</div><div style="font-size:12.5px;color:var(--tmut)">Chase &bull;&bull;&bull;&bull; 8842 &middot; verified</div></div><button onClick="{{ connectPayout }}" style="background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink);cursor:pointer">Change</button></div>
+                    <div style="padding-top:18px"><div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:10px">Payout schedule</div><div style="display:flex;gap:8px"><button data-sched="weekly" onClick="{{ schedWeekly }}" style="flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:13px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left"><span style="display:block;font-weight:700">Weekly batch</span><span style="display:block;font-size:12px;color:var(--tmut)">Every Friday</span></button><button data-sched="each" onClick="{{ schedEach }}" style="flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:13px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left"><span style="display:block;font-weight:700">After each trip</span><span style="display:block;font-size:12px;color:var(--tmut)">Released same day</span></button></div></div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 3 · LISTING -->
+          <sc-if value="{{ isListing }}">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--goldtext)">Step 4 of 5</div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1.05;margin:8px 0 6px;color:var(--ink)">Create your first listing</h1>
+              <p style="font-size:15px;color:var(--tmut);margin:0 0 24px">Fill in the details &mdash; the preview on the right updates as you type.</p>
+              <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:26px;align-items:start">
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px">
+                  <label style="display:block;margin-bottom:16px"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Listing title</span><input type="text" value="Offshore Tarpon &amp; Sailfish" onInput="{{ onTitle }}" style="width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)"></label>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+                    <label style="display:block"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Trip type</span><select onChange="{{ onType }}" style="appearance:none;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;cursor:pointer" style-focus="border-color:var(--sand)"><option>Offshore</option><option>Inshore</option><option>Nearshore &amp; reef</option><option>Fly &amp; light tackle</option></select></label>
+                    <label style="display:block"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Duration</span><select onChange="{{ onDuration }}" style="appearance:none;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;cursor:pointer" style-focus="border-color:var(--sand)"><option>Half day &middot; 4 hrs</option><option selected>Full day &middot; 8 hrs</option><option>Overnight &middot; 12 hrs</option></select></label>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+                    <div><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Max anglers</span><div style="display:flex;align-items:center;justify-content:space-between;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 12px"><button onClick="{{ decCap }}" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;cursor:pointer;display:grid;place-items:center;padding:0">&minus;</button><span style="font-size:15px;font-weight:700;color:var(--ink)">{{ capacity }}</span><button onClick="{{ incCap }}" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;cursor:pointer;display:grid;place-items:center;padding:0">+</button></div></div>
+                    <label style="display:block"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Price (per trip)</span><div style="display:flex;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:0 13px" style-focus-within="border-color:var(--sand)"><span style="font-size:15px;color:var(--tmut)">$</span><input type="number" value="850" onInput="{{ onPrice }}" style="width:100%;background:transparent;border:0;padding:12px 8px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none"></div></label>
+                  </div>
+                  <label style="display:block;margin-bottom:18px"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:6px">Description</span><textarea placeholder="Describe the experience, target species, and what makes your trip special&hellip;" style="width:100%;min-height:80px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;resize:vertical" style-focus="border-color:var(--sand)">Chase silver kings and sailfish through the Islamorada bluewater aboard a tournament-rigged 38&prime; sportfisher.</textarea></label>
+                  <div style="margin-bottom:18px"><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:10px">What&rsquo;s included</span><div style="display:flex;flex-wrap:wrap;gap:8px">
+                    <button data-chip="tackle" onClick="{{ chipTackle }}" style="border-radius:30px;padding:8px 14px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink)">Premium tackle</button>
+                    <button data-chip="bait" onClick="{{ chipBait }}" style="border-radius:30px;padding:8px 14px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink)">Live bait</button>
+                    <button data-chip="license" onClick="{{ chipLicense }}" style="border-radius:30px;padding:8px 14px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink)">Fishing license</button>
+                    <button data-chip="drinks" onClick="{{ chipDrinks }}" style="border-radius:30px;padding:8px 14px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink)">Drinks &amp; cooler</button>
+                    <button data-chip="photos" onClick="{{ chipPhotos }}" style="border-radius:30px;padding:8px 14px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink)">Photos</button>
+                    <button data-chip="cleaning" onClick="{{ chipCleaning }}" style="border-radius:30px;padding:8px 14px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink)">Catch cleaning</button>
+                  </div></div>
+                  <div><span style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:10px">Photos</span>
+                    <sc-if value="{{ photoOff }}"><button onClick="{{ addPhoto }}" style="width:100%;border:1.5px dashed rgba(13,34,54,.22);background:var(--paper);border-radius:12px;padding:22px;cursor:pointer;font-family:var(--sans);color:var(--tmut)" style-hover="border-color:var(--sand)"><div style="font-size:22px;margin-bottom:4px">&#8593;</div><div style="font-size:13px;font-weight:600;color:var(--ink)">Click to add photos</div><div style="font-size:12px">JPG or PNG, up to 10MB</div></button></sc-if>
+                    <sc-if value="{{ photoOn }}"><div style="display:flex;gap:10px"><img src="assets/seascape.jpg" alt="" style="width:96px;height:72px;border-radius:10px;object-fit:cover"><img src="assets/yacht-coast.png" alt="" style="width:96px;height:72px;border-radius:10px;object-fit:cover"><button onClick="{{ addPhoto }}" style="width:72px;height:72px;border:1.5px dashed rgba(13,34,54,.22);background:var(--paper);border-radius:10px;cursor:pointer;color:var(--tmut);font-size:22px">+</button></div></sc-if>
+                  </div>
+                </div>
+
+                <!-- LIVE PREVIEW -->
+                <div style="position:sticky;top:24px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tmut);margin-bottom:10px">Anglers will see</div>
+                  <article style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(13,34,54,.4)">
+                    <div style="position:relative;height:170px;background-image:{{ photoBg }};background-size:cover;background-position:50% 45%"><span style="position:absolute;top:13px;left:13px;display:inline-flex;align-items:center;gap:6px;background:rgba(6,21,31,.72);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;border-radius:30px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></span> Escrow</span></div>
+                    <div style="padding:18px 20px 20px">
+                      <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--tmut);margin-bottom:8px"><span style="font-size:11px;font-weight:700;color:var(--goldtext);background:var(--sandsoft);border-radius:20px;padding:2px 9px">New</span> &middot; {{ ttype }} &middot; Islamorada</div>
+                      <h3 style="font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.12;margin:0 0 12px;color:var(--ink)">{{ title }}</h3>
+                      <div style="display:flex;gap:7px;margin-bottom:14px"><span style="font-size:11px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:5px 9px">{{ duration }}</span><span style="font-size:11px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:5px 9px">Up to {{ capacity }}</span></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:14px"><div style="display:flex;align-items:center;gap:9px"><img src="assets/james.jpg" alt="" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:50% 30%"><span style="font-size:12.5px;color:var(--tmut)">Capt. Sterling</span></div><div style="text-align:right"><span style="font-size:11px;color:var(--tmut)">from </span><span style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--goldtext)">{{ priceLabel }}</span></div></div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 4 · REVIEW -->
+          <sc-if value="{{ isReview }}">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--goldtext)">Step 5 of 5</div>
+              <h1 style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1.05;margin:8px 0 6px;color:var(--ink)">Review &amp; go live</h1>
+              <p style="font-size:15px;color:var(--tmut);margin:0 0 24px">One last look before your listing hits the marketplace.</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:820px">
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:13.5px;font-weight:700;color:var(--ink)">Business profile</span><span style="color:var(--green);font-size:12px;font-weight:700">&#10003; Complete</span></div><div style="font-size:13px;color:var(--tmut);line-height:1.6">Sterling Sportfishing<br>Capt. James Sterling &middot; Islamorada, FL</div></div>
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:13.5px;font-weight:700;color:var(--ink)">Verification</span><span data-verify-badge style="color:var(--tmut);font-size:12px;font-weight:700">{{ verifyStatus }}</span></div><div style="font-size:13px;color:var(--tmut);line-height:1.6">Captain&rsquo;s license, vessel insurance &amp; ID<br>{{ verifyNote }}</div></div>
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:13.5px;font-weight:700;color:var(--ink)">Payouts &amp; escrow</span><span data-payout-badge style="font-size:12px;font-weight:700">{{ payoutStatus }}</span></div><div style="font-size:13px;color:var(--tmut);line-height:1.6">Escrow-protected payments<br>{{ payoutNote }}</div></div>
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:13.5px;font-weight:700;color:var(--ink)">Listing</span><span style="color:var(--green);font-size:12px;font-weight:700">&#10003; Ready</span></div><div style="font-size:13px;color:var(--tmut);line-height:1.6">{{ title }}<br>{{ ttype }} &middot; {{ duration }} &middot; {{ priceLabel }}</div></div>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+
+        <!-- FOOTER NAV -->
+        <div style="position:sticky;bottom:0;background:rgba(238,242,245,.9);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:16px 44px;display:flex;align-items:center;justify-content:space-between">
+          <sc-if value="{{ backVisible }}"><button onClick="{{ back }}" style="background:transparent;border:1px solid var(--line);border-radius:11px;padding:12px 22px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Back</button></sc-if>
+          <sc-if value="{{ backHidden }}"><span></span></sc-if>
+          <button onClick="{{ advance }}" style="background:var(--sand);color:#1c1303;border:0;border-radius:11px;padding:13px 26px;font-family:var(--sans);font-size:13.5px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:filter .2s,transform .2s" style-hover="filter:brightness(1.05);transform:translateY(-1px)">{{ continueLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===== LIVE SUCCESS ===== -->
+    <sc-if value="{{ isLive }}">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px">
+        <div style="max-width:520px;text-align:center">
+          <div style="width:82px;height:82px;border-radius:50%;background:var(--greensoft);display:grid;place-items:center;color:var(--green);margin:0 auto 22px;font-size:36px;animation:fx-pop .5s both">&#10003;</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--goldtext)">You&rsquo;re live on Fish-X</div>
+          <h1 style="font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.05;margin:10px 0 10px;color:var(--ink)">Your listing is published.</h1>
+          <p style="font-size:15.5px;line-height:1.55;color:var(--tmut);margin:0 0 26px">Anglers can now find and book <b style="color:var(--ink)">{{ title }}</b>. Payments arrive protected in escrow &mdash; released to you after every trip.</p>
+          <article style="background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;text-align:left;margin-bottom:26px;box-shadow:0 24px 50px -34px rgba(13,34,54,.4)">
+            <div style="height:132px;background-image:{{ photoBg }};background-size:cover;background-position:50% 45%"></div>
+            <div style="padding:16px 18px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink)">{{ title }}</div><div style="font-size:12.5px;color:var(--tmut);margin-top:2px">{{ ttype }} &middot; {{ duration }}</div></div><div style="text-align:right"><span style="font-size:11px;color:var(--tmut)">from </span><span style="font-family:var(--serif);font-size:20px;font-weight:600;color:var(--goldtext)">{{ priceLabel }}</span></div></div>
+          </article>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <a href="Fish-X Captain Dashboard.dc.html" style="background:var(--navy);color:#fff;text-decoration:none;border-radius:12px;padding:14px 24px;font-size:13px;font-weight:700;letter-spacing:.03em" style-hover="filter:brightness(1.15)">Go to dashboard</a>
+            <a href="Fish-X Captain Profile.dc.html" style="background:transparent;border:1px solid var(--line);color:var(--ink);text-decoration:none;border-radius:12px;padding:14px 24px;font-size:13px;font-weight:600" style-hover="border-color:rgba(13,34,54,.25)">View live listing</a>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </main>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    step:0, published:false, toast:'',
+    up:{ license:false, insurance:false, id:false },
+    payout:false, schedule:'weekly',
+    title:'Offshore Tarpon & Sailfish', ttype:'Offshore', duration:'Full day · 8 hrs', capacity:6, price:850,
+    inc:{ tackle:true, bait:true, license:true, drinks:false, photos:true, cleaning:false },
+    photo:false
+  };
+
+  componentDidMount(){ this._root=document.getElementById('ob-flow'); this.applyAll(); }
+  componentDidUpdate(){ this.applyAll(); }
+  applyAll(){ this.applyStepper(); this.applyProgress(); this.applyChips(); this.applySched(); }
+
+  applyStepper(){
+    var root=this._root; if(!root) return; var cur=this.state.step;
+    root.querySelectorAll('[data-step-item]').forEach(function(it){
+      var i=parseInt(it.getAttribute('data-step-item'),10);
+      var dot=it.querySelector('[data-step-dot]'); var lbl=it.querySelector('[data-step-label]');
+      if(i<cur){ it.style.background='transparent'; if(dot){ dot.style.background='#e3c089'; dot.style.borderColor='#e3c089'; dot.style.color='#1c1303'; dot.innerHTML='&#10003;'; } if(lbl) lbl.style.color='#eaf1f6'; }
+      else if(i===cur){ it.style.background='rgba(227,192,137,.14)'; if(dot){ dot.style.background='#e3c089'; dot.style.borderColor='#e3c089'; dot.style.color='#1c1303'; dot.textContent=String(i+1); } if(lbl) lbl.style.color='#ffffff'; }
+      else { it.style.background='transparent'; if(dot){ dot.style.background='transparent'; dot.style.borderColor='rgba(255,255,255,.2)'; dot.style.color='#93a7b7'; dot.textContent=String(i+1); } if(lbl) lbl.style.color='#93a7b7'; }
+    });
+  }
+  applyProgress(){
+    var root=this._root; if(!root) return;
+    var bar=root.querySelector('[data-progress-bar]'); var lab=root.querySelector('[data-progress-label]');
+    var pct=this.state.published?100:Math.round((this.state.step/4)*100);
+    if(bar) bar.style.width=pct+'%';
+    if(lab) lab.textContent=this.state.published?'Complete':('Step '+(this.state.step+1)+' / 5');
+  }
+  applyChips(){
+    var root=this._root; if(!root) return; var inc=this.state.inc;
+    root.querySelectorAll('[data-chip]').forEach(function(c){
+      var on=inc[c.getAttribute('data-chip')];
+      c.style.background=on?'#fbf6ec':'#ffffff'; c.style.borderColor=on?'#e3c089':'rgba(13,34,54,.10)'; c.style.color=on?'#a97e3c':'#0d2236';
+    });
+  }
+  applySched(){
+    var root=this._root; if(!root) return; var s=this.state.schedule;
+    root.querySelectorAll('[data-sched]').forEach(function(b){
+      var on=b.getAttribute('data-sched')===s;
+      b.style.borderColor=on?'#e3c089':'rgba(13,34,54,.10)'; b.style.background=on?'#fbf6ec':'#ffffff';
+    });
+  }
+
+  showToast(m){ this.setState({toast:m}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2400); }
+  go(i){ this.setState({step:i}); try{ window.scrollTo(0,0); }catch(e){} }
+  advance(){ if(this.state.step<4){ this.go(this.state.step+1); } else { this.setState({published:true}); try{ window.scrollTo(0,0); }catch(e){} } }
+  upload(k){ var up=Object.assign({},this.state.up); up[k]=true; this.setState({up:up}); this.showToast('Document uploaded'); }
+  toggleInc(k){ var inc=Object.assign({},this.state.inc); inc[k]=!inc[k]; this.setState({inc:inc}); }
+  money(n){ return '$'+Math.round(n).toLocaleString(); }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var upCount=(s.up.license?1:0)+(s.up.insurance?1:0)+(s.up.id?1:0);
+    return {
+      notLive:!s.published, isLive:s.published,
+      isProfile:s.step===0, isVerify:s.step===1, isPayouts:s.step===2, isListing:s.step===3, isReview:s.step===4,
+      backVisible:s.step>0, backHidden:s.step===0,
+      continueLabel: s.step===4 ? 'Publish listing & go live' : 'Continue',
+      step0:function(){ self.go(0); }, step1:function(){ self.go(1); }, step2:function(){ self.go(2); }, step3:function(){ self.go(3); }, step4:function(){ self.go(4); },
+      back:function(){ self.go(Math.max(0,s.step-1)); }, advance:function(){ self.advance(); },
+      // verification
+      docs:[
+        { key:'license', title:"Captain's license", desc:'USCG / national boating license', done:s.up.license, pending:!s.up.license, onUpload:function(){ self.upload('license'); } },
+        { key:'insurance', title:'Vessel insurance', desc:'Current liability coverage', done:s.up.insurance, pending:!s.up.insurance, onUpload:function(){ self.upload('insurance'); } },
+        { key:'id', title:'Government ID', desc:"Passport or driver's license", done:s.up.id, pending:!s.up.id, onUpload:function(){ self.upload('id'); } }
+      ],
+      // payouts
+      payoutOff:!s.payout, payoutOn:s.payout,
+      connectPayout:function(){ self.setState({payout:!s.payout}); if(!s.payout) self.showToast('Bank account connected'); },
+      schedWeekly:function(){ self.setState({schedule:'weekly'}); }, schedEach:function(){ self.setState({schedule:'each'}); },
+      // listing
+      title:s.title, ttype:s.ttype, duration:s.duration, capacity:s.capacity, priceLabel:this.money(s.price),
+      photoBg: s.photo ? "url('assets/seascape.jpg')" : 'linear-gradient(135deg,#123049,#0a2236)',
+      photoOff:!s.photo, photoOn:s.photo,
+      onTitle:function(e){ self.setState({title:e.target.value||'Untitled charter'}); },
+      onType:function(e){ self.setState({ttype:e.target.value}); },
+      onDuration:function(e){ self.setState({duration:e.target.value}); },
+      onPrice:function(e){ var v=parseInt(e.target.value,10); self.setState({price:isNaN(v)?0:v}); },
+      incCap:function(){ self.setState({capacity:Math.min(12,s.capacity+1)}); }, decCap:function(){ self.setState({capacity:Math.max(1,s.capacity-1)}); },
+      chipTackle:function(){ self.toggleInc('tackle'); }, chipBait:function(){ self.toggleInc('bait'); }, chipLicense:function(){ self.toggleInc('license'); }, chipDrinks:function(){ self.toggleInc('drinks'); }, chipPhotos:function(){ self.toggleInc('photos'); }, chipCleaning:function(){ self.toggleInc('cleaning'); },
+      addPhoto:function(){ self.setState({photo:true}); if(!s.photo) self.showToast('Photos added'); },
+      // review
+      verifyStatus: upCount===3 ? '\u2713 In review' : (upCount+' of 3'),
+      verifyNote: upCount===3 ? 'Submitted \u2014 clears within 24h' : 'Upload remaining docs to finish',
+      payoutStatus: s.payout ? '\u2713 Connected' : 'Not set',
+      payoutNote: s.payout ? ((s.schedule==='weekly'?'Weekly batch payouts':'Paid after each trip')) : 'Connect a bank to receive payouts',
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>
