@@ -70,11 +70,12 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
   const isCanceled = b.status.startsWith("cancelled") || b.status === "refunded" || b.status === "declined";
   const isActive = !isCanceled;
 
-  const captainName = b.captain?.display_name ?? b.captain?.full_name ?? "Your captain";
+  const captain = data.captain;
+  const captainName = captain?.display_name ?? captain?.full_name ?? "Your captain";
   const boatName = b.business?.name ?? "the vessel";
-  const location = [b.business?.city].filter(Boolean).join(", ");
+  const location = [b.business?.city, b.business?.region].filter(Boolean).join(", ");
   const heroImg = b.service?.hero_url || b.business?.hero_url || "/dashboards/assets/seascape.jpg";
-  const captainAvatar = b.captain?.avatar_url || "/dashboards/assets/james.jpg";
+  const captainAvatar = captain?.avatar_url || "/dashboards/assets/james.jpg";
 
   const escrowLabel = money(b.total_cents);
 

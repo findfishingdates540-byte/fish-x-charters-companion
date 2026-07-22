@@ -20,8 +20,7 @@ export const getTripDetail = createServerFn({ method: "GET" })
       .select(
         "id,trip_date,start_time,status,escrow_state,total_cents,application_fee_cents,party_size,notes,angler_id,captain_id,business_id,service_id,cancellation_policy," +
           "service:bookable_services(id,title,hero_url,departure_location,duration_minutes,included_json)," +
-          "business:businesses(id,slug,name,city,region,hero_url,logo_url,verified_at)," +
-          "captain:profiles!bookings_captain_id_fkey(id,full_name,display_name,avatar_url)",
+          "business:businesses(id,slug,name,city,region,hero_url,logo_url,verified_at)",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -32,16 +31,24 @@ export const getTripDetail = createServerFn({ method: "GET" })
       throw new Response("Forbidden", { status: 403 });
     }
 
-    const messagesRes = await supabase
-      .from("booking_messages")
-      .select("id,body,sender_id,created_at")
-      .eq("booking_id", data.id)
-      .order("created_at", { ascending: true })
-      .limit(200);
+    const [captainRes, messagesRes] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("id,full_name,display_name,avatar_url")
+        .eq("id", bookingRes.data.captain_id)
+        .maybeSingle(),
+      supabase
+        .from("booking_messages")
+        .select("id,body,sender_id,created_at")
+        .eq("booking_id", data.id)
+        .order("created_at", { ascending: true })
+        .limit(200),
+    ]);
     if (messagesRes.error) throw new Response(messagesRes.error.message, { status: 500 });
 
     return {
       booking: bookingRes.data,
+      captain: captainRes.data,
       messages: messagesRes.data ?? [],
       viewerId: userId,
     };
@@ -74,7 +81,7 @@ export const cancelTrip = createServerFn({ method: "POST" })
     const { data: row, error } = await supabase.rpc("transition_booking", {
       _booking_id: data.bookingId,
       _to_status: to,
-      _reason: data.reason ?? null,
+      _reason: data.reason,
       _metadata: {},
     });
     if (error) throw new Response(error.message, { status: 400 });

@@ -1,13 +1,12 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { TripDetail } from "@/components/angler/TripDetail";
 import { getTripDetail } from "@/lib/trip-detail.functions";
 
 const searchSchema = z.object({ id: z.string().uuid() });
 
 export const Route = createFileRoute("/_authenticated/trips/detail")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
   loaderDeps: ({ search }) => ({ id: search.id }),
   loader: ({ context, deps }) =>
     context.queryClient.ensureQueryData({
