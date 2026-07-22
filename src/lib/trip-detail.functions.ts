@@ -19,7 +19,7 @@ export const getTripDetail = createServerFn({ method: "GET" })
       .from("bookings")
       .select(
         "id,trip_date,start_time,status,escrow_state,total_cents,application_fee_cents,party_size,notes,angler_id,captain_id,business_id,service_id,cancellation_policy," +
-          "service:bookable_services(id,title,hero_url,departure_location,duration_minutes,included_json)," +
+          "service:bookable_services(id,title,hero_url,departure_location,duration_minutes,includes)," +
           "business:businesses(id,slug,name,city,region,hero_url,logo_url,verified_at)",
       )
       .eq("id", data.id)

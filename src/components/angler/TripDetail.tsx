@@ -140,7 +140,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
     padding: "7px 13px",
   };
 
-  const included = Array.isArray(b.service?.included_json) ? (b.service?.included_json as string[]) : [];
+  const included = b.service?.includes ?? [];
   const chips = included.length ? included : ["Tackle & bait included", "Licenses covered", "Catch cleaned & bagged", "Cooler with ice"];
 
   return (
