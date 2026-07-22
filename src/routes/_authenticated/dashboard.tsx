@@ -27,13 +27,28 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     await Promise.all([
       context.queryClient.ensureQueryData(myRolesQO),
       context.queryClient.ensureQueryData(myBusinessesQO),
+      context.queryClient.ensureQueryData({
+        queryKey: ["angler-dashboard"],
+        queryFn: () => getAnglerDashboard(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: ["angler-recos"],
+        queryFn: () => listRecommendedCharters(),
+      }),
     ]);
   },
   component: Dashboard,
+  errorComponent: ({ error }) => (
+    <div style={{ padding: 40, fontFamily: "system-ui" }}>
+      <h1>Dashboard error</h1>
+      <p>{(error as Error).message}</p>
+    </div>
+  ),
 });
 
 // Map an operator's business category to its DC dashboard template.
 const categoryTemplate: Record<string, string> = {
+
   charter: "captain",
   tackle_shop: "tackle",
   bait_shop: "tackle",
