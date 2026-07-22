@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(13,34,54,.18);border-radius:10px;border:3px solid transparent;background-clip:content-box}
+  @keyframes fx-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><circle cx="200" cy="170" r="80" fill="none" stroke="#e3c089" stroke-width="10"/><path d="m232 138-20 50-50 20 20-50z" fill="#e3c089"/><text x="200" y="330" font-family="Georgia,serif" font-size="30" letter-spacing="4" fill="#eaf1f6" text-anchor="middle">Guides</text></svg></template>
+</helmet>
+<div id="gd-dash" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--deep:#06151f;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--cyansoft:#e2eef2;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--redsoft:#fbe9e8;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.10);display:flex;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="width:256px;flex:none;background:var(--navy);color:var(--ond);display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh;border-right:1px solid rgba(255,255,255,.06)">
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 10px 22px">
+      <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+      <span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:11px 12px;margin-bottom:18px">
+      <span style="width:34px;height:34px;border-radius:9px;background:rgba(227,192,137,.16);display:grid;place-items:center;color:var(--sand);flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z" fill="currentColor" stroke="none"/></svg></span>
+      <div style="line-height:1.2;min-width:0"><div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ondmut)">Workspace</div><div style="font-size:13.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Backcountry Guides</div></div>
+      <span style="margin-left:auto;color:var(--ondmut);font-size:12px">&#9662;</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:3px">
+      <button data-nav="overview" onClick="{{ navOverview }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg> Overview</button>
+      <button data-nav="trips" onClick="{{ navTrips }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="m9 15 2 2 4-4"/></svg> Trips <span data-unassigned-badge style="margin-left:auto;background:var(--sand);color:#1c1303;font-size:11px;font-weight:700;border-radius:20px;padding:1px 8px">{{ unassignedCount }}</span></button>
+      <button data-nav="guides" onClick="{{ navGuides }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c.8-3.4 3.4-5.4 6.5-5.4s5.7 2 6.5 5.4"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15.5 14.4c2.6.2 4.8 1.8 5.6 4.6"/></svg> Guides</button>
+      <button data-nav="requests" onClick="{{ navRequests }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H8l-4 4z"/></svg> Requests <span style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--cyan)"></span></button>
+    </nav>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:10px 12px">
+      <span style="width:38px;height:38px;border-radius:50%;background:rgba(227,192,137,.18);display:grid;place-items:center;font-family:var(--serif);font-size:16px;font-weight:600;color:var(--sand);flex:none">W</span>
+      <div style="line-height:1.25;min-width:0"><div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Wade Coulter</div><div style="font-size:11px;color:var(--sand)">Owner &middot; Verified outfitter</div></div>
+      <a href="Fish-X Auth.dc.html" title="Sign out" style="margin-left:auto;color:var(--ondmut);text-decoration:none;flex:none" style-hover="color:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="position:sticky;top:0;z-index:20;background:rgba(238,242,245,.86);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line);padding:18px 34px;display:flex;align-items:center;gap:24px">
+      <div style="min-width:0">
+        <div style="font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.1;color:var(--ink)">{{ pageTitle }}</div>
+        <div style="font-size:13px;color:var(--tmut);margin-top:1px">{{ pageSub }}</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <label style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:9px 15px;width:230px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search trips, guides&hellip;" style="border:0;outline:none;background:transparent;font-family:var(--sans);font-size:13.5px;color:var(--ink);width:100%">
+        </label>
+        <div style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:9px 16px"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:fx-pulse 2.4s ease-in-out infinite"></span><span style="font-size:12.5px;font-weight:600;color:var(--ink)">{{ guidesOutToday }} guides on the water</span></div>
+      </div>
+    </header>
+
+    <main style="flex:1;padding:30px 34px 48px;max-width:1180px;width:100%">
+
+      <!-- ===== OVERVIEW ===== -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">This month</span><span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:2px 8px">&uarr; 15%</span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">$31,600</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Across 64 guided trips</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">This week</span><span style="color:var(--goldtext)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">18 trips</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px"><span data-unassigned-inline>{{ unassignedCount }}</span> still unassigned</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">In escrow</span><span style="position:relative;display:grid;place-items:center;width:18px;height:18px"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan);animation:fx-sonar 3s ease-out infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan)"></span></span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">$7,240</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Released as trips complete</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Team rating</span><span style="color:var(--sand)">&#9733;</span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)">4.95</div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Across 5 guides</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px">
+            <!-- TODAY'S BOARD -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+                <div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">Today &middot; Jul 7</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">On the water</div></div>
+                <button onClick="{{ navTrips }}" style="background:transparent;border:0;color:var(--goldtext);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer">All trips &rarr;</button>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)">
+                  <span style="width:42px;height:42px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:16px;font-weight:600;color:var(--goldtext);flex:none">M</span>
+                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">Mia Torres &middot; Flats fly, dawn</div><div style="font-size:12.5px;color:var(--tmut)">5:30a &ndash; 11:00a &middot; 2 anglers &middot; Snake Bight</div></div>
+                  <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:4px 11px;flex:none">On water</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)">
+                  <span style="width:42px;height:42px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:16px;font-weight:600;color:var(--goldtext);flex:none">D</span>
+                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">Dez Okafor &middot; Bass, electric skiff</div><div style="font-size:12.5px;color:var(--tmut)">6:00a &ndash; 12:00p &middot; 3 anglers &middot; Lake Tohopekaliga</div></div>
+                  <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:4px 11px;flex:none">On water</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)">
+                  <span style="width:42px;height:42px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:16px;font-weight:600;color:var(--goldtext);flex:none">S</span>
+                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">Sam Reyes &middot; Inshore, afternoon</div><div style="font-size:12.5px;color:var(--tmut)">1:00p &ndash; 6:00p &middot; 4 anglers &middot; Flamingo ramp</div></div>
+                  <span style="font-size:11px;font-weight:700;color:var(--cyan);background:var(--cyansoft);border-radius:20px;padding:4px 11px;flex:none">Departs 1p</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;padding:13px 0">
+                  <span style="width:42px;height:42px;border-radius:50%;background:var(--sandsoft);border:1px dashed var(--sand2);display:grid;place-items:center;color:var(--goldtext);flex:none;font-size:16px">?</span>
+                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">Sunset fly &middot; needs a guide</div><div style="font-size:12.5px;color:var(--tmut)">5:30p &ndash; 9:00p &middot; 2 anglers &middot; escrow funded</div></div>
+                  <button onClick="{{ navTrips }}" style="flex:none;background:var(--navy);color:#fff;border:0;border-radius:9px;padding:9px 15px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.15)">Assign</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- GUIDE LOAD -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">This week</div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin:3px 0 20px">Guide load</div>
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="font-weight:600;color:var(--ink)">Mia Torres</span><span style="color:var(--tmut)">6 trips</span></div><div style="height:8px;border-radius:8px;background:var(--paper);overflow:hidden"><div style="width:100%;height:100%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:8px"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="font-weight:600;color:var(--ink)">Dez Okafor</span><span style="color:var(--tmut)">5 trips</span></div><div style="height:8px;border-radius:8px;background:var(--paper);overflow:hidden"><div style="width:83%;height:100%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:8px"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="font-weight:600;color:var(--ink)">Sam Reyes</span><span style="color:var(--tmut)">4 trips</span></div><div style="height:8px;border-radius:8px;background:var(--paper);overflow:hidden"><div style="width:66%;height:100%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:8px"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="font-weight:600;color:var(--ink)">Priya Anand</span><span style="color:var(--tmut)">3 trips</span></div><div style="height:8px;border-radius:8px;background:var(--paper);overflow:hidden"><div style="width:50%;height:100%;background:linear-gradient(90deg,var(--sand),var(--sand2));border-radius:8px"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="font-weight:600;color:var(--ink)">Cole Bennett</span><span style="color:var(--red)">Off this week</span></div><div style="height:8px;border-radius:8px;background:var(--paper);overflow:hidden"><div style="width:0%;height:100%;background:var(--sand)"></div></div></div>
+              </div>
+              <button onClick="{{ navGuides }}" style="margin-top:22px;width:100%;background:transparent;border:1px solid var(--line);border-radius:11px;padding:12px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Manage roster &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== TRIPS ===== -->
+      <sc-if value="{{ isTrips }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+            <span style="font-size:13px;color:var(--tmut)">Unassigned trips are escrow-funded and waiting on a guide &mdash; pick one from the menu.</span>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:1.4fr 1fr .7fr .8fr 1.1fr;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)"><span>Trip &amp; party</span><span>When</span><span>Amount</span><span>Status</span><span>Guide</span></div>
+            <sc-for list="{{ trips }}" as="t" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:1.4fr 1fr .7fr .8fr 1.1fr;gap:16px;padding:16px 24px;border-bottom:1px solid var(--line);align-items:center;background:{{ t.rowBg }}" style-hover="background:var(--paper)">
+                <div style="min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">{{ t.title }}</div><div style="font-size:12.5px;color:var(--tmut)">{{ t.party }}</div></div>
+                <span style="font-size:13.5px;color:var(--ink)">{{ t.when }}</span>
+                <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink)">{{ t.amount }}</span>
+                <span style="font-size:11px;font-weight:700;border-radius:20px;padding:4px 11px;white-space:nowrap;width:fit-content;color:{{ t.statusColor }};background:{{ t.statusBg }}">{{ t.status }}</span>
+                <sc-if value="{{ t.assigned }}">
+                  <div style="display:flex;align-items:center;gap:9px"><span style="width:30px;height:30px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:13px;font-weight:600;color:var(--goldtext);flex:none">{{ t.guideInitial }}</span><span style="font-size:13px;color:var(--ink);font-weight:600">{{ t.guide }}</span></div>
+                </sc-if>
+                <sc-if value="{{ t.needsGuide }}">
+                  <select onChange="{{ t.onAssign }}" style="appearance:none;background:var(--sandsoft);border:1px solid var(--sand2);border-radius:10px;padding:10px 12px;font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--goldtext);outline:none;cursor:pointer;width:100%">
+                    <option>Assign a guide&hellip;</option>
+                    <option>Mia Torres</option>
+                    <option>Dez Okafor</option>
+                    <option>Sam Reyes</option>
+                    <option>Priya Anand</option>
+                  </select>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== GUIDES ===== -->
+      <sc-if value="{{ isGuides }}">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+          <sc-for list="{{ guides }}" as="g" hint-placeholder-count="5">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px" style-hover="box-shadow:0 24px 44px -34px rgba(13,34,54,.5)">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+                <span style="width:52px;height:52px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:20px;font-weight:600;color:var(--goldtext);flex:none">{{ g.initial }}</span>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:15px;font-weight:700;color:var(--ink)">{{ g.name }}</span><span title="Verified guide" style="width:17px;height:17px;border-radius:50%;background:var(--sand);display:grid;place-items:center;color:#1c1303;font-size:9px;flex:none">&#10003;</span></div>
+                  <div style="font-size:12.5px;color:var(--tmut)">{{ g.spec }}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none">
+                  <span style="font-size:12px;font-weight:600;color:{{ g.availColor }}">{{ g.availLabel }}</span>
+                  <button onClick="{{ g.onToggle }}" role="switch" style="position:relative;width:40px;height:23px;border-radius:20px;border:0;cursor:pointer;background:{{ g.togBg }};transition:background .3s;padding:0"><span style="position:absolute;top:2px;left:{{ g.knobLeft }};width:19px;height:19px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></button>
+                </div>
+              </div>
+              <div style="display:flex;gap:18px;padding:14px 0;border-top:1px solid var(--line)">
+                <div><div style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ g.rating }}<span style="color:var(--sand);font-size:13px"> &#9733;</span></div><div style="font-size:11px;color:var(--tmut)">rating</div></div>
+                <div style="border-left:1px solid var(--line);padding-left:18px"><div style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ g.trips }}</div><div style="font-size:11px;color:var(--tmut)">trips this season</div></div>
+                <div style="border-left:1px solid var(--line);padding-left:18px"><div style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ g.earnings }}</div><div style="font-size:11px;color:var(--tmut)">earned MTD</div></div>
+              </div>
+            </div>
+          </sc-for>
+          <div style="background:transparent;border:1.5px dashed rgba(13,34,54,.2);border-radius:18px;display:grid;place-items:center;min-height:150px">
+            <button onClick="{{ inviteGuide }}" style="background:transparent;border:0;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--goldtext)">+ Invite a guide to your team</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== REQUESTS ===== -->
+      <sc-if value="{{ isRequests }}">
+        <div style="max-width:760px">
+          <sc-if value="{{ hasRequests }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ requests }}" as="r" hint-placeholder-count="3">
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+                  <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+                    <span style="width:44px;height:44px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext);flex:none">{{ r.initial }}</span>
+                    <div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600;color:var(--ink)">{{ r.name }}</div><div style="font-size:12.5px;color:var(--tmut)">{{ r.detail }}</div></div>
+                    <div style="text-align:right;flex:none"><div style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ r.amount }}</div><div style="font-size:11px;color:var(--cyan);font-weight:600">escrow ready</div></div>
+                  </div>
+                  <div style="background:var(--paper);border-radius:11px;padding:12px 14px;font-size:13px;color:var(--tmut);margin-bottom:14px;font-style:italic">&ldquo;{{ r.note }}&rdquo;</div>
+                  <div style="display:flex;gap:8px">
+                    <button onClick="{{ r.onAccept }}" style="flex:1;background:var(--green);color:#fff;border:0;border-radius:10px;padding:11px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer" style-hover="filter:brightness(1.06)">Accept &mdash; funds to escrow</button>
+                    <button onClick="{{ r.onDecline }}" style="flex:none;background:transparent;color:var(--tmut);border:1px solid var(--line);border-radius:10px;padding:11px 18px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer" style-hover="border-color:var(--red);color:var(--red)">Decline</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noRequests }}">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;text-align:center;padding:48px 20px"><div style="width:52px;height:52px;border-radius:50%;background:var(--greensoft);display:grid;place-items:center;color:var(--green);margin:0 auto 12px;font-size:22px">&#10003;</div><div style="font-family:var(--serif);font-size:20px;color:var(--ink)">Inbox clear</div><div style="font-size:13px;color:var(--tmut);margin-top:2px">No booking requests waiting.</div></div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = {
+    view:'overview', toast:'',
+    trips:[
+      { id:1, title:'Sunset fly \u00b7 Snake Bight', party:'2 anglers \u00b7 J. Whitmore', when:'Today \u00b7 5:30p', amount:'$420', guide:null },
+      { id:2, title:'Flats fly, dawn', party:'2 anglers \u00b7 M. Chen', when:'Jul 8 \u00b7 5:30a', amount:'$480', guide:'Mia Torres' },
+      { id:3, title:'Bass, electric skiff', party:'3 anglers \u00b7 Okafor party', when:'Jul 8 \u00b7 6:00a', amount:'$390', guide:'Dez Okafor' },
+      { id:4, title:'Inshore slam', party:'4 anglers \u00b7 R. Vance', when:'Jul 9 \u00b7 7:00a', amount:'$520', guide:null },
+      { id:5, title:'Night tarpon \u00b7 bridges', party:'2 anglers \u00b7 A. Chen', when:'Jul 10 \u00b7 8:30p', amount:'$460', guide:'Sam Reyes' },
+      { id:6, title:'Everglades backcountry', party:'2 anglers \u00b7 P. Silva', when:'Jul 11 \u00b7 6:30a', amount:'$540', guide:'Priya Anand' }
+    ],
+    avail:{ mia:true, dez:true, sam:true, priya:true, cole:false },
+    reqs:[
+      { id:1, initial:'K', name:'Kai Nakamura', detail:'Flats fly \u00b7 Jul 14 \u00b7 2 anglers', amount:'$480', note:'First time fly fishing the flats \u2014 we\u2019d love a patient guide and casting help.' },
+      { id:2, initial:'L', name:'Lena Fischer', detail:'Bass trip \u00b7 Jul 16 \u00b7 3 anglers', amount:'$390', note:'Bringing my two teenagers. Morning slot preferred if possible.' },
+      { id:3, initial:'T', name:'Tom Delgado', detail:'Night tarpon \u00b7 Jul 19 \u00b7 2 anglers', amount:'$460', note:'Bucket-list trip \u2014 we want the bridge bite. Any moon-phase advice welcome.' }
+    ]
+  };
+
+  componentDidMount(){ this._root=document.getElementById('gd-dash'); this.applyNav(); }
+  componentDidUpdate(){ this.applyNav(); }
+  applyNav(){
+    var root=this._root; if(!root) return; var v=this.state.view;
+    root.querySelectorAll('[data-nav]').forEach(function(b){
+      var on=b.getAttribute('data-nav')===v;
+      b.style.background=on?'rgba(227,192,137,.14)':'transparent';
+      b.style.color=on?'#f4e6cd':'#93a7b7';
+    });
+  }
+  showToast(m){ this.setState({toast:m}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2600); }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var titles={ overview:['Overview','Morning, Wade \u2014 three boats out today'], trips:['Trips','Assignment board \u2014 escrow-funded bookings'], guides:['Guides','Your roster & availability'], requests:['Requests','New bookings waiting on you'] };
+    var t=titles[s.view]||titles.overview;
+    var unassigned=s.trips.filter(function(x){return !x.guide;}).length;
+    return {
+      isOverview:s.view==='overview', isTrips:s.view==='trips', isGuides:s.view==='guides', isRequests:s.view==='requests',
+      pageTitle:t[0], pageSub:t[1],
+      navOverview:function(){ self.setState({view:'overview'}); },
+      navTrips:function(){ self.setState({view:'trips'}); },
+      navGuides:function(){ self.setState({view:'guides'}); },
+      navRequests:function(){ self.setState({view:'requests'}); },
+      guidesOutToday:2, unassignedCount:unassigned,
+      trips:s.trips.map(function(tr){
+        var assigned=!!tr.guide;
+        return {
+          title:tr.title, party:tr.party, when:tr.when, amount:tr.amount,
+          assigned:assigned, needsGuide:!assigned,
+          guide:tr.guide||'', guideInitial:(tr.guide||'?').charAt(0),
+          rowBg: assigned ? 'transparent' : 'rgba(227,192,137,.07)',
+          status: assigned ? 'Confirmed' : 'Needs guide',
+          statusColor: assigned ? '#1f8a5b' : '#a97e3c',
+          statusBg: assigned ? '#e2f2ea' : '#f4e6cd',
+          onAssign:function(e){
+            var name=e.target.value;
+            if(name.indexOf('Assign')===0) return;
+            var next=s.trips.map(function(x){ return x.id===tr.id ? Object.assign({},x,{guide:name}) : x; });
+            self.setState({trips:next});
+            self.showToast(name+' assigned \u2014 '+tr.title.split(' \u00b7 ')[0]+' confirmed to the angler');
+          }
+        };
+      }),
+      guides:[
+        { key:'mia', initial:'M', name:'Mia Torres', spec:'Flats & fly \u00b7 poling skiff', rating:'4.99', trips:41, earnings:'$8.4k' },
+        { key:'dez', initial:'D', name:'Dez Okafor', spec:'Bass & freshwater \u00b7 electric skiff', rating:'4.96', trips:36, earnings:'$6.9k' },
+        { key:'sam', initial:'S', name:'Sam Reyes', spec:'Inshore & night tarpon', rating:'4.94', trips:33, earnings:'$6.2k' },
+        { key:'priya', initial:'P', name:'Priya Anand', spec:'Everglades backcountry', rating:'4.93', trips:27, earnings:'$5.1k' },
+        { key:'cole', initial:'C', name:'Cole Bennett', spec:'Offshore light tackle', rating:'4.92', trips:22, earnings:'$4.8k' }
+      ].map(function(g){
+        var on=!!s.avail[g.key];
+        return Object.assign({},g,{
+          availLabel:on?'Taking trips':'Off',
+          availColor:on?'#1f8a5b':'#5c6b78',
+          togBg:on?'#1f8a5b':'rgba(13,34,54,.14)',
+          knobLeft:on?'19px':'2px',
+          onToggle:function(){ var av=Object.assign({},s.avail); av[g.key]=!av[g.key]; self.setState({avail:av}); self.showToast(g.name+(av[g.key]?' is now taking trips':' marked off \u2014 hidden from assignment')); }
+        });
+      }),
+      inviteGuide:function(){ self.showToast('Invite sent \u2014 they\u2019ll onboard with license & background check'); },
+      requests:s.reqs.map(function(r){
+        return Object.assign({},r,{
+          onAccept:function(){ self.setState({reqs:s.reqs.filter(function(x){return x.id!==r.id;})}); self.showToast(r.name+' accepted \u2014 '+r.amount+' funded in escrow'); },
+          onDecline:function(){ self.setState({reqs:s.reqs.filter(function(x){return x.id!==r.id;})}); self.showToast('Request declined'); }
+        });
+      }),
+      hasRequests:s.reqs.length>0, noRequests:s.reqs.length===0,
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

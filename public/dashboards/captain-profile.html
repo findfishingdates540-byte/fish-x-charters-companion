@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><circle cx="200" cy="160" r="60" fill="none" stroke="#e3c089" stroke-width="5"/><circle cx="200" cy="140" r="22" fill="#e3c089"/><path d="M160 205c8-22 72-22 80 0" fill="#e3c089"/><path d="M258 118l14 14 24-28" stroke="#27c0e2" stroke-width="8" fill="none" stroke-linecap="round"/><text x="200" y="320" font-family="Georgia,serif" font-size="28" letter-spacing="3" fill="#eaf1f6" text-anchor="middle">Captain</text></svg></template>
+</helmet>
+<div id="cap-profile" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--deep:#06151f;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.12);min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- ============ NAV ============ -->
+  <header style="position:sticky;top:0;z-index:40;background:rgba(9,27,44,.94);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid rgba(255,255,255,.1);color:var(--ond)">
+    <div style="max-width:1160px;margin:0 auto;padding:0 28px;height:62px;display:flex;align-items:center;gap:24px">
+      <a href="Fish-X Charters.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ond)">
+        <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+        <span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span>
+      </a>
+      <a href="Fish-X Charters.dc.html" style="display:inline-flex;align-items:center;gap:7px;color:var(--ondmut);text-decoration:none;font-size:13px;font-weight:500" style-hover="color:#fff"><span>&larr;</span> Back to charters</a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <button onClick="{{ share }}" style="display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;cursor:pointer;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ond)" style-hover="border-color:var(--sand)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></svg> Share</button>
+        <button onClick="{{ toggleSave }}" style="display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;cursor:pointer;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ond)" style-hover="border-color:var(--sand)"><span style="font-size:14px;color:{{ heartColor }}">{{ heart }}</span> {{ saveLabel }}</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ COVER ============ -->
+  <div data-screen-label="Profile cover" style="position:relative;height:280px;overflow:hidden">
+    <img src="assets/seascape.jpg" alt="Islamorada bluewater" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 42%">
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,34,54,.35) 0%,rgba(10,34,54,0) 40%,rgba(238,242,245,0) 70%,#eef2f5 100%)"></div>
+  </div>
+
+  <main style="max-width:1160px;margin:0 auto;padding:0 28px 64px">
+
+    <!-- ============ IDENTITY ============ -->
+    <div data-screen-label="Identity" style="display:flex;align-items:flex-end;gap:22px;margin-top:-64px;position:relative;flex-wrap:wrap">
+      <div style="position:relative;flex:none">
+        <img src="assets/james.jpg" alt="Capt. James Sterling" style="width:128px;height:128px;border-radius:24px;object-fit:cover;object-position:50% 30%;border:5px solid #fff;box-shadow:0 24px 48px -24px rgba(13,34,54,.55)">
+        <span title="Verified captain" style="position:absolute;bottom:-8px;right:-8px;width:36px;height:36px;border-radius:50%;background:var(--sand);display:grid;place-items:center;color:#1c1303;font-size:16px;border:3px solid #fff">&#10003;</span>
+      </div>
+      <div style="flex:1;min-width:260px;padding-bottom:4px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <h1 style="font-family:var(--serif);font-weight:600;font-size:38px;letter-spacing:-.01em;line-height:1;margin:0;color:var(--ink)">Capt. James Sterling</h1>
+          <sc-if value="{{ topRated }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:6px;background:var(--sandsoft);color:var(--goldtext);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:20px;padding:5px 11px">&#9733; Top rated</span></sc-if>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--tmut);margin-top:8px;flex-wrap:wrap">
+          <span style="color:var(--sand)">&#9733;</span><b style="color:var(--ink)">4.98</b><span>(317 reviews)</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:var(--tmut);opacity:.5"></span>
+          <span>Sterling Sportfishing &middot; Islamorada, Florida Keys</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:var(--tmut);opacity:.5"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:600"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Accepting bookings</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:26px;padding:16px 22px;background:var(--card);border:1px solid var(--line);border-radius:16px;flex:none">
+        <div><div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);line-height:1">20+</div><div style="font-size:11.5px;color:var(--tmut);margin-top:3px">years</div></div>
+        <div style="border-left:1px solid var(--line);padding-left:26px"><div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);line-height:1">317</div><div style="font-size:11.5px;color:var(--tmut);margin-top:3px">trips</div></div>
+        <div style="border-left:1px solid var(--line);padding-left:26px"><div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);line-height:1">~1 hr</div><div style="font-size:11.5px;color:var(--tmut);margin-top:3px">response</div></div>
+      </div>
+    </div>
+
+    <!-- ============ BODY GRID ============ -->
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:26px;align-items:start;margin-top:34px">
+
+      <!-- MAIN COLUMN -->
+      <div style="min-width:0;display:flex;flex-direction:column;gap:26px">
+
+        <!-- ABOUT -->
+        <section data-screen-label="About" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px">
+          <h2 style="font-family:var(--serif);font-weight:600;font-size:23px;margin:0 0 12px;color:var(--ink)">About Captain Sterling</h2>
+          <p style="font-size:14.5px;line-height:1.65;color:var(--tmut);margin:0 0 18px">Tournament-grade offshore captain with over two decades running the Islamorada bluewater. James grew up on these flats and has guided everyone from first-cast kids to IGFA record chasers. His 38&prime; custom sportfisher is rigged for tarpon, sailfish and mahi &mdash; and his crews clean and bag every keeper before you hit the dock.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">Speaks EN &middot; ES</span>
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">USCG Master 100GT</span>
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">Family friendly</span>
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">Tournament rigged</span>
+          </div>
+        </section>
+
+        <!-- THE BOAT / GALLERY -->
+        <section data-screen-label="The boat" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px">
+            <h2 style="font-family:var(--serif);font-weight:600;font-size:23px;margin:0;color:var(--ink)">The boat &mdash; &ldquo;Reel Sterling&rdquo;</h2>
+            <span style="font-size:13px;color:var(--tmut)">38&prime; custom sportfisher &middot; twin diesels</span>
+          </div>
+          <div style="border-radius:16px;overflow:hidden;height:300px;margin-bottom:10px;background-image:{{ galleryBg }};background-size:cover;background-position:50% 55%;transition:background-image .3s"></div>
+          <div style="display:flex;gap:10px">
+            <button onClick="{{ gal0 }}" style="flex:1;height:66px;border-radius:11px;overflow:hidden;border:2px solid {{ gal0Border }};padding:0;cursor:pointer;background:transparent"><img src="assets/yacht-coast.png" alt="Hull" style="width:100%;height:100%;object-fit:cover"></button>
+            <button onClick="{{ gal1 }}" style="flex:1;height:66px;border-radius:11px;overflow:hidden;border:2px solid {{ gal1Border }};padding:0;cursor:pointer;background:transparent"><img src="assets/helm.png" alt="Helm" style="width:100%;height:100%;object-fit:cover"></button>
+            <button onClick="{{ gal2 }}" style="flex:1;height:66px;border-radius:11px;overflow:hidden;border:2px solid {{ gal2Border }};padding:0;cursor:pointer;background:transparent"><img src="assets/sunset-tall.jpg" alt="On the water" style="width:100%;height:100%;object-fit:cover;object-position:50% 60%"></button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px">
+            <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--tmut)"><span style="color:var(--goldtext)">&#10003;</span> Garmin sonar suite</div>
+            <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--tmut)"><span style="color:var(--goldtext)">&#10003;</span> Outriggers &amp; kites</div>
+            <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--tmut)"><span style="color:var(--goldtext)">&#10003;</span> Shaded cabin + head</div>
+            <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--tmut)"><span style="color:var(--goldtext)">&#10003;</span> Life vests all sizes</div>
+          </div>
+        </section>
+
+        <!-- LISTINGS -->
+        <section data-screen-label="Trips offered">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+            <h2 style="font-family:var(--serif);font-weight:600;font-size:23px;margin:0;color:var(--ink)">Trips offered</h2>
+            <span style="font-size:13px;color:var(--tmut)">All escrow-protected</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ trips }}" as="t" hint-placeholder-count="3">
+              <article style="background:var(--card);border:1px solid {{ t.border }};border-radius:18px;padding:16px;display:flex;align-items:center;gap:18px;transition:box-shadow .3s,border-color .2s" style-hover="box-shadow:0 24px 44px -34px rgba(13,34,54,.5)">
+                <img src="{{ t.img }}" alt="" style="width:104px;height:80px;border-radius:12px;object-fit:cover;flex:none">
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px"><h3 style="font-family:var(--serif);font-weight:600;font-size:19px;margin:0;color:var(--ink)">{{ t.title }}</h3><sc-if value="{{ t.popular }}"><span style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--goldtext);background:var(--sandsoft);border-radius:20px;padding:3px 9px;flex:none">Most booked</span></sc-if></div>
+                  <div style="font-size:13px;color:var(--tmut);margin-top:4px">{{ t.meta }}</div>
+                </div>
+                <div style="text-align:right;flex:none"><div><span style="font-size:11px;color:var(--tmut)">from </span><span style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--goldtext)">{{ t.price }}</span></div><div style="font-size:11.5px;color:var(--tmut)">per trip</div></div>
+                <button onClick="{{ t.onPick }}" style="flex:none;background:{{ t.btnBg }};color:{{ t.btnColor }};border:0;border-radius:11px;padding:12px 20px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;transition:filter .2s" style-hover="filter:brightness(1.08)">{{ t.btnLabel }}</button>
+              </article>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- REVIEWS -->
+        <section data-screen-label="Reviews" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px">
+          <div style="display:flex;gap:34px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px">
+            <div style="flex:none;text-align:center;padding:6px 0">
+              <div style="font-family:var(--serif);font-weight:600;font-size:54px;line-height:1;color:var(--ink)">4.98</div>
+              <div style="color:var(--sand);font-size:14px;letter-spacing:2px;margin:6px 0 2px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+              <div style="font-size:12px;color:var(--tmut)">317 verified reviews</div>
+            </div>
+            <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:7px;padding-top:4px">
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--tmut);width:44px">5 stars</span><div style="flex:1;height:7px;border-radius:7px;background:var(--paper);overflow:hidden"><div style="width:96%;height:100%;background:var(--sand);border-radius:7px"></div></div><span style="font-size:12px;color:var(--tmut);width:34px;text-align:right">304</span></div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--tmut);width:44px">4 stars</span><div style="flex:1;height:7px;border-radius:7px;background:var(--paper);overflow:hidden"><div style="width:3.5%;height:100%;background:var(--sand);border-radius:7px"></div></div><span style="font-size:12px;color:var(--tmut);width:34px;text-align:right">11</span></div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--tmut);width:44px">3 stars</span><div style="flex:1;height:7px;border-radius:7px;background:var(--paper);overflow:hidden"><div style="width:0.6%;height:100%;background:var(--sand);border-radius:7px"></div></div><span style="font-size:12px;color:var(--tmut);width:34px;text-align:right">2</span></div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--tmut);width:44px">2 &amp; 1</span><div style="flex:1;height:7px;border-radius:7px;background:var(--paper);overflow:hidden"><div style="width:0%;height:100%;background:var(--sand)"></div></div><span style="font-size:12px;color:var(--tmut);width:34px;text-align:right">0</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="3">
+              <figure style="margin:0;padding:20px 0;border-top:1px solid var(--line)">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+                  <img src="{{ r.avatar }}" alt="{{ r.name }}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:50% 26%;border:1px solid var(--line)">
+                  <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ r.name }}</div><div style="font-size:12px;color:var(--tmut)">{{ r.meta }}</div></div>
+                  <span style="color:var(--sand);font-size:12px;letter-spacing:1.5px;flex:none">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                </div>
+                <blockquote style="font-size:14px;line-height:1.6;color:var(--tmut);margin:0 0 10px">{{ r.text }}</blockquote>
+                <button onClick="{{ r.onHelpful }}" style="background:transparent;border:1px solid var(--line);border-radius:20px;padding:6px 13px;font-family:var(--sans);font-size:11.5px;font-weight:600;color:{{ r.helpfulColor }};cursor:pointer;transition:border-color .2s" style-hover="border-color:rgba(13,34,54,.28)">{{ r.helpfulLabel }}</button>
+              </figure>
+            </sc-for>
+          </div>
+          <button style="width:100%;margin-top:6px;background:transparent;border:1px solid var(--line);border-radius:12px;padding:13px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Show all 317 reviews</button>
+        </section>
+      </div>
+
+      <!-- RIGHT RAIL -->
+      <div style="display:flex;flex-direction:column;gap:18px;position:sticky;top:86px">
+
+        <!-- BOOKING CARD -->
+        <div data-screen-label="Booking card" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 30px 60px -44px rgba(13,34,54,.55)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+            <div><span style="font-family:var(--serif);font-size:27px;font-weight:600;color:var(--ink)">{{ selPrice }}</span><span style="font-size:12.5px;color:var(--tmut)"> per trip</span></div>
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--cyan);background:#e2eef2;border-radius:20px;padding:4px 10px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></span>Escrow</span>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-bottom:14px">
+            <div style="padding:12px 14px;border-bottom:1px solid var(--line)">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:4px">Trip</div>
+              <select onChange="{{ onTripSelect }}" style="appearance:none;width:100%;background:transparent;border:0;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);outline:none;cursor:pointer">
+                <option>Offshore Tarpon &amp; Sailfish</option>
+                <option>Half-Day Reef Trip</option>
+                <option>Sunset Bluewater Run</option>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr">
+              <div style="padding:12px 14px;border-right:1px solid var(--line)">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:4px">Date</div>
+                <div style="font-size:14px;font-weight:600;color:var(--ink)">Jul 18, 2026</div>
+              </div>
+              <div style="padding:12px 14px">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:4px">Anglers</div>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button onClick="{{ decParty }}" aria-label="fewer" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px;cursor:pointer;display:grid;place-items:center;padding:0">&minus;</button>
+                  <span style="font-size:14px;font-weight:700;color:var(--ink);min-width:12px;text-align:center">{{ party }}</span>
+                  <button onClick="{{ incParty }}" aria-label="more" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px;cursor:pointer;display:grid;place-items:center;padding:0">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0"><span style="color:var(--tmut)">Charter</span><span style="color:var(--ink);font-weight:600">{{ selPrice }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0"><span style="color:var(--tmut)">Service &amp; escrow fee</span><span style="color:var(--ink);font-weight:600">{{ feeLabel }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:10px 0 0;border-top:1px solid var(--line);margin-top:8px"><span style="font-weight:700;color:var(--ink)">Total today</span><span style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ totalLabel }}</span></div>
+          <a href="Fish-X Booking.dc.html" style="display:block;text-align:center;background:var(--sand);color:#1c1303;text-decoration:none;border-radius:12px;padding:15px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:16px;transition:filter .2s" style-hover="filter:brightness(1.05)">{{ ctaLabel }}</a>
+          <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;color:var(--tmut)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <span style="font-size:11.5px">Held in escrow until your trip is done</span>
+          </div>
+        </div>
+
+        <!-- CREDENTIALS -->
+        <div data-screen-label="Credentials" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px">
+            <span style="position:relative;width:36px;height:36px;border-radius:50%;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext)"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--sand);animation:fx-sonar 3.4s ease-out infinite"></span>&#10003;</span>
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--goldtext)">Fish-X verified</div><div style="font-family:var(--serif);font-size:17px;color:var(--ink)">Credentials on file</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmut);padding:8px 0;border-top:1px solid var(--line)"><span style="color:var(--green)">&#10003;</span> USCG Master license &middot; current</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmut);padding:8px 0;border-top:1px solid var(--line)"><span style="color:var(--green)">&#10003;</span> Vessel liability insurance</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmut);padding:8px 0;border-top:1px solid var(--line)"><span style="color:var(--green)">&#10003;</span> Background check &middot; May 2026</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmut);padding:8px 0;border-top:1px solid var(--line)"><span style="color:var(--green)">&#10003;</span> CPR &amp; first-aid certified</div>
+        </div>
+
+        <!-- POLICY -->
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px">
+          <div style="font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:10px">Good to know</div>
+          <div style="font-size:13px;line-height:1.6;color:var(--tmut)">Free cancellation up to 48h before departure. Weather calls are the captain&rsquo;s &mdash; full refund or free rebooking from escrow, your choice.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--sand);color:#1c1303;display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:900},&quot;instantBook&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Booking&quot;},&quot;showTopRated&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Badges&quot;}}">
+class Component extends DCLogic {
+  state = {
+    saved:false, toast:'', party:2, gallery:0, selTrip:0,
+    helpful:{ r1:false, r2:false, r3:false }
+  };
+
+  tripsData(){
+    return [
+      { title:'Offshore Tarpon & Sailfish', meta:'Full day · 8 hrs · up to 4 anglers · tackle & bait included', price:850, img:'assets/seascape.jpg', popular:true },
+      { title:'Half-Day Reef Trip', meta:'Half day · 4 hrs · up to 6 anglers · great for families', price:480, img:'assets/yacht-coast.png', popular:false },
+      { title:'Sunset Bluewater Run', meta:'Evening · 5 hrs · up to 4 anglers · mahi & tuna', price:720, img:'assets/sunset-tall.jpg', popular:false }
+    ];
+  }
+
+  showToast(m){ this.setState({toast:m}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2400); }
+  money(n){ return '$'+Math.round(n).toLocaleString(); }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var data=this.tripsData();
+    var sel=data[s.selTrip];
+    var fee=Math.round(sel.price*0.08);
+    var galleries=["url('assets/yacht-coast.png')","url('assets/helm.png')","url('assets/sunset-tall.jpg')"];
+    var instant = this.props.instantBook !== false;
+    var revs=[
+      { id:'r1', name:'Marcus Thorne', meta:'Offshore Tarpon & Sailfish · September 2025', avatar:'assets/rev-marcus.png', text:'\u201cAbsolute perfection from start to finish. James put us on tarpon within the first hour and coached my son through a sailfish on light tackle. Knowing payment sat in escrow made the whole thing effortless.\u201d' },
+      { id:'r2', name:'Julianne V.', meta:'Sunset Bluewater Run · June 2025', avatar:'assets/rev-julianne.png', text:'\u201cAn unforgettable evening. The crew\u2019s attention to detail was beyond anything we\u2019d experienced \u2014 and the mahi bite at golden hour was unreal.\u201d' },
+      { id:'r3', name:'Robert Vance', meta:'Half-Day Reef Trip · March 2026', avatar:'assets/robert.jpg', text:'\u201cBooked for my crew of six. Boat was immaculate, gear top-shelf, and every keeper was cleaned and bagged before we tied up. Already rebooked.\u201d' }
+    ];
+    return {
+      topRated: this.props.showTopRated !== false,
+      heart: s.saved ? '\u2665' : '\u2661',
+      heartColor: s.saved ? '#d8514a' : '#eaf1f6',
+      saveLabel: s.saved ? 'Saved' : 'Save',
+      toggleSave:function(){ var now=!s.saved; self.setState({saved:now}); self.showToast(now?'Captain saved to your list':'Removed from saved'); },
+      share:function(){ self.showToast('Profile link copied'); },
+      // gallery
+      galleryBg: galleries[s.gallery],
+      gal0:function(){ self.setState({gallery:0}); }, gal1:function(){ self.setState({gallery:1}); }, gal2:function(){ self.setState({gallery:2}); },
+      gal0Border: s.gallery===0?'#e3c089':'transparent',
+      gal1Border: s.gallery===1?'#e3c089':'transparent',
+      gal2Border: s.gallery===2?'#e3c089':'transparent',
+      // listings
+      trips:data.map(function(t,i){
+        var on=i===s.selTrip;
+        return { title:t.title, meta:t.meta, price:self.money(t.price), img:t.img, popular:t.popular,
+          border:on?'#e3c089':'rgba(13,34,54,.10)',
+          btnBg:on?'#e3c089':'#0a2236', btnColor:on?'#1c1303':'#ffffff', btnLabel:on?'Selected':'Select',
+          onPick:function(){ self.setState({selTrip:i}); } };
+      }),
+      // booking card
+      selPrice:this.money(sel.price), feeLabel:this.money(fee), totalLabel:this.money(sel.price+fee),
+      party:s.party,
+      incParty:function(){ self.setState({party:Math.min(6,s.party+1)}); },
+      decParty:function(){ self.setState({party:Math.max(1,s.party-1)}); },
+      onTripSelect:function(e){ self.setState({selTrip:e.target.selectedIndex}); },
+      ctaLabel: instant ? 'Book now' : 'Request to book',
+      // reviews
+      reviews:revs.map(function(r){
+        var on=s.helpful[r.id];
+        return Object.assign({},r,{
+          helpfulLabel:on?'\u2713 Helpful':'Helpful?',
+          helpfulColor:on?'#1f8a5b':'#5c6b78',
+          onHelpful:function(){ var h=Object.assign({},s.helpful); h[r.id]=!h[r.id]; self.setState({helpful:h}); }
+        });
+      }),
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @keyframes fx-pop{0%{transform:scale(.4)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><circle cx="200" cy="165" r="75" fill="none" stroke="#e3c089" stroke-width="9"/><path d="m230 135-19 47-47 19 19-47z" fill="#e3c089"/><text x="200" y="325" font-family="Georgia,serif" font-size="28" letter-spacing="3" fill="#eaf1f6" text-anchor="middle">Guides</text></svg></template>
+</helmet>
+<div id="guide-profile" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--cyansoft:#e2eef2;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.12);min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- NAV -->
+  <header style="position:sticky;top:0;z-index:40;background:rgba(9,27,44,.94);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid rgba(255,255,255,.1);color:var(--ond)">
+    <div style="max-width:1160px;margin:0 auto;padding:0 28px;height:62px;display:flex;align-items:center;gap:22px">
+      <a href="Fish-X Charters.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ond)">
+        <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+        <span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span>
+      </a>
+      <a href="Fish-X Angler Dashboard.dc.html" style="display:inline-flex;align-items:center;gap:7px;color:var(--ondmut);text-decoration:none;font-size:13px;font-weight:500" style-hover="color:#fff"><span>&larr;</span> Back to dashboard</a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <button onClick="{{ share }}" style="display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;cursor:pointer;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ond)" style-hover="border-color:var(--sand)">Share</button>
+        <button onClick="{{ toggleSave }}" style="display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;cursor:pointer;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ond)" style-hover="border-color:var(--sand)"><span style="font-size:14px;color:{{ heartColor }}">{{ heart }}</span> {{ saveLabel }}</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- COVER -->
+  <div style="position:relative;height:250px;overflow:hidden">
+    <img src="assets/sunset-tall.jpg" alt="Everglades backcountry at dawn" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 55%">
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,34,54,.35) 0%,rgba(10,34,54,0) 40%,rgba(238,242,245,0) 70%,#eef2f5 100%)"></div>
+  </div>
+
+  <main style="max-width:1160px;margin:0 auto;padding:0 28px 64px">
+
+    <!-- IDENTITY -->
+    <div data-screen-label="Guide identity" style="display:flex;align-items:flex-end;gap:22px;margin-top:-58px;position:relative;flex-wrap:wrap">
+      <div style="position:relative;flex:none">
+        <div style="width:120px;height:120px;border-radius:24px;background:var(--navy);border:5px solid #fff;box-shadow:0 24px 48px -24px rgba(13,34,54,.55);display:grid;place-items:center;color:var(--sand)">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <span title="Verified outfitter" style="position:absolute;bottom:-8px;right:-8px;width:34px;height:34px;border-radius:50%;background:var(--sand);display:grid;place-items:center;color:#1c1303;font-size:15px;border:3px solid #fff">&#10003;</span>
+      </div>
+      <div style="flex:1;min-width:260px;padding-bottom:4px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <h1 style="font-family:var(--serif);font-weight:600;font-size:36px;letter-spacing:-.01em;line-height:1;margin:0;color:var(--ink)">Backcountry Guides</h1>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--sandsoft);color:var(--goldtext);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:20px;padding:5px 11px">Guide service</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--tmut);margin-top:8px;flex-wrap:wrap">
+          <span style="color:var(--sand)">&#9733;</span><b style="color:var(--ink)">4.95</b><span>(482 reviews)</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:var(--tmut);opacity:.5"></span>
+          <span>Islamorada &amp; the Everglades &middot; est. 2014</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:var(--tmut);opacity:.5"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:600"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>5 guides &middot; taking trips</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:26px;padding:16px 22px;background:var(--card);border:1px solid var(--line);border-radius:16px;flex:none">
+        <div><div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);line-height:1">2,400+</div><div style="font-size:11.5px;color:var(--tmut);margin-top:3px">trips guided</div></div>
+        <div style="border-left:1px solid var(--line);padding-left:26px"><div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);line-height:1">~2 hr</div><div style="font-size:11.5px;color:var(--tmut);margin-top:3px">response</div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:26px;align-items:start;margin-top:32px">
+
+      <!-- MAIN -->
+      <div style="min-width:0;display:flex;flex-direction:column;gap:24px">
+
+        <!-- ABOUT -->
+        <section style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px">
+          <h2 style="font-family:var(--serif);font-weight:600;font-size:22px;margin:0 0 12px;color:var(--ink)">Skinny water is our home water.</h2>
+          <p style="font-size:14.5px;line-height:1.65;color:var(--tmut);margin:0 0 16px">Five full-time guides covering the flats, backcountry and bridges from Islamorada to Flamingo. Poling skiffs and electric-motor boats only &mdash; we hunt tailing fish, not open water. First-timers welcome; casting coaching is part of every trip.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">Fly &amp; light tackle</span>
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">Poling skiffs</span>
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">Beginner friendly</span>
+            <span style="font-size:12px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:30px;padding:7px 13px">Catch &amp; release</span>
+          </div>
+        </section>
+
+        <!-- MEET THE GUIDES -->
+        <section data-screen-label="Meet the guides">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+            <h2 style="font-family:var(--serif);font-weight:600;font-size:22px;margin:0;color:var(--ink)">Meet the guides</h2>
+            <span style="font-size:13px;color:var(--tmut)">Pick one, or let us match you</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <sc-for list="{{ guides }}" as="g" hint-placeholder-count="5">
+              <button onClick="{{ g.onPick }}" style="display:flex;align-items:center;gap:13px;text-align:left;background:var(--card);border:1px solid {{ g.border }};border-radius:15px;padding:15px;cursor:pointer;font-family:var(--sans);transition:border-color .2s,box-shadow .3s" style-hover="box-shadow:0 20px 38px -30px rgba(13,34,54,.5)">
+                <span style="width:46px;height:46px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:18px;font-weight:600;color:var(--goldtext);flex:none">{{ g.initial }}</span>
+                <span style="flex:1;min-width:0">
+                  <span style="display:flex;align-items:center;gap:7px"><span style="font-size:14px;font-weight:700;color:var(--ink)">{{ g.name }}</span><span style="width:15px;height:15px;border-radius:50%;background:var(--sand);display:grid;place-items:center;color:#1c1303;font-size:8px;flex:none">&#10003;</span></span>
+                  <span style="display:block;font-size:12px;color:var(--tmut);margin-top:2px">{{ g.spec }}</span>
+                  <span style="display:block;font-size:12px;color:var(--tmut);margin-top:2px"><span style="color:var(--sand)">&#9733;</span> <b style="color:var(--ink)">{{ g.rating }}</b> &middot; {{ g.trips }} trips</span>
+                </span>
+                <sc-if value="{{ g.picked }}"><span style="flex:none;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--goldtext);background:var(--sandsoft);border-radius:20px;padding:4px 9px">Selected</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- TRIPS -->
+        <section data-screen-label="Guided trips">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+            <h2 style="font-family:var(--serif);font-weight:600;font-size:22px;margin:0;color:var(--ink)">Guided trips</h2>
+            <span style="font-size:13px;color:var(--tmut)">All escrow-protected</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ trips }}" as="t">
+              <article style="background:var(--card);border:1px solid {{ t.border }};border-radius:16px;padding:14px;display:flex;align-items:center;gap:16px;transition:box-shadow .3s,border-color .2s" style-hover="box-shadow:0 22px 40px -32px rgba(13,34,54,.5)">
+                <div role="img" aria-label="{{ t.title }}" style="width:92px;height:72px;border-radius:11px;background-image:{{ t.bg }};background-size:cover;background-position:50% 50%;background-color:#e9edf1;flex:none"></div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px"><h3 style="font-family:var(--serif);font-weight:600;font-size:18px;margin:0;color:var(--ink)">{{ t.title }}</h3><sc-if value="{{ t.popular }}"><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--goldtext);background:var(--sandsoft);border-radius:20px;padding:3px 8px;flex:none">Most booked</span></sc-if></div>
+                  <div style="font-size:12.5px;color:var(--tmut);margin-top:3px">{{ t.meta }}</div>
+                </div>
+                <div style="text-align:right;flex:none"><span style="font-size:11px;color:var(--tmut)">from </span><span style="font-family:var(--serif);font-size:20px;font-weight:600;color:var(--goldtext)">{{ t.price }}</span></div>
+                <button onClick="{{ t.onPick }}" style="flex:none;background:{{ t.btnBg }};color:{{ t.btnColor }};border:0;border-radius:10px;padding:11px 18px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;transition:filter .2s" style-hover="filter:brightness(1.08)">{{ t.btnLabel }}</button>
+              </article>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- REVIEWS -->
+        <section style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+            <span style="font-family:var(--serif);font-weight:600;font-size:40px;line-height:1;color:var(--ink)">4.95</span>
+            <div><div style="color:var(--sand);font-size:13px;letter-spacing:2px">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div style="font-size:12px;color:var(--tmut);margin-top:2px">482 verified reviews</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <figure style="margin:0;padding:18px 0;border-top:1px solid var(--line)">
+              <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px">
+                <span style="width:38px;height:38px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:15px;font-weight:600;color:var(--goldtext)">K</span>
+                <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">Kai Nakamura</div><div style="font-size:12px;color:var(--tmut)">Flats fly with Mia &middot; June 2026</div></div>
+                <span style="color:var(--sand);font-size:12px;letter-spacing:1.5px">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+              </div>
+              <blockquote style="font-size:14px;line-height:1.6;color:var(--tmut);margin:0">&ldquo;Never held a fly rod before. Mia had me casting by 7 AM and into my first tarpon by 9. Patient, funny, relentless about finding fish.&rdquo;</blockquote>
+            </figure>
+            <figure style="margin:0;padding:18px 0;border-top:1px solid var(--line)">
+              <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px">
+                <span style="width:38px;height:38px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:15px;font-weight:600;color:var(--goldtext)">L</span>
+                <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">Lena Fischer</div><div style="font-size:12px;color:var(--tmut)">Bass trip with Dez &middot; May 2026</div></div>
+                <span style="color:var(--sand);font-size:12px;letter-spacing:1.5px">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+              </div>
+              <blockquote style="font-size:14px;line-height:1.6;color:var(--tmut);margin:0">&ldquo;Took my teenagers out on the electric skiff &mdash; silent, spooky-close to the fish. Dez made it the highlight of our whole Florida trip. Escrow made paying a stranger online feel safe.&rdquo;</blockquote>
+            </figure>
+          </div>
+        </section>
+      </div>
+
+      <!-- RAIL -->
+      <div style="display:flex;flex-direction:column;gap:18px;position:sticky;top:86px">
+        <!-- BOOKING CARD -->
+        <div data-screen-label="Guide booking card" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 30px 60px -44px rgba(13,34,54,.55)">
+          <sc-if value="{{ notBooked }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+                <div><span style="font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink)">{{ selPrice }}</span><span style="font-size:12.5px;color:var(--tmut)"> per trip</span></div>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--cyan);background:var(--cyansoft);border-radius:20px;padding:4px 10px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></span>Escrow</span>
+              </div>
+              <div style="border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-bottom:14px">
+                <div style="padding:12px 14px;border-bottom:1px solid var(--line)">
+                  <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:4px">Trip</div>
+                  <select onChange="{{ onTripSelect }}" style="appearance:none;width:100%;background:transparent;border:0;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);outline:none;cursor:pointer">
+                    <option>Flats Fly, Dawn</option>
+                    <option>Bass on the Electric Skiff</option>
+                    <option>Night Tarpon &middot; Bridges</option>
+                    <option>Everglades Backcountry</option>
+                  </select>
+                </div>
+                <div style="padding:12px 14px;border-bottom:1px solid var(--line)">
+                  <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:4px">Your guide</div>
+                  <div style="font-size:14px;font-weight:600;color:var(--ink)">{{ prefLabel }}</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr">
+                  <div style="padding:12px 14px;border-right:1px solid var(--line)">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:4px">Date</div>
+                    <div style="font-size:14px;font-weight:600;color:var(--ink)">Jul 14, 2026</div>
+                  </div>
+                  <div style="padding:12px 14px">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tmut);margin-bottom:4px">Anglers</div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <button onClick="{{ decParty }}" aria-label="fewer" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px;cursor:pointer;display:grid;place-items:center;padding:0">&minus;</button>
+                      <span style="font-size:14px;font-weight:700;color:var(--ink);min-width:12px;text-align:center">{{ party }}</span>
+                      <button onClick="{{ incParty }}" aria-label="more" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px;cursor:pointer;display:grid;place-items:center;padding:0">+</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--tmut)">Guided trip</span><span style="color:var(--ink);font-weight:600">{{ selPrice }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--tmut)">Service &amp; escrow fee</span><span style="color:var(--ink);font-weight:600">{{ feeLabel }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;padding:10px 0 0;border-top:1px solid var(--line);margin-top:8px"><span style="font-weight:700;color:var(--ink)">Total</span><span style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ totalLabel }}</span></div>
+              <button onClick="{{ requestBook }}" style="display:block;width:100%;text-align:center;background:var(--sand);color:#1c1303;border:0;border-radius:12px;padding:15px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:16px;cursor:pointer;transition:filter .2s" style-hover="filter:brightness(1.05)">Request to book</button>
+              <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;color:var(--tmut)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                <span style="font-size:11.5px">Funds move to escrow only when they accept</span>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isBooked }}">
+            <div style="text-align:center;padding:8px 0">
+              <div style="width:64px;height:64px;border-radius:50%;background:var(--greensoft);display:grid;place-items:center;margin:0 auto 16px;animation:fx-pop .5s both"><span style="color:var(--green);font-size:26px">&#10003;</span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:23px;color:var(--ink)">Request sent</div>
+              <p style="font-size:13px;line-height:1.55;color:var(--tmut);margin:8px 0 16px">{{ bookedNote }}</p>
+              <div style="text-align:left;border:1px solid var(--line);border-radius:13px;padding:4px 14px;margin-bottom:16px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:9px 0;border-bottom:1px solid var(--line)"><span style="color:var(--tmut)">Trip</span><span style="font-weight:600;color:var(--ink)">{{ selTitle }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:9px 0;border-bottom:1px solid var(--line)"><span style="color:var(--tmut)">Guide</span><span style="font-weight:600;color:var(--ink)">{{ prefLabel }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:9px 0"><span style="color:var(--tmut)">On accept &rarr; escrow</span><span style="font-family:var(--serif);font-size:15px;font-weight:600;color:var(--cyan)">{{ totalLabel }}</span></div>
+              </div>
+              <a href="Fish-X Angler Dashboard.dc.html" style="display:block;background:var(--navy);color:#fff;text-decoration:none;border-radius:11px;padding:13px;font-size:12.5px;font-weight:700" style-hover="filter:brightness(1.15)">Track in my dashboard</a>
+              <button onClick="{{ resetBook }}" style="margin-top:10px;background:transparent;border:0;cursor:pointer;font-family:var(--sans);font-size:12.5px;color:var(--tmut);text-decoration:underline;text-underline-offset:3px">Book another trip</button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- CREDENTIALS -->
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+            <span style="position:relative;width:36px;height:36px;border-radius:50%;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext)"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--sand);animation:fx-sonar 3.4s ease-out infinite"></span>&#10003;</span>
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--goldtext)">Fish-X verified</div><div style="font-family:var(--serif);font-size:17px;color:var(--ink)">All 5 guides on file</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmut);padding:8px 0;border-top:1px solid var(--line)"><span style="color:var(--green)">&#10003;</span> State guide licenses &middot; current</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmut);padding:8px 0;border-top:1px solid var(--line)"><span style="color:var(--green)">&#10003;</span> Liability insurance &middot; service-wide</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmut);padding:8px 0;border-top:1px solid var(--line)"><span style="color:var(--green)">&#10003;</span> Background checks &middot; all guides</div>
+        </div>
+
+        <!-- POLICY -->
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 22px">
+          <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink);margin-bottom:8px">Good to know</div>
+          <div style="font-size:12.5px;line-height:1.6;color:var(--tmut)">Free cancellation up to 48h before your trip. Weather calls by the guide refund in full from escrow &mdash; or rebook on the next clean window.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out"><span style="width:22px;height:22px;border-radius:50%;background:var(--sand);color:#1c1303;display:grid;place-items:center;font-size:12px">&#10003;</span><span style="font-size:13.5px;font-weight:600">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { saved:false, toast:'', selTrip:0, party:2, guidePick:'first', booked:false };
+
+  tripsData(){
+    return [
+      { title:'Flats Fly, Dawn', meta:'6 hrs \u00b7 up to 2 anglers \u00b7 casting coaching included', price:480, img:'assets/sunset-tall.jpg', popular:true, guides:['mia','priya'] },
+      { title:'Bass on the Electric Skiff', meta:'6 hrs \u00b7 up to 3 anglers \u00b7 silent approach', price:390, img:'assets/yacht-coast.png', popular:false, guides:['dez'] },
+      { title:'Night Tarpon \u00b7 Bridges', meta:'4 hrs \u00b7 up to 2 anglers \u00b7 evening departure', price:460, img:'assets/seascape.jpg', popular:false, guides:['sam'] },
+      { title:'Everglades Backcountry', meta:'8 hrs \u00b7 up to 2 anglers \u00b7 Flamingo launch', price:540, img:'assets/helm.png', popular:false, guides:['priya','mia'] }
+    ];
+  }
+  guidesData(){
+    return [
+      { key:'mia', initial:'M', name:'Mia Torres', spec:'Flats & fly \u00b7 poling skiff', rating:'4.99', trips:410 },
+      { key:'dez', initial:'D', name:'Dez Okafor', spec:'Bass & freshwater', rating:'4.96', trips:355 },
+      { key:'sam', initial:'S', name:'Sam Reyes', spec:'Inshore & night tarpon', rating:'4.94', trips:330 },
+      { key:'priya', initial:'P', name:'Priya Anand', spec:'Everglades backcountry', rating:'4.93', trips:265 },
+      { key:'cole', initial:'C', name:'Cole Bennett', spec:'Offshore light tackle', rating:'4.92', trips:228 }
+    ];
+  }
+
+  money(n){ return '$'+Math.round(n).toLocaleString(); }
+  showToast(m){ this.setState({toast:m}); var self=this; clearTimeout(this._tt); this._tt=setTimeout(function(){ self.setState({toast:''}); },2400); }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var data=this.tripsData();
+    var sel=data[s.selTrip];
+    var fee=Math.round(sel.price*0.08);
+    var gd=this.guidesData();
+    var picked=gd.find(function(g){ return g.key===s.guidePick; });
+    var prefLabel=picked?picked.name:'First available \u00b7 we match you';
+
+    return {
+      heart:s.saved?'\u2665':'\u2661', heartColor:s.saved?'#d8514a':'#eaf1f6', saveLabel:s.saved?'Saved':'Save',
+      toggleSave:function(){ var now=!s.saved; self.setState({saved:now}); self.showToast(now?'Outfitter saved to your list':'Removed from saved'); },
+      share:function(){ self.showToast('Profile link copied'); },
+      guides:gd.map(function(g){
+        var on=s.guidePick===g.key;
+        return Object.assign({},g,{ picked:on, border:on?'#e3c089':'rgba(13,34,54,.10)',
+          onPick:function(){ self.setState({guidePick: on?'first':g.key, booked:false}); self.showToast(on?'We\u2019ll match you with the first available guide':g.name+' selected as your guide'); } });
+      }),
+      trips:data.map(function(t,i){
+        var on=i===s.selTrip;
+        return { title:t.title, meta:t.meta, price:self.money(t.price), bg:"url('"+t.img+"')", popular:t.popular,
+          border:on?'#e3c089':'rgba(13,34,54,.10)',
+          btnBg:on?'#e3c089':'#0a2236', btnColor:on?'#1c1303':'#ffffff', btnLabel:on?'Selected':'Select',
+          onPick:function(){ self.setState({selTrip:i, booked:false}); } };
+      }),
+      selTitle:sel.title, selPrice:this.money(sel.price), feeLabel:this.money(fee), totalLabel:this.money(sel.price+fee),
+      party:s.party, prefLabel:prefLabel,
+      incParty:function(){ self.setState({party:Math.min(3,s.party+1)}); },
+      decParty:function(){ self.setState({party:Math.max(1,s.party-1)}); },
+      onTripSelect:function(e){ self.setState({selTrip:e.target.selectedIndex, booked:false}); },
+      notBooked:!s.booked, isBooked:s.booked,
+      requestBook:function(){ self.setState({booked:true}); self.showToast('Request sent to Backcountry Guides'); },
+      resetBook:function(){ self.setState({booked:false}); },
+      bookedNote:'Backcountry Guides usually replies within 2 hours. Your card is only charged \u2014 into escrow \u2014 when they accept.',
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

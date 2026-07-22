@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#e3c089;color:#0a2236}
+  img{display:block;max-width:100%}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(13,34,54,.18);border-radius:10px;border:3px solid transparent;background-clip:content-box}
+  @keyframes fx-spin{to{transform:rotate(360deg)}}
+  @keyframes fx-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes fx-sonar{0%{transform:scale(.7);opacity:.5}70%{opacity:0}100%{transform:scale(2.2);opacity:0}}
+  @keyframes fx-toastin{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+  @keyframes fx-grow{0%,100%{transform:scaleY(1)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a2236"/><rect x="92" y="150" width="60" height="120" rx="6" fill="#27c0e2"/><rect x="170" y="110" width="60" height="160" rx="6" fill="#e3c089"/><rect x="248" y="180" width="60" height="90" rx="6" fill="#9bb0c0"/><text x="200" y="320" font-family="Georgia,serif" font-size="30" letter-spacing="4" fill="#eaf1f6" text-anchor="middle">Captain</text></svg></template>
+</helmet>
+<div id="cap-dash" style="--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--ink:#0d2236;--navy:#0a2236;--navy2:#0c2a42;--deep:#06151f;--paper:#eef2f5;--card:#ffffff;--sand:#e3c089;--sand2:#d2a566;--sandsoft:#f4e6cd;--goldtext:#a97e3c;--cyan:#1f9fbe;--green:#1f8a5b;--greensoft:#e2f2ea;--red:#d8514a;--ond:#eaf1f6;--ondmut:#93a7b7;--tmut:#5c6b78;--line:rgba(13,34,54,.10);--lined:rgba(255,255,255,.10);display:flex;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans)">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="width:256px;flex:none;background:var(--navy);color:var(--ond);display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh;border-right:1px solid rgba(255,255,255,.06)">
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 10px 22px">
+      <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
+      <span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:11px 12px;margin-bottom:18px">
+      <span style="width:34px;height:34px;border-radius:9px;background:rgba(227,192,137,.16);display:grid;place-items:center;color:var(--sand);flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M12 21c-4 0-7-3-7-7h14c0 4-3 7-7 7zM5 9l7-3 7 3"/></svg></span>
+      <div style="line-height:1.2;min-width:0"><div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ondmut)">Workspace</div><div style="font-size:13.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Captain</div></div>
+      <span style="margin-left:auto;color:var(--ondmut);font-size:12px">&#9662;</span>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:3px">
+      <button data-nav="overview" onClick="{{ setOverview }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg> Overview</button>
+      <button data-nav="bookings" onClick="{{ setBookings }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="m9 15 2 2 4-4"/></svg> Bookings <span data-nav-badge="bookings" style="margin-left:auto;background:var(--sand);color:#1c1303;font-size:11px;font-weight:700;border-radius:20px;padding:1px 8px">3</span></button>
+      <button data-nav="calendar" onClick="{{ setCalendar }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2v4M16 2v4"/></svg> Calendar</button>
+      <button data-nav="messages" onClick="{{ setMessages }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H8l-4 4z"/></svg> Messages <span style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--cyan)"></span></button>
+      <button data-nav="earnings" onClick="{{ setEarnings }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 4-6"/></svg> Earnings</button>
+    </nav>
+
+    <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--lined)">
+      <div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ondmut);padding:0 12px 8px">Account</div>
+      <button data-nav="settings" onClick="{{ setSettings }}" style="display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ondmut);text-align:left;transition:background .2s,color .2s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg> Settings</button>
+    </div>
+
+    <div style="margin-top:auto;display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border:1px solid var(--lined);border-radius:13px;padding:10px 12px">
+      <img src="assets/james.jpg" alt="Capt. James Sterling" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:50% 30%;flex:none">
+      <div style="line-height:1.25;min-width:0"><div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Capt. J. Sterling</div><div style="font-size:11px;color:var(--sand)">&#9733; 4.98 &middot; Verified</div></div>
+      <a href="Fish-X Auth.dc.html" title="Sign out" style="margin-left:auto;color:var(--ondmut);text-decoration:none;flex:none" style-hover="color:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <!-- TOPBAR -->
+    <header style="position:sticky;top:0;z-index:20;background:rgba(238,242,245,.86);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line);padding:18px 34px;display:flex;align-items:center;gap:24px">
+      <div style="min-width:0">
+        <div style="font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.1;color:var(--ink)">{{ pageTitle }}</div>
+        <div style="font-size:13px;color:var(--tmut);margin-top:1px">{{ pageSub }}</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <label style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:9px 15px;width:230px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search bookings, guests&hellip;" style="border:0;outline:none;background:transparent;font-family:var(--sans);font-size:13.5px;color:var(--ink);width:100%">
+        </label>
+        <button data-bell onClick="{{ toggleBell }}" style="position:relative;width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--line);cursor:pointer;display:grid;place-items:center;color:var(--ink)" style-hover="border-color:rgba(13,34,54,.24)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 0 0 4 0"/></svg>
+          <span style="position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--card)"></span>
+        </button>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:5px 6px 5px 14px">
+          <span style="position:relative;display:flex;align-items:center;gap:7px"><span data-avail-dot style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:fx-pulse 2.4s ease-in-out infinite"></span><span data-avail-text style="font-size:12.5px;font-weight:600;color:var(--ink)">Accepting</span></span>
+          <button data-avail-toggle onClick="{{ toggleAvail }}" role="switch" style="position:relative;width:40px;height:23px;border-radius:20px;border:0;cursor:pointer;background:var(--green);transition:background .3s;padding:0"><span data-avail-knob style="position:absolute;top:2px;left:19px;width:19px;height:19px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></button>
+        </div>
+      </div>
+    </header>
+
+    <!-- BELL DROPDOWN -->
+    <sc-if value="{{ bellOpen }}">
+      <div style="position:absolute;top:70px;right:34px;z-index:40;width:340px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 60px -30px rgba(13,34,54,.5);overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:space-between">Notifications <span style="font-size:11px;font-weight:600;color:var(--goldtext)">3 new</span></div>
+        <div style="display:flex;gap:11px;padding:14px 18px;border-bottom:1px solid var(--line)"><span style="width:32px;height:32px;border-radius:9px;background:var(--sandsoft);display:grid;place-items:center;color:var(--goldtext);flex:none;font-size:14px">$</span><div><div style="font-size:13px;color:var(--ink);font-weight:600">Payout released &mdash; $2,240</div><div style="font-size:12px;color:var(--tmut)">Marlin Run &middot; 2 hours ago</div></div></div>
+        <div style="display:flex;gap:11px;padding:14px 18px;border-bottom:1px solid var(--line)"><span style="width:32px;height:32px;border-radius:9px;background:#e2eef2;display:grid;place-items:center;color:var(--cyan);flex:none">&#9993;</span><div><div style="font-size:13px;color:var(--ink);font-weight:600">New message from Marcus T.</div><div style="font-size:12px;color:var(--tmut)">&ldquo;What time should we arrive?&rdquo;</div></div></div>
+        <div style="display:flex;gap:11px;padding:14px 18px"><span style="width:32px;height:32px;border-radius:9px;background:var(--greensoft);display:grid;place-items:center;color:var(--green);flex:none">&#9733;</span><div><div style="font-size:13px;color:var(--ink);font-weight:600">New 5-star review</div><div style="font-size:12px;color:var(--tmut)">Julianne V. &middot; yesterday</div></div></div>
+      </div>
+    </sc-if>
+
+    <main style="flex:1;padding:30px 34px 48px;max-width:1180px;width:100%">
+
+      <!-- ===== OVERVIEW ===== -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <!-- KPI ROW -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">This month</span><span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:2px 8px">&uarr; 18%</span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)"><span data-count="12450" data-prefix="$">$12,450</span></div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Gross earnings</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Upcoming</span><span style="color:var(--goldtext)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12c3-5 8-7 13-7 2 0 3.5 2 3.5 2s2 0 2 1-1.5 2-3 2c0 0-.5 3-3 5-4 3-12 1-15-1 2 0 3-1 3-3z"/></svg></span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)"><span data-count="7">7</span></div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Trips booked</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">In escrow</span><span style="position:relative;display:grid;place-items:center;width:18px;height:18px"><span style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan);animation:fx-sonar 3s ease-out infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan)"></span></span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)"><span data-count="3820" data-prefix="$">$3,820</span></div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">Held until trips complete</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">Rating</span><span style="color:var(--sand)">&#9733;</span></div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;color:var(--ink)"><span data-count="4.98" data-dec="2">4.98</span></div>
+              <div style="font-size:12.5px;color:var(--tmut);margin-top:6px">317 verified reviews</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-bottom:22px">
+            <!-- EARNINGS CHART -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px">
+                <div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">Earnings</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">Last 7 months</div></div>
+                <div style="text-align:right"><div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink)">$71,300</div><div style="font-size:12px;color:var(--green);font-weight:600">&uarr; 23% vs last period</div></div>
+              </div>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;height:160px">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Dec &middot; $6.2k" style="width:100%;max-width:38px;height:52%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px;transform-origin:bottom;animation:fx-grow .8s .0s both"></div><span style="font-size:11px;color:var(--tmut)">Dec</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Jan &middot; $5.4k" style="width:100%;max-width:38px;height:44%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px;transform-origin:bottom;animation:fx-grow .8s .08s both"></div><span style="font-size:11px;color:var(--tmut)">Jan</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Feb &middot; $7.1k" style="width:100%;max-width:38px;height:60%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px;transform-origin:bottom;animation:fx-grow .8s .16s both"></div><span style="font-size:11px;color:var(--tmut)">Feb</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Mar &middot; $8.9k" style="width:100%;max-width:38px;height:74%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px;transform-origin:bottom;animation:fx-grow .8s .24s both"></div><span style="font-size:11px;color:var(--tmut)">Mar</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Apr &middot; $9.6k" style="width:100%;max-width:38px;height:82%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px;transform-origin:bottom;animation:fx-grow .8s .32s both"></div><span style="font-size:11px;color:var(--tmut)">Apr</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="May &middot; $10.8k" style="width:100%;max-width:38px;height:91%;background:linear-gradient(180deg,#d7dee4,#c7d0d8);border-radius:7px 7px 3px 3px;transform-origin:bottom;animation:fx-grow .8s .4s both"></div><span style="font-size:11px;color:var(--tmut)">May</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end"><div title="Jun &middot; $12.45k" style="width:100%;max-width:38px;height:100%;background:linear-gradient(180deg,var(--sand),var(--sand2));border-radius:7px 7px 3px 3px;transform-origin:bottom;animation:fx-grow .8s .48s both;box-shadow:0 8px 18px -8px rgba(211,165,102,.7)"></div><span style="font-size:11px;color:var(--ink);font-weight:700">Jun</span></div>
+              </div>
+            </div>
+            <!-- PAYOUT / ESCROW -->
+            <div style="background:linear-gradient(160deg,#0c2a42,#0a2236);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;color:var(--ond);display:flex;flex-direction:column">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sand)">Available to withdraw</div>
+              <div style="font-family:var(--serif);font-weight:600;font-size:40px;line-height:1;margin:10px 0 4px;color:#fff"><span data-count="8630" data-prefix="$">$8,630</span></div>
+              <div style="font-size:12.5px;color:var(--ondmut)">Next auto-payout Fri, Jun 21</div>
+              <div style="margin:18px 0;height:1px;background:rgba(255,255,255,.1)"></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px"><span style="color:var(--ondmut)">Held in escrow</span><span style="color:#fff;font-weight:600">$3,820</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ondmut)">Lifetime earnings</span><span style="color:#fff;font-weight:600">$284,900</span></div>
+              <button data-withdraw onClick="{{ withdraw }}" style="margin-top:auto;width:100%;background:var(--sand);color:#1c1303;border:0;border-radius:12px;padding:14px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:filter .2s,transform .2s" style-hover="filter:brightness(1.05);transform:translateY(-1px)">{{ withdrawLabel }}</button>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+            <!-- BOOKING REQUESTS -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+                <div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">Action needed</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">Booking requests</div></div>
+                <span data-req-count style="font-size:12px;font-weight:700;color:var(--goldtext);background:var(--sandsoft);border-radius:20px;padding:4px 11px">{{ requestCount }} pending</span>
+              </div>
+              <sc-if value="{{ hasRequests }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <sc-for list="{{ requests }}" as="r" hint-placeholder-count="3">
+                    <div style="border:1px solid var(--line);border-radius:14px;padding:14px">
+                      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                        <div style="width:40px;height:40px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext);flex:none">{{ r.initial }}</div>
+                        <div style="min-width:0;flex:1"><div style="font-size:14px;font-weight:600;color:var(--ink)">{{ r.name }}</div><div style="font-size:12.5px;color:var(--tmut)">{{ r.detail }}</div></div>
+                        <div style="text-align:right;flex:none"><div style="font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink)">{{ r.amount }}</div><div style="font-size:11px;color:var(--tmut)">{{ r.party }}</div></div>
+                      </div>
+                      <div style="display:flex;gap:8px">
+                        <button onClick="{{ r.onAccept }}" style="flex:1;background:var(--green);color:#fff;border:0;border-radius:10px;padding:10px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;transition:filter .2s" style-hover="filter:brightness(1.06)">Accept</button>
+                        <button onClick="{{ r.onDecline }}" style="flex:none;background:transparent;color:var(--tmut);border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;transition:border-color .2s,color .2s" style-hover="border-color:var(--red);color:var(--red)">Decline</button>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noRequests }}">
+                <div style="text-align:center;padding:30px 10px"><div style="width:52px;height:52px;border-radius:50%;background:var(--greensoft);display:grid;place-items:center;color:var(--green);margin:0 auto 12px;font-size:22px">&#10003;</div><div style="font-family:var(--serif);font-size:19px;color:var(--ink)">All caught up</div><div style="font-size:13px;color:var(--tmut);margin-top:2px">No pending requests right now.</div></div>
+              </sc-if>
+            </div>
+
+            <!-- UPCOMING SCHEDULE -->
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+                <div><div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--goldtext)">Next up</div><div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-top:3px">Upcoming trips</div></div>
+                <button onClick="{{ setCalendar }}" style="background:transparent;border:0;color:var(--goldtext);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer">Calendar &rarr;</button>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)"><div style="text-align:center;flex:none;width:46px"><div style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);line-height:1">14</div><div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--goldtext)">Jun</div></div><div style="width:1px;height:34px;background:var(--line);flex:none"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">Offshore Tarpon &amp; Sailfish</div><div style="font-size:12.5px;color:var(--tmut)">6:00 AM &middot; Marcus Thorne &middot; 4 anglers</div></div><span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:3px 9px;flex:none">Confirmed</span></div>
+                <div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)"><div style="text-align:center;flex:none;width:46px"><div style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);line-height:1">16</div><div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--goldtext)">Jun</div></div><div style="width:1px;height:34px;background:var(--line);flex:none"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">Half-Day Reef Trip</div><div style="font-size:12.5px;color:var(--tmut)">1:00 PM &middot; The Delgado Family &middot; 6 anglers</div></div><span style="font-size:11px;font-weight:700;color:var(--green);background:var(--greensoft);border-radius:20px;padding:3px 9px;flex:none">Confirmed</span></div>
+                <div style="display:flex;align-items:center;gap:14px;padding:13px 0"><div style="text-align:center;flex:none;width:46px"><div style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);line-height:1">21</div><div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--goldtext)">Jun</div></div><div style="width:1px;height:34px;background:var(--line);flex:none"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink)">Sunset Bluewater Run</div><div style="font-size:12.5px;color:var(--tmut)">5:30 PM &middot; A. Chen &middot; 2 anglers</div></div><span style="font-size:11px;font-weight:700;color:var(--cyan);background:#e2eef2;border-radius:20px;padding:3px 9px;flex:none">Deposit held</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== BOOKINGS ===== -->
+      <sc-if value="{{ isBookings }}">
+        <div>
+          <div style="display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:20px;width:fit-content">
+            <button data-tab="upcoming" onClick="{{ tabUpcoming }}" style="background:transparent;border:0;border-radius:9px;cursor:pointer;padding:9px 20px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--tmut)">Upcoming</button>
+            <button data-tab="requests" onClick="{{ tabRequests }}" style="background:transparent;border:0;border-radius:9px;cursor:pointer;padding:9px 20px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--tmut)">Requests</button>
+            <button data-tab="past" onClick="{{ tabPast }}" style="background:transparent;border:0;border-radius:9px;cursor:pointer;padding:9px 20px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--tmut)">Past</button>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:1.4fr 1fr .8fr .8fr auto;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)"><span>Guest &amp; trip</span><span>Date</span><span>Party</span><span>Amount</span><span>Status</span></div>
+            <sc-for list="{{ bookings }}" as="b" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1.4fr 1fr .8fr .8fr auto;gap:16px;padding:16px 24px;border-bottom:1px solid var(--line);align-items:center" style-hover="background:var(--paper)">
+                <div style="display:flex;align-items:center;gap:12px;min-width:0"><div style="width:38px;height:38px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:16px;font-weight:600;color:var(--goldtext);flex:none">{{ b.initial }}</div><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.name }}</div><div style="font-size:12.5px;color:var(--tmut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.trip }}</div></div></div>
+                <span style="font-size:13.5px;color:var(--ink)">{{ b.date }}</span>
+                <span style="font-size:13.5px;color:var(--tmut)">{{ b.party }}</span>
+                <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink)">{{ b.amount }}</span>
+                <span style="font-size:11px;font-weight:700;border-radius:20px;padding:4px 11px;white-space:nowrap;color:{{ b.statusColor }};background:{{ b.statusBg }}">{{ b.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== CALENDAR ===== -->
+      <sc-if value="{{ isCalendar }}">
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+            <div style="font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink)">June 2024</div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <div style="display:flex;align-items:center;gap:14px;margin-right:8px">
+                <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tmut)"><span style="width:9px;height:9px;border-radius:3px;background:var(--sand)"></span>Booked</span>
+                <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tmut)"><span style="width:9px;height:9px;border-radius:3px;background:var(--cyan)"></span>Requested</span>
+              </div>
+              <button style="width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--ink)" style-hover="background:var(--paper)">&larr;</button>
+              <button style="width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--ink)" style-hover="background:var(--paper)">&rarr;</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:8px">
+            <div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);padding:4px">Sun</div><div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);padding:4px">Mon</div><div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);padding:4px">Tue</div><div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);padding:4px">Wed</div><div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);padding:4px">Thu</div><div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);padding:4px">Fri</div><div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);padding:4px">Sat</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
+            <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="35">
+              <button onClick="{{ c.onClick }}" style="aspect-ratio:1.2;border:1px solid {{ c.border }};background:{{ c.bg }};border-radius:11px;cursor:pointer;padding:8px;text-align:left;position:relative;font-family:var(--sans);color:{{ c.color }};transition:border-color .15s" style-hover="border-color:var(--sand)"><span style="font-size:13px;font-weight:600">{{ c.day }}</span><span style="position:absolute;bottom:7px;left:8px;font-size:10px;color:{{ c.tagColor }};font-weight:600">{{ c.tag }}</span></button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== MESSAGES ===== -->
+      <sc-if value="{{ isMessages }}">
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:grid;grid-template-columns:300px 1fr;height:600px">
+          <div style="border-right:1px solid var(--line);overflow-y:auto">
+            <sc-for list="{{ convos }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.onSelect }}" style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:{{ c.bg }};border:0;border-bottom:1px solid var(--line);padding:15px 18px;cursor:pointer;font-family:var(--sans)">
+                <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext);flex:none">{{ c.initial }}</div>
+                <div style="min-width:0;flex:1"><div style="display:flex;justify-content:space-between;gap:8px"><span style="font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="font-size:11px;color:var(--tmut);flex:none">{{ c.time }}</span></div><div style="font-size:12.5px;color:var(--tmut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.snippet }}</div></div>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <div style="padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--goldtext)">{{ activeInitial }}</div>
+              <div><div style="font-size:14.5px;font-weight:600;color:var(--ink)">{{ activeName }}</div><div style="font-size:12px;color:var(--green)">{{ activeMeta }}</div></div>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:12px;background:var(--paper)">
+              <sc-for list="{{ thread }}" as="m" hint-placeholder-count="4">
+                <div style="align-self:{{ m.align }};max-width:74%;background:{{ m.bg }};color:{{ m.color }};border:1px solid {{ m.border }};border-radius:14px;padding:11px 15px;font-size:14px;line-height:1.45">{{ m.text }}</div>
+              </sc-for>
+            </div>
+            <div style="padding:16px 22px;border-top:1px solid var(--line);display:flex;gap:10px">
+              <input placeholder="Write a reply&hellip;" style="flex:1;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none" style-focus="border-color:var(--sand)">
+              <button style="background:var(--sand);color:#1c1303;border:0;border-radius:11px;padding:0 20px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer">Send</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== EARNINGS ===== -->
+      <sc-if value="{{ isEarnings }}">
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px">
+            <div style="background:linear-gradient(160deg,#0c2a42,#0a2236);border-radius:18px;padding:22px;color:var(--ond)"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sand)">Available</div><div style="font-family:var(--serif);font-size:32px;font-weight:600;color:#fff;margin-top:8px">$8,630</div><div style="font-size:12px;color:var(--ondmut);margin-top:4px">Withdraw anytime</div></div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tmut)">In escrow</div><div style="font-family:var(--serif);font-size:32px;font-weight:600;color:var(--ink);margin-top:8px">$3,820</div><div style="font-size:12px;color:var(--cyan);margin-top:4px">Across 4 upcoming trips</div></div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tmut)">Lifetime</div><div style="font-family:var(--serif);font-size:32px;font-weight:600;color:var(--ink);margin-top:8px">$284,900</div><div style="font-size:12px;color:var(--tmut);margin-top:4px">Since 2019</div></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+            <div style="padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between"><div style="font-family:var(--serif);font-weight:600;font-size:21px;color:var(--ink)">Payout history</div><button onClick="{{ withdraw }}" style="background:var(--sand);color:#1c1303;border:0;border-radius:10px;padding:10px 18px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer">Withdraw $8,630</button></div>
+            <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:16px;padding:13px 24px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)"><span>Trip</span><span>Date</span><span>Amount</span><span>Status</span></div>
+            <sc-for list="{{ payouts }}" as="p" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:16px;padding:15px 24px;border-bottom:1px solid var(--line);align-items:center" style-hover="background:var(--paper)"><span style="font-size:14px;font-weight:600;color:var(--ink)">{{ p.trip }}</span><span style="font-size:13.5px;color:var(--tmut)">{{ p.date }}</span><span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink)">{{ p.amount }}</span><span style="font-size:11px;font-weight:700;border-radius:20px;padding:4px 11px;white-space:nowrap;color:{{ p.color }};background:{{ p.bg }}">{{ p.status }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== SETTINGS ===== -->
+      <sc-if value="{{ isSettings }}">
+        <div style="max-width:640px;display:flex;flex-direction:column;gap:18px">
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px">
+            <div style="font-family:var(--serif);font-weight:600;font-size:21px;color:var(--ink);margin-bottom:18px">Profile</div>
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px"><img src="assets/james.jpg" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:50% 30%"><div><div style="font-size:16px;font-weight:600;color:var(--ink)">Capt. James Sterling</div><div style="font-size:13px;color:var(--tmut)">Sterling Sportfishing &middot; Islamorada, FL</div></div><button style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:10px;padding:9px 16px;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="border-color:rgba(13,34,54,.25)">Edit</button></div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--greensoft);border:1px solid rgba(31,138,91,.2);border-radius:12px;padding:13px 16px"><span style="color:var(--green)">&#10003;</span><span style="font-size:13.5px;color:var(--ink);font-weight:600">Verified captain</span><span style="font-size:12.5px;color:var(--tmut)">&middot; License, insurance &amp; background check current</span></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px 24px">
+            <div data-set-row style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--line)"><div><div style="font-size:14px;font-weight:600;color:var(--ink)">Accept instant bookings</div><div style="font-size:12.5px;color:var(--tmut)">Let verified anglers book without approval</div></div><button data-set-toggle onClick="{{ toggleSet1 }}" style="position:relative;width:44px;height:25px;border-radius:20px;border:0;cursor:pointer;background:var(--sand);transition:background .3s;padding:0"><span style="position:absolute;top:2px;left:21px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)" data-set-knob></span></button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--line)"><div><div style="font-size:14px;font-weight:600;color:var(--ink)">Auto-payout on completion</div><div style="font-size:12.5px;color:var(--tmut)">Release escrow to your bank the evening a trip ends</div></div><button data-set-toggle2 onClick="{{ toggleSet2 }}" style="position:relative;width:44px;height:25px;border-radius:20px;border:0;cursor:pointer;background:var(--sand);transition:background .3s;padding:0"><span style="position:absolute;top:2px;left:21px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)" data-set-knob2></span></button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0"><div><div style="font-size:14px;font-weight:600;color:var(--ink)">Trip reminders</div><div style="font-size:12.5px;color:var(--tmut)">Email guests 24h before departure</div></div><button data-set-toggle3 onClick="{{ toggleSet3 }}" style="position:relative;width:44px;height:25px;border-radius:20px;border:0;cursor:pointer;background:var(--line);transition:background .3s;padding:0"><span style="position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.3)" data-set-knob3></span></button></div>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:13px 22px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);animation:fx-toastin .35s ease-out">
+      <span style="width:22px;height:22px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px">&#10003;</span>
+      <span style="font-size:13.5px;font-weight:600">{{ toast }}</span>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = {
+    view:'overview', available:true, bellOpen:false,
+    requests:[
+      { id:1, name:'Marcus Thorne', initial:'M', detail:'Offshore Tarpon & Sailfish · Jun 18', party:'4 anglers', amount:'$850' },
+      { id:2, name:'Priya Anand', initial:'P', detail:'Half-Day Reef Trip · Jun 22', party:'2 anglers', amount:'$480' },
+      { id:3, name:'The Okafor Party', initial:'O', detail:'Full-Day Bluewater · Jun 27', party:'6 anglers', amount:'$1,240' }
+    ],
+    toast:'', bookingsTab:'upcoming',
+    convos:[
+      { id:1, name:'Marcus Thorne', initial:'M', time:'9:24a', snippet:'What time should we arrive at the dock?', meta:'Trip Jun 18 · 4 anglers',
+        thread:[{me:false,text:'Morning Captain! Really looking forward to Tuesday.'},{me:false,text:'What time should we arrive at the dock?'},{me:true,text:'Morning Marcus! Let’s aim for 5:45 AM at slip 12 — we’ll shove off right at six to catch the bite.'}] },
+      { id:2, name:'Priya Anand', initial:'P', time:'Yest', snippet:'Perfect, thank you! See you then.', meta:'Trip Jun 22 · 2 anglers',
+        thread:[{me:true,text:'Hi Priya — confirming your half-day reef trip for the 22nd. Bringing the kids?'},{me:false,text:'Yes! Two adults, two kids. Is that ok?'},{me:true,text:'Absolutely, I’ll rig lighter setups for them.'},{me:false,text:'Perfect, thank you! See you then.'}] },
+      { id:3, name:'A. Chen', initial:'A', time:'Mon', snippet:'Can we add a second cooler?', meta:'Trip Jun 21 · 2 anglers',
+        thread:[{me:false,text:'Can we add a second cooler for the catch?'},{me:true,text:'Of course — plenty of ice on board too.'}] }
+    ],
+    activeConvo:1,
+    set1:true, set2:true, set3:false, withdrawn:false
+  };
+
+  componentDidMount(){
+    this._root = document.getElementById('cap-dash');
+    this.applyNav(); this.applyTabs(); this.runCounters();
+  }
+  componentDidUpdate(prev){
+    this.applyNav(); this.applyTabs();
+    if (prev && prev.view !== this.state.view && this.state.view === 'overview') this.runCounters();
+  }
+
+  applyNav(){
+    var root=this._root; if(!root) return; var v=this.state.view; var self=this;
+    root.querySelectorAll('[data-nav]').forEach(function(b){
+      var on=b.getAttribute('data-nav')===v;
+      b.style.background = on ? 'rgba(227,192,137,.14)' : 'transparent';
+      b.style.color = on ? '#f4e6cd' : '#93a7b7';
+    });
+  }
+  applyTabs(){
+    var root=this._root; if(!root) return; var t=this.state.bookingsTab;
+    root.querySelectorAll('[data-tab]').forEach(function(b){
+      var on=b.getAttribute('data-tab')===t;
+      b.style.background = on ? '#0a2236' : 'transparent';
+      b.style.color = on ? '#fff' : '#5c6b78';
+    });
+  }
+
+  runCounters(){
+    var root=this._root; if(!root) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    root.querySelectorAll('[data-count]').forEach(function(el){
+      var target=parseFloat(el.getAttribute('data-count'));
+      var dec=parseInt(el.getAttribute('data-dec')||'0',10);
+      var prefix=el.getAttribute('data-prefix')||'';
+      var dur=1100, start=null;
+      function fmt(v){ return prefix + (dec>0 ? v.toFixed(dec) : Math.round(v).toLocaleString()); }
+      function step(ts){ if(!start)start=ts; var t=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-t,3); el.textContent=fmt(target*e); if(t<1) requestAnimationFrame(step); else el.textContent=fmt(target); }
+      requestAnimationFrame(step);
+    });
+  }
+
+  showToast(msg){
+    this.setState({ toast:msg });
+    var self=this; clearTimeout(this._tt);
+    this._tt=setTimeout(function(){ self.setState({ toast:'' }); }, 2600);
+  }
+  accept(id){ var r=this.state.requests.find(function(x){return x.id===id;}); this.setState({ requests:this.state.requests.filter(function(x){return x.id!==id;}) }); if(r) this.showToast('Booking confirmed — '+r.name+' is funded in escrow'); }
+  decline(id){ this.setState({ requests:this.state.requests.filter(function(x){return x.id!==id;}) }); this.showToast('Request declined'); }
+
+  bookingsFor(tab){
+    if(tab==='requests') return this.state.requests.map(function(r){ return { initial:r.initial, name:r.name, trip:r.detail.split(' · ')[0], date:r.detail.split(' · ')[1]||'', party:r.party, amount:r.amount, status:'Pending', statusColor:'#a97e3c', statusBg:'#f4e6cd' }; });
+    if(tab==='past') return [
+      { initial:'J', name:'Julianne V.', trip:'Sunset Bluewater Run', date:'May 30', party:'2', amount:'$720', status:'Completed', statusColor:'#5c6b78', statusBg:'rgba(13,34,54,.06)' },
+      { initial:'R', name:'Robert Vance', trip:'Offshore Tarpon', date:'May 24', party:'4', amount:'$850', status:'Completed', statusColor:'#5c6b78', statusBg:'rgba(13,34,54,.06)' },
+      { initial:'D', name:'The Delgado Family', trip:'Half-Day Reef', date:'May 19', party:'6', amount:'$980', status:'Completed', statusColor:'#5c6b78', statusBg:'rgba(13,34,54,.06)' },
+      { initial:'S', name:'Sofia M.', trip:'Full-Day Bluewater', date:'May 11', party:'3', amount:'$1,240', status:'Completed', statusColor:'#5c6b78', statusBg:'rgba(13,34,54,.06)' }
+    ];
+    return [
+      { initial:'M', name:'Marcus Thorne', trip:'Offshore Tarpon & Sailfish', date:'Jun 14', party:'4', amount:'$850', status:'Confirmed', statusColor:'#1f8a5b', statusBg:'#e2f2ea' },
+      { initial:'D', name:'The Delgado Family', trip:'Half-Day Reef Trip', date:'Jun 16', party:'6', amount:'$980', status:'Confirmed', statusColor:'#1f8a5b', statusBg:'#e2f2ea' },
+      { initial:'A', name:'A. Chen', trip:'Sunset Bluewater Run', date:'Jun 21', party:'2', amount:'$720', status:'Deposit held', statusColor:'#1f9fbe', statusBg:'#e2eef2' },
+      { initial:'K', name:'Kai Nakamura', trip:'Full-Day Offshore', date:'Jun 25', party:'4', amount:'$1,240', status:'Confirmed', statusColor:'#1f8a5b', statusBg:'#e2f2ea' }
+    ];
+  }
+
+  calCellsData(){
+    // June 2024 starts on Saturday (index 6); 30 days
+    var booked={14:'Tarpon',16:'Reef',25:'Offshore'}; var requested={18:'Req',22:'Req',27:'Req'};
+    var cells=[]; var lead=6; var self=this;
+    for(var i=0;i<lead;i++) cells.push({ day:'', bg:'transparent', border:'transparent', color:'transparent', tag:'', tagColor:'transparent', onClick:function(){} });
+    for(var d=1;d<=30;d++){
+      var bg='#fff', border='rgba(13,34,54,.10)', tag='', tagColor='transparent';
+      if(booked[d]){ bg='rgba(227,192,137,.16)'; border='rgba(227,192,137,.5)'; tag=booked[d]; tagColor='#a97e3c'; }
+      else if(requested[d]){ bg='rgba(31,159,190,.10)'; border='rgba(31,159,190,.4)'; tag='Requested'; tagColor='#1f9fbe'; }
+      cells.push({ day:String(d), bg:bg, border:border, color:'#0d2236', tag:tag, tagColor:tagColor, onClick:function(){} });
+    }
+    return cells;
+  }
+
+  renderVals(){
+    var s=this.state; var self=this;
+    var titles={ overview:['Overview','Good morning, Captain Sterling'], bookings:['Bookings','Manage your trips and requests'], calendar:['Calendar','Your availability at a glance'], messages:['Messages','Stay in touch with your guests'], earnings:['Earnings','Payouts, escrow and history'], settings:['Settings','Manage your captain account'] };
+    var t=titles[s.view]||titles.overview;
+    var active=s.convos.find(function(c){return c.id===s.activeConvo;})||s.convos[0];
+
+    return {
+      isOverview:s.view==='overview', isBookings:s.view==='bookings', isCalendar:s.view==='calendar', isMessages:s.view==='messages', isEarnings:s.view==='earnings', isSettings:s.view==='settings',
+      pageTitle:t[0], pageSub:t[1], bellOpen:s.bellOpen,
+      setOverview:function(){ self.setState({view:'overview',bellOpen:false}); },
+      setBookings:function(){ self.setState({view:'bookings',bellOpen:false}); },
+      setCalendar:function(){ self.setState({view:'calendar',bellOpen:false}); },
+      setMessages:function(){ self.setState({view:'messages',bellOpen:false}); },
+      setEarnings:function(){ self.setState({view:'earnings',bellOpen:false}); },
+      setSettings:function(){ self.setState({view:'settings',bellOpen:false}); },
+      toggleBell:function(){ self.setState({bellOpen:!s.bellOpen}); },
+      toggleAvail:function(){ self.setState({available:!s.available}); self.afterAvail(); },
+      // requests
+      requests:s.requests.map(function(r){ return Object.assign({},r,{ onAccept:function(){self.accept(r.id);}, onDecline:function(){self.decline(r.id);} }); }),
+      hasRequests:s.requests.length>0, noRequests:s.requests.length===0, requestCount:s.requests.length,
+      // withdraw
+      withdraw:function(){ if(!s.withdrawn){ self.setState({withdrawn:true}); self.showToast('Withdrawal of $8,630 is on its way to your bank'); } },
+      withdrawLabel: s.withdrawn ? 'Withdrawal sent \u2713' : 'Withdraw to bank',
+      // bookings
+      tabUpcoming:function(){ self.setState({bookingsTab:'upcoming'}); },
+      tabRequests:function(){ self.setState({bookingsTab:'requests'}); },
+      tabPast:function(){ self.setState({bookingsTab:'past'}); },
+      bookings:this.bookingsFor(s.bookingsTab),
+      // calendar
+      calCells:this.calCellsData(),
+      // messages
+      convos:s.convos.map(function(c){ return { id:c.id, name:c.name, initial:c.initial, time:c.time, snippet:c.snippet, bg:(c.id===s.activeConvo?'rgba(227,192,137,.12)':'transparent'), onSelect:function(){ self.setState({activeConvo:c.id}); } }; }),
+      activeName:active.name, activeInitial:active.initial, activeMeta:active.meta,
+      thread:active.thread.map(function(m){ return { text:m.text, align:(m.me?'flex-end':'flex-start'), bg:(m.me?'#0a2236':'#ffffff'), color:(m.me?'#ffffff':'#0d2236'), border:(m.me?'#0a2236':'rgba(13,34,54,.10)') }; }),
+      // earnings
+      payouts:[
+        { trip:'Marlin Run · Marcus T.', date:'Jun 2', amount:'$2,240', status:'Paid out', color:'#1f8a5b', bg:'#e2f2ea' },
+        { trip:'Sunset Run · Julianne V.', date:'May 30', amount:'$720', status:'Paid out', color:'#1f8a5b', bg:'#e2f2ea' },
+        { trip:'Reef Trip · Delgado', date:'May 19', amount:'$980', status:'Paid out', color:'#1f8a5b', bg:'#e2f2ea' },
+        { trip:'Offshore · A. Chen', date:'Jun 21', amount:'$720', status:'In escrow', color:'#1f9fbe', bg:'#e2eef2' },
+        { trip:'Full-Day · Okafor', date:'Jun 27', amount:'$1,240', status:'In escrow', color:'#1f9fbe', bg:'#e2eef2' }
+      ],
+      // settings
+      toggleSet1:function(){ self.setState({set1:!s.set1}); self.afterSet('set1'); },
+      toggleSet2:function(){ self.setState({set2:!s.set2}); self.afterSet('set2'); },
+      toggleSet3:function(){ self.setState({set3:!s.set3}); self.afterSet('set3'); },
+      // toast
+      hasToast:!!s.toast, toast:s.toast
+    };
+  }
+
+  afterAvail(){
+    var self=this;
+    setTimeout(function(){
+      var root=self._root; if(!root) return;
+      var on=self.state.available;
+      var dot=root.querySelector('[data-avail-dot]'), txt=root.querySelector('[data-avail-text]'), tog=root.querySelector('[data-avail-toggle]'), knob=root.querySelector('[data-avail-knob]');
+      if(dot) dot.style.background=on?'#1f8a5b':'#93a7b7';
+      if(txt) txt.textContent=on?'Accepting':'Paused';
+      if(tog) tog.style.background=on?'#1f8a5b':'rgba(13,34,54,.2)';
+      if(knob) knob.style.left=on?'19px':'2px';
+    },0);
+  }
+  afterSet(key){
+    var self=this;
+    setTimeout(function(){
+      var root=self._root; if(!root) return;
+      var map={ set1:['[data-set-toggle]','[data-set-knob]'], set2:['[data-set-toggle2]','[data-set-knob2]'], set3:['[data-set-toggle3]','[data-set-knob3]'] };
+      var on=self.state[key]; var sel=map[key];
+      var tog=root.querySelector(sel[0]), knob=root.querySelector(sel[1]);
+      if(tog) tog.style.background=on?'#e3c089':'rgba(13,34,54,.14)';
+      if(knob) knob.style.left=on?'21px':'2px';
+    },0);
+  }
+}
+</script>
+</body>
+</html>
