@@ -35,9 +35,10 @@ const myProfileQO = queryOptions({
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Fish-X Charters" }] }),
   loader: async ({ context }) => {
-    const [roles] = await Promise.all([
+    const [roles, businesses] = await Promise.all([
       context.queryClient.ensureQueryData(myRolesQO),
       context.queryClient.ensureQueryData(myBusinessesQO),
+      context.queryClient.ensureQueryData(myProfileQO),
     ]);
     const primary = hasPrimaryRole(roles);
     if (primary === "angler") {
@@ -51,11 +52,32 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
           queryFn: () => listRecommendedCharters(),
         }),
       ]);
-    } else if (primary === "captain" || primary === "business_owner") {
-      await context.queryClient.ensureQueryData({
-        queryKey: ["captain-dashboard"],
-        queryFn: () => getCaptainDashboard(),
-      });
+      return;
+    }
+    if (primary === "captain" || primary === "business_owner") {
+      const biz = businesses[0]?.business as { id: string; category_key: string } | undefined;
+      const key = biz?.category_key;
+      if (!biz || !key || key === "charter") {
+        await context.queryClient.ensureQueryData({
+          queryKey: ["captain-dashboard"],
+          queryFn: () => getCaptainDashboard(),
+        });
+      } else if (key === "marina" || key === "lodge") {
+        await context.queryClient.ensureQueryData({
+          queryKey: ["marina-overview", biz.id],
+          queryFn: () => getMarinaOverview({ data: { businessId: biz.id } }),
+        });
+      } else if (
+        key === "tackle_shop" ||
+        key === "bait_shop" ||
+        key === "gear_mfg" ||
+        key === "apparel"
+      ) {
+        await context.queryClient.ensureQueryData({
+          queryKey: ["shop-overview", biz.id],
+          queryFn: () => getShopOverview({ data: { businessId: biz.id } }),
+        });
+      }
     }
   },
   component: Dashboard,
