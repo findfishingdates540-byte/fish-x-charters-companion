@@ -4,7 +4,12 @@
  */
 import { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { signOut } from "@/lib/auth.functions";
+import { supabase } from "@/integrations/supabase/client";
+
+async function signOut() {
+  await supabase.auth.signOut();
+  window.location.href = "/auth";
+}
 
 export interface OperatorNavItem {
   key: string;
