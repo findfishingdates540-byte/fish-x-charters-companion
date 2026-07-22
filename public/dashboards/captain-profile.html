@@ -28,11 +28,11 @@
   <!-- ============ NAV ============ -->
   <header style="position:sticky;top:0;z-index:40;background:rgba(9,27,44,.94);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid rgba(255,255,255,.1);color:var(--ond)">
     <div style="max-width:1160px;margin:0 auto;padding:0 28px;height:62px;display:flex;align-items:center;gap:24px">
-      <a href="Fish-X Charters.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ond)">
+      <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ond)">
         <span style="width:11px;height:11px;background:var(--sand);transform:rotate(45deg);display:inline-block;border-radius:1px"></span>
         <span style="font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.1em">FISH&mdash;X</span>
       </a>
-      <a href="Fish-X Charters.dc.html" style="display:inline-flex;align-items:center;gap:7px;color:var(--ondmut);text-decoration:none;font-size:13px;font-weight:500" style-hover="color:#fff"><span>&larr;</span> Back to charters</a>
+      <a href="/" style="display:inline-flex;align-items:center;gap:7px;color:var(--ondmut);text-decoration:none;font-size:13px;font-weight:500" style-hover="color:#fff"><span>&larr;</span> Back to charters</a>
       <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
         <button onClick="{{ share }}" style="display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;cursor:pointer;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ond)" style-hover="border-color:var(--sand)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></svg> Share</button>
         <button onClick="{{ toggleSave }}" style="display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--lined);border-radius:30px;padding:9px 15px;cursor:pointer;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ond)" style-hover="border-color:var(--sand)"><span style="font-size:14px;color:{{ heartColor }}">{{ heart }}</span> {{ saveLabel }}</button>
@@ -201,7 +201,7 @@
           <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0"><span style="color:var(--tmut)">Charter</span><span style="color:var(--ink);font-weight:600">{{ selPrice }}</span></div>
           <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0"><span style="color:var(--tmut)">Service &amp; escrow fee</span><span style="color:var(--ink);font-weight:600">{{ feeLabel }}</span></div>
           <div style="display:flex;justify-content:space-between;font-size:14px;padding:10px 0 0;border-top:1px solid var(--line);margin-top:8px"><span style="font-weight:700;color:var(--ink)">Total today</span><span style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)">{{ totalLabel }}</span></div>
-          <a href="Fish-X Booking.dc.html" style="display:block;text-align:center;background:var(--sand);color:#1c1303;text-decoration:none;border-radius:12px;padding:15px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:16px;transition:filter .2s" style-hover="filter:brightness(1.05)">{{ ctaLabel }}</a>
+          <a href="/booking" style="display:block;text-align:center;background:var(--sand);color:#1c1303;text-decoration:none;border-radius:12px;padding:15px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:16px;transition:filter .2s" style-hover="filter:brightness(1.05)">{{ ctaLabel }}</a>
           <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;color:var(--tmut)">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
             <span style="font-size:11.5px">Held in escrow until your trip is done</span>
