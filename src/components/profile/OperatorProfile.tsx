@@ -264,7 +264,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
               {selected ? (
                 <Link
                   to="/booking"
-                  search={{ serviceId: selected.id }}
+                  search={{ service_id: selected.id }}
                   style={{ display: "block", textAlign: "center", background: "#0d2236", color: "#fff", borderRadius: 12, padding: "14px 16px", fontSize: 13, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", textDecoration: "none" }}
                 >
                   Request to book
