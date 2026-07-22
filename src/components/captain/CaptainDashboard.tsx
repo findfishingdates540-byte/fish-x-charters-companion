@@ -1,19 +1,30 @@
 /**
  * Captain dashboard — React port of public/dashboards/captain.html,
- * wired to live Supabase data via getCaptainDashboard.
+ * wired to live Supabase data via getCaptainDashboard and the
+ * captain-management server functions (bookings list, services CRUD,
+ * earnings, messages).
  */
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { getCaptainDashboard } from "@/lib/captain-dashboard.functions";
+import {
+  listCaptainBookings,
+  listCaptainConversations,
+  getCaptainEarnings,
+  upsertCaptainService,
+  deleteCaptainService,
+  toggleServicePublished,
+} from "@/lib/captain-management.functions";
 
 export const captainDashboardQO = queryOptions({
   queryKey: ["captain-dashboard"],
   queryFn: () => getCaptainDashboard(),
 });
 
-type Tab = "overview" | "bookings" | "calendar" | "messages" | "earnings" | "settings";
+type Tab = "overview" | "bookings" | "services" | "messages" | "earnings" | "settings";
 
 const money = (cents: number) =>
   `$${(Math.max(0, cents) / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
@@ -58,7 +69,7 @@ export function CaptainDashboard() {
   const pageTitle: Record<Tab, string> = {
     overview: `Welcome back, Captain`,
     bookings: "Bookings",
-    calendar: "Calendar",
+    services: "Services",
     messages: "Messages",
     earnings: "Earnings",
     settings: "Settings",
@@ -66,7 +77,7 @@ export function CaptainDashboard() {
   const pageSub: Record<Tab, string> = {
     overview: biz ? `${biz.name} · ${[biz.city, biz.region].filter(Boolean).join(", ")}` : "Set up your business to see bookings.",
     bookings: `${data.stats.upcomingCount} upcoming · ${data.stats.completedCount} completed`,
-    calendar: "Manage your availability",
+    services: "Publish trips, manage pricing and availability",
     messages: "Guest conversations",
     earnings: "Payouts and escrow",
     settings: "Business & payout settings",
@@ -97,7 +108,7 @@ export function CaptainDashboard() {
           </div>
         </div>
         <nav style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {(["overview", "bookings", "calendar", "messages", "earnings"] as Tab[]).map((t) => (
+          {(["overview", "bookings", "services", "messages", "earnings"] as Tab[]).map((t) => (
             <NavBtn key={t} label={cap(t)} active={tab === t} onClick={() => setTab(t)} badge={t === "bookings" ? data.stats.upcomingCount : undefined} />
           ))}
         </nav>
@@ -141,12 +152,12 @@ export function CaptainDashboard() {
         </header>
 
         <main style={{ flex: 1, padding: "30px 34px 48px", maxWidth: 1180, width: "100%" }}>
-          {tab === "overview" && <OverviewPanel data={data} />}
-          {tab === "bookings" && <BookingsPanel data={data} />}
-          {tab === "calendar" && <PlaceholderPanel title="Calendar" body="Manage availability, boat schedules, and blackouts. Coming soon." />}
-          {tab === "messages" && <PlaceholderPanel title="Messages" body="Guest conversations will appear here." />}
-          {tab === "earnings" && <EarningsPanel data={data} />}
-          {tab === "settings" && <PlaceholderPanel title="Settings" body="Business, payout, and notification settings." />}
+          {tab === "overview" && <OverviewPanel data={data} onGoto={setTab} />}
+          {tab === "bookings" && <BookingsPanel />}
+          {tab === "services" && <ServicesPanel data={data} />}
+          {tab === "messages" && <MessagesPanel />}
+          {tab === "earnings" && <EarningsPanel />}
+          {tab === "settings" && <SettingsPanel data={data} />}
         </main>
       </div>
     </div>
@@ -188,7 +199,9 @@ function NavBtn({ label, active, onClick, badge }: { label: string; active: bool
 
 type CaptainData = Awaited<ReturnType<typeof getCaptainDashboard>>;
 
-function OverviewPanel({ data }: { data: CaptainData }) {
+/* ---------------- OVERVIEW ---------------- */
+
+function OverviewPanel({ data, onGoto }: { data: CaptainData; onGoto: (t: Tab) => void }) {
   const { stats, upcoming, services } = data;
   return (
     <div>
@@ -200,7 +213,7 @@ function OverviewPanel({ data }: { data: CaptainData }) {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 18, marginBottom: 22 }}>
-        <Panel title="Upcoming bookings" action={{ label: "View all →", onClick: () => {} }}>
+        <Panel title="Upcoming bookings" action={{ label: "View all →", onClick: () => onGoto("bookings") }}>
           {upcoming.length === 0 && <Empty text="No upcoming trips yet." />}
           {upcoming.map((b, i) => (
             <Link
@@ -224,7 +237,7 @@ function OverviewPanel({ data }: { data: CaptainData }) {
           ))}
         </Panel>
 
-        <Panel title="Your services">
+        <Panel title="Your services" action={{ label: "Manage →", onClick: () => onGoto("services") }}>
           {services.length === 0 && <Empty text="Publish a trip to start receiving bookings." />}
           {services.map((s, i) => (
             <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < services.length - 1 ? "1px solid var(--line)" : "none" }}>
@@ -244,34 +257,412 @@ function OverviewPanel({ data }: { data: CaptainData }) {
   );
 }
 
-function BookingsPanel({ data }: { data: CaptainData }) {
-  const rows = useMemo(() => [...data.upcoming, ...data.recent.filter((r) => !data.upcoming.some((u) => u.id === r.id))], [data]);
+/* ---------------- BOOKINGS ---------------- */
+
+const BOOKING_FILTERS = [
+  { key: "all", label: "All" },
+  { key: "pending_confirmation", label: "Pending" },
+  { key: "confirmed", label: "Confirmed" },
+  { key: "in_progress", label: "In progress" },
+  { key: "completed", label: "Completed" },
+  { key: "cancelled", label: "Cancelled" },
+] as const;
+
+function BookingsPanel() {
+  const [filter, setFilter] = useState<(typeof BOOKING_FILTERS)[number]["key"]>("all");
+  const fn = useServerFn(listCaptainBookings);
+  const { data, isLoading } = useQuery({
+    queryKey: ["captain-bookings", filter],
+    queryFn: () => fn({ data: { status: filter as any } }),
+  });
+  const rows = data?.rows ?? [];
   return (
     <Panel title="All bookings">
-      {rows.length === 0 && <Empty text="No bookings yet." />}
-      {rows.map((b, i) => (
-        <div key={b.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i < rows.length - 1 ? "1px solid var(--line)" : "none" }}>
-          <div style={{ flex: 1 }}>
+      <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
+        {BOOKING_FILTERS.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            style={{
+              padding: "6px 12px",
+              borderRadius: 20,
+              fontSize: 12.5,
+              fontWeight: 600,
+              cursor: "pointer",
+              border: "1px solid var(--line)",
+              background: filter === f.key ? "var(--ink)" : "transparent",
+              color: filter === f.key ? "#fff" : "var(--tmut)",
+            }}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+      {isLoading && <Empty text="Loading…" />}
+      {!isLoading && rows.length === 0 && <Empty text="No bookings match this filter." />}
+      {rows.map((b: any, i: number) => (
+        <Link
+          key={b.id}
+          to="/bookings/detail"
+          search={{ id: b.id }}
+          style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i < rows.length - 1 ? "1px solid var(--line)" : "none", textDecoration: "none", color: "inherit" }}
+        >
+          <img src={b.service?.hero_url || "/dashboards/assets/seascape.jpg"} alt="" style={{ width: 52, height: 52, borderRadius: 11, objectFit: "cover", flex: "none" }} />
+          <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{b.service?.title ?? "Charter"}</div>
-            <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>{new Date(b.trip_date).toLocaleDateString()}</div>
+            <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
+              {new Date(b.trip_date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+              {b.customer_name ? ` · ${b.customer_name}` : ""}
+              {b.party_size ? ` · ${b.party_size} guests` : ""}
+            </div>
           </div>
           <StatusPill status={b.status} />
           <div style={{ fontFamily: "var(--serif)", fontSize: 17, color: "var(--goldtext)", fontWeight: 600, marginLeft: 12, minWidth: 90, textAlign: "right" }}>{money(b.total_cents ?? 0)}</div>
+        </Link>
+      ))}
+    </Panel>
+  );
+}
+
+/* ---------------- SERVICES ---------------- */
+
+type ServiceRow = CaptainData["services"][number];
+type ServiceDraft = {
+  id?: string;
+  title: string;
+  kind: string;
+  description: string;
+  hero_url: string;
+  base_price_cents: number;
+  deposit_cents: number;
+  capacity: number;
+  duration_minutes: number;
+  departure_location: string;
+  is_published: boolean;
+};
+
+const emptyDraft: ServiceDraft = {
+  title: "",
+  kind: "charter",
+  description: "",
+  hero_url: "",
+  base_price_cents: 0,
+  deposit_cents: 0,
+  capacity: 4,
+  duration_minutes: 240,
+  departure_location: "",
+  is_published: false,
+};
+
+function ServicesPanel({ data }: { data: CaptainData }) {
+  const qc = useQueryClient();
+  const upsert = useServerFn(upsertCaptainService);
+  const del = useServerFn(deleteCaptainService);
+  const toggle = useServerFn(toggleServicePublished);
+  const [editing, setEditing] = useState<ServiceDraft | null>(null);
+
+  const mUpsert = useMutation({
+    mutationFn: (draft: ServiceDraft) => upsert({ data: {
+      id: draft.id,
+      title: draft.title,
+      kind: draft.kind as any,
+      description: draft.description || null,
+      hero_url: draft.hero_url || null,
+      base_price_cents: Math.round(draft.base_price_cents),
+      deposit_cents: Math.round(draft.deposit_cents),
+      capacity: draft.capacity,
+      duration_minutes: draft.duration_minutes || null,
+      departure_location: draft.departure_location || null,
+      target_species: [],
+      includes: [],
+      is_published: draft.is_published,
+    } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
+      setEditing(null);
+    },
+  });
+
+  const mDelete = useMutation({
+    mutationFn: (id: string) => del({ data: { id } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["captain-dashboard"] }),
+  });
+
+  const mToggle = useMutation({
+    mutationFn: (v: { id: string; is_published: boolean }) => toggle({ data: v }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["captain-dashboard"] }),
+  });
+
+  return (
+    <Panel
+      title="Services"
+      action={{ label: "+ New service", onClick: () => setEditing({ ...emptyDraft }) }}
+    >
+      {editing && (
+        <ServiceForm
+          draft={editing}
+          onChange={setEditing}
+          onCancel={() => setEditing(null)}
+          onSave={() => mUpsert.mutate(editing)}
+          saving={mUpsert.isPending}
+          error={mUpsert.error ? String(mUpsert.error) : null}
+        />
+      )}
+
+      {data.services.length === 0 && !editing && <Empty text="No services yet. Add your first trip." />}
+
+      {data.services.map((s: ServiceRow, i: number) => (
+        <div
+          key={s.id}
+          style={{
+            display: "flex", alignItems: "center", gap: 14, padding: "14px 0",
+            borderBottom: i < data.services.length - 1 ? "1px solid var(--line)" : "none",
+          }}
+        >
+          <img src={s.hero_url || "/dashboards/assets/seascape.jpg"} alt="" style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 14, fontWeight: 600 }}>{s.title}</div>
+            <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>{money(s.base_price_cents ?? 0)} · up to {s.capacity ?? "—"} guests</div>
+          </div>
+          <button
+            onClick={() => mToggle.mutate({ id: s.id, is_published: !s.is_published })}
+            style={{ border: "1px solid var(--line)", background: "transparent", borderRadius: 20, padding: "5px 11px", fontSize: 12, fontWeight: 600, cursor: "pointer", color: s.is_published ? "var(--green)" : "var(--tmut)" }}
+          >
+            {s.is_published ? "Live" : "Draft"}
+          </button>
+          <button
+            onClick={() => setEditing({
+              id: s.id,
+              title: s.title,
+              kind: (s as any).kind ?? "charter",
+              description: "",
+              hero_url: s.hero_url ?? "",
+              base_price_cents: s.base_price_cents ?? 0,
+              deposit_cents: 0,
+              capacity: s.capacity ?? 4,
+              duration_minutes: 240,
+              departure_location: "",
+              is_published: s.is_published,
+            })}
+            style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "var(--goldtext)", fontWeight: 600 }}
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => { if (confirm(`Delete "${s.title}"?`)) mDelete.mutate(s.id); }}
+            style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "#d8514a" }}
+          >
+            Delete
+          </button>
         </div>
       ))}
     </Panel>
   );
 }
 
-function EarningsPanel({ data }: { data: CaptainData }) {
+function ServiceForm({ draft, onChange, onCancel, onSave, saving, error }: {
+  draft: ServiceDraft;
+  onChange: (d: ServiceDraft) => void;
+  onCancel: () => void;
+  onSave: () => void;
+  saving: boolean;
+  error: string | null;
+}) {
+  const upd = (patch: Partial<ServiceDraft>) => onChange({ ...draft, ...patch });
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
-      <KpiCard label="Month to date" value={money(data.stats.grossCents)} sub="Gross earnings" />
-      <KpiCard label="In escrow" value={money(data.stats.escrowCents)} sub="Releases on trip completion" />
-      <KpiCard label="Completed trips" value={String(data.stats.completedCount)} sub="Lifetime" />
+    <form
+      onSubmit={(e) => { e.preventDefault(); onSave(); }}
+      style={{ background: "var(--paper)", border: "1px solid var(--line)", borderRadius: 14, padding: 18, marginBottom: 16, display: "grid", gap: 12 }}
+    >
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
+        <Field label="Title"><input required value={draft.title} onChange={(e) => upd({ title: e.target.value })} style={input} /></Field>
+        <Field label="Kind">
+          <select value={draft.kind} onChange={(e) => upd({ kind: e.target.value })} style={input}>
+            <option value="charter">Charter</option>
+            <option value="guided_trip">Guided trip</option>
+            <option value="rental">Rental</option>
+            <option value="lesson">Lesson</option>
+            <option value="workshop">Workshop</option>
+            <option value="slip_rental">Slip rental</option>
+            <option value="custom">Custom</option>
+          </select>
+        </Field>
+      </div>
+      <Field label="Description">
+        <textarea value={draft.description} onChange={(e) => upd({ description: e.target.value })} rows={3} style={{ ...input, resize: "vertical" }} />
+      </Field>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
+        <Field label="Base price ($)"><input type="number" min={0} value={draft.base_price_cents / 100} onChange={(e) => upd({ base_price_cents: Math.round(Number(e.target.value) * 100) })} style={input} /></Field>
+        <Field label="Deposit ($)"><input type="number" min={0} value={draft.deposit_cents / 100} onChange={(e) => upd({ deposit_cents: Math.round(Number(e.target.value) * 100) })} style={input} /></Field>
+        <Field label="Capacity"><input type="number" min={1} max={50} value={draft.capacity} onChange={(e) => upd({ capacity: Number(e.target.value) })} style={input} /></Field>
+        <Field label="Duration (min)"><input type="number" min={30} step={15} value={draft.duration_minutes} onChange={(e) => upd({ duration_minutes: Number(e.target.value) })} style={input} /></Field>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
+        <Field label="Departure location"><input value={draft.departure_location} onChange={(e) => upd({ departure_location: e.target.value })} style={input} /></Field>
+        <Field label="Hero image URL"><input value={draft.hero_url} onChange={(e) => upd({ hero_url: e.target.value })} style={input} placeholder="https://…" /></Field>
+      </div>
+      <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+        <input type="checkbox" checked={draft.is_published} onChange={(e) => upd({ is_published: e.target.checked })} />
+        Publish immediately (visible on marketplace)
+      </label>
+      {error && <div style={{ color: "#d8514a", fontSize: 12.5 }}>{error}</div>}
+      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+        <button type="button" onClick={onCancel} style={btnGhost}>Cancel</button>
+        <button type="submit" disabled={saving} style={btnPrimary}>{saving ? "Saving…" : draft.id ? "Save changes" : "Create service"}</button>
+      </div>
+    </form>
+  );
+}
+
+const input: React.CSSProperties = { width: "100%", border: "1px solid var(--line)", borderRadius: 10, padding: "9px 12px", fontSize: 13.5, fontFamily: "var(--sans)", background: "#fff", color: "var(--ink)" };
+const btnPrimary: React.CSSProperties = { background: "var(--ink)", color: "#fff", border: 0, borderRadius: 20, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
+const btnGhost: React.CSSProperties = { background: "transparent", color: "var(--tmut)", border: "1px solid var(--line)", borderRadius: 20, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label style={{ display: "grid", gap: 5 }}>
+      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--tmut)" }}>{label}</span>
+      {children}
+    </label>
+  );
+}
+
+/* ---------------- EARNINGS ---------------- */
+
+function EarningsPanel() {
+  const fn = useServerFn(getCaptainEarnings);
+  const { data, isLoading } = useQuery({ queryKey: ["captain-earnings"], queryFn: () => fn() });
+  if (isLoading || !data) return <Empty text="Loading…" />;
+  const maxMonth = Math.max(1, ...data.monthly.map((m) => m.cents));
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18 }}>
+        <KpiCard label="Gross" value={money(data.totals.grossCents)} sub="Completed trips" />
+        <KpiCard label="Platform fee (10%)" value={money(data.totals.feeCents)} sub="Fish-X commission" />
+        <KpiCard label="Net earnings" value={money(data.totals.netCents)} sub="Your payout" />
+        <KpiCard label="In escrow" value={money(data.totals.escrowCents)} sub="Releases on completion" />
+      </div>
+
+      <Panel title="Monthly gross">
+        {data.monthly.length === 0 && <Empty text="No completed trips yet." />}
+        {data.monthly.length > 0 && (
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 180, padding: "10px 0" }}>
+            {data.monthly.map((m) => (
+              <div key={m.ym} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--goldtext)" }}>{money(m.cents)}</div>
+                <div
+                  style={{
+                    width: "100%",
+                    height: `${(m.cents / maxMonth) * 140}px`,
+                    minHeight: 4,
+                    background: "linear-gradient(180deg,var(--sand),var(--goldtext))",
+                    borderRadius: "6px 6px 0 0",
+                  }}
+                />
+                <div style={{ fontSize: 11, color: "var(--tmut)" }}>{m.ym}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Panel>
+
+      <Panel title="By service">
+        {data.byService.length === 0 && <Empty text="No breakdown yet." />}
+        {data.byService.map((s, i) => (
+          <div key={s.title} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < data.byService.length - 1 ? "1px solid var(--line)" : "none" }}>
+            <div style={{ flex: 1, fontSize: 13.5, fontWeight: 600 }}>{s.title}</div>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 17, color: "var(--goldtext)", fontWeight: 600 }}>{money(s.cents)}</div>
+          </div>
+        ))}
+      </Panel>
     </div>
   );
 }
+
+/* ---------------- MESSAGES ---------------- */
+
+function MessagesPanel() {
+  const fn = useServerFn(listCaptainConversations);
+  const { data, isLoading } = useQuery({ queryKey: ["captain-conversations"], queryFn: () => fn() });
+  if (isLoading) return <Empty text="Loading conversations…" />;
+  const rows = data ?? [];
+  return (
+    <Panel title="Recent conversations">
+      {rows.length === 0 && <Empty text="No messages yet. Guest messages will appear here after a booking." />}
+      {rows.map((c: any, i: number) => (
+        <Link
+          key={c.booking_id}
+          to="/bookings/detail"
+          search={{ id: c.booking_id }}
+          style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i < rows.length - 1 ? "1px solid var(--line)" : "none", textDecoration: "none", color: "inherit" }}
+        >
+          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(31,159,190,.12)", color: "var(--cyan)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", fontWeight: 600, fontSize: 18 }}>
+            {(c.customer_name || "G").charAt(0).toUpperCase()}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 14, fontWeight: 600 }}>{c.customer_name}</span>
+              <span style={{ fontSize: 12, color: "var(--tmut)" }}>· {c.trip_title}</span>
+              {c.unread_count > 0 && (
+                <span style={{ marginLeft: 6, background: "var(--sand)", color: "#1c1303", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{c.unread_count}</span>
+              )}
+            </div>
+            <div style={{ fontSize: 13, color: "var(--tmut)", marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {c.last_message?.body ?? "—"}
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: "var(--tmut)", flex: "none" }}>
+            {c.last_message?.created_at ? new Date(c.last_message.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""}
+          </div>
+        </Link>
+      ))}
+    </Panel>
+  );
+}
+
+/* ---------------- SETTINGS ---------------- */
+
+function SettingsPanel({ data }: { data: CaptainData }) {
+  const biz = data.business;
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <Panel title="Business profile">
+        {!biz && <Empty text="Complete onboarding to set up your business." />}
+        {biz && (
+          <div style={{ display: "grid", gap: 10, fontSize: 13.5 }}>
+            <Row k="Name" v={biz.name} />
+            <Row k="Location" v={[biz.city, biz.region].filter(Boolean).join(", ") || "—"} />
+            <Row k="Category" v={biz.category_key ?? "—"} />
+            <Row k="Status" v={biz.is_published ? "Published" : "Draft"} />
+            <Row k="Verification" v={biz.verified_at ? "★ Verified" : "Pending"} />
+            <div style={{ marginTop: 8 }}>
+              <Link to="/onboarding" style={{ color: "var(--goldtext)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+                Edit business →
+              </Link>
+            </div>
+          </div>
+        )}
+      </Panel>
+      <Panel title="Payouts">
+        <div style={{ fontSize: 13.5, color: "var(--tmut)", lineHeight: 1.6 }}>
+          Fish-X uses Stripe Connect for payouts. Funds are held in escrow and released 24 hours after trip completion.
+          Payout configuration will be enabled once your Stripe account is connected.
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid var(--line)" }}>
+      <span style={{ color: "var(--tmut)", fontWeight: 600 }}>{k}</span>
+      <span style={{ color: "var(--ink)" }}>{v}</span>
+    </div>
+  );
+}
+
+/* ---------------- SHARED ---------------- */
 
 function KpiCard({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
@@ -303,14 +694,6 @@ function Empty({ text }: { text: string }) {
   return <div style={{ padding: "24px 0", fontSize: 13.5, color: "var(--tmut)", textAlign: "center" }}>{text}</div>;
 }
 
-function PlaceholderPanel({ title, body }: { title: string; body: string }) {
-  return (
-    <Panel title={title}>
-      <div style={{ padding: "36px 0", textAlign: "center", color: "var(--tmut)", fontSize: 13.5 }}>{body}</div>
-    </Panel>
-  );
-}
-
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, { bg: string; fg: string; label: string }> = {
     pending_payment: { bg: "#fdf3d9", fg: "#a97e3c", label: "Awaiting payment" },
@@ -319,6 +702,8 @@ function StatusPill({ status }: { status: string }) {
     in_progress: { bg: "#e2f2ea", fg: "#1f8a5b", label: "In progress" },
     completed: { bg: "#e2f2ea", fg: "#1f8a5b", label: "Completed" },
     reviewed: { bg: "#e2f2ea", fg: "#1f8a5b", label: "Reviewed" },
+    cancelled: { bg: "rgba(216,81,74,.12)", fg: "#d8514a", label: "Cancelled" },
+    refunded: { bg: "rgba(216,81,74,.12)", fg: "#d8514a", label: "Refunded" },
   };
   const cfg = map[status] ?? { bg: "rgba(13,34,54,.08)", fg: "#5c6b78", label: status.replace(/_/g, " ") };
   return (
