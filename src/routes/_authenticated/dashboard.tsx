@@ -4,6 +4,12 @@ import { useEffect } from "react";
 import { getMyRoles, hasPrimaryRole } from "@/lib/auth.functions";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { DashboardFrame } from "@/components/DashboardFrame";
+import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
+import {
+  getAnglerDashboard,
+  listRecommendedCharters,
+} from "@/lib/angler-dashboard.functions";
+
 
 const myRolesQO = queryOptions({
   queryKey: ["my-roles"],
@@ -21,13 +27,28 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     await Promise.all([
       context.queryClient.ensureQueryData(myRolesQO),
       context.queryClient.ensureQueryData(myBusinessesQO),
+      context.queryClient.ensureQueryData({
+        queryKey: ["angler-dashboard"],
+        queryFn: () => getAnglerDashboard(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: ["angler-recos"],
+        queryFn: () => listRecommendedCharters(),
+      }),
     ]);
   },
   component: Dashboard,
+  errorComponent: ({ error }) => (
+    <div style={{ padding: 40, fontFamily: "system-ui" }}>
+      <h1>Dashboard error</h1>
+      <p>{(error as Error).message}</p>
+    </div>
+  ),
 });
 
 // Map an operator's business category to its DC dashboard template.
 const categoryTemplate: Record<string, string> = {
+
   charter: "captain",
   tackle_shop: "tackle",
   bait_shop: "tackle",
@@ -55,8 +76,9 @@ function Dashboard() {
   }, [primaryRole, businesses, navigate]);
 
   if (primaryRole === "angler") {
-    return <DashboardFrame src="/dashboards/angler.html" title="Angler dashboard" />;
+    return <AnglerDashboard />;
   }
+
 
   if (primaryRole === "business_owner" || primaryRole === "captain") {
     const categoryKey = businesses[0]?.business?.category_key as string | undefined;
