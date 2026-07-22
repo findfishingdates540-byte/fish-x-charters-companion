@@ -58,7 +58,7 @@ export const getCaptainDashboard = createServerFn({ method: "GET" })
         .limit(8),
       supabase
         .from("bookings")
-        .select("id,trip_date,start_time,status,total_cents,party_size,angler:profiles!bookings_angler_id_fkey(display_name,full_name,avatar_url),service:bookable_services(title,hero_url)")
+        .select("id,trip_date,start_time,status,total_cents,party_size,service:bookable_services(title,hero_url)")
         .eq("business_id", business.id)
         .in("status", UPCOMING)
         .gte("trip_date", today)
@@ -66,10 +66,11 @@ export const getCaptainDashboard = createServerFn({ method: "GET" })
         .limit(8),
       supabase
         .from("bookings")
-        .select("id,trip_date,status,total_cents,angler:profiles!bookings_angler_id_fkey(display_name,full_name),service:bookable_services(title)")
+        .select("id,trip_date,status,total_cents,service:bookable_services(title)")
         .eq("business_id", business.id)
         .order("updated_at", { ascending: false })
         .limit(6),
+
       supabase
         .from("bookings")
         .select("total_cents")
