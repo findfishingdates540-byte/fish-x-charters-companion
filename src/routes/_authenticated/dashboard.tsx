@@ -1,16 +1,20 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { getMyRoles, hasPrimaryRole } from "@/lib/auth.functions";
+import { getMyRoles, hasPrimaryRole, getMyProfile } from "@/lib/auth.functions";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { DashboardFrame } from "@/components/DashboardFrame";
 import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
 import { CaptainDashboard } from "@/components/captain/CaptainDashboard";
+import { MarinaDashboard } from "@/components/marina/MarinaDashboard";
+import { ShopDashboard } from "@/components/tackle/ShopDashboard";
 import {
   getAnglerDashboard,
   listRecommendedCharters,
 } from "@/lib/angler-dashboard.functions";
 import { getCaptainDashboard } from "@/lib/captain-dashboard.functions";
+import { getMarinaOverview } from "@/lib/marina.functions";
+import { getShopOverview } from "@/lib/tackle.functions";
 
 const myRolesQO = queryOptions({
   queryKey: ["my-roles"],
@@ -22,12 +26,19 @@ const myBusinessesQO = queryOptions({
   queryFn: () => getMyBusinesses(),
 });
 
+const myProfileQO = queryOptions({
+  queryKey: ["my-profile"],
+  queryFn: () => getMyProfile(),
+});
+
+
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Fish-X Charters" }] }),
   loader: async ({ context }) => {
-    const [roles] = await Promise.all([
+    const [roles, businesses] = await Promise.all([
       context.queryClient.ensureQueryData(myRolesQO),
       context.queryClient.ensureQueryData(myBusinessesQO),
+      context.queryClient.ensureQueryData(myProfileQO),
     ]);
     const primary = hasPrimaryRole(roles);
     if (primary === "angler") {
@@ -41,11 +52,32 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
           queryFn: () => listRecommendedCharters(),
         }),
       ]);
-    } else if (primary === "captain" || primary === "business_owner") {
-      await context.queryClient.ensureQueryData({
-        queryKey: ["captain-dashboard"],
-        queryFn: () => getCaptainDashboard(),
-      });
+      return;
+    }
+    if (primary === "captain" || primary === "business_owner") {
+      const biz = businesses[0]?.business as { id: string; category_key: string } | undefined;
+      const key = biz?.category_key;
+      if (!biz || !key || key === "charter") {
+        await context.queryClient.ensureQueryData({
+          queryKey: ["captain-dashboard"],
+          queryFn: () => getCaptainDashboard(),
+        });
+      } else if (key === "marina" || key === "lodge") {
+        await context.queryClient.ensureQueryData({
+          queryKey: ["marina-overview", biz.id],
+          queryFn: () => getMarinaOverview({ data: { businessId: biz.id } }),
+        });
+      } else if (
+        key === "tackle_shop" ||
+        key === "bait_shop" ||
+        key === "gear_mfg" ||
+        key === "apparel"
+      ) {
+        await context.queryClient.ensureQueryData({
+          queryKey: ["shop-overview", biz.id],
+          queryFn: () => getShopOverview({ data: { businessId: biz.id } }),
+        });
+      }
     }
   },
   component: Dashboard,
@@ -57,21 +89,12 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   ),
 });
 
-// Map an operator's business category to its DC dashboard template.
-const categoryTemplate: Record<string, string> = {
-  charter: "captain",
-  tackle_shop: "tackle",
-  bait_shop: "tackle",
-  marina: "marina",
-  lodge: "marina",
-  apparel: "apparel",
-  gear_mfg: "manufacturer",
-  guide_service: "guide",
-};
+// (categoryTemplate removed — verticals now use React components below.)
 
 function Dashboard() {
   const { data: roles } = useSuspenseQuery(myRolesQO);
   const { data: businesses } = useSuspenseQuery(myBusinessesQO);
+  const { data: profile } = useSuspenseQuery(myProfileQO);
   const navigate = useNavigate();
   const primaryRole = hasPrimaryRole(roles);
 
@@ -84,20 +107,44 @@ function Dashboard() {
     }
   }, [primaryRole, businesses, navigate]);
 
-  if (primaryRole === "angler") {
-    return <AnglerDashboard />;
-  }
-
-  if (primaryRole === "captain") {
-    return <CaptainDashboard />;
-  }
+  if (primaryRole === "angler") return <AnglerDashboard />;
+  if (primaryRole === "captain") return <CaptainDashboard />;
 
   if (primaryRole === "business_owner") {
-    const categoryKey = businesses[0]?.business?.category_key as string | undefined;
-    // Charter operators use the React captain dashboard; other verticals still use DC templates for now.
-    if (!categoryKey || categoryKey === "charter") return <CaptainDashboard />;
-    const slug = categoryTemplate[categoryKey] ?? "captain";
-    return <DashboardFrame src={`/dashboards/${slug}.html`} title="Operator dashboard" />;
+    const biz = businesses[0]?.business as
+      | { id: string; name: string; category_key: string }
+      | undefined;
+    if (!biz) return <DashboardFrame src="/dashboards/onboarding.html" title="Onboarding" />;
+
+    const operatorName =
+      profile?.display_name || profile?.full_name || "Operator";
+    const key = biz.category_key;
+
+    if (!key || key === "charter") return <CaptainDashboard />;
+    if (key === "marina" || key === "lodge")
+      return (
+        <MarinaDashboard
+          businessId={biz.id}
+          workspaceName={biz.name}
+          operatorName={operatorName}
+        />
+      );
+    if (
+      key === "tackle_shop" ||
+      key === "bait_shop" ||
+      key === "gear_mfg" ||
+      key === "apparel"
+    )
+      return (
+        <ShopDashboard
+          businessId={biz.id}
+          workspaceName={biz.name}
+          operatorName={operatorName}
+          categoryKey={key}
+        />
+      );
+    // Guide services and any other verticals still use DC templates for now.
+    return <DashboardFrame src={`/dashboards/${key === "guide_service" ? "guide" : "captain"}.html`} title="Operator dashboard" />;
   }
 
   return <DashboardFrame src="/dashboards/angler.html" title="Dashboard" />;

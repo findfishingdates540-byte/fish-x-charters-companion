@@ -25,3 +25,16 @@ export const hasPrimaryRole = (roles: string[]): "angler" | "business_owner" | "
   if (roles.includes("angler")) return "angler";
   return null;
 };
+
+export const getMyProfile = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, display_name, avatar_url")
+      .eq("id", userId)
+      .maybeSingle();
+    if (error) throw new Response(error.message, { status: 500 });
+    return data;
+  });
