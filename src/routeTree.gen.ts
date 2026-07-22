@@ -18,7 +18,6 @@ import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TripsDetailRouteImport } from './routes/trips.detail'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
 import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
 import { Route as BSlugRouteImport } from './routes/b.$slug'
@@ -72,11 +71,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TripsDetailRoute = TripsDetailRouteImport.update({
-  id: '/trips/detail',
-  path: '/trips/detail',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesProfileRoute = GuidesProfileRouteImport.update({
@@ -149,7 +143,6 @@ export interface FileRoutesByFullPath {
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
-  '/trips/detail': typeof TripsDetailRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
@@ -170,7 +163,6 @@ export interface FileRoutesByTo {
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
-  '/trips/detail': typeof TripsDetailRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
@@ -193,7 +185,6 @@ export interface FileRoutesById {
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
-  '/trips/detail': typeof TripsDetailRoute
   '/_authenticated/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
@@ -216,7 +207,6 @@ export interface FileRouteTypes {
     | '/b/$slug'
     | '/captains/profile'
     | '/guides/profile'
-    | '/trips/detail'
     | '/bookings/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
@@ -237,7 +227,6 @@ export interface FileRouteTypes {
     | '/b/$slug'
     | '/captains/profile'
     | '/guides/profile'
-    | '/trips/detail'
     | '/bookings/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
@@ -259,7 +248,6 @@ export interface FileRouteTypes {
     | '/b/$slug'
     | '/captains/profile'
     | '/guides/profile'
-    | '/trips/detail'
     | '/_authenticated/bookings/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
@@ -278,7 +266,6 @@ export interface RootRouteChildren {
   BSlugRoute: typeof BSlugRoute
   CaptainsProfileRoute: typeof CaptainsProfileRoute
   GuidesProfileRoute: typeof GuidesProfileRoute
-  TripsDetailRoute: typeof TripsDetailRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -346,13 +333,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trips/detail': {
-      id: '/trips/detail'
-      path: '/trips/detail'
-      fullPath: '/trips/detail'
-      preLoaderRoute: typeof TripsDetailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/profile': {
@@ -460,7 +440,6 @@ const rootRouteChildren: RootRouteChildren = {
   BSlugRoute: BSlugRoute,
   CaptainsProfileRoute: CaptainsProfileRoute,
   GuidesProfileRoute: GuidesProfileRoute,
-  TripsDetailRoute: TripsDetailRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
 }
