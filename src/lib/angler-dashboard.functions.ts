@@ -51,7 +51,7 @@ export const getAnglerDashboard = createServerFn({ method: "GET" })
 
     const upcoming = upcomingRes.data ?? [];
     const escrowCents = upcoming
-      .filter((b) => (ESCROW_STATUSES as readonly string[]).includes(b.status))
+      .filter((b) => ESCROW_STATUSES.includes(b.status))
       .reduce((sum, b) => sum + (b.total_cents ?? 0), 0);
 
     return {
