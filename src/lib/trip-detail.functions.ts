@@ -17,25 +17,36 @@ export const getTripDetail = createServerFn({ method: "GET" })
 
     const bookingRes = await supabase
       .from("bookings")
-      .select(
-        "id,trip_date,start_time,status,escrow_state,total_cents,application_fee_cents,party_size,notes,angler_id,captain_id,business_id,service_id,cancellation_policy," +
-          "service:bookable_services(id,title,hero_url,departure_location,duration_minutes,includes)," +
-          "business:businesses(id,slug,name,city,region,hero_url,logo_url,verified_at)",
-      )
+      .select("*")
       .eq("id", data.id)
       .maybeSingle();
 
     if (bookingRes.error) throw new Response(bookingRes.error.message, { status: 500 });
     if (!bookingRes.data) throw new Response("Booking not found", { status: 404 });
-    if (bookingRes.data.angler_id !== userId) {
+    const booking = bookingRes.data;
+    if (booking.angler_id !== userId) {
       throw new Response("Forbidden", { status: 403 });
     }
 
-    const [captainRes, messagesRes] = await Promise.all([
+    const [serviceRes, businessRes, captainRes, messagesRes] = await Promise.all([
+      booking.service_id
+        ? supabase
+            .from("bookable_services")
+            .select("id,title,hero_url,departure_location,duration_minutes,includes")
+            .eq("id", booking.service_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+      booking.business_id
+        ? supabase
+            .from("businesses")
+            .select("id,slug,name,city,region,hero_url,logo_url,verified_at")
+            .eq("id", booking.business_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
       supabase
         .from("profiles")
         .select("id,full_name,display_name,avatar_url")
-        .eq("id", bookingRes.data.captain_id)
+        .eq("id", booking.captain_id)
         .maybeSingle(),
       supabase
         .from("booking_messages")
@@ -47,7 +58,9 @@ export const getTripDetail = createServerFn({ method: "GET" })
     if (messagesRes.error) throw new Response(messagesRes.error.message, { status: 500 });
 
     return {
-      booking: bookingRes.data,
+      booking,
+      service: serviceRes.data,
+      business: businessRes.data,
       captain: captainRes.data,
       messages: messagesRes.data ?? [],
       viewerId: userId,
