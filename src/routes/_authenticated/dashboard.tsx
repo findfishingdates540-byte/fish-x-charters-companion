@@ -6,11 +6,15 @@ import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { DashboardFrame } from "@/components/DashboardFrame";
 import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
 import { CaptainDashboard } from "@/components/captain/CaptainDashboard";
+import { MarinaDashboard } from "@/components/marina/MarinaDashboard";
+import { ShopDashboard } from "@/components/tackle/ShopDashboard";
 import {
   getAnglerDashboard,
   listRecommendedCharters,
 } from "@/lib/angler-dashboard.functions";
 import { getCaptainDashboard } from "@/lib/captain-dashboard.functions";
+import { getMarinaOverview } from "@/lib/marina.functions";
+import { getShopOverview } from "@/lib/tackle.functions";
 
 const myRolesQO = queryOptions({
   queryKey: ["my-roles"],
