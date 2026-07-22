@@ -9,45 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TrustRouteImport } from './routes/trust'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as DiscoverRouteImport } from './routes/discover'
-import { Route as BrandStoryRouteImport } from './routes/brand-story'
-import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BSlugRouteImport } from './routes/b.$slug'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 
-const TrustRoute = TrustRouteImport.update({
-  id: '/trust',
-  path: '/trust',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiscoverRoute = DiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BrandStoryRoute = BrandStoryRouteImport.update({
-  id: '/brand-story',
-  path: '/brand-story',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BecomeACaptainRoute = BecomeACaptainRouteImport.update({
-  id: '/become-a-captain',
-  path: '/become-a-captain',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -60,11 +29,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BSlugRoute = BSlugRouteImport.update({
-  id: '/b/$slug',
-  path: '/b/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
@@ -92,28 +56,16 @@ const ApiPublicHooksDispatchEventsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/become-a-captain': typeof BecomeACaptainRoute
-  '/brand-story': typeof BrandStoryRoute
-  '/discover': typeof DiscoverRoute
-  '/how-it-works': typeof HowItWorksRoute
-  '/trust': typeof TrustRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/become-a-captain': typeof BecomeACaptainRoute
-  '/brand-story': typeof BrandStoryRoute
-  '/discover': typeof DiscoverRoute
-  '/how-it-works': typeof HowItWorksRoute
-  '/trust': typeof TrustRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -122,14 +74,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/become-a-captain': typeof BecomeACaptainRoute
-  '/brand-story': typeof BrandStoryRoute
-  '/discover': typeof DiscoverRoute
-  '/how-it-works': typeof HowItWorksRoute
-  '/trust': typeof TrustRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
-  '/b/$slug': typeof BSlugRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -138,28 +84,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/become-a-captain'
-    | '/brand-story'
-    | '/discover'
-    | '/how-it-works'
-    | '/trust'
     | '/dashboard'
     | '/onboarding'
-    | '/b/$slug'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/become-a-captain'
-    | '/brand-story'
-    | '/discover'
-    | '/how-it-works'
-    | '/trust'
     | '/dashboard'
     | '/onboarding'
-    | '/b/$slug'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   id:
@@ -167,14 +101,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/become-a-captain'
-    | '/brand-story'
-    | '/discover'
-    | '/how-it-works'
-    | '/trust'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
-    | '/b/$slug'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   fileRoutesById: FileRoutesById
@@ -183,53 +111,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  BecomeACaptainRoute: typeof BecomeACaptainRoute
-  BrandStoryRoute: typeof BrandStoryRoute
-  DiscoverRoute: typeof DiscoverRoute
-  HowItWorksRoute: typeof HowItWorksRoute
-  TrustRoute: typeof TrustRoute
-  BSlugRoute: typeof BSlugRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/trust': {
-      id: '/trust'
-      path: '/trust'
-      fullPath: '/trust'
-      preLoaderRoute: typeof TrustRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/discover': {
-      id: '/discover'
-      path: '/discover'
-      fullPath: '/discover'
-      preLoaderRoute: typeof DiscoverRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/brand-story': {
-      id: '/brand-story'
-      path: '/brand-story'
-      fullPath: '/brand-story'
-      preLoaderRoute: typeof BrandStoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/become-a-captain': {
-      id: '/become-a-captain'
-      path: '/become-a-captain'
-      fullPath: '/become-a-captain'
-      preLoaderRoute: typeof BecomeACaptainRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -249,13 +136,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/b/$slug': {
-      id: '/b/$slug'
-      path: '/b/$slug'
-      fullPath: '/b/$slug'
-      preLoaderRoute: typeof BSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/onboarding': {
@@ -306,25 +186,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  BecomeACaptainRoute: BecomeACaptainRoute,
-  BrandStoryRoute: BrandStoryRoute,
-  DiscoverRoute: DiscoverRoute,
-  HowItWorksRoute: HowItWorksRoute,
-  TrustRoute: TrustRoute,
-  BSlugRoute: BSlugRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
