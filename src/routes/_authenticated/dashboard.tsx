@@ -8,6 +8,7 @@ import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
 import { CaptainDashboard } from "@/components/captain/CaptainDashboard";
 import { MarinaDashboard } from "@/components/marina/MarinaDashboard";
 import { ShopDashboard } from "@/components/tackle/ShopDashboard";
+import { GuideDashboard } from "@/components/guide/GuideDashboard";
 import {
   getAnglerDashboard,
   listRecommendedCharters,
@@ -15,6 +16,7 @@ import {
 import { getCaptainDashboard } from "@/lib/captain-dashboard.functions";
 import { getMarinaOverview } from "@/lib/marina.functions";
 import { getShopOverview } from "@/lib/tackle.functions";
+import { getGuideOverview } from "@/lib/guide.functions";
 
 const myRolesQO = queryOptions({
   queryKey: ["my-roles"],
@@ -76,6 +78,11 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
         await context.queryClient.ensureQueryData({
           queryKey: ["shop-overview", biz.id],
           queryFn: () => getShopOverview({ data: { businessId: biz.id } }),
+        });
+      } else if (key === "guide_service") {
+        await context.queryClient.ensureQueryData({
+          queryKey: ["guide-overview", biz.id],
+          queryFn: () => getGuideOverview({ data: { businessId: biz.id } }),
         });
       }
     }
@@ -143,8 +150,15 @@ function Dashboard() {
           categoryKey={key}
         />
       );
-    // Guide services and any other verticals still use DC templates for now.
-    return <DashboardFrame src={`/dashboards/${key === "guide_service" ? "guide" : "captain"}.html`} title="Operator dashboard" />;
+    if (key === "guide_service")
+      return (
+        <GuideDashboard
+          businessId={biz.id}
+          workspaceName={biz.name}
+          operatorName={operatorName}
+        />
+      );
+    return <DashboardFrame src="/dashboards/captain.html" title="Operator dashboard" />;
   }
 
   return <DashboardFrame src="/dashboards/angler.html" title="Dashboard" />;

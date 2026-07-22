@@ -298,6 +298,7 @@ export type Database = {
           accept_deadline_at: string | null
           angler_id: string | null
           application_fee_cents: number | null
+          assigned_guide_id: string | null
           boat_id: string | null
           business_id: string | null
           cancellation_policy: Json
@@ -335,6 +336,7 @@ export type Database = {
           accept_deadline_at?: string | null
           angler_id?: string | null
           application_fee_cents?: number | null
+          assigned_guide_id?: string | null
           boat_id?: string | null
           business_id?: string | null
           cancellation_policy?: Json
@@ -372,6 +374,7 @@ export type Database = {
           accept_deadline_at?: string | null
           angler_id?: string | null
           application_fee_cents?: number | null
+          assigned_guide_id?: string | null
           boat_id?: string | null
           business_id?: string | null
           cancellation_policy?: Json
@@ -2192,6 +2195,7 @@ export type Database = {
           accept_deadline_at: string | null
           angler_id: string | null
           application_fee_cents: number | null
+          assigned_guide_id: string | null
           boat_id: string | null
           business_id: string | null
           cancellation_policy: Json
