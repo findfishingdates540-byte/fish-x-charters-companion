@@ -17,7 +17,7 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
     const { data: svc, error } = await supabase
       .from("bookable_services")
       .select(
-        "id,title,hero_url,duration_minutes,base_price_cents,max_party,includes,departure_location,business_id,business:businesses(id,slug,name,city,region,logo_url,hero_url,owner_id)",
+        "id,title,hero_url,duration_minutes,base_price_cents,capacity,includes,departure_location,business_id,business:businesses(id,slug,name,city,region,logo_url,hero_url,owner_id)",
       )
       .eq("id", data.serviceId)
       .maybeSingle();
@@ -42,12 +42,12 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     // Resolve service + business owner (captain_id is NOT NULL on bookings)
     const { data: svc, error: svcErr } = await supabase
       .from("bookable_services")
-      .select("id,base_price_cents,business_id,max_party,business:businesses(owner_id)")
+      .select("id,base_price_cents,business_id,capacity,business:businesses(owner_id)")
       .eq("id", data.serviceId)
       .maybeSingle();
-    if (svcErr) throw new Response(svcErr.error?.message ?? svcErr.message, { status: 500 });
+    if (svcErr) throw new Response(svcErr.message, { status: 500 });
     if (!svc) throw new Response("Service not found", { status: 404 });
-    if (data.partySize > (svc.max_party ?? 10)) {
+    if (data.partySize > (svc.capacity ?? 10)) {
       throw new Response("Party size exceeds capacity", { status: 400 });
     }
     const ownerId = (svc.business as { owner_id: string } | null)?.owner_id;
