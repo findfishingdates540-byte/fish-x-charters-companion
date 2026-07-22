@@ -18,7 +18,6 @@ import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TripsDetailRouteImport } from './routes/trips.detail'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
 import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
 import { Route as BSlugRouteImport } from './routes/b.$slug'
@@ -27,6 +26,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedBookingRouteImport } from './routes/_authenticated/booking'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
+import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
 import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 
@@ -74,11 +74,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TripsDetailRoute = TripsDetailRouteImport.update({
-  id: '/trips/detail',
-  path: '/trips/detail',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GuidesProfileRoute = GuidesProfileRouteImport.update({
   id: '/guides/profile',
   path: '/guides/profile',
@@ -120,6 +115,12 @@ const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
   path: '/api/public/fishx-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTripsDetailRoute =
+  AuthenticatedTripsDetailRouteImport.update({
+    id: '/trips/detail',
+    path: '/trips/detail',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedBookingsDetailRoute =
   AuthenticatedBookingsDetailRouteImport.update({
     id: '/bookings/detail',
@@ -149,8 +150,8 @@ export interface FileRoutesByFullPath {
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
-  '/trips/detail': typeof TripsDetailRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
+  '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -170,8 +171,8 @@ export interface FileRoutesByTo {
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
-  '/trips/detail': typeof TripsDetailRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
+  '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -193,8 +194,8 @@ export interface FileRoutesById {
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
-  '/trips/detail': typeof TripsDetailRoute
   '/_authenticated/bookings/detail': typeof AuthenticatedBookingsDetailRoute
+  '/_authenticated/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -216,8 +217,8 @@ export interface FileRouteTypes {
     | '/b/$slug'
     | '/captains/profile'
     | '/guides/profile'
-    | '/trips/detail'
     | '/bookings/detail'
+    | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   fileRoutesByTo: FileRoutesByTo
@@ -237,8 +238,8 @@ export interface FileRouteTypes {
     | '/b/$slug'
     | '/captains/profile'
     | '/guides/profile'
-    | '/trips/detail'
     | '/bookings/detail'
+    | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   id:
@@ -259,8 +260,8 @@ export interface FileRouteTypes {
     | '/b/$slug'
     | '/captains/profile'
     | '/guides/profile'
-    | '/trips/detail'
     | '/_authenticated/bookings/detail'
+    | '/_authenticated/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   fileRoutesById: FileRoutesById
@@ -278,7 +279,6 @@ export interface RootRouteChildren {
   BSlugRoute: typeof BSlugRoute
   CaptainsProfileRoute: typeof CaptainsProfileRoute
   GuidesProfileRoute: typeof GuidesProfileRoute
-  TripsDetailRoute: typeof TripsDetailRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -348,13 +348,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trips/detail': {
-      id: '/trips/detail'
-      path: '/trips/detail'
-      fullPath: '/trips/detail'
-      preLoaderRoute: typeof TripsDetailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/guides/profile': {
       id: '/guides/profile'
       path: '/guides/profile'
@@ -411,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicFishxWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/trips/detail': {
+      id: '/_authenticated/trips/detail'
+      path: '/trips/detail'
+      fullPath: '/trips/detail'
+      preLoaderRoute: typeof AuthenticatedTripsDetailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/bookings/detail': {
       id: '/_authenticated/bookings/detail'
       path: '/bookings/detail'
@@ -434,6 +434,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedResolutionCenterRoute: typeof AuthenticatedResolutionCenterRoute
   AuthenticatedBookingsDetailRoute: typeof AuthenticatedBookingsDetailRoute
+  AuthenticatedTripsDetailRoute: typeof AuthenticatedTripsDetailRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -442,6 +443,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedResolutionCenterRoute: AuthenticatedResolutionCenterRoute,
   AuthenticatedBookingsDetailRoute: AuthenticatedBookingsDetailRoute,
+  AuthenticatedTripsDetailRoute: AuthenticatedTripsDetailRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -460,7 +462,6 @@ const rootRouteChildren: RootRouteChildren = {
   BSlugRoute: BSlugRoute,
   CaptainsProfileRoute: CaptainsProfileRoute,
   GuidesProfileRoute: GuidesProfileRoute,
-  TripsDetailRoute: TripsDetailRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
 }
