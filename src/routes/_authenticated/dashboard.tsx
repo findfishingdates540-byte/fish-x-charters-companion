@@ -76,8 +76,9 @@ function Dashboard() {
   }, [primaryRole, businesses, navigate]);
 
   if (primaryRole === "angler") {
-    return <DashboardFrame src="/dashboards/angler.html" title="Angler dashboard" />;
+    return <AnglerDashboard />;
   }
+
 
   if (primaryRole === "business_owner" || primaryRole === "captain") {
     const categoryKey = businesses[0]?.business?.category_key as string | undefined;
