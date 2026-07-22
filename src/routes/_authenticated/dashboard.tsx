@@ -5,11 +5,12 @@ import { getMyRoles, hasPrimaryRole } from "@/lib/auth.functions";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { DashboardFrame } from "@/components/DashboardFrame";
 import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
+import { CaptainDashboard } from "@/components/captain/CaptainDashboard";
 import {
   getAnglerDashboard,
   listRecommendedCharters,
 } from "@/lib/angler-dashboard.functions";
-
+import { getCaptainDashboard } from "@/lib/captain-dashboard.functions";
 
 const myRolesQO = queryOptions({
   queryKey: ["my-roles"],
@@ -24,18 +25,28 @@ const myBusinessesQO = queryOptions({
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Fish-X Charters" }] }),
   loader: async ({ context }) => {
-    await Promise.all([
+    const [roles] = await Promise.all([
       context.queryClient.ensureQueryData(myRolesQO),
       context.queryClient.ensureQueryData(myBusinessesQO),
-      context.queryClient.ensureQueryData({
-        queryKey: ["angler-dashboard"],
-        queryFn: () => getAnglerDashboard(),
-      }),
-      context.queryClient.ensureQueryData({
-        queryKey: ["angler-recos"],
-        queryFn: () => listRecommendedCharters(),
-      }),
     ]);
+    const primary = hasPrimaryRole(roles);
+    if (primary === "angler") {
+      await Promise.all([
+        context.queryClient.ensureQueryData({
+          queryKey: ["angler-dashboard"],
+          queryFn: () => getAnglerDashboard(),
+        }),
+        context.queryClient.ensureQueryData({
+          queryKey: ["angler-recos"],
+          queryFn: () => listRecommendedCharters(),
+        }),
+      ]);
+    } else if (primary === "captain" || primary === "business_owner") {
+      await context.queryClient.ensureQueryData({
+        queryKey: ["captain-dashboard"],
+        queryFn: () => getCaptainDashboard(),
+      });
+    }
   },
   component: Dashboard,
   errorComponent: ({ error }) => (
@@ -48,7 +59,6 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 // Map an operator's business category to its DC dashboard template.
 const categoryTemplate: Record<string, string> = {
-
   charter: "captain",
   tackle_shop: "tackle",
   bait_shop: "tackle",
@@ -65,7 +75,6 @@ function Dashboard() {
   const navigate = useNavigate();
   const primaryRole = hasPrimaryRole(roles);
 
-  // Operators without a business are sent to onboarding.
   useEffect(() => {
     if (
       (primaryRole === "business_owner" || primaryRole === "captain") &&
@@ -79,13 +88,18 @@ function Dashboard() {
     return <AnglerDashboard />;
   }
 
+  if (primaryRole === "captain") {
+    return <CaptainDashboard />;
+  }
 
-  if (primaryRole === "business_owner" || primaryRole === "captain") {
+  if (primaryRole === "business_owner") {
     const categoryKey = businesses[0]?.business?.category_key as string | undefined;
-    const slug = (categoryKey && categoryTemplate[categoryKey]) || "captain";
+    // Charter operators use the React captain dashboard; other verticals still use DC templates for now.
+    if (!categoryKey || categoryKey === "charter") return <CaptainDashboard />;
+    const slug = categoryTemplate[categoryKey] ?? "captain";
     return <DashboardFrame src={`/dashboards/${slug}.html`} title="Operator dashboard" />;
   }
 
-  // Fallback while roles resolve.
   return <DashboardFrame src="/dashboards/angler.html" title="Dashboard" />;
 }
+
