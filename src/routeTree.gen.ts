@@ -26,6 +26,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedBookingRouteImport } from './routes/_authenticated/booking'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
+import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
 import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 
@@ -114,6 +115,12 @@ const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
   path: '/api/public/fishx-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTripsDetailRoute =
+  AuthenticatedTripsDetailRouteImport.update({
+    id: '/trips/detail',
+    path: '/trips/detail',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedBookingsDetailRoute =
   AuthenticatedBookingsDetailRouteImport.update({
     id: '/bookings/detail',
@@ -144,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
+  '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
+  '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -186,6 +195,7 @@ export interface FileRoutesById {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/_authenticated/bookings/detail': typeof AuthenticatedBookingsDetailRoute
+  '/_authenticated/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/bookings/detail'
+    | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   fileRoutesByTo: FileRoutesByTo
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/bookings/detail'
+    | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   id:
@@ -249,6 +261,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/_authenticated/bookings/detail'
+    | '/_authenticated/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
   fileRoutesById: FileRoutesById
@@ -391,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicFishxWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/trips/detail': {
+      id: '/_authenticated/trips/detail'
+      path: '/trips/detail'
+      fullPath: '/trips/detail'
+      preLoaderRoute: typeof AuthenticatedTripsDetailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/bookings/detail': {
       id: '/_authenticated/bookings/detail'
       path: '/bookings/detail'
@@ -414,6 +434,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedResolutionCenterRoute: typeof AuthenticatedResolutionCenterRoute
   AuthenticatedBookingsDetailRoute: typeof AuthenticatedBookingsDetailRoute
+  AuthenticatedTripsDetailRoute: typeof AuthenticatedTripsDetailRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -422,6 +443,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedResolutionCenterRoute: AuthenticatedResolutionCenterRoute,
   AuthenticatedBookingsDetailRoute: AuthenticatedBookingsDetailRoute,
+  AuthenticatedTripsDetailRoute: AuthenticatedTripsDetailRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
