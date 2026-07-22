@@ -52,11 +52,13 @@ export const getCaptainBooking = createServerFn({ method: "GET" })
             .eq("id", booking.business_id)
             .maybeSingle()
         : Promise.resolve({ data: null, error: null }),
-      supabase
-        .from("profiles")
-        .select("id,full_name,display_name,avatar_url")
-        .eq("id", booking.angler_id)
-        .maybeSingle(),
+      booking.angler_id
+        ? supabase
+            .from("profiles")
+            .select("id,full_name,display_name,avatar_url")
+            .eq("id", booking.angler_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
       supabase
         .from("booking_messages")
         .select("id,body,sender_id,created_at")
