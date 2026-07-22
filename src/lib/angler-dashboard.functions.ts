@@ -7,14 +7,17 @@ import { createClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
-const UPCOMING_STATUSES = [
+type BookingStatus = Database["public"]["Enums"]["booking_status"];
+
+const UPCOMING_STATUSES: BookingStatus[] = [
   "pending_payment",
   "pending_confirmation",
   "confirmed",
   "in_progress",
-] as const;
+];
 
-const ESCROW_STATUSES = ["confirmed", "in_progress"] as const;
+const ESCROW_STATUSES: BookingStatus[] = ["confirmed", "in_progress"];
+
 
 export const getAnglerDashboard = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
