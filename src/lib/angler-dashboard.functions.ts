@@ -42,7 +42,7 @@ export const getAnglerDashboard = createServerFn({ method: "GET" })
         .from("bookings")
         .select("id,total_cents,status")
         .eq("angler_id", userId)
-        .in("status", ["completed", "reviewed"]),
+        .in("status", ["completed", "reviewed"] satisfies BookingStatus[]),
     ]);
 
     if (profileRes.error) throw new Response(profileRes.error.message, { status: 500 });
