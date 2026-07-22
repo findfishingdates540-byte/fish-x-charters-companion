@@ -1035,6 +1035,69 @@ export type Database = {
         }
         Relationships: []
       }
+      guide_availability: {
+        Row: {
+          booked_count: number
+          business_id: string
+          capacity: number
+          created_at: string
+          end_time: string | null
+          id: string
+          notes: string | null
+          price_cents: number | null
+          service_id: string | null
+          slot_date: string
+          start_time: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          booked_count?: number
+          business_id: string
+          capacity?: number
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          notes?: string | null
+          price_cents?: number | null
+          service_id?: string | null
+          slot_date: string
+          start_time?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          booked_count?: number
+          business_id?: string
+          capacity?: number
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          notes?: string | null
+          price_cents?: number | null
+          service_id?: string | null
+          slot_date?: string
+          start_time?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_availability_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guide_availability_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "bookable_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       idempotency_keys: {
         Row: {
           actor_id: string | null
@@ -1124,6 +1187,68 @@ export type Database = {
           },
           {
             foreignKeyName: "inquiries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_products: {
+        Row: {
+          business_id: string
+          category: string | null
+          compare_at_cents: number | null
+          created_at: string
+          description: string | null
+          id: string
+          images: Json
+          is_published: boolean
+          low_stock_threshold: number
+          metadata: Json
+          price_cents: number
+          sku: string | null
+          stock_qty: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          category?: string | null
+          compare_at_cents?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: Json
+          is_published?: boolean
+          low_stock_threshold?: number
+          metadata?: Json
+          price_cents?: number
+          sku?: string | null
+          stock_qty?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          category?: string | null
+          compare_at_cents?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: Json
+          is_published?: boolean
+          low_stock_threshold?: number
+          metadata?: Json
+          price_cents?: number
+          sku?: string | null
+          stock_qty?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_products_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
@@ -1256,6 +1381,128 @@ export type Database = {
             columns: ["service_id"]
             isOneToOne: true
             referencedRelation: "bookable_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marina_reservations: {
+        Row: {
+          arrive_date: string
+          business_id: string
+          captain_name: string | null
+          created_at: string
+          depart_date: string
+          id: string
+          nightly_rate_cents: number | null
+          notes: string | null
+          slip_id: string | null
+          status: string
+          total_cents: number | null
+          updated_at: string
+          vessel_length_ft: number | null
+          vessel_name: string
+        }
+        Insert: {
+          arrive_date: string
+          business_id: string
+          captain_name?: string | null
+          created_at?: string
+          depart_date: string
+          id?: string
+          nightly_rate_cents?: number | null
+          notes?: string | null
+          slip_id?: string | null
+          status?: string
+          total_cents?: number | null
+          updated_at?: string
+          vessel_length_ft?: number | null
+          vessel_name: string
+        }
+        Update: {
+          arrive_date?: string
+          business_id?: string
+          captain_name?: string | null
+          created_at?: string
+          depart_date?: string
+          id?: string
+          nightly_rate_cents?: number | null
+          notes?: string | null
+          slip_id?: string | null
+          status?: string
+          total_cents?: number | null
+          updated_at?: string
+          vessel_length_ft?: number | null
+          vessel_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marina_reservations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marina_reservations_slip_id_fkey"
+            columns: ["slip_id"]
+            isOneToOne: false
+            referencedRelation: "marina_slips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marina_slips: {
+        Row: {
+          amperage: string | null
+          beam_ft: number | null
+          business_id: string
+          created_at: string
+          draft_ft: number | null
+          id: string
+          length_ft: number | null
+          monthly_rate_cents: number | null
+          nightly_rate_cents: number | null
+          notes: string | null
+          slip_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amperage?: string | null
+          beam_ft?: number | null
+          business_id: string
+          created_at?: string
+          draft_ft?: number | null
+          id?: string
+          length_ft?: number | null
+          monthly_rate_cents?: number | null
+          nightly_rate_cents?: number | null
+          notes?: string | null
+          slip_number: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amperage?: string | null
+          beam_ft?: number | null
+          business_id?: string
+          created_at?: string
+          draft_ft?: number | null
+          id?: string
+          length_ft?: number | null
+          monthly_rate_cents?: number | null
+          nightly_rate_cents?: number | null
+          notes?: string | null
+          slip_number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marina_slips_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -1409,6 +1656,116 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "business_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          product_id: string | null
+          quantity: number
+          sku: string | null
+          title: string
+          unit_price_cents: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          product_id?: string | null
+          quantity?: number
+          sku?: string | null
+          title: string
+          unit_price_cents?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          quantity?: number
+          sku?: string | null
+          title?: string
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "product_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_orders: {
+        Row: {
+          business_id: string
+          buyer_email: string | null
+          buyer_id: string | null
+          buyer_name: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          shipping_address: Json | null
+          shipping_cents: number
+          status: string
+          subtotal_cents: number
+          tax_cents: number
+          total_cents: number
+          tracking_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          buyer_email?: string | null
+          buyer_id?: string | null
+          buyer_name?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          shipping_address?: Json | null
+          shipping_cents?: number
+          status?: string
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          buyer_email?: string | null
+          buyer_id?: string | null
+          buyer_name?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          shipping_address?: Json | null
+          shipping_cents?: number
+          status?: string
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_orders_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
