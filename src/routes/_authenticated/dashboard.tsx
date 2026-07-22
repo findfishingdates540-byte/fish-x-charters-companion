@@ -31,15 +31,6 @@ const myProfileQO = queryOptions({
   queryFn: () => getMyProfile(),
 });
 
-const myRolesQO = queryOptions({
-  queryKey: ["my-roles"],
-  queryFn: () => getMyRoles(),
-});
-
-const myBusinessesQO = queryOptions({
-  queryKey: ["my-businesses"],
-  queryFn: () => getMyBusinesses(),
-});
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Fish-X Charters" }] }),
