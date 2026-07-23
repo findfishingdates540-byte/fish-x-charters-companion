@@ -2236,27 +2236,6 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      withdraw_dispute: {
-        Args: {
-          _dispute_id: string
-        }
-        Returns: {
-          booking_id: string
-          created_at: string
-          description: string | null
-          id: string
-          kind: string
-          metadata: Json
-          opened_by: string | null
-          opened_by_kind: string
-          resolution_note: string | null
-          resolved_at: string | null
-          resolved_by: string | null
-          status: string
-          stripe_dispute_id: string | null
-          updated_at: string
-        }
-      }
     }
     Enums: {
       app_role:
