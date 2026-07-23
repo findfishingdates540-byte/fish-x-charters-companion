@@ -421,8 +421,8 @@ function AuthPage() {
                 <p style={{ fontSize: 15, color: "var(--tmut)", margin: 0 }}>Book verified charters and gear in minutes.</p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-                <button type="button" style={socialDark}><span style={{ fontSize: 16 }}></span> Sign up with Apple</button>
-                <button type="button" style={socialLight}><span style={googleDot} /> Sign up with Google</button>
+                <button type="button" onClick={() => oauth("apple", "angler")} disabled={isSubmitting} style={{ ...socialDark, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}><span style={{ fontSize: 16 }}></span> Sign up with Apple</button>
+                <button type="button" onClick={() => oauth("google", "angler")} disabled={isSubmitting} style={{ ...socialLight, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}><span style={googleDot} /> Sign up with Google</button>
               </div>
               {dividerRow}
               <form onSubmit={submit} noValidate style={{ display: "flex", flexDirection: "column", gap: 15 }}>
