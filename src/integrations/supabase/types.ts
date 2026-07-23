@@ -2236,6 +2236,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      withdraw_dispute: { Args: { _dispute_id: string }; Returns: undefined }
     }
     Enums: {
       app_role:
