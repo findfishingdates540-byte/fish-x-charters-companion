@@ -18,18 +18,32 @@ const profileQO = (slug: string) =>
 
 export const Route = createFileRoute("/b/$slug")({
   loader: async ({ context, params }) => {
-    await context.queryClient.ensureQueryData(profileQO(params.slug));
+    return await context.queryClient.ensureQueryData(profileQO(params.slug));
   },
-  head: ({ params, loaderData: _l }) => ({
-    meta: [
-      { title: `${params.slug} — Fish-X Charters` },
-      { name: "description", content: `Book this Fish-X operator: verified reviews, live availability, escrow-protected payment.` },
-      { property: "og:title", content: `${params.slug} — Fish-X Charters` },
-      { property: "og:description", content: `Explore trips, reviews, and availability from this verified Fish-X operator.` },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return { meta: [{ title: "Operator not found — Fish-X Charters" }, { name: "robots", content: "noindex" }] };
+    }
+    const b = loaderData.business;
+    const location = [b.city, b.region, b.country].filter(Boolean).join(", ");
+    const title = `${b.name}${location ? ` — ${location}` : ""} · Fish-X Charters`;
+    const description =
+      b.tagline ??
+      (b.description ? b.description.slice(0, 155) : `Book ${b.name} on Fish-X — verified reviews, live availability, escrow-protected payment.`);
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+    ];
+    if (b.hero_url && /^https?:\/\//.test(b.hero_url)) {
+      meta.push({ property: "og:image", content: b.hero_url });
+      meta.push({ name: "twitter:image", content: b.hero_url });
+    }
+    return { meta };
+  },
   component: BusinessPage,
   errorComponent: ({ error }) => (
     <div style={{ padding: 40, fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
@@ -39,7 +53,7 @@ export const Route = createFileRoute("/b/$slug")({
   notFoundComponent: () => (
     <div style={{ padding: 60, textAlign: "center", fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
       <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}>Operator not found</h1>
-      <Link to="/discover">Back to directory →</Link>
+      <Link to="/discover" search={{}}>Back to directory →</Link>
     </div>
   ),
 });
