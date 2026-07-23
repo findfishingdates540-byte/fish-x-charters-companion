@@ -123,6 +123,22 @@ export function AnglerDashboard() {
               </button>
             ))}
             <Link
+              to="/messages"
+              style={{
+                background: "transparent",
+                borderRadius: 10,
+                padding: "9px 15px",
+                fontFamily: "var(--sans)",
+                fontSize: 14,
+                fontWeight: 600,
+                color: "var(--ondmut)",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Messages
+            </Link>
+            <Link
               to="/marketplace"
               style={{
                 background: "transparent",
@@ -160,15 +176,24 @@ export function AnglerDashboard() {
               </svg>
               <span style={{ position: "absolute", top: 8, right: 9, width: 8, height: 8, borderRadius: "50%", background: "var(--sand)", border: "2px solid var(--navy)" }} />
             </button>
-            <button
-              onClick={handleSignOut}
-              title="Sign out"
-              style={{ display: "flex", alignItems: "center", gap: 9, background: "transparent", border: 0, cursor: "pointer" }}
+            <Link
+              to="/account"
+              title="Your account"
+              style={{ display: "flex", alignItems: "center", gap: 9, background: "transparent", border: 0, cursor: "pointer", textDecoration: "none" }}
             >
               <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(227,192,137,.16)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, color: "var(--sand)" }}>
                 {initial}
               </div>
               <span style={{ fontSize: 13.5, fontWeight: 600, color: "#fff" }}>{firstName}</span>
+            </Link>
+            <button
+              onClick={handleSignOut}
+              title="Sign out"
+              style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", cursor: "pointer", display: "grid", placeItems: "center", color: "var(--ond)" }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+              </svg>
             </button>
           </div>
         </div>
@@ -182,6 +207,13 @@ export function AnglerDashboard() {
               ? `Trip confirmed & escrow-protected — ${nextTrip.business?.name ?? "your captain"}`
               : "You're all caught up."}
           </div>
+          <Link
+            to="/messages"
+            onClick={() => setBellOpen(false)}
+            style={{ display: "block", padding: "12px 18px", borderTop: "1px solid var(--line)", fontSize: 13, fontWeight: 700, color: "var(--goldtext)", textDecoration: "none" }}
+          >
+            Open Messages →
+          </Link>
         </div>
       )}
 

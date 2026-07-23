@@ -9,64 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
-import { Route as BrandStoryRouteImport } from './routes/brand-story'
-import { Route as DiscoverRouteImport } from './routes/discover'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as TrustRouteImport } from './routes/trust'
-import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
-import { Route as AuthenticatedBookingRouteImport } from './routes/_authenticated/booking'
-import { Route as AuthenticatedCancelBookingRouteImport } from './routes/_authenticated/cancel-booking'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
-import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
-import { Route as AuthenticatedPayoutsStatusRouteImport } from './routes/_authenticated/payouts-status'
-import { Route as AuthenticatedResolutionCenterRouteImport } from './routes/_authenticated/resolution-center'
-import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
-import { Route as BSlugRouteImport } from './routes/b.$slug'
-import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as BrandStoryRouteImport } from './routes/brand-story'
+import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
-import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
-import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
+import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
+import { Route as BSlugRouteImport } from './routes/b.$slug'
+import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
+import { Route as AuthenticatedResolutionCenterRouteImport } from './routes/_authenticated/resolution-center'
+import { Route as AuthenticatedPayoutsStatusRouteImport } from './routes/_authenticated/payouts-status'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedBookingRouteImport } from './routes/_authenticated/booking'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
+import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
+import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BecomeACaptainRoute = BecomeACaptainRouteImport.update({
-  id: '/become-a-captain',
-  path: '/become-a-captain',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BrandStoryRoute = BrandStoryRouteImport.update({
-  id: '/brand-story',
-  path: '/brand-story',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiscoverRoute = DiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceRoute = MarketplaceRouteImport.update({
@@ -74,67 +44,38 @@ const MarketplaceRoute = MarketplaceRouteImport.update({
   path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TrustRoute = TrustRouteImport.update({
-  id: '/trust',
-  path: '/trust',
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedBookingRoute = AuthenticatedBookingRouteImport.update({
-  id: '/booking',
-  path: '/booking',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedCancelBookingRoute =
-  AuthenticatedCancelBookingRouteImport.update({
-    id: '/cancel-booking',
-    path: '/cancel-booking',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedPayoutsStatusRoute =
-  AuthenticatedPayoutsStatusRouteImport.update({
-    id: '/payouts-status',
-    path: '/payouts-status',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedResolutionCenterRoute =
-  AuthenticatedResolutionCenterRouteImport.update({
-    id: '/resolution-center',
-    path: '/resolution-center',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
-  id: '/review',
-  path: '/review',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const BSlugRoute = BSlugRouteImport.update({
-  id: '/b/$slug',
-  path: '/b/$slug',
+const DiscoverRoute = DiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CaptainsProfileRoute = CaptainsProfileRouteImport.update({
-  id: '/captains/profile',
-  path: '/captains/profile',
+const BrandStoryRoute = BrandStoryRouteImport.update({
+  id: '/brand-story',
+  path: '/brand-story',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BecomeACaptainRoute = BecomeACaptainRouteImport.update({
+  id: '/become-a-captain',
+  path: '/become-a-captain',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesProfileRoute = GuidesProfileRouteImport.update({
@@ -142,23 +83,75 @@ const GuidesProfileRoute = GuidesProfileRouteImport.update({
   path: '/guides/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedBookingsDetailRoute =
-  AuthenticatedBookingsDetailRouteImport.update({
-    id: '/bookings/detail',
-    path: '/bookings/detail',
+const CaptainsProfileRoute = CaptainsProfileRouteImport.update({
+  id: '/captains/profile',
+  path: '/captains/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BSlugRoute = BSlugRouteImport.update({
+  id: '/b/$slug',
+  path: '/b/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedResolutionCenterRoute =
+  AuthenticatedResolutionCenterRouteImport.update({
+    id: '/resolution-center',
+    path: '/resolution-center',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPayoutsStatusRoute =
+  AuthenticatedPayoutsStatusRouteImport.update({
+    id: '/payouts-status',
+    path: '/payouts-status',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBookingRoute = AuthenticatedBookingRouteImport.update({
+  id: '/booking',
+  path: '/booking',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
+  id: '/api/public/fishx-webhook',
+  path: '/api/public/fishx-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedTripsDetailRoute =
   AuthenticatedTripsDetailRouteImport.update({
     id: '/trips/detail',
     path: '/trips/detail',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
-  id: '/api/public/fishx-webhook',
-  path: '/api/public/fishx-webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedBookingsDetailRoute =
+  AuthenticatedBookingsDetailRouteImport.update({
+    id: '/bookings/detail',
+    path: '/bookings/detail',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicHooksDispatchEventsRoute =
   ApiPublicHooksDispatchEventsRouteImport.update({
     id: '/api/public/hooks/dispatch-events',
@@ -177,7 +170,6 @@ export interface FileRoutesByFullPath {
   '/trust': typeof TrustRoute
   '/account': typeof AuthenticatedAccountRoute
   '/booking': typeof AuthenticatedBookingRoute
-  '/cancel-booking': typeof AuthenticatedCancelBookingRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/messages': typeof AuthenticatedMessagesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -203,7 +195,6 @@ export interface FileRoutesByTo {
   '/trust': typeof TrustRoute
   '/account': typeof AuthenticatedAccountRoute
   '/booking': typeof AuthenticatedBookingRoute
-  '/cancel-booking': typeof AuthenticatedCancelBookingRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/messages': typeof AuthenticatedMessagesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -231,7 +222,6 @@ export interface FileRoutesById {
   '/trust': typeof TrustRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/booking': typeof AuthenticatedBookingRoute
-  '/_authenticated/cancel-booking': typeof AuthenticatedCancelBookingRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/messages': typeof AuthenticatedMessagesRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
@@ -259,7 +249,6 @@ export interface FileRouteTypes {
     | '/trust'
     | '/account'
     | '/booking'
-    | '/cancel-booking'
     | '/dashboard'
     | '/messages'
     | '/onboarding'
@@ -285,7 +274,6 @@ export interface FileRouteTypes {
     | '/trust'
     | '/account'
     | '/booking'
-    | '/cancel-booking'
     | '/dashboard'
     | '/messages'
     | '/onboarding'
@@ -312,7 +300,6 @@ export interface FileRouteTypes {
     | '/trust'
     | '/_authenticated/account'
     | '/_authenticated/booking'
-    | '/_authenticated/cancel-booking'
     | '/_authenticated/dashboard'
     | '/_authenticated/messages'
     | '/_authenticated/onboarding'
@@ -347,53 +334,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/become-a-captain': {
-      id: '/become-a-captain'
-      path: '/become-a-captain'
-      fullPath: '/become-a-captain'
-      preLoaderRoute: typeof BecomeACaptainRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/brand-story': {
-      id: '/brand-story'
-      path: '/brand-story'
-      fullPath: '/brand-story'
-      preLoaderRoute: typeof BrandStoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/discover': {
-      id: '/discover'
-      path: '/discover'
-      fullPath: '/discover'
-      preLoaderRoute: typeof DiscoverRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace': {
@@ -403,88 +348,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trust': {
-      id: '/trust'
-      path: '/trust'
-      fullPath: '/trust'
-      preLoaderRoute: typeof TrustRouteImport
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/account': {
-      id: '/_authenticated/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AuthenticatedAccountRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/booking': {
-      id: '/_authenticated/booking'
-      path: '/booking'
-      fullPath: '/booking'
-      preLoaderRoute: typeof AuthenticatedBookingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/cancel-booking': {
-      id: '/_authenticated/cancel-booking'
-      path: '/cancel-booking'
-      fullPath: '/cancel-booking'
-      preLoaderRoute: typeof AuthenticatedCancelBookingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/messages': {
-      id: '/_authenticated/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/onboarding': {
-      id: '/_authenticated/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/payouts-status': {
-      id: '/_authenticated/payouts-status'
-      path: '/payouts-status'
-      fullPath: '/payouts-status'
-      preLoaderRoute: typeof AuthenticatedPayoutsStatusRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/resolution-center': {
-      id: '/_authenticated/resolution-center'
-      path: '/resolution-center'
-      fullPath: '/resolution-center'
-      preLoaderRoute: typeof AuthenticatedResolutionCenterRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/review': {
-      id: '/_authenticated/review'
-      path: '/review'
-      fullPath: '/review'
-      preLoaderRoute: typeof AuthenticatedReviewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/b/$slug': {
-      id: '/b/$slug'
-      path: '/b/$slug'
-      fullPath: '/b/$slug'
-      preLoaderRoute: typeof BSlugRouteImport
+    '/discover': {
+      id: '/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof DiscoverRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/captains/profile': {
-      id: '/captains/profile'
-      path: '/captains/profile'
-      fullPath: '/captains/profile'
-      preLoaderRoute: typeof CaptainsProfileRouteImport
+    '/brand-story': {
+      id: '/brand-story'
+      path: '/brand-story'
+      fullPath: '/brand-story'
+      preLoaderRoute: typeof BrandStoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/become-a-captain': {
+      id: '/become-a-captain'
+      path: '/become-a-captain'
+      fullPath: '/become-a-captain'
+      preLoaderRoute: typeof BecomeACaptainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/profile': {
@@ -494,18 +404,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/bookings/detail': {
-      id: '/_authenticated/bookings/detail'
-      path: '/bookings/detail'
-      fullPath: '/bookings/detail'
-      preLoaderRoute: typeof AuthenticatedBookingsDetailRouteImport
+    '/captains/profile': {
+      id: '/captains/profile'
+      path: '/captains/profile'
+      fullPath: '/captains/profile'
+      preLoaderRoute: typeof CaptainsProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/b/$slug': {
+      id: '/b/$slug'
+      path: '/b/$slug'
+      fullPath: '/b/$slug'
+      preLoaderRoute: typeof BSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/review': {
+      id: '/_authenticated/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AuthenticatedReviewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/trips/detail': {
-      id: '/_authenticated/trips/detail'
-      path: '/trips/detail'
-      fullPath: '/trips/detail'
-      preLoaderRoute: typeof AuthenticatedTripsDetailRouteImport
+    '/_authenticated/resolution-center': {
+      id: '/_authenticated/resolution-center'
+      path: '/resolution-center'
+      fullPath: '/resolution-center'
+      preLoaderRoute: typeof AuthenticatedResolutionCenterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/payouts-status': {
+      id: '/_authenticated/payouts-status'
+      path: '/payouts-status'
+      fullPath: '/payouts-status'
+      preLoaderRoute: typeof AuthenticatedPayoutsStatusRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages': {
+      id: '/_authenticated/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/booking': {
+      id: '/_authenticated/booking'
+      path: '/booking'
+      fullPath: '/booking'
+      preLoaderRoute: typeof AuthenticatedBookingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/fishx-webhook': {
@@ -514,6 +480,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/fishx-webhook'
       preLoaderRoute: typeof ApiPublicFishxWebhookRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/trips/detail': {
+      id: '/_authenticated/trips/detail'
+      path: '/trips/detail'
+      fullPath: '/trips/detail'
+      preLoaderRoute: typeof AuthenticatedTripsDetailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/bookings/detail': {
+      id: '/_authenticated/bookings/detail'
+      path: '/bookings/detail'
+      fullPath: '/bookings/detail'
+      preLoaderRoute: typeof AuthenticatedBookingsDetailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/hooks/dispatch-events': {
       id: '/api/public/hooks/dispatch-events'
@@ -528,7 +508,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedBookingRoute: typeof AuthenticatedBookingRoute
-  AuthenticatedCancelBookingRoute: typeof AuthenticatedCancelBookingRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
@@ -542,7 +521,6 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedBookingRoute: AuthenticatedBookingRoute,
-  AuthenticatedCancelBookingRoute: AuthenticatedCancelBookingRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMessagesRoute: AuthenticatedMessagesRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
@@ -575,3 +553,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
