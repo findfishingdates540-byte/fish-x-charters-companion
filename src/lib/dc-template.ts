@@ -2,20 +2,12 @@
 // Charters landing page pixel-for-pixel. The templates are copied verbatim
 // into src/dc-templates/*.html and imported as raw strings.
 
-const ASSET_URLS: Record<string, string> = {
-  "cap-alessandro.png": "/__l5e/assets-v1/ef87ef4c-b7d9-4792-a62b-f2869d530620/cap-alessandro.png",
-  "helm.png": "/__l5e/assets-v1/0f3aeb4d-bbf0-4932-9ce4-d15b37e1fb84/helm.png",
-  "james.jpg": "/__l5e/assets-v1/ea01ac20-ddf1-49eb-b4e6-c2cced9631a5/james.jpg",
-  "rev-julianne.png": "/__l5e/assets-v1/d4df6363-395e-4956-b636-53564b8dbcda/rev-julianne.png",
-  "rev-marcus.png": "/__l5e/assets-v1/bd018ef1-ecdb-4b59-a6ed-a54a05e08253/rev-marcus.png",
-  "robert.jpg": "/__l5e/assets-v1/bc3205aa-dad8-4ab0-a663-449670bfc0a5/robert.jpg",
-  "seascape.jpg": "/__l5e/assets-v1/a5cffe8e-82de-438a-8391-1c422fed4dc9/seascape.jpg",
-  "seraphina.jpg": "/__l5e/assets-v1/ed3af574-ce0c-4f18-a4e8-f5803562a920/seraphina.jpg",
-  "yacht-coast.png": "/__l5e/assets-v1/d83686fe-7da2-4768-ab4e-5bb324aa18c6/yacht-coast.png",
-};
-
+// The landing/auth template images ship in public/dashboards/assets/, which
+// Vite copies to the site root so they serve at /dashboards/assets/<name> on
+// any host. (The old /__l5e/assets-v1/… CDN paths only resolved inside
+// Lovable's preview hosting and 404'd on Netlify.)
 export function resolveAsset(name: string): string {
-  return ASSET_URLS[name] ?? `/assets/${name}`;
+  return `/dashboards/assets/${name}`;
 }
 
 /** Extract innerHTML of <x-dc>...</x-dc> and the DC <script> body. */
