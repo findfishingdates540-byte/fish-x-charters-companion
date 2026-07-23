@@ -1,0 +1,431 @@
+/**
+ * Angler Account / Profile settings. Layout + copy ported from
+ * /tmp/stitch/zone2/angler-profile.html (header identity card + a
+ * "Personal details" form card) but re-skinned into the light `V` palette to
+ * match ResolutionCenter.tsx. Only fields backed by real `profiles` columns are
+ * shown — no notification prefs, no payment methods. Reads/writes the signed-in
+ * angler's own row via src/lib/angler-profile.functions.ts. Email is read-only
+ * (it lives in auth, not `profiles`).
+ */
+import { useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getMyProfile, updateMyProfile } from "@/lib/angler-profile.functions";
+
+const V = {
+  serif: "'Cormorant Garamond',Georgia,serif",
+  sans: "'Hanken Grotesk',system-ui,sans-serif",
+  ink: "#0d2236",
+  navy: "#0a2236",
+  paper: "#eef2f5",
+  card: "#ffffff",
+  sand: "#e3c089",
+  sand2: "#d2a566",
+  sandsoft: "#f4e6cd",
+  goldtext: "#a97e3c",
+  cyan: "#1f9fbe",
+  cyansoft: "#e2eef2",
+  green: "#1f8a5b",
+  greensoft: "#e2f2ea",
+  red: "#d8514a",
+  redsoft: "#fbe9e8",
+  ond: "#eaf1f6",
+  ondmut: "#93a7b7",
+  tmut: "#5c6b78",
+  line: "rgba(13,34,54,.10)",
+  lined: "rgba(255,255,255,.12)",
+};
+
+function useToast() {
+  const [toast, setToast] = useState("");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = (m: string) => {
+    setToast(m);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setToast(""), 2400);
+  };
+  return { toast, showToast };
+}
+
+function Toast({ toast }: { toast: string }) {
+  if (!toast) return null;
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: 28,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 80,
+        display: "flex",
+        alignItems: "center",
+        gap: 11,
+        background: V.navy,
+        color: "#fff",
+        border: "1px solid rgba(255,255,255,.12)",
+        borderRadius: 30,
+        padding: "13px 22px",
+        boxShadow: "0 20px 44px -20px rgba(0,0,0,.6)",
+      }}
+    >
+      <span
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: "50%",
+          background: V.sand,
+          color: "#1c1303",
+          display: "grid",
+          placeItems: "center",
+          fontSize: 12,
+        }}
+      >
+        ✓
+      </span>
+      <span style={{ fontSize: 13.5, fontWeight: 600 }}>{toast}</span>
+    </div>
+  );
+}
+
+function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
+      <header style={{ position: "sticky", top: 0, zIndex: 30, background: V.navy, color: V.ond }}>
+        <div
+          style={{
+            maxWidth: 980,
+            margin: "0 auto",
+            padding: "0 28px",
+            height: 62,
+            display: "flex",
+            alignItems: "center",
+            gap: 22,
+          }}
+        >
+          <Link
+            to="/dashboard"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              color: V.ondmut,
+              textDecoration: "none",
+              fontSize: 13,
+              fontWeight: 600,
+            }}
+          >
+            <span>←</span> Back
+          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "0 auto" }}>
+            <span
+              style={{
+                width: 10,
+                height: 10,
+                background: V.sand,
+                transform: "rotate(45deg)",
+                display: "inline-block",
+                borderRadius: 1,
+              }}
+            />
+            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".1em" }}>
+              FISH—X
+            </span>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: ".16em",
+                textTransform: "uppercase",
+                color: V.sand,
+                marginLeft: 4,
+              }}
+            >
+              Account
+            </span>
+          </div>
+          <span style={{ width: 60 }} />
+        </div>
+      </header>
+      <main style={{ maxWidth: 760, margin: "0 auto", padding: "28px 28px 64px" }}>{children}</main>
+    </div>
+  );
+}
+
+const label = (s: string) => (
+  <span
+    style={{
+      display: "block",
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: ".14em",
+      textTransform: "uppercase",
+      color: V.goldtext,
+      marginBottom: 8,
+    }}
+  >
+    {s}
+  </span>
+);
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  boxSizing: "border-box",
+  background: V.paper,
+  border: `1px solid ${V.line}`,
+  borderRadius: 11,
+  padding: "12px 14px",
+  fontFamily: V.sans,
+  fontSize: 14,
+  color: V.ink,
+  outline: "none",
+};
+
+const initialsOf = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]!.toUpperCase())
+    .join("") || "?";
+
+export function AnglerAccount() {
+  const { data } = useSuspenseQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => getMyProfile(),
+  });
+  const queryClient = useQueryClient();
+  const { toast, showToast } = useToast();
+  const saveFn = useServerFn(updateMyProfile);
+
+  const p = data.profile;
+  const email = data.email;
+
+  const [fullName, setFullName] = useState(p?.full_name ?? "");
+  const [displayName, setDisplayName] = useState(p?.display_name ?? "");
+  const [phone, setPhone] = useState(p?.phone ?? "");
+  const [avatarUrl, setAvatarUrl] = useState(p?.avatar_url ?? "");
+
+  const dirty =
+    fullName !== (p?.full_name ?? "") ||
+    displayName !== (p?.display_name ?? "") ||
+    phone !== (p?.phone ?? "") ||
+    avatarUrl !== (p?.avatar_url ?? "");
+
+  const saveMut = useMutation({
+    mutationFn: () =>
+      saveFn({
+        data: {
+          full_name: fullName,
+          display_name: displayName,
+          phone,
+          avatar_url: avatarUrl,
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+      showToast("Profile saved");
+    },
+    onError: (e) => showToast(e instanceof Error ? e.message : "Couldn't save your profile"),
+  });
+
+  const shownName = displayName || fullName || email || "Your account";
+  const initials = initialsOf(displayName || fullName || email || "");
+  const disabled = saveMut.isPending || !dirty;
+
+  return (
+    <Shell>
+      <h1
+        style={{
+          fontFamily: V.serif,
+          fontWeight: 600,
+          fontSize: 30,
+          letterSpacing: "-.01em",
+          margin: "0 0 6px",
+          color: V.ink,
+        }}
+      >
+        Manage account
+      </h1>
+      <p style={{ fontSize: 14, color: V.tmut, margin: "0 0 22px" }}>
+        Update how you appear to captains and how they can reach you.
+      </p>
+
+      {/* Identity header card */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          background: V.card,
+          border: `1px solid ${V.line}`,
+          borderRadius: 20,
+          padding: 22,
+          marginBottom: 22,
+          flexWrap: "wrap",
+        }}
+      >
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt=""
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              objectFit: "cover",
+              flex: "none",
+              border: `2px solid ${V.sandsoft}`,
+            }}
+          />
+        ) : (
+          <span
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              background: V.sandsoft,
+              color: V.goldtext,
+              display: "grid",
+              placeItems: "center",
+              fontFamily: V.serif,
+              fontSize: 26,
+              fontWeight: 600,
+              flex: "none",
+            }}
+          >
+            {initials}
+          </span>
+        )}
+        <div style={{ minWidth: 0 }}>
+          <div
+            style={{
+              fontFamily: V.serif,
+              fontSize: 24,
+              fontWeight: 600,
+              color: V.ink,
+              lineHeight: 1.1,
+            }}
+          >
+            {shownName}
+          </div>
+          <div style={{ fontSize: 13, color: V.tmut, marginTop: 4 }}>
+            {email ?? "No email on file"}
+            <span
+              style={{
+                marginLeft: 8,
+                fontSize: 10.5,
+                fontWeight: 700,
+                letterSpacing: ".1em",
+                textTransform: "uppercase",
+                color: V.ondmut,
+              }}
+            >
+              · Sign-in email
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Personal details card */}
+      <div
+        style={{
+          background: V.card,
+          border: `1px solid ${V.line}`,
+          borderRadius: 20,
+          padding: 26,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: V.serif,
+            fontSize: 18,
+            fontWeight: 600,
+            color: V.ink,
+            marginBottom: 20,
+          }}
+        >
+          Personal details
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 18 }}>
+          <div>
+            {label("Full name")}
+            <input
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              maxLength={120}
+              placeholder="Alex Chen"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            {label("Display name")}
+            <input
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              maxLength={80}
+              placeholder="How captains see you"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            {label("Phone number")}
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              maxLength={40}
+              placeholder="+1 (305) 555-0129"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            {label("Email address")}
+            <input
+              value={email ?? ""}
+              disabled
+              readOnly
+              placeholder="—"
+              style={{ ...inputStyle, color: V.tmut, cursor: "not-allowed" }}
+            />
+          </div>
+          <div style={{ gridColumn: "1 / -1" }}>
+            {label("Avatar URL")}
+            <input
+              value={avatarUrl}
+              onChange={(e) => setAvatarUrl(e.target.value)}
+              maxLength={2000}
+              type="url"
+              placeholder="https://…"
+              style={inputStyle}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24 }}>
+          <button
+            onClick={() => saveMut.mutate()}
+            disabled={disabled}
+            style={{
+              background: V.sand,
+              color: "#1c1303",
+              border: 0,
+              borderRadius: 12,
+              padding: "13px 28px",
+              fontFamily: V.sans,
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: ".06em",
+              textTransform: "uppercase",
+              cursor: disabled ? "default" : "pointer",
+              opacity: disabled ? 0.55 : 1,
+            }}
+          >
+            {saveMut.isPending ? "Saving…" : "Save changes"}
+          </button>
+        </div>
+      </div>
+      <Toast toast={toast} />
+    </Shell>
+  );
+}

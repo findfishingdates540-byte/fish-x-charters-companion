@@ -69,6 +69,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
   const b = data.booking;
   const isCanceled = b.status.startsWith("cancelled") || b.status === "refunded" || b.status === "declined";
   const isActive = !isCanceled;
+  const canReview = b.status === "completed" || b.status === "reviewed";
 
   const captain = data.captain;
   const captainName = captain?.display_name ?? captain?.full_name ?? "Your captain";
@@ -417,11 +418,22 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                 </button>
                 <Link
                   to="/resolution-center"
+                  search={{ booking: bookingId }}
                   style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", borderBottom: `1px solid ${V.line}`, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.ink, textAlign: "left", textDecoration: "none" }}
                 >
                   <span style={{ width: 32, height: 32, borderRadius: 9, background: V.paper, border: `1px solid ${V.line}`, display: "grid", placeItems: "center", flex: "none" }}>⚑</span>
                   Report an issue
                 </Link>
+                {canReview && (
+                  <Link
+                    to="/review"
+                    search={{ booking: bookingId }}
+                    style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", borderBottom: `1px solid ${V.line}`, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.ink, textAlign: "left", textDecoration: "none" }}
+                  >
+                    <span style={{ width: 32, height: 32, borderRadius: 9, background: V.sandsoft, display: "grid", placeItems: "center", flex: "none" }}>★</span>
+                    {b.status === "reviewed" ? "View your review" : "Leave a review"}
+                  </Link>
+                )}
                 <button
                   onClick={() => setCancelOpen(true)}
                   style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", border: 0, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.red, textAlign: "left" }}
