@@ -343,8 +343,8 @@ function AuthPage() {
                 <p style={{ fontSize: 15, color: "var(--tmut)", margin: 0 }}>Sign in to manage your listings, bookings and payouts.</p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-                <button type="button" style={socialDark}><span style={{ fontSize: 16 }}></span> Continue with Apple</button>
-                <button type="button" style={socialLight}><span style={googleDot} /> Continue with Google</button>
+                <button type="button" onClick={() => oauth("apple")} disabled={isSubmitting} style={{ ...socialDark, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}><span style={{ fontSize: 16 }}></span> Continue with Apple</button>
+                <button type="button" onClick={() => oauth("google")} disabled={isSubmitting} style={{ ...socialLight, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "wait" : "pointer" }}><span style={googleDot} /> Continue with Google</button>
               </div>
               {dividerRow}
               <form onSubmit={submit} noValidate style={{ display: "flex", flexDirection: "column", gap: 15 }}>
