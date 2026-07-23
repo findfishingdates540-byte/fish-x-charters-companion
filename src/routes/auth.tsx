@@ -224,6 +224,25 @@ function AuthPage() {
     else navigate({ to: "/dashboard" });
   };
 
+  const oauth = async (provider: "google" | "apple", role?: "angler") => {
+    setError("");
+    setStatus("submitting");
+    setDoneKind(role ? "angler" : "login");
+    try {
+      const { error: e2 } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+          ...(role ? { data: { intended_role: role } } : {}),
+        },
+      });
+      if (e2) throw e2;
+    } catch (err) {
+      setStatus("idle");
+      setError(err instanceof Error ? err.message : "OAuth sign-in failed. Try again.");
+    }
+  };
+
   const pwField = (autoComplete: string, placeholder: string) => (
     <label style={{ display: "block" }}>
       <span style={labelSpan}>Password</span>
