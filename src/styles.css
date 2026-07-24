@@ -251,6 +251,7 @@ body.dc-body { margin:0; background:#0a2236; }
  * on the site is affected.
  * ============================================================= */
 .fx-authed { min-width: 0; }
+.fx-authed .fx-hamburger { display: none; }
 
 @media (max-width: 900px) {
   /* Root shell: stack sidebar above main */
@@ -316,27 +317,52 @@ body.dc-body { margin:0; background:#0a2236; }
     gap: 10px !important;
     flex-wrap: wrap !important;
   }
+  /* Hide the primary nav by default on mobile; a hamburger toggles it. */
   .fx-authed header[style*="sticky"] nav {
+    display: none !important;
+  }
+  .fx-authed header[style*="sticky"][data-nav-open="true"] nav {
+    display: flex !important;
     order: 3 !important;
     width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    flex-wrap: nowrap !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     gap: 2px !important;
-    padding-bottom: 2px !important;
+    padding: 6px 4px 2px !important;
+    border-top: 1px solid rgba(255,255,255,.08);
+    margin-top: 6px !important;
   }
-  .fx-authed header[style*="sticky"] nav::-webkit-scrollbar { display: none; }
-  .fx-authed header[style*="sticky"] nav > * {
+  .fx-authed header[style*="sticky"][data-nav-open="true"] nav > * {
     flex: none !important;
     white-space: nowrap !important;
-    padding: 6px 10px !important;
-    font-size: 13px !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    border-radius: 10px !important;
   }
   .fx-authed header[style*="sticky"] > div:first-child > div[style*="margin-left"] {
     margin-left: auto !important;
     gap: 8px !important;
     flex-wrap: nowrap !important;
   }
+  /* Hamburger button injected by _authenticated layout */
+  .fx-authed .fx-hamburger {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    margin-left: auto;
+  }
+  .fx-authed .fx-hamburger svg { width: 20px; height: 20px; }
   /* Hide the wide search field on tablets/phones */
   .fx-authed header[style*="sticky"] label[style*="width: 230"],
   .fx-authed header[style*="sticky"] label[style*="width:230"],
