@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PublicHeader } from "@/components/public/PublicHeader";
+
 import { useState } from "react";
 import captainHero from "@/assets/captain-hero.jpg";
 
