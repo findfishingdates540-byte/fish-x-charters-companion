@@ -120,9 +120,8 @@ function AuthPage() {
 
   useEffect(() => {
     if (!isDone) return;
-    const target = doneKind === "business" ? "/onboarding" : "/dashboard";
     const timer = setTimeout(() => {
-      navigate({ to: target });
+      navigate({ to: "/dashboard" });
     }, 1200);
     return () => clearTimeout(timer);
   }, [isDone, doneKind, navigate]);
