@@ -75,57 +75,8 @@ function BecomeCaptainPage() {
         }
       `}</style>
 
-      {/* ============ HEADER ============ */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 60,
-          background: "rgba(9,27,44,.94)",
-          backdropFilter: "saturate(140%) blur(12px)",
-          borderBottom: "1px solid rgba(255,255,255,.1)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1280,
-            margin: "0 auto",
-            padding: "18px 40px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 24,
-          }}
-        >
-          <Link
-            to="/"
-            style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "var(--ond)" }}
-          >
-            <span
-              style={{
-                width: 11,
-                height: 11,
-                background: "var(--sand)",
-                transform: "rotate(45deg)",
-                display: "inline-block",
-                borderRadius: 1,
-              }}
-            />
-            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 21, letterSpacing: ".02em" }}>
-              Fish-X Charters
-            </span>
-          </Link>
-          <nav style={{ display: "flex", alignItems: "center", gap: 30 }}>
-            <a href="#opportunity" style={navLink}>Opportunity</a>
-            <a href="#earnings" style={navLink}>Earnings</a>
-            <a href="#process" style={navLink}>Process</a>
-            <a href="#trust" style={navLink}>Security</a>
-          </nav>
-          <a href="#apply" style={ctaBtn}>
-            Join as Captain
-          </a>
-        </div>
-      </header>
+      <PublicHeader />
+
 
       {/* ============ HERO — full-bleed image ============ */}
       <section
