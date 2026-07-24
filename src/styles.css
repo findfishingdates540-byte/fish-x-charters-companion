@@ -396,10 +396,14 @@ body.dc-body { margin:0; background:#0a2236; }
 
 @media (max-width: 560px) {
   .fx-authed main { padding: 14px 10px 32px !important; }
-  .fx-authed header[style*="sticky"] { padding: 10px 12px !important; }
+  .fx-authed header[style*="sticky"] { padding: 8px 10px !important; }
+  .fx-authed header[style*="sticky"] > div:first-child { padding: 6px 10px !important; }
   .fx-authed aside { padding: 10px 10px !important; }
   /* Hide the user chip label on very small screens, keep avatar */
   .fx-authed aside > div:last-child > div[style*="line-height"] { display: none !important; }
+  /* Hide the username label next to the avatar in navy top-nav headers */
+  .fx-authed header[style*="sticky"] a[href="/account"] > span,
+  .fx-authed header[style*="sticky"] a[title="Your account"] > span { display: none !important; }
 }
 
 
