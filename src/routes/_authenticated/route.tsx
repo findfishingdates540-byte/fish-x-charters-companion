@@ -10,5 +10,9 @@ export const Route = createFileRoute("/_authenticated")({
     }
     return { user: data.user };
   },
-  component: () => <Outlet />,
+  component: () => (
+    <div className="fx-authed">
+      <Outlet />
+    </div>
+  ),
 });
