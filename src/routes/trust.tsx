@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PublicHeader } from "@/components/public/PublicHeader";
+
 
 export const Route = createFileRoute("/trust")({
   component: TrustPage,
@@ -144,54 +146,8 @@ function TrustPage() {
       `}</style>
 
       {/* ============ HEADER ============ */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 60,
-          background: "rgba(9,27,44,.94)",
-          backdropFilter: "saturate(140%) blur(12px)",
-          borderBottom: "1px solid rgba(255,255,255,.1)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1280,
-            margin: "0 auto",
-            padding: "18px 40px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 24,
-          }}
-        >
-          <Link
-            to="/"
-            style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "var(--ond)" }}
-          >
-            <span
-              style={{
-                width: 11,
-                height: 11,
-                background: "var(--sand)",
-                transform: "rotate(45deg)",
-                display: "inline-block",
-                borderRadius: 1,
-              }}
-            />
-            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 21, letterSpacing: ".02em" }}>
-              Fish-X Charters
-            </span>
-          </Link>
-          <nav style={{ display: "flex", alignItems: "center", gap: 30 }}>
-            <Link to="/" style={navLink}>Home</Link>
-            <Link to="/how-it-works" style={navLink}>How it works</Link>
-            <Link to="/become-a-captain" style={navLink}>Captains</Link>
-            <Link to="/trust" style={{ ...navLink, color: "var(--sand)", opacity: 1 }}>Trust</Link>
-          </nav>
-          <Link to="/auth" style={ctaBtn}>Sign in</Link>
-        </div>
-      </header>
+      <PublicHeader />
+
 
       {/* ============ HERO ============ */}
       <section

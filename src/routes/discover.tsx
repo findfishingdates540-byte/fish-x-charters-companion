@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { listPublicBusinesses, listCategories } from "@/lib/businesses.functions";
+import { PublicHeader } from "@/components/public/PublicHeader";
+
 
 const businessesQO = (category?: string) =>
   queryOptions({
@@ -45,15 +47,16 @@ function DiscoverPage() {
 
   return (
     <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#0d2236" }}>
+      <PublicHeader />
       <header style={{ padding: "40px 48px 24px", borderBottom: "1px solid rgba(13,34,54,.08)" }}>
-        <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: "#0d2236", textDecoration: "none" }}>Fish-X Charters</Link>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px,5vw,64px)", letterSpacing: "-.02em", margin: "16px 0 8px", fontWeight: 600 }}>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px,5vw,64px)", letterSpacing: "-.02em", margin: "0 0 8px", fontWeight: 600 }}>
           Discover operators.
         </h1>
         <p style={{ color: "#5c6b78", fontSize: 16, maxWidth: 560 }}>
           Every fishing-industry business inside Fish-X — charters, tackle shops, marinas, guides, lodges, apparel and gear brands.
         </p>
       </header>
+
 
       <nav style={{ display: "flex", gap: 8, flexWrap: "wrap", padding: "20px 48px", borderBottom: "1px solid rgba(13,34,54,.06)" }}>
         <Link

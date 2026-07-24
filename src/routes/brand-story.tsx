@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PublicHeader } from "@/components/public/PublicHeader";
+
 import heroImg from "@/assets/story-hero.jpg";
 import teamImg from "@/assets/story-team.jpg";
 import helmImg from "@/assets/story-helm.jpg";
@@ -97,46 +99,8 @@ function BrandStoryPage() {
       `}</style>
 
       {/* Nav */}
-      <header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-          background: "rgba(244,246,248,.72)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          borderBottom: "1px solid var(--line)",
-          height: 76,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            padding: "0 24px",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Link to="/" className="bs-serif" style={{ fontSize: 28, letterSpacing: "-.02em", color: "var(--ink)", fontWeight: 600 }}>
-            Fish-X Charters
-          </Link>
-          <nav className="bs-nav" style={{ display: "flex", gap: 32, alignItems: "center" }}>
-            <Link to="/discover">Charters</Link>
-            <Link to="/how-it-works">How It Works</Link>
-            <Link to="/brand-story" className="active">Our Story</Link>
-            <Link to="/trust">Trust</Link>
-            <Link to="/become-a-captain">For Captains</Link>
-          </nav>
-          <Link to="/discover" className="bs-btn bs-btn-primary" style={{ padding: "10px 22px" }}>
-            Book A Trip
-          </Link>
-        </div>
-      </header>
+      <PublicHeader />
+
 
       {/* Hero */}
       <section style={{ position: "relative", height: "100vh", minHeight: 620, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
