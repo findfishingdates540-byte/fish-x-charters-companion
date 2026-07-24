@@ -31,7 +31,7 @@ export const listCaptainBookings = createServerFn({ method: "GET" })
     if (!businessId) return { businessId: null, rows: [] };
     let q = context.supabase
       .from("bookings")
-      .select("id,trip_date,start_time,status,total_cents,party_size,customer_name,service:bookable_services(title,hero_url)")
+      .select("id,trip_date,start_time,status,total_cents,party_size,customer:customers(full_name,email),service:bookable_services(title,hero_url)")
       .eq("business_id", businessId)
       .order("trip_date", { ascending: false })
       .limit(100);

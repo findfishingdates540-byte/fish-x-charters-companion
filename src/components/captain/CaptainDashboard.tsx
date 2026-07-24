@@ -312,7 +312,7 @@ function BookingsPanel() {
             <div style={{ fontSize: 14, fontWeight: 600 }}>{b.service?.title ?? "Charter"}</div>
             <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
               {new Date(b.trip_date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
-              {b.customer_name ? ` · ${b.customer_name}` : ""}
+              {b.customer?.full_name ? ` · ${b.customer.full_name}` : ""}
               {b.party_size ? ` · ${b.party_size} guests` : ""}
             </div>
           </div>
