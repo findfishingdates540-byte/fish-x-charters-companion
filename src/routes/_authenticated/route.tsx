@@ -47,6 +47,7 @@ function AuthedLayout() {
           header.setAttribute("data-nav-open", next ? "true" : "false");
           btn.setAttribute("aria-expanded", next ? "true" : "false");
           btn.innerHTML = next ? CLOSE_SVG : HAMBURGER_SVG;
+          if (next) window.scrollTo({ top: 0, behavior: "smooth" });
         });
 
         // Insert as the last child of the inner row so it sits at the right edge.

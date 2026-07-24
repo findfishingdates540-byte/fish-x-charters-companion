@@ -321,6 +321,12 @@ body.dc-body { margin:0; background:#0a2236; }
   .fx-authed header[style*="sticky"] nav {
     display: none !important;
   }
+  /* When the menu is open, drop sticky so the expanded header pushes
+     page content down instead of overlaying it. */
+  .fx-authed header[style*="sticky"][data-nav-open="true"] {
+    position: relative !important;
+    top: auto !important;
+  }
   .fx-authed header[style*="sticky"][data-nav-open="true"] nav {
     display: flex !important;
     order: 3 !important;
