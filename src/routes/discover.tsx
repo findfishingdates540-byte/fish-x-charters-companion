@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { listPublicBusinesses, listCategories } from "@/lib/businesses.functions";
+import { PublicHeader } from "@/components/public/PublicHeader";
+
 
 const businessesQO = (category?: string) =>
   queryOptions({
