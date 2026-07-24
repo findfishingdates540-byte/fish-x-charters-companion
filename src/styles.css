@@ -426,16 +426,62 @@ body.dc-body { margin:0; background:#0a2236; }
   .fx-authed [style*="fontSize: 26"] { font-size: 20px !important; }
 }
 
+/* ---- Global authed header simplification (all viewports) ---- */
+/* Hide username label next to avatar (keep the round avatar div) */
+.fx-authed header[style*="sticky"] a[href="/account"] > span,
+.fx-authed header[style*="sticky"] a[title="Your account"] > span { display: none !important; }
+/* Hide the standalone sign-out icon button (moved into avatar dropdown) */
+.fx-authed header[style*="sticky"] button[title="Sign out"] { display: none !important; }
+
+/* Shrink or hide the wide search field to declutter the desktop nav */
+@media (max-width: 1200px) {
+  .fx-authed header[style*="sticky"] label:has(> input[placeholder*="Search"]),
+  .fx-authed header[style*="sticky"] label:has(> input[placeholder*="search"]) { display: none !important; }
+}
+
+/* Avatar dropdown menu */
+.fx-profile-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: var(--card, #fff);
+  color: var(--ink, #0d2236);
+  border: 1px solid var(--line, rgba(13,34,54,.12));
+  border-radius: 12px;
+  box-shadow: 0 20px 50px -20px rgba(13,34,54,.35);
+  padding: 6px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fx-profile-menu[hidden] { display: none; }
+.fx-profile-menu a,
+.fx-profile-menu button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  font: 600 13.5px var(--sans, system-ui);
+  color: var(--ink, #0d2236);
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+.fx-profile-menu a:hover,
+.fx-profile-menu button:hover { background: rgba(13,34,54,.06); }
+
 @media (max-width: 560px) {
   .fx-authed main { padding: 14px 10px 32px !important; }
   .fx-authed header[style*="sticky"] { padding: 8px 10px !important; }
   .fx-authed header[style*="sticky"] > div:first-child { padding: 6px 10px !important; }
   .fx-authed aside { padding: 10px 10px !important; }
-  /* Hide the user chip label on very small screens, keep avatar */
   .fx-authed aside > div:last-child > div[style*="line-height"] { display: none !important; }
-  /* Hide the username label next to the avatar in navy top-nav headers */
-  .fx-authed header[style*="sticky"] a[href="/account"] > span,
-  .fx-authed header[style*="sticky"] a[title="Your account"] > span { display: none !important; }
 }
+
 
 

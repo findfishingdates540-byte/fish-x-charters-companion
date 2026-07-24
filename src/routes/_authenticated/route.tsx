@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthedLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  // Inject a hamburger toggle into any sticky top-nav header on mobile.
+  // Inject a hamburger toggle + profile dropdown into any sticky top-nav header.
   useEffect(() => {
     const HAMBURGER_SVG =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
@@ -29,6 +29,44 @@ function AuthedLayout() {
         '.fx-authed header[style*="sticky"]',
       );
       headers.forEach((header) => {
+        // ---- Profile dropdown (Account + Sign out) ----
+        const signOutBtn = header.querySelector<HTMLButtonElement>(
+          'button[title="Sign out"]',
+        );
+        if (signOutBtn && !header.querySelector(".fx-profile-menu")) {
+          const trigger = signOutBtn.previousElementSibling as HTMLElement | null;
+          if (trigger) {
+            trigger.style.position = "relative";
+            trigger.setAttribute("role", "button");
+            trigger.setAttribute("aria-haspopup", "menu");
+            const menu = document.createElement("div");
+            menu.className = "fx-profile-menu";
+            menu.setAttribute("hidden", "");
+            menu.innerHTML =
+              '<a href="/account" data-fx-account>Account</a>' +
+              '<button type="button" data-fx-signout>Sign out</button>';
+            trigger.appendChild(menu);
+
+            trigger.addEventListener("click", (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const open = !menu.hasAttribute("hidden");
+              if (open) menu.setAttribute("hidden", "");
+              else menu.removeAttribute("hidden");
+            });
+            menu
+              .querySelector<HTMLButtonElement>("[data-fx-signout]")!
+              .addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                menu.setAttribute("hidden", "");
+                signOutBtn.click();
+              });
+            menu.addEventListener("click", (e) => e.stopPropagation());
+          }
+        }
+
+        // ---- Hamburger for mobile nav ----
         const nav = header.querySelector("nav");
         if (!nav) return;
         if (header.querySelector(".fx-hamburger")) return;
@@ -49,11 +87,8 @@ function AuthedLayout() {
           btn.innerHTML = next ? CLOSE_SVG : HAMBURGER_SVG;
           if (next) window.scrollTo({ top: 0, behavior: "smooth" });
         });
-
-        // Insert as the last child of the inner row so it sits at the right edge.
         inner.appendChild(btn);
 
-        // Auto-close when a nav item is tapped.
         nav.addEventListener("click", (e) => {
           const t = e.target as HTMLElement;
           if (t.closest("a, button")) {
@@ -68,8 +103,21 @@ function AuthedLayout() {
     decorate();
     const mo = new MutationObserver(decorate);
     mo.observe(document.body, { childList: true, subtree: true });
-    return () => mo.disconnect();
+
+    // Close any open profile menu on outside click.
+    const onDocClick = () => {
+      document
+        .querySelectorAll<HTMLElement>(".fx-profile-menu")
+        .forEach((m) => m.setAttribute("hidden", ""));
+    };
+    document.addEventListener("click", onDocClick);
+
+    return () => {
+      mo.disconnect();
+      document.removeEventListener("click", onDocClick);
+    };
   }, []);
+
 
   // Close any open nav on route change.
   useEffect(() => {
