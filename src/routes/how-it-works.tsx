@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PublicHeader } from "@/components/public/PublicHeader";
+
 import discoverImg from "@/assets/hiw-discover.jpg";
 import bookImg from "@/assets/hiw-book.jpg";
 import coordinateImg from "@/assets/hiw-coordinate.jpg";
