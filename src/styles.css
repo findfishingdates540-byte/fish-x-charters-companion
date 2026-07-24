@@ -251,6 +251,7 @@ body.dc-body { margin:0; background:#0a2236; }
  * on the site is affected.
  * ============================================================= */
 .fx-authed { min-width: 0; }
+.fx-authed .fx-hamburger { display: none; }
 
 @media (max-width: 900px) {
   /* Root shell: stack sidebar above main */
