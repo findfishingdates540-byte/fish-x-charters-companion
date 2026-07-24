@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PublicHeader } from "@/components/public/PublicHeader";
+
 
 export const Route = createFileRoute("/trust")({
   component: TrustPage,
