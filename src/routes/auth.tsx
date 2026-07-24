@@ -106,6 +106,15 @@ function AuthPage() {
     return () => document.body.classList.remove("dc-body");
   }, []);
 
+  useEffect(() => {
+    if (!isDone) return;
+    const target = doneKind === "business" ? "/onboarding" : "/dashboard";
+    const timer = setTimeout(() => {
+      navigate({ to: target });
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [isDone, doneKind, navigate]);
+
   const isLogin = view === "login";
   const atIntent = view === "signup" && step === "intent";
   const atAngler = view === "signup" && step === "angler";
