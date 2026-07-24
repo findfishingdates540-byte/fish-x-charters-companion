@@ -293,15 +293,56 @@ body.dc-body { margin:0; background:#0a2236; }
   .fx-authed aside > div[style*="margin-top: auto"],
   .fx-authed aside > div[style*="marginTop"] { margin-top: 0 !important; }
 
-  /* Sticky header inside main */
+  /* Sticky header inside main (OperatorShell light header) */
   .fx-authed header[style*="sticky"] {
-    padding: 12px 16px !important;
-    gap: 12px !important;
+    padding: 10px 14px !important;
+    gap: 10px !important;
     flex-wrap: wrap !important;
   }
   .fx-authed header[style*="sticky"] > div[style*="margin-left: auto"],
   .fx-authed header[style*="sticky"] > div:last-child {
     margin-left: auto !important;
+  }
+
+  /* Navy top-nav headers (Angler / Trip / Booking / Captain-detail / Marketplace / Messages / etc.)
+     Structure: <header sticky navy> <div maxWidth:1160 padding:0 28px height:66 flex row> children </div> </header>
+     Collapse inner row into a wrapping bar, horizontal-scroll the nav, hide the wide search,
+     keep right-side actions compact. */
+  .fx-authed header[style*="sticky"] > div:first-child {
+    max-width: 100% !important;
+    padding: 8px 12px !important;
+    height: auto !important;
+    min-height: 56px !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+  }
+  .fx-authed header[style*="sticky"] nav {
+    order: 3 !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex-wrap: nowrap !important;
+    gap: 2px !important;
+    padding-bottom: 2px !important;
+  }
+  .fx-authed header[style*="sticky"] nav::-webkit-scrollbar { display: none; }
+  .fx-authed header[style*="sticky"] nav > * {
+    flex: none !important;
+    white-space: nowrap !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+  }
+  .fx-authed header[style*="sticky"] > div:first-child > div[style*="margin-left"] {
+    margin-left: auto !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+  }
+  /* Hide the wide search field on tablets/phones */
+  .fx-authed header[style*="sticky"] label[style*="width: 230"],
+  .fx-authed header[style*="sticky"] label[style*="width:230"],
+  .fx-authed header[style*="sticky"] label[style*="width: 260"],
+  .fx-authed header[style*="sticky"] label[style*="width: 300"] {
+    display: none !important;
   }
 
   /* Main content padding */
