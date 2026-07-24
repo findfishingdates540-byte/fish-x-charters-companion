@@ -118,6 +118,15 @@ function AuthPage() {
   const pwType = showPw ? "text" : "password";
   const pwToggleLabel = showPw ? "Hide" : "Show";
 
+  useEffect(() => {
+    if (!isDone) return;
+    const target = doneKind === "business" ? "/onboarding" : "/dashboard";
+    const timer = setTimeout(() => {
+      navigate({ to: target });
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [isDone, doneKind, navigate]);
+
   const doneTitle = doneKind === "business" ? "Workspace created" : doneKind === "angler" ? "Account created" : "You’re in";
   const doneMsg = doneKind === "business"
     ? "Welcome aboard. Complete a few quick steps to get verified and start selling."
