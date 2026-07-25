@@ -229,10 +229,13 @@ export function OperatorOnboarding() {
     }
   }
 
-  const uploadedCount = Object.values(uploaded).filter(Boolean).length + (data?.verification?.doc_urls?.length ? 3 : 0);
-  const pct = published ? 100 : Math.round((step / 4) * 100);
-
   const categories = data?.categories ?? [];
+  const verifyConfig = getVerificationConfig(profile.categoryKey);
+  const requiredDocCount = verifyConfig.docs.length;
+  const uploadedCount =
+    Object.values(uploaded).filter(Boolean).length +
+    (data?.verification?.doc_urls?.length ? requiredDocCount : 0);
+  const pct = published ? 100 : Math.round((step / 4) * 100);
 
   if (isLoading) {
     return <div className="min-h-screen grid place-items-center bg-[#eef2f5] text-[#5c6b78]">Loading…</div>;
