@@ -40,8 +40,12 @@ export const getOnboardingState = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const businessId = await pickBusinessId(context.supabase, context.userId);
+    const catBaseRes = await context.supabase
+      .from("business_categories")
+      .select("key,label,sort_order")
+      .order("sort_order");
     if (!businessId) {
-      return { business: null, verification: null, service: null, categories: [] as any[] };
+      return { business: null, verification: null, service: null, categories: catBaseRes.data ?? [] };
     }
     const [bizRes, verRes, svcRes, catRes] = await Promise.all([
       context.supabase.from("businesses").select("*").eq("id", businessId).maybeSingle(),
