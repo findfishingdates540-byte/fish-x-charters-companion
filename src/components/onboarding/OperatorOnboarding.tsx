@@ -557,22 +557,31 @@ function ProfileStep({
 }
 
 function VerifyStep({
+  config,
+  categoryLabel,
   uploaded,
   onUpload,
   alreadySubmitted,
 }: {
-  uploaded: Record<DocKey, string | null>;
+  config: { headline: string; docs: DocSpec[] };
+  categoryLabel: string;
+  uploaded: Record<string, string | null>;
   onUpload: (k: DocKey, file: File) => void;
   alreadySubmitted: boolean;
 }) {
   return (
     <div className="flex flex-col gap-[14px] max-w-[720px]">
-      {(Object.keys(DOC_META) as DocKey[]).map((k) => {
-        const meta = DOC_META[k];
-        const done = !!uploaded[k] || alreadySubmitted;
+      <div className="bg-white border border-[#0d2236]/10 rounded-2xl p-[16px_20px]">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#a97e3c] mb-1">
+          {categoryLabel}
+        </div>
+        <div className="text-[13.5px] text-[#0d2236] leading-[1.5]">{config.headline}</div>
+      </div>
+      {config.docs.map((meta) => {
+        const done = !!uploaded[meta.key] || alreadySubmitted;
         return (
           <div
-            key={k}
+            key={meta.key}
             className="bg-white border border-[#0d2236]/10 rounded-2xl p-[18px_20px] flex items-center gap-4"
           >
             <span className="w-11 h-11 rounded-xl bg-[#f4e6cd] grid place-items-center text-[#a97e3c] flex-none">
@@ -598,7 +607,7 @@ function VerifyStep({
                   accept="image/*,.pdf"
                   onChange={(e) => {
                     const f = e.target.files?.[0];
-                    if (f) onUpload(k, f);
+                    if (f) onUpload(meta.key, f);
                     e.target.value = "";
                   }}
                 />
