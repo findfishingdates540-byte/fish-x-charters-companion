@@ -541,7 +541,20 @@ export function OperatorOnboarding() {
                 />
               )}
               {step === 2 && (
-                <PayoutsStep schedule={payoutSchedule} setSchedule={setPayoutSchedule} />
+                <PayoutsStep
+                  config={getPayoutConfig(profile.categoryKey)}
+                  schedule={payoutSchedule}
+                  setSchedule={setPayoutSchedule}
+                  stripeConnected={stripeConnected}
+                  onConnectStripe={() => {
+                    // Dummy Stripe Connect — simulate OAuth handshake
+                    showToast("Connecting to Stripe…");
+                    setTimeout(() => {
+                      setStripeConnected(true);
+                      showToast("Stripe account connected (demo)");
+                    }, 900);
+                  }}
+                />
               )}
               {step === 3 && <ListingStep listing={listing} setListing={setListing} />}
               {step === 4 && (
