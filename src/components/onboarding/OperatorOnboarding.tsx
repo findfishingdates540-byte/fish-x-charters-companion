@@ -331,7 +331,7 @@ export function OperatorOnboarding() {
       if (docPaths.length > 0 && !data?.verification) {
         await submitVer({ data: { docPaths } });
       }
-      await savePayout({ data: { schedule: payoutSchedule } });
+      await savePayout({ data: { schedule: payoutSchedule, stripeConnected } });
       return publish({
         data: {
           title: listing.title,
