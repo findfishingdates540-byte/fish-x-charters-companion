@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Marketplace } from "@/components/marketplace/Marketplace";
 
-export const Route = createFileRoute("/marketplace")({
+export const Route = createFileRoute("/marketplace/")({
   head: () => ({
     meta: [
       { title: "Marketplace — Fish-X Charters" },
