@@ -257,7 +257,8 @@ export function Marketplace() {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
                     <span style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 600, color: V.goldtext }}>{money(p.price)}</span>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setCart((c) => ({ ...c, [p.id]: (c[p.id] ?? 0) + 1 }));
                         showToast(`${p.name} added — escrow-protected`);
                       }}
