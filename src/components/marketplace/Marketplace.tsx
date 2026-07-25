@@ -224,7 +224,11 @@ export function Marketplace() {
             return (
               <article
                 key={p.id}
-                style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, overflow: "hidden", display: "flex", flexDirection: "column" }}
+                onClick={() => {
+                  setCart((c) => ({ ...c, [p.id]: (c[p.id] ?? 0) + 1 }));
+                  showToast(`${p.name} added — escrow-protected`);
+                }}
+                style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}
               >
                 <div style={{ position: "relative", height: 170, background: tile.bg, display: "grid", placeItems: "center" }}>
                   <span style={{ color: tile.ink, opacity: 0.9 }}>
@@ -253,7 +257,8 @@ export function Marketplace() {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
                     <span style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 600, color: V.goldtext }}>{money(p.price)}</span>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setCart((c) => ({ ...c, [p.id]: (c[p.id] ?? 0) + 1 }));
                         showToast(`${p.name} added — escrow-protected`);
                       }}
