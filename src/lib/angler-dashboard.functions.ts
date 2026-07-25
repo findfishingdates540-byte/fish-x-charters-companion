@@ -76,6 +76,7 @@ export const listRecommendedCharters = createServerFn({ method: "GET" }).handler
       "id,slug,title,hero_url,base_price_cents,departure_location,business:businesses(id,slug,name,city,region,verified_at)",
     )
     .eq("is_published", true)
+    .in("kind", ["charter_trip", "guided_trip"])
     .order("created_at", { ascending: false })
     .limit(6);
   if (error) throw new Response(error.message, { status: 500 });
