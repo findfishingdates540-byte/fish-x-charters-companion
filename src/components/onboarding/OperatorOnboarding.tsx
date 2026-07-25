@@ -82,6 +82,136 @@ const VERIFICATION_BY_CATEGORY: Record<string, { headline: string; docs: DocSpec
   },
 };
 
+type PayoutFlowStep = { n: number; t: string; d: string; c: string; ic: string };
+export type PayoutScheduleKey = "weekly" | "each" | "monthly";
+type PayoutScheduleOpt = { key: PayoutScheduleKey; title: string; desc: string };
+type PayoutConfig = {
+  eyebrow: string;
+  headline: string;
+  flow: PayoutFlowStep[];
+  schedules: PayoutScheduleOpt[];
+  connectLabel: string;
+  connectDesc: string;
+  fineprint: string;
+};
+
+const DEFAULT_ESCROW_FLOW: PayoutFlowStep[] = [
+  { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "#f4e6cd", ic: "#a97e3c" },
+  { n: 2, t: "Held in escrow", d: "Safe — not your balance yet.", c: "#e2eef2", ic: "#1f9fbe" },
+  { n: 3, t: "You're paid", d: "Released after the trip.", c: "#e2f2ea", ic: "#1f8a5b" },
+];
+
+const RETAIL_FLOW: PayoutFlowStep[] = [
+  { n: 1, t: "Customer checks out", d: "Card charged at purchase.", c: "#f4e6cd", ic: "#a97e3c" },
+  { n: 2, t: "Order settles", d: "Funds clear after fulfillment.", c: "#e2eef2", ic: "#1f9fbe" },
+  { n: 3, t: "Payout to you", d: "Net proceeds sent on schedule.", c: "#e2f2ea", ic: "#1f8a5b" },
+];
+
+const STAY_FLOW: PayoutFlowStep[] = [
+  { n: 1, t: "Guest reserves", d: "Deposit taken at booking.", c: "#f4e6cd", ic: "#a97e3c" },
+  { n: 2, t: "Balance on arrival", d: "Remaining balance clears at check-in.", c: "#e2eef2", ic: "#1f9fbe" },
+  { n: 3, t: "Payout to you", d: "Released after checkout.", c: "#e2f2ea", ic: "#1f8a5b" },
+];
+
+const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
+  charter: {
+    eyebrow: "Charter escrow",
+    headline: "Anglers pay upfront into escrow — you're paid after every trip runs.",
+    flow: DEFAULT_ESCROW_FLOW,
+    schedules: [
+      { key: "each", title: "After each trip", desc: "Released as soon as escrow clears." },
+      { key: "weekly", title: "Weekly", desc: "Auto-batched every Monday." },
+    ],
+    connectLabel: "Connect Stripe for captain payouts",
+    connectDesc: "Verified bank account required before your first release.",
+    fineprint: "Stripe Connect linking is enabled after your first booking. Adjustable in Settings.",
+  },
+  guide_service: {
+    eyebrow: "Guide escrow",
+    headline: "Trip fees sit in escrow until your guided day is complete.",
+    flow: DEFAULT_ESCROW_FLOW,
+    schedules: [
+      { key: "each", title: "After each trip", desc: "Released the day your guided trip wraps." },
+      { key: "weekly", title: "Weekly", desc: "Auto-batched every Monday." },
+    ],
+    connectLabel: "Connect Stripe for guide payouts",
+    connectDesc: "We'll verify your bank account before your first release.",
+    fineprint: "Stripe Connect linking is enabled after your first booking. Adjustable in Settings.",
+  },
+  tackle_shop: {
+    eyebrow: "Retail settlement",
+    headline: "Orders settle after fulfillment — payouts land on your chosen schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Batched net proceeds every Monday." },
+      { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
+    ],
+    connectLabel: "Connect Stripe for storefront payouts",
+    connectDesc: "Needed to receive proceeds from Fish-X orders.",
+    fineprint: "Refunds & chargebacks are reconciled automatically against your next payout.",
+  },
+  bait_shop: {
+    eyebrow: "Retail settlement",
+    headline: "Live-bait and small-goods orders settle daily — payouts on your schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Batched net proceeds every Monday." },
+      { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
+    ],
+    connectLabel: "Connect Stripe for bait shop payouts",
+    connectDesc: "Verified bank account required for storefront proceeds.",
+    fineprint: "Perishable-item refunds are handled per your shop policy.",
+  },
+  marina: {
+    eyebrow: "Slip & service settlement",
+    headline: "Slip reservations and service invoices settle after check-out or job completion.",
+    flow: STAY_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Batched slip & service proceeds every Monday." },
+      { key: "monthly", title: "Monthly", desc: "Consolidated payout on the 1st." },
+    ],
+    connectLabel: "Connect Stripe for marina payouts",
+    connectDesc: "Used for slip reservations, fuel, and service invoices.",
+    fineprint: "Recurring monthly slip holders can be invoiced separately in Settings.",
+  },
+  lodge: {
+    eyebrow: "Lodging escrow",
+    headline: "Guests pay a deposit upfront; balance clears at check-in. Payout after checkout.",
+    flow: STAY_FLOW,
+    schedules: [
+      { key: "each", title: "After each stay", desc: "Payout the day after guest checkout." },
+      { key: "weekly", title: "Weekly", desc: "Batched every Monday." },
+    ],
+    connectLabel: "Connect Stripe for lodge payouts",
+    connectDesc: "Verified bank account required before your first release.",
+    fineprint: "Damage holds and incidentals can be captured separately at checkout.",
+  },
+  apparel: {
+    eyebrow: "Brand settlement",
+    headline: "Apparel orders settle after fulfillment — payouts on your chosen schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Net proceeds every Monday." },
+      { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
+    ],
+    connectLabel: "Connect Stripe for brand payouts",
+    connectDesc: "Required to receive proceeds from apparel orders.",
+    fineprint: "Returns are auto-reconciled against your next payout.",
+  },
+  gear_mfg: {
+    eyebrow: "Manufacturer settlement",
+    headline: "Wholesale and DTC orders settle after fulfillment — payouts on your schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Net proceeds every Monday." },
+      { key: "monthly", title: "Monthly (NET-30)", desc: "Consolidated wholesale settlement." },
+    ],
+    connectLabel: "Connect Stripe for manufacturer payouts",
+    connectDesc: "Used for DTC and wholesale order proceeds.",
+    fineprint: "Wholesale terms & POs can be configured separately in Settings.",
+  },
+};
+
 function getVerificationConfig(categoryKey: string) {
   return (
     VERIFICATION_BY_CATEGORY[categoryKey] ?? {
@@ -92,6 +222,10 @@ function getVerificationConfig(categoryKey: string) {
       ],
     }
   );
+}
+
+function getPayoutConfig(categoryKey: string): PayoutConfig {
+  return PAYOUT_BY_CATEGORY[categoryKey] ?? PAYOUT_BY_CATEGORY.charter;
 }
 
 const STEPS = [
