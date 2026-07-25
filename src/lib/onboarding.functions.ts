@@ -121,9 +121,9 @@ export const upsertBusinessProfile = createServerFn({ method: "POST" })
       _name: data.name,
       _slug: slug,
       _category_key: data.categoryKey,
-      _city: data.city ?? null,
-      _phone: data.phone ?? null,
-      _description: data.description ?? null,
+      _city: data.city ?? undefined,
+      _phone: data.phone ?? undefined,
+      _description: data.description ?? undefined,
     });
     if (bizErr) throw new Response(bizErr.message, { status: 400 });
 
