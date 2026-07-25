@@ -2152,6 +2152,57 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_business_with_owner: {
+        Args: {
+          _category_key: string
+          _city?: string
+          _description?: string
+          _name: string
+          _phone?: string
+          _slug: string
+        }
+        Returns: {
+          address: string | null
+          amenities_json: Json
+          category_key: string
+          charges_enabled: boolean
+          city: string | null
+          commission_rate: number
+          country: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          email: string | null
+          fishx_business_id: string | null
+          hero_url: string | null
+          hours_json: Json
+          id: string
+          is_published: boolean
+          lat: number | null
+          lng: number | null
+          logo_url: string | null
+          name: string
+          onboarding_completed_at: string | null
+          payout_delay_days: number
+          payouts_enabled: boolean
+          phone: string | null
+          premium_until: string | null
+          region: string | null
+          slug: string
+          stripe_account_id: string | null
+          stripe_account_type: string
+          tagline: string | null
+          updated_at: string
+          verified_at: string | null
+          website: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "businesses"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       emit_domain_event: {
         Args: {
           _aggregate_id: string
