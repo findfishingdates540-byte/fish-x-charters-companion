@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -228,6 +228,248 @@ function getPayoutConfig(categoryKey: string): PayoutConfig {
   return PAYOUT_BY_CATEGORY[categoryKey] ?? PAYOUT_BY_CATEGORY.charter;
 }
 
+type ListingKind =
+  | "charter_trip"
+  | "guided_trip"
+  | "slip_rental"
+  | "lodging"
+  | "workshop"
+  | "rental"
+  | "other";
+
+type ListingChip = { key: string; label: string };
+type ListingConfig = {
+  eyebrow: string;
+  headline: string;
+  kind: ListingKind;
+  titleLabel: string;
+  titlePlaceholder: string;
+  titleDefault: string;
+  showDuration: boolean;
+  durationLabel: string;
+  durationDefault: number; // minutes; 0 when hidden
+  capacityLabel: string;
+  capacityDefault: number;
+  priceLabel: string;
+  priceDefault: number;
+  includesLabel: string;
+  chips: ListingChip[];
+  reviewLine: (l: { title: string; capacity: number; price: number; durationMinutes: number }) => string;
+};
+
+const LISTING_BY_CATEGORY: Record<string, ListingConfig> = {
+  charter: {
+    eyebrow: "Charter trip",
+    headline: "Publish one signature charter to open your calendar.",
+    kind: "charter_trip",
+    titleLabel: "Trip title",
+    titlePlaceholder: "e.g. Full-day offshore charter",
+    titleDefault: "Offshore charter",
+    showDuration: true,
+    durationLabel: "Duration (min)",
+    durationDefault: 480,
+    capacityLabel: "Max anglers",
+    capacityDefault: 6,
+    priceLabel: "Price per trip (USD)",
+    priceDefault: 850,
+    includesLabel: "What's included",
+    chips: [
+      { key: "tackle", label: "Tackle" },
+      { key: "bait", label: "Bait" },
+      { key: "license", label: "License" },
+      { key: "drinks", label: "Drinks" },
+      { key: "photos", label: "Photos" },
+      { key: "cleaning", label: "Fish cleaning" },
+    ],
+    reviewLine: (l) => `${l.title} · ${l.capacity} anglers · $${l.price}/trip`,
+  },
+  guide_service: {
+    eyebrow: "Guided trip",
+    headline: "Publish your signature guided experience.",
+    kind: "guided_trip",
+    titleLabel: "Trip title",
+    titlePlaceholder: "e.g. Half-day wade trip for redfish",
+    titleDefault: "Guided wade trip",
+    showDuration: true,
+    durationLabel: "Duration (min)",
+    durationDefault: 300,
+    capacityLabel: "Max guests",
+    capacityDefault: 3,
+    priceLabel: "Price per trip (USD)",
+    priceDefault: 550,
+    includesLabel: "What's included",
+    chips: [
+      { key: "tackle", label: "Tackle" },
+      { key: "flies", label: "Flies" },
+      { key: "license", label: "License" },
+      { key: "lunch", label: "Lunch" },
+      { key: "photos", label: "Photos" },
+      { key: "transport", label: "Transport" },
+    ],
+    reviewLine: (l) => `${l.title} · ${l.capacity} guests · $${l.price}/trip`,
+  },
+  marina: {
+    eyebrow: "Transient slip",
+    headline: "List a slip anglers and cruisers can reserve by the night.",
+    kind: "slip_rental",
+    titleLabel: "Slip listing title",
+    titlePlaceholder: "e.g. 40-ft transient slip on A-dock",
+    titleDefault: "Transient slip · A-dock",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Max vessel length (ft)",
+    capacityDefault: 40,
+    priceLabel: "Nightly rate (USD)",
+    priceDefault: 95,
+    includesLabel: "Slip amenities",
+    chips: [
+      { key: "power_30a", label: "30A power" },
+      { key: "power_50a", label: "50A power" },
+      { key: "water", label: "Fresh water" },
+      { key: "wifi", label: "Wi-Fi" },
+      { key: "pumpout", label: "Pump-out" },
+      { key: "showers", label: "Showers" },
+      { key: "laundry", label: "Laundry" },
+      { key: "fuel", label: "Fuel dock" },
+    ],
+    reviewLine: (l) => `${l.title} · up to ${l.capacity} ft · $${l.price}/night`,
+  },
+  lodge: {
+    eyebrow: "Lodging",
+    headline: "Publish a room, cabin, or full-service package.",
+    kind: "lodging",
+    titleLabel: "Lodging title",
+    titlePlaceholder: "e.g. Lakeside cabin — sleeps 4",
+    titleDefault: "Lakeside cabin",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Sleeps",
+    capacityDefault: 4,
+    priceLabel: "Nightly rate (USD)",
+    priceDefault: 260,
+    includesLabel: "What's included",
+    chips: [
+      { key: "breakfast", label: "Breakfast" },
+      { key: "wifi", label: "Wi-Fi" },
+      { key: "dock", label: "Dock access" },
+      { key: "boat_rental", label: "Boat rental" },
+      { key: "guide", label: "Guide included" },
+      { key: "meals", label: "All meals" },
+      { key: "gear", label: "Gear provided" },
+    ],
+    reviewLine: (l) => `${l.title} · sleeps ${l.capacity} · $${l.price}/night`,
+  },
+  tackle_shop: {
+    eyebrow: "Storefront product",
+    headline: "Add your first product to open your Fish-X storefront.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Shimano Stradic FL 4000",
+    titleDefault: "Signature product",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Stock on hand",
+    capacityDefault: 24,
+    priceLabel: "Unit price (USD)",
+    priceDefault: 199,
+    includesLabel: "Product tags",
+    chips: [
+      { key: "rods", label: "Rods" },
+      { key: "reels", label: "Reels" },
+      { key: "lures", label: "Lures" },
+      { key: "line", label: "Line" },
+      { key: "terminal", label: "Terminal tackle" },
+      { key: "electronics", label: "Electronics" },
+      { key: "apparel", label: "Apparel" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} · ${l.capacity} in stock`,
+  },
+  bait_shop: {
+    eyebrow: "Storefront product",
+    headline: "Add your first item — live, frozen, or dry goods.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Live shrimp — dozen",
+    titleDefault: "Live shrimp · dozen",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Stock on hand",
+    capacityDefault: 100,
+    priceLabel: "Unit price (USD)",
+    priceDefault: 12,
+    includesLabel: "Product tags",
+    chips: [
+      { key: "live_bait", label: "Live bait" },
+      { key: "frozen", label: "Frozen" },
+      { key: "cut_bait", label: "Cut bait" },
+      { key: "chum", label: "Chum" },
+      { key: "ice", label: "Ice" },
+      { key: "terminal", label: "Terminal tackle" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} · ${l.capacity} in stock`,
+  },
+  apparel: {
+    eyebrow: "Product drop",
+    headline: "Publish your first SKU to open the brand store.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Deep Hull performance hoodie",
+    titleDefault: "Signature hoodie",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Units available",
+    capacityDefault: 120,
+    priceLabel: "Retail price (USD)",
+    priceDefault: 78,
+    includesLabel: "Size run",
+    chips: [
+      { key: "xs", label: "XS" },
+      { key: "s", label: "S" },
+      { key: "m", label: "M" },
+      { key: "l", label: "L" },
+      { key: "xl", label: "XL" },
+      { key: "xxl", label: "XXL" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} · ${l.capacity} units`,
+  },
+  gear_mfg: {
+    eyebrow: "Catalog product",
+    headline: "Publish a hero SKU — DTC or wholesale.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Tidewater 240 rod blank",
+    titleDefault: "Signature SKU",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Units in inventory",
+    capacityDefault: 500,
+    priceLabel: "MSRP (USD)",
+    priceDefault: 249,
+    includesLabel: "Catalog tags",
+    chips: [
+      { key: "rods", label: "Rods" },
+      { key: "reels", label: "Reels" },
+      { key: "lures", label: "Lures" },
+      { key: "electronics", label: "Electronics" },
+      { key: "wholesale", label: "Wholesale" },
+      { key: "dtc", label: "DTC" },
+      { key: "custom", label: "Custom order" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} MSRP · ${l.capacity} units`,
+  },
+};
+
+function getListingConfig(categoryKey: string): ListingConfig {
+  return LISTING_BY_CATEGORY[categoryKey] ?? LISTING_BY_CATEGORY.charter;
+}
+
+
 const STEPS = [
   { label: "Business profile", sub: "Who you are" },
   { label: "Verification", sub: "License & insurance" },
@@ -281,22 +523,18 @@ export function OperatorOnboarding() {
     if (biz.is_published) setPublished(true);
   }
 
-  // Listing form
+  // Listing form — defaults come from the current category config
   const svc = data?.service;
-  const [listing, setListing] = useState({
-    title: "Offshore charter",
-    kind: "charter" as const,
-    durationMinutes: 480,
-    capacity: 6,
-    price: 850,
-    inc: {
-      tackle: true,
-      bait: true,
-      license: true,
-      drinks: false,
-      photos: true,
-      cleaning: false,
-    } as Record<string, boolean>,
+  const listingConfig = getListingConfig(profile.categoryKey);
+  const [listing, setListing] = useState(() => {
+    const c = LISTING_BY_CATEGORY.charter;
+    return {
+      title: c.titleDefault,
+      durationMinutes: c.durationDefault,
+      capacity: c.capacityDefault,
+      price: c.priceDefault,
+      inc: Object.fromEntries(c.chips.map((ch, i) => [ch.key, i < 3])) as Record<string, boolean>,
+    };
   });
   const svcLoadedRef = useRef(false);
   if (svc && !svcLoadedRef.current) {
@@ -304,11 +542,32 @@ export function OperatorOnboarding() {
     setListing((p) => ({
       ...p,
       title: svc.title,
-      durationMinutes: svc.duration_minutes ?? 480,
+      durationMinutes: svc.duration_minutes ?? p.durationMinutes,
       capacity: svc.capacity,
       price: Math.round((svc.base_price_cents ?? 0) / 100),
+      inc: Object.fromEntries(
+        (svc.includes ?? []).map((k: string) => [k, true]),
+      ) as Record<string, boolean>,
     }));
   }
+
+  // When the user changes category (and hasn't already loaded a saved service),
+  // re-seed the listing defaults so labels/chips match the new vertical.
+  const lastCategoryRef = useRef(profile.categoryKey);
+  useEffect(() => {
+    if (svcLoadedRef.current) return;
+    if (lastCategoryRef.current === profile.categoryKey) return;
+    lastCategoryRef.current = profile.categoryKey;
+    const c = getListingConfig(profile.categoryKey);
+    setListing({
+      title: c.titleDefault,
+      durationMinutes: c.durationDefault,
+      capacity: c.capacityDefault,
+      price: c.priceDefault,
+      inc: Object.fromEntries(c.chips.map((ch, i) => [ch.key, i < 3])) as Record<string, boolean>,
+    });
+  }, [profile.categoryKey]);
+
 
   function showToast(msg: string) {
     setToast(msg);
@@ -335,7 +594,7 @@ export function OperatorOnboarding() {
       return publish({
         data: {
           title: listing.title,
-          kind: listing.kind,
+          kind: listingConfig.kind,
           durationMinutes: listing.durationMinutes,
           capacity: listing.capacity,
           basePriceCents: Math.round(listing.price * 100),
@@ -556,11 +815,18 @@ export function OperatorOnboarding() {
                   }}
                 />
               )}
-              {step === 3 && <ListingStep listing={listing} setListing={setListing} />}
+              {step === 3 && (
+                <ListingStep listing={listing} setListing={setListing} config={listingConfig} />
+              )}
               {step === 4 && (
                 <ReviewStep
                   profile={profile}
                   listing={listing}
+                  listingConfig={listingConfig}
+                  categoryLabel={
+                    categories.find((c) => c.key === profile.categoryKey)?.label ??
+                    profile.categoryKey
+                  }
                   verifyStatus={
                     data?.verification
                       ? "✓ Submitted"
@@ -571,6 +837,7 @@ export function OperatorOnboarding() {
                   payoutSchedule={payoutSchedule}
                 />
               )}
+
 
               <div className="mt-10 flex items-center justify-between max-w-[720px]">
                 <button
@@ -881,50 +1148,70 @@ function PayoutsStep({
   );
 }
 
-function ListingStep({ listing, setListing }: { listing: any; setListing: (v: any) => void }) {
-  const chips = [
-    ["tackle", "Tackle"],
-    ["bait", "Bait"],
-    ["license", "License"],
-    ["drinks", "Drinks"],
-    ["photos", "Photos"],
-    ["cleaning", "Fish cleaning"],
-  ] as const;
+function ListingStep({
+  listing,
+  setListing,
+  config,
+}: {
+  listing: any;
+  setListing: (v: any) => void;
+  config: ListingConfig;
+}) {
   return (
     <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
+      <div className="mb-5">
+        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#a97e3c]">
+          {config.eyebrow}
+        </div>
+        <div
+          className="text-[20px] font-semibold text-[#0d2236] mt-1"
+          style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+        >
+          {config.headline}
+        </div>
+      </div>
+
       <label className="block mb-4">
-        <span className={labelCls}>Title</span>
+        <span className={labelCls}>{config.titleLabel}</span>
         <input
           value={listing.title}
+          placeholder={config.titlePlaceholder}
           onChange={(e) => setListing({ ...listing, title: e.target.value })}
           className={inputCls}
         />
       </label>
-      <div className="grid grid-cols-3 gap-4 mb-4">
+
+      <div
+        className="grid gap-4 mb-4"
+        style={{ gridTemplateColumns: config.showDuration ? "1fr 1fr 1fr" : "1fr 1fr" }}
+      >
+        {config.showDuration && (
+          <label className="block">
+            <span className={labelCls}>{config.durationLabel}</span>
+            <input
+              type="number"
+              min={30}
+              step={30}
+              value={listing.durationMinutes}
+              onChange={(e) =>
+                setListing({ ...listing, durationMinutes: parseInt(e.target.value) || 30 })
+              }
+              className={inputCls}
+            />
+          </label>
+        )}
         <label className="block">
-          <span className={labelCls}>Duration (min)</span>
-          <input
-            type="number"
-            min={30}
-            step={30}
-            value={listing.durationMinutes}
-            onChange={(e) => setListing({ ...listing, durationMinutes: parseInt(e.target.value) || 30 })}
-            className={inputCls}
-          />
-        </label>
-        <label className="block">
-          <span className={labelCls}>Capacity</span>
+          <span className={labelCls}>{config.capacityLabel}</span>
           <input
             type="number"
             min={1}
-            max={50}
             value={listing.capacity}
             onChange={(e) => setListing({ ...listing, capacity: parseInt(e.target.value) || 1 })}
             className={inputCls}
           />
         </label>
         <label className="block">
-          <span className={labelCls}>Price (USD)</span>
+          <span className={labelCls}>{config.priceLabel}</span>
           <input
             type="number"
             min={0}
@@ -934,15 +1221,18 @@ function ListingStep({ listing, setListing }: { listing: any; setListing: (v: an
           />
         </label>
       </div>
+
       <div>
-        <div className={labelCls}>What's included</div>
+        <div className={labelCls}>{config.includesLabel}</div>
         <div className="flex flex-wrap gap-2">
-          {chips.map(([k, l]) => {
-            const on = !!listing.inc[k];
+          {config.chips.map((ch) => {
+            const on = !!listing.inc[ch.key];
             return (
               <button
-                key={k}
-                onClick={() => setListing({ ...listing, inc: { ...listing.inc, [k]: !on } })}
+                key={ch.key}
+                onClick={() =>
+                  setListing({ ...listing, inc: { ...listing.inc, [ch.key]: !on } })
+                }
                 className="border rounded-full px-[14px] py-[8px] text-[12.5px] font-semibold"
                 style={{
                   background: on ? "#fbf6ec" : "#fff",
@@ -950,7 +1240,7 @@ function ListingStep({ listing, setListing }: { listing: any; setListing: (v: an
                   color: on ? "#a97e3c" : "#0d2236",
                 }}
               >
-                {l}
+                {ch.label}
               </button>
             );
           })}
@@ -963,28 +1253,51 @@ function ListingStep({ listing, setListing }: { listing: any; setListing: (v: an
 function ReviewStep({
   profile,
   listing,
+  listingConfig,
+  categoryLabel,
   verifyStatus,
   payoutSchedule,
 }: {
   profile: any;
   listing: any;
+  listingConfig: ListingConfig;
+  categoryLabel: string;
   verifyStatus: string;
   payoutSchedule: string;
 }) {
-  const rows = [
+  const payoutLabel =
+    payoutSchedule === "weekly"
+      ? "Weekly"
+      : payoutSchedule === "monthly"
+        ? "Monthly"
+        : "After each transaction";
+  const rows: Array<[string, string]> = [
     ["Business", profile.name || "—"],
-    ["Category", profile.categoryKey],
+    ["Category", categoryLabel],
     ["Homeport", profile.city || "—"],
     ["Verification", verifyStatus],
-    ["Payouts", payoutSchedule === "weekly" ? "Weekly" : "After each trip"],
-    ["Listing", `${listing.title} · ${listing.capacity} guests · $${listing.price}`],
+    ["Payouts", payoutLabel],
+    [
+      listingConfig.eyebrow,
+      listingConfig.reviewLine({
+        title: listing.title,
+        capacity: listing.capacity,
+        price: listing.price,
+        durationMinutes: listing.durationMinutes,
+      }),
+    ],
   ];
   return (
     <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
       <div className="grid gap-3">
         {rows.map(([k, v]) => (
-          <div key={k} className="flex justify-between border-b border-[#0d2236]/[0.06] pb-3 last:border-0 last:pb-0">
-            <span className="text-[12px] font-bold tracking-[0.1em] uppercase text-[#5c6b78]">{k}</span>
+          <div
+            key={k}
+            className="flex justify-between border-b border-[#0d2236]/[0.06] pb-3 last:border-0 last:pb-0"
+          >
+            <span className="text-[12px] font-bold tracking-[0.1em] uppercase text-[#5c6b78]">
+              {k}
+            </span>
             <span className="text-[13.5px] text-[#0d2236] text-right">{v}</span>
           </div>
         ))}
@@ -992,3 +1305,4 @@ function ReviewStep({
     </div>
   );
 }
+
