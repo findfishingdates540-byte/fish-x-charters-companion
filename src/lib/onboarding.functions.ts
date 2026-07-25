@@ -47,7 +47,7 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     if (!businessId) {
       return { business: null, verification: null, service: null, categories: catBaseRes.data ?? [] };
     }
-    const [bizRes, verRes, svcRes, catRes] = await Promise.all([
+    const [bizRes, verRes, svcRes, prodRes, catRes] = await Promise.all([
       context.supabase.from("businesses").select("*").eq("id", businessId).maybeSingle(),
       context.supabase
         .from("verification_requests")
@@ -63,13 +63,34 @@ export const getOnboardingState = createServerFn({ method: "GET" })
         .order("created_at", { ascending: true })
         .limit(1)
         .maybeSingle(),
+      context.supabase
+        .from("inventory_products")
+        .select("id,title,price_cents,stock_qty,is_published,metadata,category")
+        .eq("business_id", businessId)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle(),
       context.supabase.from("business_categories").select("key,label,sort_order").order("sort_order"),
     ]);
     if (bizRes.error) throw new Response(bizRes.error.message, { status: 500 });
+    const isRetail = RETAIL_CATEGORIES.has((bizRes.data as any)?.category_key);
+    const service = isRetail && prodRes.data
+      ? {
+          id: prodRes.data.id,
+          title: prodRes.data.title,
+          kind: "other",
+          duration_minutes: 0,
+          capacity: prodRes.data.stock_qty,
+          base_price_cents: prodRes.data.price_cents,
+          hero_url: null,
+          is_published: prodRes.data.is_published,
+          includes: ((prodRes.data.metadata as any)?.tags as string[] | undefined) ?? [],
+        }
+      : svcRes.data ?? null;
     return {
       business: bizRes.data,
       verification: verRes.data ?? null,
-      service: svcRes.data ?? null,
+      service,
       categories: catRes.data ?? [],
     };
   });
