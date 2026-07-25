@@ -228,6 +228,248 @@ function getPayoutConfig(categoryKey: string): PayoutConfig {
   return PAYOUT_BY_CATEGORY[categoryKey] ?? PAYOUT_BY_CATEGORY.charter;
 }
 
+type ListingKind =
+  | "charter_trip"
+  | "guided_trip"
+  | "slip_rental"
+  | "lodging"
+  | "workshop"
+  | "rental"
+  | "other";
+
+type ListingChip = { key: string; label: string };
+type ListingConfig = {
+  eyebrow: string;
+  headline: string;
+  kind: ListingKind;
+  titleLabel: string;
+  titlePlaceholder: string;
+  titleDefault: string;
+  showDuration: boolean;
+  durationLabel: string;
+  durationDefault: number; // minutes; 0 when hidden
+  capacityLabel: string;
+  capacityDefault: number;
+  priceLabel: string;
+  priceDefault: number;
+  includesLabel: string;
+  chips: ListingChip[];
+  reviewLine: (l: { title: string; capacity: number; price: number; durationMinutes: number }) => string;
+};
+
+const LISTING_BY_CATEGORY: Record<string, ListingConfig> = {
+  charter: {
+    eyebrow: "Charter trip",
+    headline: "Publish one signature charter to open your calendar.",
+    kind: "charter_trip",
+    titleLabel: "Trip title",
+    titlePlaceholder: "e.g. Full-day offshore charter",
+    titleDefault: "Offshore charter",
+    showDuration: true,
+    durationLabel: "Duration (min)",
+    durationDefault: 480,
+    capacityLabel: "Max anglers",
+    capacityDefault: 6,
+    priceLabel: "Price per trip (USD)",
+    priceDefault: 850,
+    includesLabel: "What's included",
+    chips: [
+      { key: "tackle", label: "Tackle" },
+      { key: "bait", label: "Bait" },
+      { key: "license", label: "License" },
+      { key: "drinks", label: "Drinks" },
+      { key: "photos", label: "Photos" },
+      { key: "cleaning", label: "Fish cleaning" },
+    ],
+    reviewLine: (l) => `${l.title} · ${l.capacity} anglers · $${l.price}/trip`,
+  },
+  guide_service: {
+    eyebrow: "Guided trip",
+    headline: "Publish your signature guided experience.",
+    kind: "guided_trip",
+    titleLabel: "Trip title",
+    titlePlaceholder: "e.g. Half-day wade trip for redfish",
+    titleDefault: "Guided wade trip",
+    showDuration: true,
+    durationLabel: "Duration (min)",
+    durationDefault: 300,
+    capacityLabel: "Max guests",
+    capacityDefault: 3,
+    priceLabel: "Price per trip (USD)",
+    priceDefault: 550,
+    includesLabel: "What's included",
+    chips: [
+      { key: "tackle", label: "Tackle" },
+      { key: "flies", label: "Flies" },
+      { key: "license", label: "License" },
+      { key: "lunch", label: "Lunch" },
+      { key: "photos", label: "Photos" },
+      { key: "transport", label: "Transport" },
+    ],
+    reviewLine: (l) => `${l.title} · ${l.capacity} guests · $${l.price}/trip`,
+  },
+  marina: {
+    eyebrow: "Transient slip",
+    headline: "List a slip anglers and cruisers can reserve by the night.",
+    kind: "slip_rental",
+    titleLabel: "Slip listing title",
+    titlePlaceholder: "e.g. 40-ft transient slip on A-dock",
+    titleDefault: "Transient slip · A-dock",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Max vessel length (ft)",
+    capacityDefault: 40,
+    priceLabel: "Nightly rate (USD)",
+    priceDefault: 95,
+    includesLabel: "Slip amenities",
+    chips: [
+      { key: "power_30a", label: "30A power" },
+      { key: "power_50a", label: "50A power" },
+      { key: "water", label: "Fresh water" },
+      { key: "wifi", label: "Wi-Fi" },
+      { key: "pumpout", label: "Pump-out" },
+      { key: "showers", label: "Showers" },
+      { key: "laundry", label: "Laundry" },
+      { key: "fuel", label: "Fuel dock" },
+    ],
+    reviewLine: (l) => `${l.title} · up to ${l.capacity} ft · $${l.price}/night`,
+  },
+  lodge: {
+    eyebrow: "Lodging",
+    headline: "Publish a room, cabin, or full-service package.",
+    kind: "lodging",
+    titleLabel: "Lodging title",
+    titlePlaceholder: "e.g. Lakeside cabin — sleeps 4",
+    titleDefault: "Lakeside cabin",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Sleeps",
+    capacityDefault: 4,
+    priceLabel: "Nightly rate (USD)",
+    priceDefault: 260,
+    includesLabel: "What's included",
+    chips: [
+      { key: "breakfast", label: "Breakfast" },
+      { key: "wifi", label: "Wi-Fi" },
+      { key: "dock", label: "Dock access" },
+      { key: "boat_rental", label: "Boat rental" },
+      { key: "guide", label: "Guide included" },
+      { key: "meals", label: "All meals" },
+      { key: "gear", label: "Gear provided" },
+    ],
+    reviewLine: (l) => `${l.title} · sleeps ${l.capacity} · $${l.price}/night`,
+  },
+  tackle_shop: {
+    eyebrow: "Storefront product",
+    headline: "Add your first product to open your Fish-X storefront.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Shimano Stradic FL 4000",
+    titleDefault: "Signature product",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Stock on hand",
+    capacityDefault: 24,
+    priceLabel: "Unit price (USD)",
+    priceDefault: 199,
+    includesLabel: "Product tags",
+    chips: [
+      { key: "rods", label: "Rods" },
+      { key: "reels", label: "Reels" },
+      { key: "lures", label: "Lures" },
+      { key: "line", label: "Line" },
+      { key: "terminal", label: "Terminal tackle" },
+      { key: "electronics", label: "Electronics" },
+      { key: "apparel", label: "Apparel" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} · ${l.capacity} in stock`,
+  },
+  bait_shop: {
+    eyebrow: "Storefront product",
+    headline: "Add your first item — live, frozen, or dry goods.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Live shrimp — dozen",
+    titleDefault: "Live shrimp · dozen",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Stock on hand",
+    capacityDefault: 100,
+    priceLabel: "Unit price (USD)",
+    priceDefault: 12,
+    includesLabel: "Product tags",
+    chips: [
+      { key: "live_bait", label: "Live bait" },
+      { key: "frozen", label: "Frozen" },
+      { key: "cut_bait", label: "Cut bait" },
+      { key: "chum", label: "Chum" },
+      { key: "ice", label: "Ice" },
+      { key: "terminal", label: "Terminal tackle" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} · ${l.capacity} in stock`,
+  },
+  apparel: {
+    eyebrow: "Product drop",
+    headline: "Publish your first SKU to open the brand store.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Deep Hull performance hoodie",
+    titleDefault: "Signature hoodie",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Units available",
+    capacityDefault: 120,
+    priceLabel: "Retail price (USD)",
+    priceDefault: 78,
+    includesLabel: "Size run",
+    chips: [
+      { key: "xs", label: "XS" },
+      { key: "s", label: "S" },
+      { key: "m", label: "M" },
+      { key: "l", label: "L" },
+      { key: "xl", label: "XL" },
+      { key: "xxl", label: "XXL" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} · ${l.capacity} units`,
+  },
+  gear_mfg: {
+    eyebrow: "Catalog product",
+    headline: "Publish a hero SKU — DTC or wholesale.",
+    kind: "other",
+    titleLabel: "Product title",
+    titlePlaceholder: "e.g. Tidewater 240 rod blank",
+    titleDefault: "Signature SKU",
+    showDuration: false,
+    durationLabel: "",
+    durationDefault: 0,
+    capacityLabel: "Units in inventory",
+    capacityDefault: 500,
+    priceLabel: "MSRP (USD)",
+    priceDefault: 249,
+    includesLabel: "Catalog tags",
+    chips: [
+      { key: "rods", label: "Rods" },
+      { key: "reels", label: "Reels" },
+      { key: "lures", label: "Lures" },
+      { key: "electronics", label: "Electronics" },
+      { key: "wholesale", label: "Wholesale" },
+      { key: "dtc", label: "DTC" },
+      { key: "custom", label: "Custom order" },
+    ],
+    reviewLine: (l) => `${l.title} · $${l.price} MSRP · ${l.capacity} units`,
+  },
+};
+
+function getListingConfig(categoryKey: string): ListingConfig {
+  return LISTING_BY_CATEGORY[categoryKey] ?? LISTING_BY_CATEGORY.charter;
+}
+
+
 const STEPS = [
   { label: "Business profile", sub: "Who you are" },
   { label: "Verification", sub: "License & insurance" },
