@@ -12,12 +12,87 @@ import {
   upsertBusinessProfile,
 } from "@/lib/onboarding.functions";
 
-type DocKey = "license" | "insurance" | "id";
-const DOC_META: Record<DocKey, { title: string; desc: string }> = {
-  license: { title: "Captain's license", desc: "USCG / national boating license" },
-  insurance: { title: "Vessel insurance", desc: "Current liability coverage" },
-  id: { title: "Government ID", desc: "Passport or driver's license" },
+type DocKey = string;
+type DocSpec = { key: string; title: string; desc: string };
+
+const VERIFICATION_BY_CATEGORY: Record<string, { headline: string; docs: DocSpec[] }> = {
+  charter: {
+    headline: "Charter captains need proof of licensure, vessel coverage, and identity.",
+    docs: [
+      { key: "captain_license", title: "Captain's license", desc: "USCG OUPV / Master or national equivalent" },
+      { key: "vessel_insurance", title: "Vessel insurance", desc: "Current liability & hull coverage" },
+      { key: "gov_id", title: "Government ID", desc: "Passport or driver's license" },
+    ],
+  },
+  guide_service: {
+    headline: "Guides need a state guide license and general liability coverage.",
+    docs: [
+      { key: "guide_license", title: "Fishing guide license", desc: "State parks & wildlife guide permit" },
+      { key: "liability_insurance", title: "General liability insurance", desc: "Minimum $1M recommended" },
+      { key: "gov_id", title: "Government ID", desc: "Passport or driver's license" },
+    ],
+  },
+  tackle_shop: {
+    headline: "Retailers verify business registration and tax standing.",
+    docs: [
+      { key: "business_license", title: "Business license", desc: "State or municipal registration" },
+      { key: "resale_cert", title: "Resale / sales tax certificate", desc: "For inventory sold on Fish-X" },
+      { key: "gov_id", title: "Owner ID", desc: "Passport or driver's license of the business owner" },
+    ],
+  },
+  bait_shop: {
+    headline: "Live-bait dealers need a wildlife or health permit alongside your business license.",
+    docs: [
+      { key: "business_license", title: "Business license", desc: "State or municipal registration" },
+      { key: "bait_permit", title: "Live bait dealer permit", desc: "State wildlife / health department" },
+      { key: "gov_id", title: "Owner ID", desc: "Passport or driver's license of the business owner" },
+    ],
+  },
+  marina: {
+    headline: "Marinas verify operating permits and dockage liability coverage.",
+    docs: [
+      { key: "business_license", title: "Business license", desc: "State or municipal registration" },
+      { key: "marina_permit", title: "Marina operating permit", desc: "Harbor / environmental compliance permit" },
+      { key: "liability_insurance", title: "Marina liability insurance", desc: "Dockage & pollution coverage" },
+    ],
+  },
+  lodge: {
+    headline: "Lodges verify hospitality permitting and guest liability coverage.",
+    docs: [
+      { key: "business_license", title: "Business license", desc: "State or municipal registration" },
+      { key: "lodging_permit", title: "Lodging / hospitality permit", desc: "Occupancy or short-term rental permit" },
+      { key: "liability_insurance", title: "Property & liability insurance", desc: "Guest & property coverage" },
+    ],
+  },
+  apparel: {
+    headline: "Apparel brands verify business identity and, when applicable, brand ownership.",
+    docs: [
+      { key: "business_license", title: "Business license", desc: "State or municipal registration" },
+      { key: "trademark_doc", title: "Trademark or brand doc", desc: "USPTO cert or brand registration (optional)" },
+      { key: "gov_id", title: "Owner ID", desc: "Passport or driver's license of the business owner" },
+    ],
+  },
+  gear_mfg: {
+    headline: "Manufacturers verify business identity and product liability coverage.",
+    docs: [
+      { key: "business_license", title: "Business license", desc: "State or municipal registration" },
+      { key: "product_liability", title: "Product liability insurance", desc: "Coverage for manufactured goods" },
+      { key: "gov_id", title: "Owner ID", desc: "Passport or driver's license of the business owner" },
+    ],
+  },
 };
+
+function getVerificationConfig(categoryKey: string) {
+  return (
+    VERIFICATION_BY_CATEGORY[categoryKey] ?? {
+      headline: "Verify your business identity so anglers can book with confidence.",
+      docs: [
+        { key: "business_license", title: "Business license", desc: "State or municipal registration" },
+        { key: "gov_id", title: "Owner ID", desc: "Passport or driver's license of the business owner" },
+      ],
+    }
+  );
+}
 
 const STEPS = [
   { label: "Business profile", sub: "Who you are" },
@@ -44,11 +119,7 @@ export function OperatorOnboarding() {
 
   const [step, setStep] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
-  const [uploaded, setUploaded] = useState<Record<DocKey, string | null>>({
-    license: null,
-    insurance: null,
-    id: null,
-  });
+  const [uploaded, setUploaded] = useState<Record<string, string | null>>({});
   const [payoutSchedule, setPayoutSchedule] = useState<"weekly" | "each">("weekly");
   const [published, setPublished] = useState(false);
 
@@ -158,10 +229,13 @@ export function OperatorOnboarding() {
     }
   }
 
-  const uploadedCount = Object.values(uploaded).filter(Boolean).length + (data?.verification?.doc_urls?.length ? 3 : 0);
-  const pct = published ? 100 : Math.round((step / 4) * 100);
-
   const categories = data?.categories ?? [];
+  const verifyConfig = getVerificationConfig(profile.categoryKey);
+  const requiredDocCount = verifyConfig.docs.length;
+  const uploadedCount =
+    Object.values(uploaded).filter(Boolean).length +
+    (data?.verification?.doc_urls?.length ? requiredDocCount : 0);
+  const pct = published ? 100 : Math.round((step / 4) * 100);
 
   if (isLoading) {
     return <div className="min-h-screen grid place-items-center bg-[#eef2f5] text-[#5c6b78]">Loading…</div>;
@@ -322,6 +396,10 @@ export function OperatorOnboarding() {
               )}
               {step === 1 && (
                 <VerifyStep
+                  config={verifyConfig}
+                  categoryLabel={
+                    categories.find((c) => c.key === profile.categoryKey)?.label ?? "your business"
+                  }
                   uploaded={uploaded}
                   onUpload={handleUpload}
                   alreadySubmitted={!!data?.verification}
@@ -339,7 +417,7 @@ export function OperatorOnboarding() {
                     data?.verification
                       ? "✓ Submitted"
                       : uploadedCount > 0
-                        ? `${Math.min(uploadedCount, 3)} of 3`
+                        ? `${Math.min(uploadedCount, requiredDocCount)} of ${requiredDocCount}`
                         : "Not started"
                   }
                   payoutSchedule={payoutSchedule}
@@ -479,22 +557,31 @@ function ProfileStep({
 }
 
 function VerifyStep({
+  config,
+  categoryLabel,
   uploaded,
   onUpload,
   alreadySubmitted,
 }: {
-  uploaded: Record<DocKey, string | null>;
+  config: { headline: string; docs: DocSpec[] };
+  categoryLabel: string;
+  uploaded: Record<string, string | null>;
   onUpload: (k: DocKey, file: File) => void;
   alreadySubmitted: boolean;
 }) {
   return (
     <div className="flex flex-col gap-[14px] max-w-[720px]">
-      {(Object.keys(DOC_META) as DocKey[]).map((k) => {
-        const meta = DOC_META[k];
-        const done = !!uploaded[k] || alreadySubmitted;
+      <div className="bg-white border border-[#0d2236]/10 rounded-2xl p-[16px_20px]">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#a97e3c] mb-1">
+          {categoryLabel}
+        </div>
+        <div className="text-[13.5px] text-[#0d2236] leading-[1.5]">{config.headline}</div>
+      </div>
+      {config.docs.map((meta) => {
+        const done = !!uploaded[meta.key] || alreadySubmitted;
         return (
           <div
-            key={k}
+            key={meta.key}
             className="bg-white border border-[#0d2236]/10 rounded-2xl p-[18px_20px] flex items-center gap-4"
           >
             <span className="w-11 h-11 rounded-xl bg-[#f4e6cd] grid place-items-center text-[#a97e3c] flex-none">
@@ -520,7 +607,7 @@ function VerifyStep({
                   accept="image/*,.pdf"
                   onChange={(e) => {
                     const f = e.target.files?.[0];
-                    if (f) onUpload(k, f);
+                    if (f) onUpload(meta.key, f);
                     e.target.value = "";
                   }}
                 />
