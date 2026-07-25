@@ -196,12 +196,13 @@ export const savePayoutPreference = createServerFn({ method: "POST" })
 
 const publishInput = z.object({
   title: z.string().min(3).max(120),
-  kind: z.enum(["charter", "guided_trip", "rental", "lesson", "workshop", "gear", "apparel", "slip_rental", "custom"]),
-  durationMinutes: z.number().int().min(30).max(24 * 60),
-  capacity: z.number().int().min(1).max(50),
+  kind: z.enum(["charter_trip", "guided_trip", "slip_rental", "lodging", "workshop", "rental", "other"]),
+  durationMinutes: z.number().int().min(0).max(24 * 60),
+  capacity: z.number().int().min(1).max(9999),
   basePriceCents: z.number().int().min(0),
   includes: z.array(z.string()).default([]),
 });
+
 
 export const publishListing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
