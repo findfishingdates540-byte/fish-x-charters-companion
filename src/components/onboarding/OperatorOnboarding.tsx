@@ -254,7 +254,8 @@ export function OperatorOnboarding() {
   const [step, setStep] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const [uploaded, setUploaded] = useState<Record<string, string | null>>({});
-  const [payoutSchedule, setPayoutSchedule] = useState<"weekly" | "each">("weekly");
+  const [payoutSchedule, setPayoutSchedule] = useState<PayoutScheduleKey>("weekly");
+  const [stripeConnected, setStripeConnected] = useState(false);
   const [published, setPublished] = useState(false);
 
   // Profile form
