@@ -523,22 +523,18 @@ export function OperatorOnboarding() {
     if (biz.is_published) setPublished(true);
   }
 
-  // Listing form
+  // Listing form — defaults come from the current category config
   const svc = data?.service;
-  const [listing, setListing] = useState({
-    title: "Offshore charter",
-    kind: "charter" as const,
-    durationMinutes: 480,
-    capacity: 6,
-    price: 850,
-    inc: {
-      tackle: true,
-      bait: true,
-      license: true,
-      drinks: false,
-      photos: true,
-      cleaning: false,
-    } as Record<string, boolean>,
+  const listingConfig = getListingConfig(profile.categoryKey);
+  const [listing, setListing] = useState(() => {
+    const c = LISTING_BY_CATEGORY.charter;
+    return {
+      title: c.titleDefault,
+      durationMinutes: c.durationDefault,
+      capacity: c.capacityDefault,
+      price: c.priceDefault,
+      inc: Object.fromEntries(c.chips.map((ch, i) => [ch.key, i < 3])) as Record<string, boolean>,
+    };
   });
   const svcLoadedRef = useRef(false);
   if (svc && !svcLoadedRef.current) {
@@ -546,11 +542,32 @@ export function OperatorOnboarding() {
     setListing((p) => ({
       ...p,
       title: svc.title,
-      durationMinutes: svc.duration_minutes ?? 480,
+      durationMinutes: svc.duration_minutes ?? p.durationMinutes,
       capacity: svc.capacity,
       price: Math.round((svc.base_price_cents ?? 0) / 100),
+      inc: Object.fromEntries(
+        (svc.includes ?? []).map((k: string) => [k, true]),
+      ) as Record<string, boolean>,
     }));
   }
+
+  // When the user changes category (and hasn't already loaded a saved service),
+  // re-seed the listing defaults so labels/chips match the new vertical.
+  const lastCategoryRef = useRef(profile.categoryKey);
+  useEffect(() => {
+    if (svcLoadedRef.current) return;
+    if (lastCategoryRef.current === profile.categoryKey) return;
+    lastCategoryRef.current = profile.categoryKey;
+    const c = getListingConfig(profile.categoryKey);
+    setListing({
+      title: c.titleDefault,
+      durationMinutes: c.durationDefault,
+      capacity: c.capacityDefault,
+      price: c.priceDefault,
+      inc: Object.fromEntries(c.chips.map((ch, i) => [ch.key, i < 3])) as Record<string, boolean>,
+    });
+  }, [profile.categoryKey]);
+
 
   function showToast(msg: string) {
     setToast(msg);
