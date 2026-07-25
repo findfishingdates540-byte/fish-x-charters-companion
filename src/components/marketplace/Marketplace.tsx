@@ -3,8 +3,9 @@
  * Catalog is currently client-side demo data — no products/orders tables exist yet;
  * add schema + server fns to make orders persistent.
  */
-import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { useMemo, useState, type CSSProperties } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { CATALOG, tileFor, money, ProductIcon, type Cat } from "./catalog";
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
