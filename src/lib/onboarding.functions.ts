@@ -204,6 +204,8 @@ const publishInput = z.object({
 });
 
 
+const RETAIL_CATEGORIES = new Set(["tackle_shop", "bait_shop", "gear_mfg", "apparel"]);
+
 export const publishListing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => publishInput.parse(i))
@@ -211,30 +213,77 @@ export const publishListing = createServerFn({ method: "POST" })
     const businessId = await pickBusinessId(context.supabase, context.userId);
     if (!businessId) throw new Response("Create your business first", { status: 400 });
 
-    // Upsert first bookable_service
-    const { data: existing } = await context.supabase
-      .from("bookable_services")
-      .select("id")
-      .eq("business_id", businessId)
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle();
+    const { data: biz, error: bizErr } = await context.supabase
+      .from("businesses")
+      .select("id, category_key")
+      .eq("id", businessId)
+      .single();
+    if (bizErr) throw new Response(bizErr.message, { status: 400 });
 
-    const payload = {
-      business_id: businessId,
-      title: data.title,
-      kind: data.kind as ServiceKind,
-      duration_minutes: data.durationMinutes,
-      capacity: data.capacity,
-      base_price_cents: data.basePriceCents,
-      includes: data.includes,
-      is_published: true,
-    };
+    const isRetail = RETAIL_CATEGORIES.has(biz.category_key);
+    let resultRow: any;
 
-    const svc = existing?.id
-      ? await context.supabase.from("bookable_services").update(payload).eq("id", existing.id).select().single()
-      : await context.supabase.from("bookable_services").insert(payload).select().single();
-    if (svc.error) throw new Response(svc.error.message, { status: 400 });
+    if (isRetail) {
+      // Retail verticals publish an inventory product, not a bookable service.
+      // `capacity` acts as stock on hand and `includes` are product tags.
+      const productPayload = {
+        business_id: businessId,
+        title: data.title,
+        price_cents: data.basePriceCents,
+        stock_qty: data.capacity,
+        category: data.includes[0] ?? null,
+        metadata: { tags: data.includes },
+        is_published: true,
+      };
+
+      const { data: existing } = await context.supabase
+        .from("inventory_products")
+        .select("id")
+        .eq("business_id", businessId)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      const prod = existing?.id
+        ? await context.supabase
+            .from("inventory_products")
+            .update(productPayload)
+            .eq("id", existing.id)
+            .select()
+            .single()
+        : await context.supabase
+            .from("inventory_products")
+            .insert(productPayload)
+            .select()
+            .single();
+      if (prod.error) throw new Response(prod.error.message, { status: 400 });
+      resultRow = prod.data;
+    } else {
+      const { data: existing } = await context.supabase
+        .from("bookable_services")
+        .select("id")
+        .eq("business_id", businessId)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      const payload = {
+        business_id: businessId,
+        title: data.title,
+        kind: data.kind as ServiceKind,
+        duration_minutes: data.durationMinutes,
+        capacity: data.capacity,
+        base_price_cents: data.basePriceCents,
+        includes: data.includes,
+        is_published: true,
+      };
+
+      const svc = existing?.id
+        ? await context.supabase.from("bookable_services").update(payload).eq("id", existing.id).select().single()
+        : await context.supabase.from("bookable_services").insert(payload).select().single();
+      if (svc.error) throw new Response(svc.error.message, { status: 400 });
+      resultRow = svc.data;
+    }
 
     const { error: bErr } = await context.supabase
       .from("businesses")
@@ -242,5 +291,5 @@ export const publishListing = createServerFn({ method: "POST" })
       .eq("id", businessId);
     if (bErr) throw new Response(bErr.message, { status: 400 });
 
-    return { service: svc.data, businessId };
+    return { service: resultRow, businessId };
   });
