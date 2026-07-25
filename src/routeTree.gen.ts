@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
-import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as BrandStoryRouteImport } from './routes/brand-story'
@@ -18,6 +17,7 @@ import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as MarketplaceProductIdRouteImport } from './routes/marketplace.$productId'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
 import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
@@ -38,11 +38,6 @@ import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/p
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
   path: '/trust',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketplaceRoute = MarketplaceRouteImport.update({
-  id: '/marketplace',
-  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -79,10 +74,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
+  id: '/marketplace/',
+  path: '/marketplace/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketplaceProductIdRoute = MarketplaceProductIdRouteImport.update({
-  id: '/$productId',
-  path: '/$productId',
-  getParentRoute: () => MarketplaceRoute,
+  id: '/marketplace/$productId',
+  path: '/marketplace/$productId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesProfileRoute = GuidesProfileRouteImport.update({
   id: '/guides/profile',
@@ -172,7 +172,6 @@ export interface FileRoutesByFullPath {
   '/brand-story': typeof BrandStoryRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/marketplace': typeof MarketplaceRouteWithChildren
   '/trust': typeof TrustRoute
   '/account': typeof AuthenticatedAccountRoute
   '/booking': typeof AuthenticatedBookingRoute
@@ -186,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
@@ -198,7 +198,6 @@ export interface FileRoutesByTo {
   '/brand-story': typeof BrandStoryRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/marketplace': typeof MarketplaceRouteWithChildren
   '/trust': typeof TrustRoute
   '/account': typeof AuthenticatedAccountRoute
   '/booking': typeof AuthenticatedBookingRoute
@@ -212,6 +211,7 @@ export interface FileRoutesByTo {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/marketplace': typeof MarketplaceIndexRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
@@ -226,7 +226,6 @@ export interface FileRoutesById {
   '/brand-story': typeof BrandStoryRoute
   '/discover': typeof DiscoverRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/marketplace': typeof MarketplaceRouteWithChildren
   '/trust': typeof TrustRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/booking': typeof AuthenticatedBookingRoute
@@ -240,6 +239,7 @@ export interface FileRoutesById {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/_authenticated/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/_authenticated/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
@@ -254,7 +254,6 @@ export interface FileRouteTypes {
     | '/brand-story'
     | '/discover'
     | '/how-it-works'
-    | '/marketplace'
     | '/trust'
     | '/account'
     | '/booking'
@@ -268,6 +267,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/marketplace/'
     | '/bookings/detail'
     | '/trips/detail'
     | '/api/public/fishx-webhook'
@@ -280,7 +280,6 @@ export interface FileRouteTypes {
     | '/brand-story'
     | '/discover'
     | '/how-it-works'
-    | '/marketplace'
     | '/trust'
     | '/account'
     | '/booking'
@@ -294,6 +293,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/marketplace'
     | '/bookings/detail'
     | '/trips/detail'
     | '/api/public/fishx-webhook'
@@ -307,7 +307,6 @@ export interface FileRouteTypes {
     | '/brand-story'
     | '/discover'
     | '/how-it-works'
-    | '/marketplace'
     | '/trust'
     | '/_authenticated/account'
     | '/_authenticated/booking'
@@ -321,6 +320,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/marketplace/'
     | '/_authenticated/bookings/detail'
     | '/_authenticated/trips/detail'
     | '/api/public/fishx-webhook'
@@ -335,11 +335,12 @@ export interface RootRouteChildren {
   BrandStoryRoute: typeof BrandStoryRoute
   DiscoverRoute: typeof DiscoverRoute
   HowItWorksRoute: typeof HowItWorksRoute
-  MarketplaceRoute: typeof MarketplaceRouteWithChildren
   TrustRoute: typeof TrustRoute
   BSlugRoute: typeof BSlugRoute
   CaptainsProfileRoute: typeof CaptainsProfileRoute
   GuidesProfileRoute: typeof GuidesProfileRoute
+  MarketplaceProductIdRoute: typeof MarketplaceProductIdRoute
+  MarketplaceIndexRoute: typeof MarketplaceIndexRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
 }
@@ -351,13 +352,6 @@ declare module '@tanstack/react-router' {
       path: '/trust'
       fullPath: '/trust'
       preLoaderRoute: typeof TrustRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/marketplace': {
-      id: '/marketplace'
-      path: '/marketplace'
-      fullPath: '/marketplace'
-      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -409,12 +403,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/marketplace'
+      fullPath: '/marketplace/'
+      preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/marketplace/$productId': {
       id: '/marketplace/$productId'
-      path: '/$productId'
+      path: '/marketplace/$productId'
       fullPath: '/marketplace/$productId'
       preLoaderRoute: typeof MarketplaceProductIdRouteImport
-      parentRoute: typeof MarketplaceRoute
+      parentRoute: typeof rootRouteImport
     }
     '/guides/profile': {
       id: '/guides/profile'
@@ -553,18 +554,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface MarketplaceRouteChildren {
-  MarketplaceProductIdRoute: typeof MarketplaceProductIdRoute
-}
-
-const MarketplaceRouteChildren: MarketplaceRouteChildren = {
-  MarketplaceProductIdRoute: MarketplaceProductIdRoute,
-}
-
-const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
-  MarketplaceRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -573,11 +562,12 @@ const rootRouteChildren: RootRouteChildren = {
   BrandStoryRoute: BrandStoryRoute,
   DiscoverRoute: DiscoverRoute,
   HowItWorksRoute: HowItWorksRoute,
-  MarketplaceRoute: MarketplaceRouteWithChildren,
   TrustRoute: TrustRoute,
   BSlugRoute: BSlugRoute,
   CaptainsProfileRoute: CaptainsProfileRoute,
   GuidesProfileRoute: GuidesProfileRoute,
+  MarketplaceProductIdRoute: MarketplaceProductIdRoute,
+  MarketplaceIndexRoute: MarketplaceIndexRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
 }
