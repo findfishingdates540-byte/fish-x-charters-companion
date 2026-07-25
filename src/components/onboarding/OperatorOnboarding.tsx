@@ -82,6 +82,136 @@ const VERIFICATION_BY_CATEGORY: Record<string, { headline: string; docs: DocSpec
   },
 };
 
+type PayoutFlowStep = { n: number; t: string; d: string; c: string; ic: string };
+export type PayoutScheduleKey = "weekly" | "each" | "monthly";
+type PayoutScheduleOpt = { key: PayoutScheduleKey; title: string; desc: string };
+type PayoutConfig = {
+  eyebrow: string;
+  headline: string;
+  flow: PayoutFlowStep[];
+  schedules: PayoutScheduleOpt[];
+  connectLabel: string;
+  connectDesc: string;
+  fineprint: string;
+};
+
+const DEFAULT_ESCROW_FLOW: PayoutFlowStep[] = [
+  { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "#f4e6cd", ic: "#a97e3c" },
+  { n: 2, t: "Held in escrow", d: "Safe — not your balance yet.", c: "#e2eef2", ic: "#1f9fbe" },
+  { n: 3, t: "You're paid", d: "Released after the trip.", c: "#e2f2ea", ic: "#1f8a5b" },
+];
+
+const RETAIL_FLOW: PayoutFlowStep[] = [
+  { n: 1, t: "Customer checks out", d: "Card charged at purchase.", c: "#f4e6cd", ic: "#a97e3c" },
+  { n: 2, t: "Order settles", d: "Funds clear after fulfillment.", c: "#e2eef2", ic: "#1f9fbe" },
+  { n: 3, t: "Payout to you", d: "Net proceeds sent on schedule.", c: "#e2f2ea", ic: "#1f8a5b" },
+];
+
+const STAY_FLOW: PayoutFlowStep[] = [
+  { n: 1, t: "Guest reserves", d: "Deposit taken at booking.", c: "#f4e6cd", ic: "#a97e3c" },
+  { n: 2, t: "Balance on arrival", d: "Remaining balance clears at check-in.", c: "#e2eef2", ic: "#1f9fbe" },
+  { n: 3, t: "Payout to you", d: "Released after checkout.", c: "#e2f2ea", ic: "#1f8a5b" },
+];
+
+const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
+  charter: {
+    eyebrow: "Charter escrow",
+    headline: "Anglers pay upfront into escrow — you're paid after every trip runs.",
+    flow: DEFAULT_ESCROW_FLOW,
+    schedules: [
+      { key: "each", title: "After each trip", desc: "Released as soon as escrow clears." },
+      { key: "weekly", title: "Weekly", desc: "Auto-batched every Monday." },
+    ],
+    connectLabel: "Connect Stripe for captain payouts",
+    connectDesc: "Verified bank account required before your first release.",
+    fineprint: "Stripe Connect linking is enabled after your first booking. Adjustable in Settings.",
+  },
+  guide_service: {
+    eyebrow: "Guide escrow",
+    headline: "Trip fees sit in escrow until your guided day is complete.",
+    flow: DEFAULT_ESCROW_FLOW,
+    schedules: [
+      { key: "each", title: "After each trip", desc: "Released the day your guided trip wraps." },
+      { key: "weekly", title: "Weekly", desc: "Auto-batched every Monday." },
+    ],
+    connectLabel: "Connect Stripe for guide payouts",
+    connectDesc: "We'll verify your bank account before your first release.",
+    fineprint: "Stripe Connect linking is enabled after your first booking. Adjustable in Settings.",
+  },
+  tackle_shop: {
+    eyebrow: "Retail settlement",
+    headline: "Orders settle after fulfillment — payouts land on your chosen schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Batched net proceeds every Monday." },
+      { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
+    ],
+    connectLabel: "Connect Stripe for storefront payouts",
+    connectDesc: "Needed to receive proceeds from Fish-X orders.",
+    fineprint: "Refunds & chargebacks are reconciled automatically against your next payout.",
+  },
+  bait_shop: {
+    eyebrow: "Retail settlement",
+    headline: "Live-bait and small-goods orders settle daily — payouts on your schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Batched net proceeds every Monday." },
+      { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
+    ],
+    connectLabel: "Connect Stripe for bait shop payouts",
+    connectDesc: "Verified bank account required for storefront proceeds.",
+    fineprint: "Perishable-item refunds are handled per your shop policy.",
+  },
+  marina: {
+    eyebrow: "Slip & service settlement",
+    headline: "Slip reservations and service invoices settle after check-out or job completion.",
+    flow: STAY_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Batched slip & service proceeds every Monday." },
+      { key: "monthly", title: "Monthly", desc: "Consolidated payout on the 1st." },
+    ],
+    connectLabel: "Connect Stripe for marina payouts",
+    connectDesc: "Used for slip reservations, fuel, and service invoices.",
+    fineprint: "Recurring monthly slip holders can be invoiced separately in Settings.",
+  },
+  lodge: {
+    eyebrow: "Lodging escrow",
+    headline: "Guests pay a deposit upfront; balance clears at check-in. Payout after checkout.",
+    flow: STAY_FLOW,
+    schedules: [
+      { key: "each", title: "After each stay", desc: "Payout the day after guest checkout." },
+      { key: "weekly", title: "Weekly", desc: "Batched every Monday." },
+    ],
+    connectLabel: "Connect Stripe for lodge payouts",
+    connectDesc: "Verified bank account required before your first release.",
+    fineprint: "Damage holds and incidentals can be captured separately at checkout.",
+  },
+  apparel: {
+    eyebrow: "Brand settlement",
+    headline: "Apparel orders settle after fulfillment — payouts on your chosen schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Net proceeds every Monday." },
+      { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
+    ],
+    connectLabel: "Connect Stripe for brand payouts",
+    connectDesc: "Required to receive proceeds from apparel orders.",
+    fineprint: "Returns are auto-reconciled against your next payout.",
+  },
+  gear_mfg: {
+    eyebrow: "Manufacturer settlement",
+    headline: "Wholesale and DTC orders settle after fulfillment — payouts on your schedule.",
+    flow: RETAIL_FLOW,
+    schedules: [
+      { key: "weekly", title: "Weekly", desc: "Net proceeds every Monday." },
+      { key: "monthly", title: "Monthly (NET-30)", desc: "Consolidated wholesale settlement." },
+    ],
+    connectLabel: "Connect Stripe for manufacturer payouts",
+    connectDesc: "Used for DTC and wholesale order proceeds.",
+    fineprint: "Wholesale terms & POs can be configured separately in Settings.",
+  },
+};
+
 function getVerificationConfig(categoryKey: string) {
   return (
     VERIFICATION_BY_CATEGORY[categoryKey] ?? {
@@ -92,6 +222,10 @@ function getVerificationConfig(categoryKey: string) {
       ],
     }
   );
+}
+
+function getPayoutConfig(categoryKey: string): PayoutConfig {
+  return PAYOUT_BY_CATEGORY[categoryKey] ?? PAYOUT_BY_CATEGORY.charter;
 }
 
 const STEPS = [
@@ -120,7 +254,8 @@ export function OperatorOnboarding() {
   const [step, setStep] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const [uploaded, setUploaded] = useState<Record<string, string | null>>({});
-  const [payoutSchedule, setPayoutSchedule] = useState<"weekly" | "each">("weekly");
+  const [payoutSchedule, setPayoutSchedule] = useState<PayoutScheduleKey>("weekly");
+  const [stripeConnected, setStripeConnected] = useState(false);
   const [published, setPublished] = useState(false);
 
   // Profile form
@@ -196,7 +331,7 @@ export function OperatorOnboarding() {
       if (docPaths.length > 0 && !data?.verification) {
         await submitVer({ data: { docPaths } });
       }
-      await savePayout({ data: { schedule: payoutSchedule } });
+      await savePayout({ data: { schedule: payoutSchedule, stripeConnected } });
       return publish({
         data: {
           title: listing.title,
@@ -406,7 +541,20 @@ export function OperatorOnboarding() {
                 />
               )}
               {step === 2 && (
-                <PayoutsStep schedule={payoutSchedule} setSchedule={setPayoutSchedule} />
+                <PayoutsStep
+                  config={getPayoutConfig(profile.categoryKey)}
+                  schedule={payoutSchedule}
+                  setSchedule={setPayoutSchedule}
+                  stripeConnected={stripeConnected}
+                  onConnectStripe={() => {
+                    // Dummy Stripe Connect — simulate OAuth handshake
+                    showToast("Connecting to Stripe…");
+                    setTimeout(() => {
+                      setStripeConnected(true);
+                      showToast("Stripe account connected (demo)");
+                    }, 900);
+                  }}
+                />
               )}
               {step === 3 && <ListingStep listing={listing} setListing={setListing} />}
               {step === 4 && (
@@ -628,20 +776,34 @@ function VerifyStep({
 }
 
 function PayoutsStep({
+  config,
   schedule,
   setSchedule,
+  stripeConnected,
+  onConnectStripe,
 }: {
-  schedule: "weekly" | "each";
-  setSchedule: (s: "weekly" | "each") => void;
+  config: PayoutConfig;
+  schedule: PayoutScheduleKey;
+  setSchedule: (s: PayoutScheduleKey) => void;
+  stripeConnected: boolean;
+  onConnectStripe: () => void;
 }) {
+  // Keep the selected schedule valid for the current category
+  const validKeys = config.schedules.map((s) => s.key);
+  if (!validKeys.includes(schedule)) {
+    setTimeout(() => setSchedule(config.schedules[0].key), 0);
+  }
+  const gridCols = config.flow.length === 3 ? "grid-cols-3" : "grid-cols-2";
   return (
     <>
-      <div className="grid grid-cols-3 gap-[14px] max-w-[720px] mb-5">
-        {[
-          { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "#f4e6cd", ic: "#a97e3c" },
-          { n: 2, t: "Held in escrow", d: "Safe — not your balance yet.", c: "#e2eef2", ic: "#1f9fbe" },
-          { n: 3, t: "You're paid", d: "Released after the trip.", c: "#e2f2ea", ic: "#1f8a5b" },
-        ].map((x) => (
+      <div className="bg-white border border-[#0d2236]/10 rounded-2xl p-[16px_20px] max-w-[720px] mb-4">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#a97e3c] mb-1">
+          {config.eyebrow}
+        </div>
+        <div className="text-[13.5px] text-[#0d2236] leading-[1.5]">{config.headline}</div>
+      </div>
+      <div className={`grid ${gridCols} gap-[14px] max-w-[720px] mb-5`}>
+        {config.flow.map((x) => (
           <div key={x.n} className="bg-white border border-[#0d2236]/10 rounded-2xl p-[18px]">
             <div
               className="w-[34px] h-[34px] rounded-[9px] grid place-items-center mb-3 font-semibold"
@@ -654,36 +816,66 @@ function PayoutsStep({
           </div>
         ))}
       </div>
+
+      {/* Dummy Stripe Connect */}
+      <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px] mb-4">
+        <div className="flex items-center gap-4">
+          <span
+            className="w-11 h-11 rounded-xl grid place-items-center flex-none font-bold text-white"
+            style={{ background: "#635bff", fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+          >
+            S
+          </span>
+          <div className="flex-1 min-w-0">
+            <div className="text-[14.5px] font-semibold text-[#0d2236]">{config.connectLabel}</div>
+            <div className="text-[12.5px] text-[#5c6b78]">{config.connectDesc}</div>
+          </div>
+          {stripeConnected ? (
+            <span className="inline-flex items-center gap-2 bg-[#e2f2ea] text-[#1f8a5b] rounded-full px-[14px] py-[9px] text-[12.5px] font-bold flex-none">
+              <span className="w-4 h-4 rounded-full bg-[#1f8a5b] text-white grid place-items-center text-[10px]">
+                ✓
+              </span>
+              Connected
+            </span>
+          ) : (
+            <button
+              onClick={onConnectStripe}
+              className="flex-none bg-[#635bff] text-white border-0 rounded-[10px] px-[18px] py-[10px] text-[12.5px] font-bold cursor-pointer"
+            >
+              Connect Stripe
+            </button>
+          )}
+        </div>
+        <div className="text-[11.5px] text-[#8a97a3] mt-3">
+          Demo mode — no real Stripe account is created. Live Connect wiring ships later.
+        </div>
+      </div>
+
       <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
         <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-[#5c6b78] mb-3">Payout schedule</div>
-        <div className="grid grid-cols-2 gap-3">
-          {(["weekly", "each"] as const).map((s) => {
-            const on = s === schedule;
+        <div
+          className="grid gap-3"
+          style={{ gridTemplateColumns: `repeat(${config.schedules.length}, minmax(0,1fr))` }}
+        >
+          {config.schedules.map((opt) => {
+            const on = opt.key === schedule;
             return (
               <button
-                key={s}
-                onClick={() => setSchedule(s)}
+                key={opt.key}
+                onClick={() => setSchedule(opt.key)}
                 className="border rounded-xl p-4 text-left"
                 style={{
                   borderColor: on ? "#e3c089" : "rgba(13,34,54,.10)",
                   background: on ? "#fbf6ec" : "#fff",
                 }}
               >
-                <div className="text-[13.5px] font-semibold text-[#0d2236]">
-                  {s === "weekly" ? "Weekly" : "After each trip"}
-                </div>
-                <div className="text-[12px] text-[#5c6b78] mt-1">
-                  {s === "weekly"
-                    ? "Auto-batched every Monday."
-                    : "Payout released as soon as escrow clears."}
-                </div>
+                <div className="text-[13.5px] font-semibold text-[#0d2236]">{opt.title}</div>
+                <div className="text-[12px] text-[#5c6b78] mt-1">{opt.desc}</div>
               </button>
             );
           })}
         </div>
-        <div className="text-[12px] text-[#5c6b78] mt-4">
-          Stripe Connect linking is enabled after your first booking. You can adjust this later in Settings.
-        </div>
+        <div className="text-[12px] text-[#5c6b78] mt-4">{config.fineprint}</div>
       </div>
     </>
   );
