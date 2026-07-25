@@ -1148,50 +1148,70 @@ function PayoutsStep({
   );
 }
 
-function ListingStep({ listing, setListing }: { listing: any; setListing: (v: any) => void }) {
-  const chips = [
-    ["tackle", "Tackle"],
-    ["bait", "Bait"],
-    ["license", "License"],
-    ["drinks", "Drinks"],
-    ["photos", "Photos"],
-    ["cleaning", "Fish cleaning"],
-  ] as const;
+function ListingStep({
+  listing,
+  setListing,
+  config,
+}: {
+  listing: any;
+  setListing: (v: any) => void;
+  config: ListingConfig;
+}) {
   return (
     <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
+      <div className="mb-5">
+        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#a97e3c]">
+          {config.eyebrow}
+        </div>
+        <div
+          className="text-[20px] font-semibold text-[#0d2236] mt-1"
+          style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+        >
+          {config.headline}
+        </div>
+      </div>
+
       <label className="block mb-4">
-        <span className={labelCls}>Title</span>
+        <span className={labelCls}>{config.titleLabel}</span>
         <input
           value={listing.title}
+          placeholder={config.titlePlaceholder}
           onChange={(e) => setListing({ ...listing, title: e.target.value })}
           className={inputCls}
         />
       </label>
-      <div className="grid grid-cols-3 gap-4 mb-4">
+
+      <div
+        className="grid gap-4 mb-4"
+        style={{ gridTemplateColumns: config.showDuration ? "1fr 1fr 1fr" : "1fr 1fr" }}
+      >
+        {config.showDuration && (
+          <label className="block">
+            <span className={labelCls}>{config.durationLabel}</span>
+            <input
+              type="number"
+              min={30}
+              step={30}
+              value={listing.durationMinutes}
+              onChange={(e) =>
+                setListing({ ...listing, durationMinutes: parseInt(e.target.value) || 30 })
+              }
+              className={inputCls}
+            />
+          </label>
+        )}
         <label className="block">
-          <span className={labelCls}>Duration (min)</span>
-          <input
-            type="number"
-            min={30}
-            step={30}
-            value={listing.durationMinutes}
-            onChange={(e) => setListing({ ...listing, durationMinutes: parseInt(e.target.value) || 30 })}
-            className={inputCls}
-          />
-        </label>
-        <label className="block">
-          <span className={labelCls}>Capacity</span>
+          <span className={labelCls}>{config.capacityLabel}</span>
           <input
             type="number"
             min={1}
-            max={50}
             value={listing.capacity}
             onChange={(e) => setListing({ ...listing, capacity: parseInt(e.target.value) || 1 })}
             className={inputCls}
           />
         </label>
         <label className="block">
-          <span className={labelCls}>Price (USD)</span>
+          <span className={labelCls}>{config.priceLabel}</span>
           <input
             type="number"
             min={0}
@@ -1201,15 +1221,18 @@ function ListingStep({ listing, setListing }: { listing: any; setListing: (v: an
           />
         </label>
       </div>
+
       <div>
-        <div className={labelCls}>What's included</div>
+        <div className={labelCls}>{config.includesLabel}</div>
         <div className="flex flex-wrap gap-2">
-          {chips.map(([k, l]) => {
-            const on = !!listing.inc[k];
+          {config.chips.map((ch) => {
+            const on = !!listing.inc[ch.key];
             return (
               <button
-                key={k}
-                onClick={() => setListing({ ...listing, inc: { ...listing.inc, [k]: !on } })}
+                key={ch.key}
+                onClick={() =>
+                  setListing({ ...listing, inc: { ...listing.inc, [ch.key]: !on } })
+                }
                 className="border rounded-full px-[14px] py-[8px] text-[12.5px] font-semibold"
                 style={{
                   background: on ? "#fbf6ec" : "#fff",
@@ -1217,7 +1240,7 @@ function ListingStep({ listing, setListing }: { listing: any; setListing: (v: an
                   color: on ? "#a97e3c" : "#0d2236",
                 }}
               >
-                {l}
+                {ch.label}
               </button>
             );
           })}
@@ -1230,28 +1253,51 @@ function ListingStep({ listing, setListing }: { listing: any; setListing: (v: an
 function ReviewStep({
   profile,
   listing,
+  listingConfig,
+  categoryLabel,
   verifyStatus,
   payoutSchedule,
 }: {
   profile: any;
   listing: any;
+  listingConfig: ListingConfig;
+  categoryLabel: string;
   verifyStatus: string;
   payoutSchedule: string;
 }) {
-  const rows = [
+  const payoutLabel =
+    payoutSchedule === "weekly"
+      ? "Weekly"
+      : payoutSchedule === "monthly"
+        ? "Monthly"
+        : "After each transaction";
+  const rows: Array<[string, string]> = [
     ["Business", profile.name || "—"],
-    ["Category", profile.categoryKey],
+    ["Category", categoryLabel],
     ["Homeport", profile.city || "—"],
     ["Verification", verifyStatus],
-    ["Payouts", payoutSchedule === "weekly" ? "Weekly" : "After each trip"],
-    ["Listing", `${listing.title} · ${listing.capacity} guests · $${listing.price}`],
+    ["Payouts", payoutLabel],
+    [
+      listingConfig.eyebrow,
+      listingConfig.reviewLine({
+        title: listing.title,
+        capacity: listing.capacity,
+        price: listing.price,
+        durationMinutes: listing.durationMinutes,
+      }),
+    ],
   ];
   return (
     <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
       <div className="grid gap-3">
         {rows.map(([k, v]) => (
-          <div key={k} className="flex justify-between border-b border-[#0d2236]/[0.06] pb-3 last:border-0 last:pb-0">
-            <span className="text-[12px] font-bold tracking-[0.1em] uppercase text-[#5c6b78]">{k}</span>
+          <div
+            key={k}
+            className="flex justify-between border-b border-[#0d2236]/[0.06] pb-3 last:border-0 last:pb-0"
+          >
+            <span className="text-[12px] font-bold tracking-[0.1em] uppercase text-[#5c6b78]">
+              {k}
+            </span>
             <span className="text-[13.5px] text-[#0d2236] text-right">{v}</span>
           </div>
         ))}
@@ -1259,3 +1305,4 @@ function ReviewStep({
     </div>
   );
 }
+
