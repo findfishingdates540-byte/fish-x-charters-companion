@@ -763,20 +763,34 @@ function VerifyStep({
 }
 
 function PayoutsStep({
+  config,
   schedule,
   setSchedule,
+  stripeConnected,
+  onConnectStripe,
 }: {
-  schedule: "weekly" | "each";
-  setSchedule: (s: "weekly" | "each") => void;
+  config: PayoutConfig;
+  schedule: PayoutScheduleKey;
+  setSchedule: (s: PayoutScheduleKey) => void;
+  stripeConnected: boolean;
+  onConnectStripe: () => void;
 }) {
+  // Keep the selected schedule valid for the current category
+  const validKeys = config.schedules.map((s) => s.key);
+  if (!validKeys.includes(schedule)) {
+    setTimeout(() => setSchedule(config.schedules[0].key), 0);
+  }
+  const gridCols = config.flow.length === 3 ? "grid-cols-3" : "grid-cols-2";
   return (
     <>
-      <div className="grid grid-cols-3 gap-[14px] max-w-[720px] mb-5">
-        {[
-          { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "#f4e6cd", ic: "#a97e3c" },
-          { n: 2, t: "Held in escrow", d: "Safe — not your balance yet.", c: "#e2eef2", ic: "#1f9fbe" },
-          { n: 3, t: "You're paid", d: "Released after the trip.", c: "#e2f2ea", ic: "#1f8a5b" },
-        ].map((x) => (
+      <div className="bg-white border border-[#0d2236]/10 rounded-2xl p-[16px_20px] max-w-[720px] mb-4">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#a97e3c] mb-1">
+          {config.eyebrow}
+        </div>
+        <div className="text-[13.5px] text-[#0d2236] leading-[1.5]">{config.headline}</div>
+      </div>
+      <div className={`grid ${gridCols} gap-[14px] max-w-[720px] mb-5`}>
+        {config.flow.map((x) => (
           <div key={x.n} className="bg-white border border-[#0d2236]/10 rounded-2xl p-[18px]">
             <div
               className="w-[34px] h-[34px] rounded-[9px] grid place-items-center mb-3 font-semibold"
@@ -789,36 +803,66 @@ function PayoutsStep({
           </div>
         ))}
       </div>
+
+      {/* Dummy Stripe Connect */}
+      <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px] mb-4">
+        <div className="flex items-center gap-4">
+          <span
+            className="w-11 h-11 rounded-xl grid place-items-center flex-none font-bold text-white"
+            style={{ background: "#635bff", fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+          >
+            S
+          </span>
+          <div className="flex-1 min-w-0">
+            <div className="text-[14.5px] font-semibold text-[#0d2236]">{config.connectLabel}</div>
+            <div className="text-[12.5px] text-[#5c6b78]">{config.connectDesc}</div>
+          </div>
+          {stripeConnected ? (
+            <span className="inline-flex items-center gap-2 bg-[#e2f2ea] text-[#1f8a5b] rounded-full px-[14px] py-[9px] text-[12.5px] font-bold flex-none">
+              <span className="w-4 h-4 rounded-full bg-[#1f8a5b] text-white grid place-items-center text-[10px]">
+                ✓
+              </span>
+              Connected
+            </span>
+          ) : (
+            <button
+              onClick={onConnectStripe}
+              className="flex-none bg-[#635bff] text-white border-0 rounded-[10px] px-[18px] py-[10px] text-[12.5px] font-bold cursor-pointer"
+            >
+              Connect Stripe
+            </button>
+          )}
+        </div>
+        <div className="text-[11.5px] text-[#8a97a3] mt-3">
+          Demo mode — no real Stripe account is created. Live Connect wiring ships later.
+        </div>
+      </div>
+
       <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
         <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-[#5c6b78] mb-3">Payout schedule</div>
-        <div className="grid grid-cols-2 gap-3">
-          {(["weekly", "each"] as const).map((s) => {
-            const on = s === schedule;
+        <div
+          className="grid gap-3"
+          style={{ gridTemplateColumns: `repeat(${config.schedules.length}, minmax(0,1fr))` }}
+        >
+          {config.schedules.map((opt) => {
+            const on = opt.key === schedule;
             return (
               <button
-                key={s}
-                onClick={() => setSchedule(s)}
+                key={opt.key}
+                onClick={() => setSchedule(opt.key)}
                 className="border rounded-xl p-4 text-left"
                 style={{
                   borderColor: on ? "#e3c089" : "rgba(13,34,54,.10)",
                   background: on ? "#fbf6ec" : "#fff",
                 }}
               >
-                <div className="text-[13.5px] font-semibold text-[#0d2236]">
-                  {s === "weekly" ? "Weekly" : "After each trip"}
-                </div>
-                <div className="text-[12px] text-[#5c6b78] mt-1">
-                  {s === "weekly"
-                    ? "Auto-batched every Monday."
-                    : "Payout released as soon as escrow clears."}
-                </div>
+                <div className="text-[13.5px] font-semibold text-[#0d2236]">{opt.title}</div>
+                <div className="text-[12px] text-[#5c6b78] mt-1">{opt.desc}</div>
               </button>
             );
           })}
         </div>
-        <div className="text-[12px] text-[#5c6b78] mt-4">
-          Stripe Connect linking is enabled after your first booking. You can adjust this later in Settings.
-        </div>
+        <div className="text-[12px] text-[#5c6b78] mt-4">{config.fineprint}</div>
       </div>
     </>
   );
