@@ -54,3 +54,24 @@ export const tileFor = (cat: Cat): { bg: string; ink: string } => {
 };
 
 export const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
+
+import type { ReactNode } from "react";
+
+export function ProductIcon({ kind, size = 46 }: { kind: IconKind; size?: number }) {
+  const paths: Record<IconKind, ReactNode> = {
+    rod: (<><path d="M3 21 20 4" /><path d="M20 4c1.5 3-1 6-3 6" /><circle cx="6" cy="18" r="1.2" /><circle cx="10" cy="14" r="1.2" /><circle cx="14" cy="10" r="1.2" /></>),
+    reel: (<><circle cx="12" cy="12" r="7" /><circle cx="12" cy="12" r="2.4" /><path d="M12 5V2M19 12h3" /></>),
+    lure: (<><path d="M3 12c4-5 10-6 15-3l3 3-3 3c-5 3-11 2-15-3z" /><circle cx="16" cy="11" r=".9" /><path d="M8 15l-1.5 4M12 16l0 4" /></>),
+    shirt: (<path d="M8 4 4 7l2 3 2-1v11h8V9l2 1 2-3-4-3-2 2h-4z" />),
+    cap: (<><path d="M4 13a8 8 0 0 1 16 0v2H4z" /><path d="M4 15c6 3 10 3 16 0M12 5V3" /></>),
+    spool: (<><circle cx="12" cy="12" r="7.5" /><circle cx="12" cy="12" r="4.5" /><circle cx="12" cy="12" r="1.5" /></>),
+    sonar: (<><rect x="3" y="5" width="18" height="13" rx="2" /><path d="M6 14l3-4 3 2 4-5" /><path d="M9 21h6" /></>),
+    jacket: (<><path d="M9 3h6l4 4-2 3-1-1v12H8V9L7 10 5 7z" /><path d="M12 3v18" /></>),
+    hook: (<><path d="M16 3a5 5 0 0 1 0 10c-3 0-5-2-5-5" /><path d="M11 8v8a4 4 0 0 0 8 0" /></>),
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      {paths[kind]}
+    </svg>
+  );
+}
