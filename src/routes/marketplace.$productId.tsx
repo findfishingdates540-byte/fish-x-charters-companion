@@ -123,7 +123,7 @@ function ProductDetail() {
               <div>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 10 }}>Specifications</div>
                 <dl style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 24px", margin: 0 }}>
-                  {product.specs.map((s) => (
+                  {product.specs.map((s: { label: string; value: string }) => (
                     <div key={s.label} style={{ display: "flex", justifyContent: "space-between", borderBottom: `1px solid ${V.line}`, padding: "8px 0" }}>
                       <dt style={{ fontSize: 13, color: V.tmut }}>{s.label}</dt>
                       <dd style={{ fontSize: 13, fontWeight: 600, color: V.ink, margin: 0 }}>{s.value}</dd>
