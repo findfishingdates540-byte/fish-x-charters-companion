@@ -815,11 +815,18 @@ export function OperatorOnboarding() {
                   }}
                 />
               )}
-              {step === 3 && <ListingStep listing={listing} setListing={setListing} />}
+              {step === 3 && (
+                <ListingStep listing={listing} setListing={setListing} config={listingConfig} />
+              )}
               {step === 4 && (
                 <ReviewStep
                   profile={profile}
                   listing={listing}
+                  listingConfig={listingConfig}
+                  categoryLabel={
+                    categories.find((c) => c.key === profile.categoryKey)?.label ??
+                    profile.categoryKey
+                  }
                   verifyStatus={
                     data?.verification
                       ? "✓ Submitted"
@@ -830,6 +837,7 @@ export function OperatorOnboarding() {
                   payoutSchedule={payoutSchedule}
                 />
               )}
+
 
               <div className="mt-10 flex items-center justify-between max-w-[720px]">
                 <button
