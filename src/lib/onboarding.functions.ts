@@ -185,6 +185,7 @@ export const savePayoutPreference = createServerFn({ method: "POST" })
       .single();
     const hours = (biz?.hours_json as Record<string, any>) ?? {};
     hours.payout_schedule = data.schedule;
+    if (typeof data.stripeConnected === "boolean") hours.stripe_connected = data.stripeConnected;
     const { error } = await context.supabase
       .from("businesses")
       .update({ hours_json: hours })
