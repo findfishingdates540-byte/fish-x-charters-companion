@@ -594,7 +594,7 @@ export function OperatorOnboarding() {
       return publish({
         data: {
           title: listing.title,
-          kind: listing.kind,
+          kind: listingConfig.kind,
           durationMinutes: listing.durationMinutes,
           capacity: listing.capacity,
           basePriceCents: Math.round(listing.price * 100),
