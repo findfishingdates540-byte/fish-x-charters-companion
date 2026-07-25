@@ -36,6 +36,7 @@ const CATS: Array<{ k: "all" | Cat; label: string }> = [
 ];
 
 export function Marketplace() {
+  const navigate = useNavigate();
   const [cat, setCat] = useState<"all" | Cat>("all");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
