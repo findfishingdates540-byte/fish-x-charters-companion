@@ -133,7 +133,7 @@ export const upsertBusinessProfile = createServerFn({ method: "POST" })
 export const createVerificationUploadUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: { docKey: string; filename: string }) =>
-    z.object({ docKey: z.enum(["license", "insurance", "id"]), filename: z.string().min(1).max(200) }).parse(i),
+    z.object({ docKey: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/), filename: z.string().min(1).max(200) }).parse(i),
   )
   .handler(async ({ data, context }) => {
     const businessId = await pickBusinessId(context.supabase, context.userId);
