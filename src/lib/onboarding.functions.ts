@@ -117,17 +117,15 @@ export const upsertBusinessProfile = createServerFn({ method: "POST" })
     }
     if (!slugRe.test(slug)) slug = `biz-${Math.random().toString(36).slice(2, 8)}`;
 
-    const { data: business, error: bizErr } = await supabase
-      .from("businesses")
-      .insert({ ...payload, slug, created_by: userId })
-      .select()
-      .single();
+    const { data: business, error: bizErr } = await supabase.rpc("create_business_with_owner", {
+      _name: data.name,
+      _slug: slug,
+      _category_key: data.categoryKey,
+      _city: data.city ?? null,
+      _phone: data.phone ?? null,
+      _description: data.description ?? null,
+    });
     if (bizErr) throw new Response(bizErr.message, { status: 400 });
-
-    const { error: memErr } = await supabase
-      .from("business_members")
-      .insert({ business_id: business.id, user_id: userId, role: "owner" });
-    if (memErr) throw new Response(memErr.message, { status: 400 });
 
     return business;
   });
