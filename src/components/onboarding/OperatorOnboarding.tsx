@@ -396,6 +396,10 @@ export function OperatorOnboarding() {
               )}
               {step === 1 && (
                 <VerifyStep
+                  config={verifyConfig}
+                  categoryLabel={
+                    categories.find((c) => c.key === profile.categoryKey)?.label ?? "your business"
+                  }
                   uploaded={uploaded}
                   onUpload={handleUpload}
                   alreadySubmitted={!!data?.verification}
@@ -413,7 +417,7 @@ export function OperatorOnboarding() {
                     data?.verification
                       ? "✓ Submitted"
                       : uploadedCount > 0
-                        ? `${Math.min(uploadedCount, 3)} of 3`
+                        ? `${Math.min(uploadedCount, requiredDocCount)} of ${requiredDocCount}`
                         : "Not started"
                   }
                   payoutSchedule={payoutSchedule}
