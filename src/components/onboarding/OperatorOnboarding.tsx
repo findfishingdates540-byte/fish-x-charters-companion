@@ -119,11 +119,7 @@ export function OperatorOnboarding() {
 
   const [step, setStep] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
-  const [uploaded, setUploaded] = useState<Record<DocKey, string | null>>({
-    license: null,
-    insurance: null,
-    id: null,
-  });
+  const [uploaded, setUploaded] = useState<Record<string, string | null>>({});
   const [payoutSchedule, setPayoutSchedule] = useState<"weekly" | "each">("weekly");
   const [published, setPublished] = useState(false);
 
