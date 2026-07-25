@@ -455,8 +455,8 @@ function RecoCard({ c }: { c: Reco }) {
             from <b style={{ fontFamily: "var(--serif)", fontSize: 18, color: "var(--goldtext)" }}>{money(c.base_price_cents)}</b>
           </span>
           <Link
-            to="/trips/detail"
-            search={{ id: c.id }}
+            to="/booking"
+            search={{ service_id: c.id }}
             style={{ background: "var(--navy)", color: "#fff", borderRadius: 9, padding: "9px 15px", fontSize: 12, fontWeight: 700, textDecoration: "none" }}
           >
             Book
