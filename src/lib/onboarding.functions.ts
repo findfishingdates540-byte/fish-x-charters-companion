@@ -171,8 +171,8 @@ export const submitVerification = createServerFn({ method: "POST" })
 
 export const savePayoutPreference = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: { schedule: "weekly" | "each" }) =>
-    z.object({ schedule: z.enum(["weekly", "each"]) }).parse(i),
+  .inputValidator((i: { schedule: "weekly" | "each" | "monthly"; stripeConnected?: boolean }) =>
+    z.object({ schedule: z.enum(["weekly", "each", "monthly"]), stripeConnected: z.boolean().optional() }).parse(i),
   )
   .handler(async ({ data, context }) => {
     const businessId = await pickBusinessId(context.supabase, context.userId);
