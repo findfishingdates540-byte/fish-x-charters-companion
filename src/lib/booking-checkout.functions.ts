@@ -54,11 +54,17 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     if (!ownerId) throw new Response("Business owner missing", { status: 500 });
 
     const price = svc.base_price_cents ?? 0;
-    const fee = Math.round(price * 0.08);
-    const total = price + fee;
+    const total = price * data.partySize > 0 ? price : price;
+    const { splitAmount } = await import("./stripe.server");
+    const { platformFeeCents, vendorCents } = splitAmount(total);
 
-    // Create booking directly at 'confirmed' with escrow held.
-    // Real Stripe wiring will move: pending_payment -> pending_confirmation -> confirmed
+    // Booking starts as pending_payment; the Stripe webhook flips it to
+    // confirmed + escrow held once the PaymentIntent succeeds. Without a
+    // Stripe key configured we short-circuit to confirmed so the flow is
+    // still demoable in preview.
+    const { getStripe } = await import("./stripe.server");
+    const stripe = getStripe();
+
     const insert: Database["public"]["Tables"]["bookings"]["Insert"] = {
       angler_id: userId,
       captain_id: ownerId,
@@ -68,10 +74,11 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       party_size: data.partySize,
       total_cents: total,
       deposit_cents: 0,
-      payout_cents: price,
-      application_fee_cents: fee,
-      status: "confirmed",
-      escrow_state: "held",
+      payout_cents: vendorCents,
+      application_fee_cents: platformFeeCents,
+      commission_rate: 0.2,
+      status: stripe ? "pending_payment" : "confirmed",
+      escrow_state: stripe ? "none" : "held",
       instant_book: true,
       notes: data.notes ?? null,
     };
@@ -81,5 +88,38 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (insErr) throw new Response(insErr.message, { status: 500 });
-    return { bookingId: row.id, totalCents: total, feeCents: fee };
+
+    let clientSecret: string | null = null;
+    if (stripe) {
+      // Funds are captured on the PLATFORM account (separate charges and
+      // transfers) so the vendor's 80% can be held in escrow and transferred
+      // 24h after the trip is completed.
+      const intent = await stripe.paymentIntents.create(
+        {
+          amount: total,
+          currency: "usd",
+          automatic_payment_methods: { enabled: true },
+          metadata: {
+            booking_id: row.id,
+            business_id: svc.business_id ?? "",
+            vendor_cents: String(vendorCents),
+            platform_fee_cents: String(platformFeeCents),
+          },
+        },
+        { idempotencyKey: `booking-intent-${row.id}` },
+      );
+      clientSecret = intent.client_secret;
+      await supabase
+        .from("bookings")
+        .update({ stripe_payment_intent_id: intent.id })
+        .eq("id", row.id);
+    }
+
+    return {
+      bookingId: row.id,
+      totalCents: total,
+      feeCents: platformFeeCents,
+      vendorCents,
+      clientSecret,
+    };
   });
