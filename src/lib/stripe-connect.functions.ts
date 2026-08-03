@@ -120,6 +120,6 @@ export const createConnectDashboardLink = createServerFn({ method: "POST" })
     const biz = await ownedBusiness(context.supabase, context.userId, data.businessId);
     if (!biz.stripe_account_id) throw new Response("Connect your payout account first", { status: 400 });
     const { requireStripe } = await import("./stripe.server");
-    const login = await requireStripe().loginLinks.create(biz.stripe_account_id);
+    const login = await requireStripe().accounts.createLoginLink(biz.stripe_account_id);
     return { url: login.url };
   });
