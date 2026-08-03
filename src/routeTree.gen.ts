@@ -33,6 +33,7 @@ import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticate
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
 import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
 import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
+import { Route as ApiPublicHooksReleaseEscrowRouteImport } from './routes/api/public/hooks/release-escrow'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 
 const TrustRoute = TrustRouteImport.update({
@@ -158,6 +159,12 @@ const AuthenticatedBookingsDetailRoute =
     path: '/bookings/detail',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicHooksReleaseEscrowRoute =
+  ApiPublicHooksReleaseEscrowRouteImport.update({
+    id: '/api/public/hooks/release-escrow',
+    path: '/api/public/hooks/release-escrow',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDispatchEventsRoute =
   ApiPublicHooksDispatchEventsRouteImport.update({
     id: '/api/public/hooks/dispatch-events',
@@ -190,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
+  '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -216,6 +224,7 @@ export interface FileRoutesByTo {
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
+  '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -244,6 +253,7 @@ export interface FileRoutesById {
   '/_authenticated/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
+  '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
+    | '/api/public/hooks/release-escrow'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
+    | '/api/public/hooks/release-escrow'
   id:
     | '__root__'
     | '/'
@@ -325,6 +337,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/hooks/dispatch-events'
+    | '/api/public/hooks/release-escrow'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -343,6 +356,7 @@ export interface RootRouteChildren {
   MarketplaceIndexRoute: typeof MarketplaceIndexRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
+  ApiPublicHooksReleaseEscrowRoute: typeof ApiPublicHooksReleaseEscrowRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -515,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBookingsDetailRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/hooks/release-escrow': {
+      id: '/api/public/hooks/release-escrow'
+      path: '/api/public/hooks/release-escrow'
+      fullPath: '/api/public/hooks/release-escrow'
+      preLoaderRoute: typeof ApiPublicHooksReleaseEscrowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/dispatch-events': {
       id: '/api/public/hooks/dispatch-events'
       path: '/api/public/hooks/dispatch-events'
@@ -570,6 +591,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketplaceIndexRoute: MarketplaceIndexRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
+  ApiPublicHooksReleaseEscrowRoute: ApiPublicHooksReleaseEscrowRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
