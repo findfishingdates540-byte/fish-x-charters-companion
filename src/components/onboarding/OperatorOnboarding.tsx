@@ -503,6 +503,19 @@ export function OperatorOnboarding() {
   const [stripeConnected, setStripeConnected] = useState(false);
   const [published, setPublished] = useState(false);
 
+  // Reflect real Stripe Connect state (also after returning from Stripe).
+  useEffect(() => {
+    let cancelled = false;
+    connectStatus({ data: {} })
+      .then((s) => {
+        if (!cancelled) setStripeConnected(Boolean(s.chargesEnabled && s.payoutsEnabled));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [connectStatus]);
+
   // Profile form
   const biz = data?.business;
   const [profile, setProfile] = useState({
