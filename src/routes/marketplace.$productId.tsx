@@ -83,6 +83,39 @@ function ProductDetail() {
   const { product } = Route.useLoaderData();
   const tile = tileFor(product.cat);
   const related = CATALOG.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
+  const startCheckout = useServerFn(createProductCheckout);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  /** Live products go straight to Stripe Checkout; demo items bounce to the cart. */
+  const buyNow = async () => {
+    if (!product.live) {
+      window.location.href = "/marketplace";
+      return;
+    }
+    setBusy(true);
+    setErr("");
+    try {
+      const res = await startCheckout({
+        data: {
+          items: [{ productId: product.id, quantity: 1 }],
+          origin: window.location.origin,
+        },
+      });
+      if (res.checkoutUrl) {
+        window.location.href = res.checkoutUrl;
+        return;
+      }
+      setErr("Could not start checkout.");
+    } catch (e) {
+      const msg = e instanceof Response ? await e.text() : String(e);
+      setErr(msg.slice(0, 160) || "Checkout failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+
 
   return (
     <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
