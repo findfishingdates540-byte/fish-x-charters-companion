@@ -30,6 +30,7 @@ import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedBookingRouteImport } from './routes/_authenticated/booking'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
 import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
 import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
@@ -142,6 +143,11 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe-webhook',
+  path: '/api/public/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
   id: '/api/public/fishx-webhook',
   path: '/api/public/fishx-webhook',
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
 }
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
 }
@@ -252,6 +260,7 @@ export interface FileRoutesById {
   '/_authenticated/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/_authenticated/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
 }
@@ -281,6 +290,7 @@ export interface FileRouteTypes {
     | '/bookings/detail'
     | '/trips/detail'
     | '/api/public/fishx-webhook'
+    | '/api/public/stripe-webhook'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
   fileRoutesByTo: FileRoutesByTo
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/bookings/detail'
     | '/trips/detail'
     | '/api/public/fishx-webhook'
+    | '/api/public/stripe-webhook'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
   id:
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bookings/detail'
     | '/_authenticated/trips/detail'
     | '/api/public/fishx-webhook'
+    | '/api/public/stripe-webhook'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
   fileRoutesById: FileRoutesById
@@ -355,6 +367,7 @@ export interface RootRouteChildren {
   MarketplaceProductIdRoute: typeof MarketplaceProductIdRoute
   MarketplaceIndexRoute: typeof MarketplaceIndexRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
   ApiPublicHooksReleaseEscrowRoute: typeof ApiPublicHooksReleaseEscrowRoute
 }
@@ -508,6 +521,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/stripe-webhook': {
+      id: '/api/public/stripe-webhook'
+      path: '/api/public/stripe-webhook'
+      fullPath: '/api/public/stripe-webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/fishx-webhook': {
       id: '/api/public/fishx-webhook'
       path: '/api/public/fishx-webhook'
@@ -590,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketplaceProductIdRoute: MarketplaceProductIdRoute,
   MarketplaceIndexRoute: MarketplaceIndexRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
   ApiPublicHooksReleaseEscrowRoute: ApiPublicHooksReleaseEscrowRoute,
 }

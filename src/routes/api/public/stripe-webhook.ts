@@ -134,7 +134,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         await supabaseAdmin.from("payment_events").insert({
           stripe_event_id: event.id,
           event_type: event.type,
-          payload: event as unknown as Record<string, unknown>,
+          payload: JSON.parse(body),
           booking_id: bookingId,
           processed_at: new Date().toISOString(),
         });
