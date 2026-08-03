@@ -136,9 +136,14 @@ function ProductDetail() {
         <div className="mkt-detail-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0,1.05fr) minmax(0,1fr)", gap: 36 }}>
           <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 22, overflow: "hidden" }}>
             <div style={{ position: "relative", aspectRatio: "1 / 1", background: tile.bg, display: "grid", placeItems: "center" }}>
-              <span style={{ color: tile.ink, opacity: 0.9 }}>
-                <ProductIcon kind={product.icon} size={180} />
-              </span>
+              {product.image ? (
+                <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <span style={{ color: tile.ink, opacity: 0.9 }}>
+                  <ProductIcon kind={product.icon} size={180} />
+                </span>
+              )}
+
               {product.badge && (
                 <span style={{ position: "absolute", top: 18, left: 18, background: "rgba(6,21,31,.72)", color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 20 }}>
                   {product.badge}
