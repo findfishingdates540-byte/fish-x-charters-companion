@@ -1713,6 +1713,7 @@ export type Database = {
       }
       product_orders: {
         Row: {
+          application_fee_cents: number | null
           business_id: string
           buyer_email: string | null
           buyer_id: string | null
@@ -1720,9 +1721,15 @@ export type Database = {
           created_at: string
           id: string
           notes: string | null
+          paid_at: string | null
+          payout_cents: number | null
+          payout_released_at: string | null
           shipping_address: Json | null
           shipping_cents: number
           status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          stripe_transfer_id: string | null
           subtotal_cents: number
           tax_cents: number
           total_cents: number
@@ -1730,6 +1737,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          application_fee_cents?: number | null
           business_id: string
           buyer_email?: string | null
           buyer_id?: string | null
@@ -1737,9 +1745,15 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          paid_at?: string | null
+          payout_cents?: number | null
+          payout_released_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          stripe_transfer_id?: string | null
           subtotal_cents?: number
           tax_cents?: number
           total_cents?: number
@@ -1747,6 +1761,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          application_fee_cents?: number | null
           business_id?: string
           buyer_email?: string | null
           buyer_id?: string | null
@@ -1754,9 +1769,15 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          paid_at?: string | null
+          payout_cents?: number | null
+          payout_released_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          stripe_transfer_id?: string | null
           subtotal_cents?: number
           tax_cents?: number
           total_cents?: number
