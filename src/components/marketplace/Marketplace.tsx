@@ -475,14 +475,15 @@ export function Marketplace() {
                 </div>
                 <div style={{ padding: "18px 24px", borderTop: `1px solid ${V.line}` }}>
                   <button
-                    onClick={() => {
-                      setOrderId("FX-" + (8400 + Math.floor(Math.random() * 90)));
-                      setStep("done");
-                    }}
-                    style={{ width: "100%", background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: "pointer" }}
+                    onClick={() => void placeOrder()}
+                    disabled={paying}
+                    style={{ width: "100%", background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: paying ? "wait" : "pointer", opacity: paying ? 0.7 : 1 }}
                   >
-                    Place order · fund escrow {money(total)}
+                    {paying
+                      ? "Redirecting to Stripe…"
+                      : `${liveLines.length ? "Pay securely" : "Place order"} · fund escrow ${money(total)}`}
                   </button>
+
                 </div>
               </>
             )}
