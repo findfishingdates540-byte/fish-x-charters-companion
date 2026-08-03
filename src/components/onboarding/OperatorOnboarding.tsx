@@ -805,13 +805,21 @@ export function OperatorOnboarding() {
                   schedule={payoutSchedule}
                   setSchedule={setPayoutSchedule}
                   stripeConnected={stripeConnected}
-                  onConnectStripe={() => {
-                    // Dummy Stripe Connect — simulate OAuth handshake
-                    showToast("Connecting to Stripe…");
-                    setTimeout(() => {
-                      setStripeConnected(true);
-                      showToast("Stripe account connected (demo)");
-                    }, 900);
+                  onConnectStripe={async () => {
+                    showToast("Opening Stripe Connect…");
+                    try {
+                      const res = await startConnect({
+                        data: { returnUrl: `${window.location.origin}/onboarding` },
+                      });
+                      window.location.href = res.url;
+                    } catch (err) {
+                      const msg = err instanceof Response ? await err.text() : String(err);
+                      showToast(
+                        msg.includes("not configured")
+                          ? "Stripe isn't connected yet — add your Stripe key to enable payouts."
+                          : "Could not start Stripe onboarding.",
+                      );
+                    }
                   }}
                 />
               )}
