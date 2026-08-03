@@ -54,7 +54,7 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     if (!ownerId) throw new Response("Business owner missing", { status: 500 });
 
     const price = svc.base_price_cents ?? 0;
-    const total = price * data.partySize > 0 ? price : price;
+    const total = price;
     const { splitAmount } = await import("./stripe.server");
     const { platformFeeCents, vendorCents } = splitAmount(total);
 
