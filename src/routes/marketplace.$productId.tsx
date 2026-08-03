@@ -1,12 +1,48 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { CATALOG, tileFor, money, ProductIcon } from "@/components/marketplace/catalog";
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  CATALOG,
+  tileFor,
+  money,
+  ProductIcon,
+  catFromCategory,
+  iconFromCategory,
+  type Product,
+} from "@/components/marketplace/catalog";
+import { getStoreProduct, createProductCheckout } from "@/lib/product-checkout.functions";
 
 export const Route = createFileRoute("/marketplace/$productId")({
-  loader: ({ params }) => {
-    const product = CATALOG.find((p) => p.id === params.productId);
-    if (!product) throw notFound();
-    return { product };
+  loader: async ({ params }) => {
+    const demo = CATALOG.find((p) => p.id === params.productId);
+    if (demo) return { product: demo };
+    // Real vendor inventory row (UUID id).
+    const isUuid = /^[0-9a-f-]{36}$/i.test(params.productId);
+    if (isUuid) {
+      const row = await getStoreProduct({ data: { productId: params.productId } });
+      if (row) {
+        const cat = catFromCategory(row.category, row.sellerCategory);
+        const product: Product = {
+          id: row.id,
+          name: row.title,
+          seller: row.sellerName,
+          sellerType: "Verified vendor",
+          price: row.priceCents / 100,
+          rating: "5.0",
+          reviews: 0,
+          cat,
+          icon: iconFromCategory(cat, row.title),
+          description: row.description ?? undefined,
+          live: true,
+          image: row.image,
+          stockQty: row.stockQty,
+        };
+        return { product };
+      }
+    }
+    throw notFound();
   },
+
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Product not found — Fish-X Charters" }, { name: "robots", content: "noindex" }] };
     const { product } = loaderData;
