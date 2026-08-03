@@ -184,14 +184,24 @@ function ProductDetail() {
               </span>
             </div>
 
-            <div style={{ display: "flex", gap: 12, marginBottom: 28 }}>
-              <button style={{ flex: 1, background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: "14px 18px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-                Add to cart
-              </button>
-              <button style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: "14px 22px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-                Buy now
+            <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+              <Link
+                to="/marketplace"
+                style={{ flex: 1, textAlign: "center", textDecoration: "none", background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: "14px 18px", fontFamily: V.sans, fontSize: 14, fontWeight: 700 }}
+              >
+                Back to marketplace
+              </Link>
+              <button
+                onClick={() => void buyNow()}
+                disabled={busy}
+                style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: "14px 22px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: busy ? "wait" : "pointer", opacity: busy ? 0.7 : 1 }}
+              >
+                {busy ? "Redirecting…" : "Buy now"}
               </button>
             </div>
+            {err && <div style={{ color: "#b3261e", fontSize: 13, marginBottom: 18 }}>{err}</div>}
+            <div style={{ marginBottom: 16 }} />
+
 
             {product.specs && product.specs.length > 0 && (
               <div>
