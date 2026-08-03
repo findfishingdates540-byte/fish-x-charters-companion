@@ -1138,8 +1138,9 @@ function PayoutsStep({
           )}
         </div>
         <div className="text-[11.5px] text-[#8a97a3] mt-3">
-          Payments are held in escrow by Fish-X. You keep 80% of every booking; the platform fee is 20%. Your share is released 24 hours after the trip is completed.
+          You keep 80% of every sale; the Fish-X platform fee is 20%. {config.fineprint}
         </div>
+
       </div>
 
       <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
