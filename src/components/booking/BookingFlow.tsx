@@ -286,7 +286,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 15, fontWeight: 600 }}>{svc.title}</div>
                           <div style={{ fontSize: 13, color: V.tmut, marginTop: 3 }}>{businessLine}</div>
-                          <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{dateLabel} · {party} anglers</div>
+                          <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{dateLabel} · {time} · {party} anglers</div>
                         </div>
                       </div>
                     )}
@@ -388,7 +388,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                 <img src={heroUrl} alt="" style={{ width: 104, height: 80, borderRadius: 13, objectFit: "cover", flex: "none" }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 600 }}>{svc.title}</div>
-                  <div style={{ fontSize: 13.5, color: V.tmut, marginTop: 4 }}>{dateLabel} · {party} anglers</div>
+                  <div style={{ fontSize: 13.5, color: V.tmut, marginTop: 4 }}>{dateLabel} · {time} · {party} anglers</div>
                   <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{business?.name ?? "Captain"}</div>
                 </div>
               </div>
