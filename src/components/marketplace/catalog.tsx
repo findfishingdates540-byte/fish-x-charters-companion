@@ -14,7 +14,37 @@ export type Product = {
   icon: IconKind;
   description?: string;
   specs?: Array<{ label: string; value: string }>;
+  /** Set for real vendor inventory rows (purchasable through Stripe). */
+  live?: boolean;
+  image?: string | null;
+  stockQty?: number;
 };
+
+/** Maps a vendor product's free-text category onto a marketplace tab. */
+export function catFromCategory(category: string | null, sellerCategory: string | null): Cat {
+  const s = `${category ?? ""} ${sellerCategory ?? ""}`.toLowerCase();
+  if (/apparel|shirt|hoodie|cap|jacket|wear/.test(s)) return "apparel";
+  if (/electronic|sonar|gps|chartplotter|marine tech/.test(s)) return "electronics";
+  if (/rod|reel/.test(s)) return "rods";
+  return "tackle";
+}
+
+/** Picks an illustrative icon when a vendor product has no image. */
+export function iconFromCategory(cat: Cat, title: string): IconKind {
+  const t = title.toLowerCase();
+  if (/reel/.test(t)) return "reel";
+  if (/hook/.test(t)) return "hook";
+  if (/braid|line|spool/.test(t)) return "spool";
+  if (/hoodie|shirt|tee/.test(t)) return "shirt";
+  if (/cap|hat/.test(t)) return "cap";
+  if (/jacket|shell/.test(t)) return "jacket";
+  if (/lure|jig|bait/.test(t)) return "lure";
+  if (cat === "electronics") return "sonar";
+  if (cat === "apparel") return "shirt";
+  if (cat === "rods") return "rod";
+  return "lure";
+}
+
 
 export const CATALOG: Product[] = [
   { id: "p1", name: "Apex 7'0\" Inshore Spinning Rod", seller: "Apex Rod Co.", sellerType: "Gear maker", price: 189, rating: "4.9", reviews: 214, cat: "rods", badge: "Bestseller", icon: "rod",
