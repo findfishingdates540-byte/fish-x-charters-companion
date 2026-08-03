@@ -180,8 +180,17 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                   })
                   .eq("id", bookingId);
               }
+              const piOrderIds = orderIdsOf(pi);
+              if (piOrderIds.length) {
+                await settleProductOrders(
+                  piOrderIds,
+                  pi.id,
+                  typeof pi.latest_charge === "string" ? pi.latest_charge : null,
+                );
+              }
               break;
             }
+
             case "payment_intent.payment_failed": {
               const pi = event.data.object as Stripe.PaymentIntent;
               bookingId = bookingIdOf(pi);
