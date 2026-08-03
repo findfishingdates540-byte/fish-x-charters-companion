@@ -304,23 +304,23 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                     )}
                     {sec.n === 3 && (
                       <>
-                        <label style={{ display: "block", marginBottom: 12 }}>
-                          <span style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: V.tmut, marginBottom: 6 }}>Card number</span>
-                          <input defaultValue="4242 4242 4242 4242" style={{ width: "100%", background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "12px 13px", fontFamily: V.sans, fontSize: 14, color: V.ink, outline: "none" }} />
-                        </label>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-                          <input defaultValue="08 / 27" style={{ background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "12px 13px", fontSize: 14, outline: "none" }} />
-                          <input defaultValue="123" style={{ background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "12px 13px", fontSize: 14, outline: "none" }} />
+                        <div style={{ display: "flex", alignItems: "center", gap: 12, background: V.paper, border: `1px solid ${V.line}`, borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+                          <span style={{ fontSize: 20 }}>💳</span>
+                          <div>
+                            <div style={{ fontSize: 13.5, fontWeight: 700 }}>Secure card payment via Stripe</div>
+                            <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 2 }}>You'll be taken to Stripe's hosted checkout to enter your card, then returned here.</div>
+                          </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: V.cyansoft, borderRadius: 11, padding: "13px 15px" }}>
                           <span style={{ color: V.cyan, flex: "none", marginTop: 1 }}>🔒</span>
                           <div>
                             <div style={{ fontSize: 13, fontWeight: 700 }}>Charged to escrow — not the captain</div>
-                            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: V.tmut, marginTop: 2 }}>Held by Fish-X's regulated escrow partner and released only after your trip.</div>
+                            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: V.tmut, marginTop: 2 }}>Held by Fish-X and released to your captain 24 hours after the trip is completed.</div>
                           </div>
                         </div>
                       </>
                     )}
+
                   </div>
                 ))}
               </div>
