@@ -195,7 +195,15 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                 <div style={{ border: `1px solid ${V.line}`, borderRadius: 13, overflow: "hidden", marginBottom: 14 }}>
                   <label style={{ display: "block", padding: "11px 14px", borderBottom: `1px solid ${V.line}` }}>
                     <span style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 3 }}>Date</span>
-                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }} />
+                    <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }} />
+                  </label>
+                  <label style={{ display: "block", padding: "11px 14px", borderBottom: `1px solid ${V.line}` }}>
+                    <span style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 3 }}>Departure time</span>
+                    <select value={time} onChange={(e) => setTime(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }}>
+                      {["05:30", "06:00", "07:00", "08:00", "12:00", "13:00", "15:00"].map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
                   </label>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 14px" }}>
                     <div>
@@ -209,7 +217,8 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                   </div>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip</span><span style={{ color: V.ink }}>{money(price)}</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Service fee</span><span style={{ color: V.ink }}>{money(fee)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
+
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
                   <span>Total</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(total)}</span>
                 </div>
