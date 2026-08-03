@@ -73,9 +73,23 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
   const createBookingRPC = useServerFn(createBookingFromService);
   const placeMut = useMutation({
-    mutationFn: () => createBookingRPC({ data: { serviceId, tripDate: date, partySize: party } }),
+    mutationFn: () =>
+      createBookingRPC({
+        data: {
+          serviceId,
+          tripDate: date,
+          startTime: time,
+          partySize: party,
+          origin: typeof window !== "undefined" ? window.location.origin : undefined,
+        },
+      }),
     onMutate: () => setProcessing(true),
     onSuccess: (res) => {
+      if (res.checkoutUrl) {
+        // Hand off to Stripe Checkout; we come back with ?paid=1&booking_id=...
+        window.location.href = res.checkoutUrl;
+        return;
+      }
       setConfirmedId(res.bookingId);
       setStep("confirmed");
       setProcessing(false);
@@ -86,6 +100,20 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
       showToast(e instanceof Error ? e.message : "Booking failed");
     },
   });
+
+  // Returning from Stripe Checkout.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("paid") === "1" && q.get("booking_id")) {
+      setConfirmedId(q.get("booking_id"));
+      setStep("confirmed");
+      window.scrollTo(0, 0);
+    } else if (q.get("canceled") === "1") {
+      showToast("Payment canceled — your trip wasn't booked.");
+    }
+  }, []);
+
 
   useEffect(() => { if (party > cap) setParty(cap); }, [party]);
 
