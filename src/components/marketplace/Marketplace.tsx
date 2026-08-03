@@ -1,11 +1,26 @@
 /**
- * Gear/apparel marketplace, pixel-ported from public/dashboards/marketplace.html.
- * Catalog is currently client-side demo data — no products/orders tables exist yet;
- * add schema + server fns to make orders persistent.
+ * Gear/apparel marketplace.
+ *
+ * Real vendor inventory (`inventory_products`) is listed alongside the demo
+ * catalog. Carts containing real products check out through Stripe Checkout;
+ * the webhook then pays each vendor 80% via Stripe Connect.
  */
-import { useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { CATALOG, tileFor, money, ProductIcon, type Cat } from "./catalog";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  CATALOG,
+  tileFor,
+  money,
+  ProductIcon,
+  catFromCategory,
+  iconFromCategory,
+  type Cat,
+  type Product,
+} from "./catalog";
+import { listStoreProducts, createProductCheckout } from "@/lib/product-checkout.functions";
+
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
@@ -37,29 +52,113 @@ const CATS: Array<{ k: "all" | Cat; label: string }> = [
 
 export function Marketplace() {
   const navigate = useNavigate();
+  const fetchProducts = useServerFn(listStoreProducts);
+  const startCheckout = useServerFn(createProductCheckout);
   const [cat, setCat] = useState<"all" | Cat>("all");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [orderId, setOrderId] = useState("");
   const [toast, setToast] = useState("");
+  const [paying, setPaying] = useState(false);
 
   const showToast = (m: string) => {
     setToast(m);
     setTimeout(() => setToast(""), 2200);
   };
 
-  const visible = useMemo(() => CATALOG.filter((p) => cat === "all" || p.cat === cat), [cat]);
-  const lines = useMemo(
+  const { data: liveRows } = useQuery({
+    queryKey: ["store-products"],
+    queryFn: () => fetchProducts(),
+  });
+
+  // Real vendor inventory, mapped onto the marketplace card shape.
+  const liveProducts = useMemo<Product[]>(
     () =>
-      CATALOG.map((p) => ({ p, qty: cart[p.id] ?? 0 })).filter((l) => l.qty > 0),
-    [cart],
+      (liveRows ?? []).map((r) => {
+        const c = catFromCategory(r.category, r.sellerCategory);
+        return {
+          id: r.id,
+          name: r.title,
+          seller: r.sellerName,
+          sellerType: "Verified vendor",
+          price: r.priceCents / 100,
+          rating: "5.0",
+          reviews: 0,
+          cat: c,
+          icon: iconFromCategory(c, r.title),
+          description: r.description ?? undefined,
+          badge: r.stockQty > 0 ? undefined : "Sold out",
+          live: true,
+          image: r.image,
+          stockQty: r.stockQty,
+        };
+      }),
+    [liveRows],
+  );
+
+  const allProducts = useMemo(() => [...liveProducts, ...CATALOG], [liveProducts]);
+
+  // Returning from Stripe Checkout.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("paid") === "1") {
+      setOrderId((params.get("order") ?? "").slice(0, 8).toUpperCase());
+      setCart({});
+      setStep("done");
+      setCartOpen(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (params.get("canceled") === "1") {
+      showToast("Checkout canceled — your cart is still here.");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  const visible = useMemo(
+    () => allProducts.filter((p) => cat === "all" || p.cat === cat),
+    [allProducts, cat],
+  );
+  const lines = useMemo(
+    () => allProducts.map((p) => ({ p, qty: cart[p.id] ?? 0 })).filter((l) => l.qty > 0),
+    [allProducts, cart],
   );
   const count = lines.reduce((a, l) => a + l.qty, 0);
   const subtotal = lines.reduce((a, l) => a + l.p.price * l.qty, 0);
   const freeShip = subtotal >= 150 || subtotal === 0;
   const ship = freeShip ? 0 : 8;
   const total = subtotal + ship;
+  const liveLines = lines.filter((l) => l.p.live);
+
+  const placeOrder = async () => {
+    // Demo-catalog-only carts keep the simulated confirmation.
+    if (liveLines.length === 0) {
+      setOrderId("FX-" + (8400 + Math.floor(Math.random() * 90)));
+      setStep("done");
+      return;
+    }
+    setPaying(true);
+    try {
+      const res = await startCheckout({
+        data: {
+          items: liveLines.map((l) => ({ productId: l.p.id, quantity: l.qty })),
+          shippingCents: Math.round(ship * 100),
+          origin: window.location.origin,
+        },
+      });
+      if (res.checkoutUrl) {
+        window.location.href = res.checkoutUrl;
+        return;
+      }
+      showToast("Could not start checkout — try again.");
+    } catch (err) {
+      const msg = err instanceof Response ? await err.text() : String(err);
+      showToast(msg.slice(0, 120) || "Checkout failed");
+    } finally {
+      setPaying(false);
+    }
+  };
+
 
   const sellerGroups = useMemo(() => {
     const map: Record<string, { total: number; items: number }> = {};
@@ -174,9 +273,19 @@ export function Marketplace() {
                 style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}
               >
                 <div style={{ position: "relative", height: 170, background: tile.bg, display: "grid", placeItems: "center" }}>
-                  <span style={{ color: tile.ink, opacity: 0.9 }}>
-                    <ProductIcon kind={p.icon} />
-                  </span>
+                  {p.image ? (
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      loading="lazy"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <span style={{ color: tile.ink, opacity: 0.9 }}>
+                      <ProductIcon kind={p.icon} />
+                    </span>
+                  )}
+
                   {p.badge && (
                     <span style={{ position: "absolute", top: 12, left: 12, background: "rgba(6,21,31,.72)", color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "5px 10px", borderRadius: 20 }}>
                       {p.badge}
@@ -366,14 +475,15 @@ export function Marketplace() {
                 </div>
                 <div style={{ padding: "18px 24px", borderTop: `1px solid ${V.line}` }}>
                   <button
-                    onClick={() => {
-                      setOrderId("FX-" + (8400 + Math.floor(Math.random() * 90)));
-                      setStep("done");
-                    }}
-                    style={{ width: "100%", background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: "pointer" }}
+                    onClick={() => void placeOrder()}
+                    disabled={paying}
+                    style={{ width: "100%", background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: paying ? "wait" : "pointer", opacity: paying ? 0.7 : 1 }}
                   >
-                    Place order · fund escrow {money(total)}
+                    {paying
+                      ? "Redirecting to Stripe…"
+                      : `${liveLines.length ? "Pay securely" : "Place order"} · fund escrow ${money(total)}`}
                   </button>
+
                 </div>
               </>
             )}

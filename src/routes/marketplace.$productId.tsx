@@ -1,12 +1,48 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { CATALOG, tileFor, money, ProductIcon } from "@/components/marketplace/catalog";
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  CATALOG,
+  tileFor,
+  money,
+  ProductIcon,
+  catFromCategory,
+  iconFromCategory,
+  type Product,
+} from "@/components/marketplace/catalog";
+import { getStoreProduct, createProductCheckout } from "@/lib/product-checkout.functions";
 
 export const Route = createFileRoute("/marketplace/$productId")({
-  loader: ({ params }) => {
-    const product = CATALOG.find((p) => p.id === params.productId);
-    if (!product) throw notFound();
-    return { product };
+  loader: async ({ params }) => {
+    const demo = CATALOG.find((p) => p.id === params.productId);
+    if (demo) return { product: demo };
+    // Real vendor inventory row (UUID id).
+    const isUuid = /^[0-9a-f-]{36}$/i.test(params.productId);
+    if (isUuid) {
+      const row = await getStoreProduct({ data: { productId: params.productId } });
+      if (row) {
+        const cat = catFromCategory(row.category, row.sellerCategory);
+        const product: Product = {
+          id: row.id,
+          name: row.title,
+          seller: row.sellerName,
+          sellerType: "Verified vendor",
+          price: row.priceCents / 100,
+          rating: "5.0",
+          reviews: 0,
+          cat,
+          icon: iconFromCategory(cat, row.title),
+          description: row.description ?? undefined,
+          live: true,
+          image: row.image,
+          stockQty: row.stockQty,
+        };
+        return { product };
+      }
+    }
+    throw notFound();
   },
+
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Product not found — Fish-X Charters" }, { name: "robots", content: "noindex" }] };
     const { product } = loaderData;
@@ -47,6 +83,39 @@ function ProductDetail() {
   const { product } = Route.useLoaderData();
   const tile = tileFor(product.cat);
   const related = CATALOG.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
+  const startCheckout = useServerFn(createProductCheckout);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  /** Live products go straight to Stripe Checkout; demo items bounce to the cart. */
+  const buyNow = async () => {
+    if (!product.live) {
+      window.location.href = "/marketplace";
+      return;
+    }
+    setBusy(true);
+    setErr("");
+    try {
+      const res = await startCheckout({
+        data: {
+          items: [{ productId: product.id, quantity: 1 }],
+          origin: window.location.origin,
+        },
+      });
+      if (res.checkoutUrl) {
+        window.location.href = res.checkoutUrl;
+        return;
+      }
+      setErr("Could not start checkout.");
+    } catch (e) {
+      const msg = e instanceof Response ? await e.text() : String(e);
+      setErr(msg.slice(0, 160) || "Checkout failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+
 
   return (
     <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
@@ -67,9 +136,14 @@ function ProductDetail() {
         <div className="mkt-detail-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0,1.05fr) minmax(0,1fr)", gap: 36 }}>
           <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 22, overflow: "hidden" }}>
             <div style={{ position: "relative", aspectRatio: "1 / 1", background: tile.bg, display: "grid", placeItems: "center" }}>
-              <span style={{ color: tile.ink, opacity: 0.9 }}>
-                <ProductIcon kind={product.icon} size={180} />
-              </span>
+              {product.image ? (
+                <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <span style={{ color: tile.ink, opacity: 0.9 }}>
+                  <ProductIcon kind={product.icon} size={180} />
+                </span>
+              )}
+
               {product.badge && (
                 <span style={{ position: "absolute", top: 18, left: 18, background: "rgba(6,21,31,.72)", color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 20 }}>
                   {product.badge}
@@ -110,14 +184,24 @@ function ProductDetail() {
               </span>
             </div>
 
-            <div style={{ display: "flex", gap: 12, marginBottom: 28 }}>
-              <button style={{ flex: 1, background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: "14px 18px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-                Add to cart
-              </button>
-              <button style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: "14px 22px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-                Buy now
+            <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+              <Link
+                to="/marketplace"
+                style={{ flex: 1, textAlign: "center", textDecoration: "none", background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: "14px 18px", fontFamily: V.sans, fontSize: 14, fontWeight: 700 }}
+              >
+                Back to marketplace
+              </Link>
+              <button
+                onClick={() => void buyNow()}
+                disabled={busy}
+                style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: "14px 22px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: busy ? "wait" : "pointer", opacity: busy ? 0.7 : 1 }}
+              >
+                {busy ? "Redirecting…" : "Buy now"}
               </button>
             </div>
+            {err && <div style={{ color: "#b3261e", fontSize: 13, marginBottom: 18 }}>{err}</div>}
+            <div style={{ marginBottom: 16 }} />
+
 
             {product.specs && product.specs.length > 0 && (
               <div>
