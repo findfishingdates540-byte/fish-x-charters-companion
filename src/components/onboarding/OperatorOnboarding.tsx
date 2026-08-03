@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { createConnectOnboardingLink, getConnectStatus } from "@/lib/stripe-connect.functions";
 import { supabase } from "@/integrations/supabase/client";
 import {
   createVerificationUploadUrl,
@@ -487,6 +488,8 @@ export function OperatorOnboarding() {
   const submitVer = useServerFn(submitVerification);
   const savePayout = useServerFn(savePayoutPreference);
   const publish = useServerFn(publishListing);
+  const startConnect = useServerFn(createConnectOnboardingLink);
+  const connectStatus = useServerFn(getConnectStatus);
 
   const { data, isLoading } = useQuery({
     queryKey: ["onboarding"],
@@ -1092,7 +1095,7 @@ function PayoutsStep({
         ))}
       </div>
 
-      {/* Dummy Stripe Connect */}
+      {/* Stripe Connect */}
       <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px] mb-4">
         <div className="flex items-center gap-4">
           <span
@@ -1122,7 +1125,7 @@ function PayoutsStep({
           )}
         </div>
         <div className="text-[11.5px] text-[#8a97a3] mt-3">
-          Demo mode — no real Stripe account is created. Live Connect wiring ships later.
+          Payments are held in escrow by Fish-X. You keep 80% of every booking; the platform fee is 20%. Your share is released 24 hours after the trip is completed.
         </div>
       </div>
 
