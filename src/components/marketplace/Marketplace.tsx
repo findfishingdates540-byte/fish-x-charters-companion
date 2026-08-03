@@ -273,9 +273,19 @@ export function Marketplace() {
                 style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}
               >
                 <div style={{ position: "relative", height: 170, background: tile.bg, display: "grid", placeItems: "center" }}>
-                  <span style={{ color: tile.ink, opacity: 0.9 }}>
-                    <ProductIcon kind={p.icon} />
-                  </span>
+                  {p.image ? (
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      loading="lazy"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <span style={{ color: tile.ink, opacity: 0.9 }}>
+                      <ProductIcon kind={p.icon} />
+                    </span>
+                  )}
+
                   {p.badge && (
                     <span style={{ position: "absolute", top: 12, left: 12, background: "rgba(6,21,31,.72)", color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "5px 10px", borderRadius: 20 }}>
                       {p.badge}
