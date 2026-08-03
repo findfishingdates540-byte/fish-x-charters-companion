@@ -53,7 +53,25 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
 
         try {
           switch (event.type) {
+            case "checkout.session.completed": {
+              const session = event.data.object as Stripe.Checkout.Session;
+              bookingId = bookingIdOf(session);
+              if (bookingId && session.payment_status === "paid") {
+                await supabaseAdmin
+                  .from("bookings")
+                  .update({
+                    status: "confirmed",
+                    escrow_state: "held",
+                    ...(typeof session.payment_intent === "string"
+                      ? { stripe_payment_intent_id: session.payment_intent }
+                      : {}),
+                  })
+                  .eq("id", bookingId);
+              }
+              break;
+            }
             case "payment_intent.succeeded": {
+
               const pi = event.data.object as Stripe.PaymentIntent;
               bookingId = bookingIdOf(pi);
               if (bookingId) {

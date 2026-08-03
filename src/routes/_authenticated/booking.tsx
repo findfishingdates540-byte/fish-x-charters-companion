@@ -2,7 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { BookingFlow, checkoutQuery } from "@/components/booking/BookingFlow";
 
-const search = z.object({ service_id: z.string().uuid() });
+const search = z.object({
+  service_id: z.string().uuid(),
+  paid: z.string().optional(),
+  canceled: z.string().optional(),
+  booking_id: z.string().optional(),
+});
+
 
 export const Route = createFileRoute("/_authenticated/booking")({
   head: () => ({

@@ -50,6 +50,8 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
     return d.toISOString().slice(0, 10);
   });
   const [party, setParty] = useState(2);
+  const [time, setTime] = useState("07:00");
+
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [released, setReleased] = useState(false);
@@ -59,7 +61,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
   const cap = 8;
   const price = svc.base_price_cents ?? 0;
-  const fee = Math.round(price * 0.08);
+  const fee = 0;
   const total = price + fee;
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
   const dateLabel = useMemo(() => {
@@ -71,9 +73,23 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
   const createBookingRPC = useServerFn(createBookingFromService);
   const placeMut = useMutation({
-    mutationFn: () => createBookingRPC({ data: { serviceId, tripDate: date, partySize: party } }),
+    mutationFn: () =>
+      createBookingRPC({
+        data: {
+          serviceId,
+          tripDate: date,
+          startTime: time,
+          partySize: party,
+          origin: typeof window !== "undefined" ? window.location.origin : undefined,
+        },
+      }),
     onMutate: () => setProcessing(true),
     onSuccess: (res) => {
+      if (res.checkoutUrl) {
+        // Hand off to Stripe Checkout; we come back with ?paid=1&booking_id=...
+        window.location.href = res.checkoutUrl;
+        return;
+      }
       setConfirmedId(res.bookingId);
       setStep("confirmed");
       setProcessing(false);
@@ -84,6 +100,20 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
       showToast(e instanceof Error ? e.message : "Booking failed");
     },
   });
+
+  // Returning from Stripe Checkout.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("paid") === "1" && q.get("booking_id")) {
+      setConfirmedId(q.get("booking_id"));
+      setStep("confirmed");
+      window.scrollTo(0, 0);
+    } else if (q.get("canceled") === "1") {
+      showToast("Payment canceled — your trip wasn't booked.");
+    }
+  }, []);
+
 
   useEffect(() => { if (party > cap) setParty(cap); }, [party]);
 
@@ -195,7 +225,15 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                 <div style={{ border: `1px solid ${V.line}`, borderRadius: 13, overflow: "hidden", marginBottom: 14 }}>
                   <label style={{ display: "block", padding: "11px 14px", borderBottom: `1px solid ${V.line}` }}>
                     <span style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 3 }}>Date</span>
-                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }} />
+                    <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }} />
+                  </label>
+                  <label style={{ display: "block", padding: "11px 14px", borderBottom: `1px solid ${V.line}` }}>
+                    <span style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 3 }}>Departure time</span>
+                    <select value={time} onChange={(e) => setTime(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }}>
+                      {["05:30", "06:00", "07:00", "08:00", "12:00", "13:00", "15:00"].map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
                   </label>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 14px" }}>
                     <div>
@@ -209,7 +247,8 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                   </div>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip</span><span style={{ color: V.ink }}>{money(price)}</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Service fee</span><span style={{ color: V.ink }}>{money(fee)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
+
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
                   <span>Total</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(total)}</span>
                 </div>
@@ -247,7 +286,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 15, fontWeight: 600 }}>{svc.title}</div>
                           <div style={{ fontSize: 13, color: V.tmut, marginTop: 3 }}>{businessLine}</div>
-                          <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{dateLabel} · {party} anglers</div>
+                          <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{dateLabel} · {time} · {party} anglers</div>
                         </div>
                       </div>
                     )}
@@ -265,30 +304,31 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                     )}
                     {sec.n === 3 && (
                       <>
-                        <label style={{ display: "block", marginBottom: 12 }}>
-                          <span style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: V.tmut, marginBottom: 6 }}>Card number</span>
-                          <input defaultValue="4242 4242 4242 4242" style={{ width: "100%", background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "12px 13px", fontFamily: V.sans, fontSize: 14, color: V.ink, outline: "none" }} />
-                        </label>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-                          <input defaultValue="08 / 27" style={{ background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "12px 13px", fontSize: 14, outline: "none" }} />
-                          <input defaultValue="123" style={{ background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "12px 13px", fontSize: 14, outline: "none" }} />
+                        <div style={{ display: "flex", alignItems: "center", gap: 12, background: V.paper, border: `1px solid ${V.line}`, borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+                          <span style={{ fontSize: 20 }}>💳</span>
+                          <div>
+                            <div style={{ fontSize: 13.5, fontWeight: 700 }}>Secure card payment via Stripe</div>
+                            <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 2 }}>You'll be taken to Stripe's hosted checkout to enter your card, then returned here.</div>
+                          </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: V.cyansoft, borderRadius: 11, padding: "13px 15px" }}>
                           <span style={{ color: V.cyan, flex: "none", marginTop: 1 }}>🔒</span>
                           <div>
                             <div style={{ fontSize: 13, fontWeight: 700 }}>Charged to escrow — not the captain</div>
-                            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: V.tmut, marginTop: 2 }}>Held by Fish-X's regulated escrow partner and released only after your trip.</div>
+                            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: V.tmut, marginTop: 2 }}>Held by Fish-X and released to your captain 24 hours after the trip is completed.</div>
                           </div>
                         </div>
                       </>
                     )}
+
                   </div>
                 ))}
               </div>
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Order summary</div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip</span><span style={{ color: V.ink }}>{money(price)}</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Service fee</span><span style={{ color: V.ink }}>{money(fee)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
+
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
                   <span>Total due today</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(total)}</span>
                 </div>
@@ -348,7 +388,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                 <img src={heroUrl} alt="" style={{ width: 104, height: 80, borderRadius: 13, objectFit: "cover", flex: "none" }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 600 }}>{svc.title}</div>
-                  <div style={{ fontSize: 13.5, color: V.tmut, marginTop: 4 }}>{dateLabel} · {party} anglers</div>
+                  <div style={{ fontSize: 13.5, color: V.tmut, marginTop: 4 }}>{dateLabel} · {time} · {party} anglers</div>
                   <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{business?.name ?? "Captain"}</div>
                 </div>
               </div>
