@@ -49,6 +49,89 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         const bookingIdOf = (obj: { metadata?: Stripe.Metadata | null }) =>
           (obj.metadata?.["booking_id"] as string | undefined) ?? null;
 
+        const orderIdsOf = (obj: { metadata?: Stripe.Metadata | null }) => {
+          if (obj.metadata?.["kind"] !== "product_order") return [];
+          return (obj.metadata?.["order_ids"] ?? "").split(",").filter(Boolean);
+        };
+
+        /**
+         * Marks vendor product orders paid, decrements stock and transfers the
+         * vendor's 80% to their connected account. Retail has no dispute
+         * window, so the transfer goes out as soon as the charge lands.
+         */
+        const settleProductOrders = async (
+          orderIds: string[],
+          paymentIntentId: string | null,
+          chargeId: string | null,
+        ) => {
+          for (const orderId of orderIds) {
+            const { data: order } = await supabaseAdmin
+              .from("product_orders")
+              .select("id,business_id,total_cents,payout_cents,paid_at,stripe_transfer_id")
+              .eq("id", orderId)
+              .maybeSingle();
+            if (!order || order.paid_at) continue;
+
+            await supabaseAdmin
+              .from("product_orders")
+              .update({
+                status: "paid",
+                paid_at: new Date().toISOString(),
+                ...(paymentIntentId ? { stripe_payment_intent_id: paymentIntentId } : {}),
+              })
+              .eq("id", orderId);
+
+            // Draw down inventory for each line.
+            const { data: items } = await supabaseAdmin
+              .from("product_order_items")
+              .select("product_id,quantity")
+              .eq("order_id", orderId);
+            for (const item of items ?? []) {
+              if (!item.product_id) continue;
+              const { data: prod } = await supabaseAdmin
+                .from("inventory_products")
+                .select("stock_qty")
+                .eq("id", item.product_id)
+                .maybeSingle();
+              if (!prod) continue;
+              await supabaseAdmin
+                .from("inventory_products")
+                .update({ stock_qty: Math.max(0, (prod.stock_qty ?? 0) - item.quantity) })
+                .eq("id", item.product_id);
+            }
+
+            // Pay the vendor via Stripe Connect.
+            const { data: biz } = await supabaseAdmin
+              .from("businesses")
+              .select("stripe_account_id,payouts_enabled")
+              .eq("id", order.business_id)
+              .maybeSingle();
+            if (!biz?.stripe_account_id || !biz.payouts_enabled || order.stripe_transfer_id) continue;
+            try {
+              const transfer = await stripe.transfers.create(
+                {
+                  amount: order.payout_cents ?? 0,
+                  currency: "usd",
+                  destination: biz.stripe_account_id,
+                  transfer_group: `order_${orderId}`,
+                  ...(chargeId ? { source_transaction: chargeId } : {}),
+                  metadata: { order_id: orderId },
+                },
+                { idempotencyKey: `order-transfer-${orderId}` },
+              );
+              await supabaseAdmin
+                .from("product_orders")
+                .update({
+                  stripe_transfer_id: transfer.id,
+                  payout_released_at: new Date().toISOString(),
+                })
+                .eq("id", orderId);
+            } catch (err) {
+              console.error(`[stripe] vendor transfer failed for order ${orderId}`, err);
+            }
+          }
+        };
+
         let bookingId: string | null = null;
 
         try {
@@ -68,8 +151,20 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                   })
                   .eq("id", bookingId);
               }
+              const orderIds = orderIdsOf(session);
+              if (orderIds.length && session.payment_status === "paid") {
+                const piId =
+                  typeof session.payment_intent === "string" ? session.payment_intent : null;
+                let chargeId: string | null = null;
+                if (piId) {
+                  const pi = await stripe.paymentIntents.retrieve(piId);
+                  chargeId = typeof pi.latest_charge === "string" ? pi.latest_charge : null;
+                }
+                await settleProductOrders(orderIds, piId, chargeId);
+              }
               break;
             }
+
             case "payment_intent.succeeded": {
 
               const pi = event.data.object as Stripe.PaymentIntent;
