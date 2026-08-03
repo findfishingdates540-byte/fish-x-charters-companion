@@ -1,11 +1,26 @@
 /**
- * Gear/apparel marketplace, pixel-ported from public/dashboards/marketplace.html.
- * Catalog is currently client-side demo data — no products/orders tables exist yet;
- * add schema + server fns to make orders persistent.
+ * Gear/apparel marketplace.
+ *
+ * Real vendor inventory (`inventory_products`) is listed alongside the demo
+ * catalog. Carts containing real products check out through Stripe Checkout;
+ * the webhook then pays each vendor 80% via Stripe Connect.
  */
-import { useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { CATALOG, tileFor, money, ProductIcon, type Cat } from "./catalog";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  CATALOG,
+  tileFor,
+  money,
+  ProductIcon,
+  catFromCategory,
+  iconFromCategory,
+  type Cat,
+  type Product,
+} from "./catalog";
+import { listStoreProducts, createProductCheckout } from "@/lib/product-checkout.functions";
+
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
