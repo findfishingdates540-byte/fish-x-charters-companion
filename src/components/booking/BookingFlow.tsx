@@ -50,6 +50,8 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
     return d.toISOString().slice(0, 10);
   });
   const [party, setParty] = useState(2);
+  const [time, setTime] = useState("07:00");
+
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [released, setReleased] = useState(false);
