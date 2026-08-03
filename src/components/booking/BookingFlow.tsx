@@ -59,7 +59,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
   const cap = 8;
   const price = svc.base_price_cents ?? 0;
-  const fee = Math.round(price * 0.08);
+  const fee = 0;
   const total = price + fee;
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
   const dateLabel = useMemo(() => {
