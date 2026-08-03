@@ -52,29 +52,113 @@ const CATS: Array<{ k: "all" | Cat; label: string }> = [
 
 export function Marketplace() {
   const navigate = useNavigate();
+  const fetchProducts = useServerFn(listStoreProducts);
+  const startCheckout = useServerFn(createProductCheckout);
   const [cat, setCat] = useState<"all" | Cat>("all");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [orderId, setOrderId] = useState("");
   const [toast, setToast] = useState("");
+  const [paying, setPaying] = useState(false);
 
   const showToast = (m: string) => {
     setToast(m);
     setTimeout(() => setToast(""), 2200);
   };
 
-  const visible = useMemo(() => CATALOG.filter((p) => cat === "all" || p.cat === cat), [cat]);
-  const lines = useMemo(
+  const { data: liveRows } = useQuery({
+    queryKey: ["store-products"],
+    queryFn: () => fetchProducts(),
+  });
+
+  // Real vendor inventory, mapped onto the marketplace card shape.
+  const liveProducts = useMemo<Product[]>(
     () =>
-      CATALOG.map((p) => ({ p, qty: cart[p.id] ?? 0 })).filter((l) => l.qty > 0),
-    [cart],
+      (liveRows ?? []).map((r) => {
+        const c = catFromCategory(r.category, r.sellerCategory);
+        return {
+          id: r.id,
+          name: r.title,
+          seller: r.sellerName,
+          sellerType: "Verified vendor",
+          price: r.priceCents / 100,
+          rating: "5.0",
+          reviews: 0,
+          cat: c,
+          icon: iconFromCategory(c, r.title),
+          description: r.description ?? undefined,
+          badge: r.stockQty > 0 ? undefined : "Sold out",
+          live: true,
+          image: r.image,
+          stockQty: r.stockQty,
+        };
+      }),
+    [liveRows],
+  );
+
+  const allProducts = useMemo(() => [...liveProducts, ...CATALOG], [liveProducts]);
+
+  // Returning from Stripe Checkout.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("paid") === "1") {
+      setOrderId((params.get("order") ?? "").slice(0, 8).toUpperCase());
+      setCart({});
+      setStep("done");
+      setCartOpen(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (params.get("canceled") === "1") {
+      showToast("Checkout canceled — your cart is still here.");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  const visible = useMemo(
+    () => allProducts.filter((p) => cat === "all" || p.cat === cat),
+    [allProducts, cat],
+  );
+  const lines = useMemo(
+    () => allProducts.map((p) => ({ p, qty: cart[p.id] ?? 0 })).filter((l) => l.qty > 0),
+    [allProducts, cart],
   );
   const count = lines.reduce((a, l) => a + l.qty, 0);
   const subtotal = lines.reduce((a, l) => a + l.p.price * l.qty, 0);
   const freeShip = subtotal >= 150 || subtotal === 0;
   const ship = freeShip ? 0 : 8;
   const total = subtotal + ship;
+  const liveLines = lines.filter((l) => l.p.live);
+
+  const placeOrder = async () => {
+    // Demo-catalog-only carts keep the simulated confirmation.
+    if (liveLines.length === 0) {
+      setOrderId("FX-" + (8400 + Math.floor(Math.random() * 90)));
+      setStep("done");
+      return;
+    }
+    setPaying(true);
+    try {
+      const res = await startCheckout({
+        data: {
+          items: liveLines.map((l) => ({ productId: l.p.id, quantity: l.qty })),
+          shippingCents: Math.round(ship * 100),
+          origin: window.location.origin,
+        },
+      });
+      if (res.checkoutUrl) {
+        window.location.href = res.checkoutUrl;
+        return;
+      }
+      showToast("Could not start checkout — try again.");
+    } catch (err) {
+      const msg = err instanceof Response ? await err.text() : String(err);
+      showToast(msg.slice(0, 120) || "Checkout failed");
+    } finally {
+      setPaying(false);
+    }
+  };
+
 
   const sellerGroups = useMemo(() => {
     const map: Record<string, { total: number; items: number }> = {};
