@@ -29,9 +29,12 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
 const CreateBookingInput = z.object({
   serviceId: z.string().uuid(),
   tripDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/).optional(),
   partySize: z.number().int().min(1).max(20),
   notes: z.string().max(2000).optional(),
+  origin: z.string().url().optional(),
 });
+
 
 export const createBookingFromService = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
