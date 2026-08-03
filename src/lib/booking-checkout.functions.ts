@@ -74,6 +74,7 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       business_id: svc.business_id,
       service_id: svc.id,
       trip_date: data.tripDate,
+      start_time: data.startTime ? `${data.startTime}:00` : null,
       party_size: data.partySize,
       total_cents: total,
       deposit_cents: 0,
@@ -92,30 +93,49 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       .single();
     if (insErr) throw new Response(insErr.message, { status: 500 });
 
-    let clientSecret: string | null = null;
+    let checkoutUrl: string | null = null;
     if (stripe) {
       // Funds are captured on the PLATFORM account (separate charges and
       // transfers) so the vendor's 80% can be held in escrow and transferred
       // 24h after the trip is completed.
-      const intent = await stripe.paymentIntents.create(
+      const origin = data.origin ?? "https://fishx-charter-hub.lovable.app";
+      const metadata = {
+        booking_id: row.id,
+        business_id: svc.business_id ?? "",
+        vendor_cents: String(vendorCents),
+        platform_fee_cents: String(platformFeeCents),
+      };
+      const session = await stripe.checkout.sessions.create(
         {
-          amount: total,
-          currency: "usd",
-          automatic_payment_methods: { enabled: true },
-          metadata: {
-            booking_id: row.id,
-            business_id: svc.business_id ?? "",
-            vendor_cents: String(vendorCents),
-            platform_fee_cents: String(platformFeeCents),
-          },
+          mode: "payment",
+          line_items: [
+            {
+              quantity: 1,
+              price_data: {
+                currency: "usd",
+                unit_amount: total,
+                product_data: {
+                  name: svc.title ?? "Fishing charter",
+                  description: `${data.tripDate}${data.startTime ? ` · ${data.startTime}` : ""} · ${data.partySize} angler(s)`,
+                  ...(svc.hero_url ? { images: [svc.hero_url] } : {}),
+                },
+              },
+            },
+          ],
+          metadata,
+          payment_intent_data: { metadata },
+          success_url: `${origin}/booking?service_id=${svc.id}&paid=1&booking_id=${row.id}`,
+          cancel_url: `${origin}/booking?service_id=${svc.id}&canceled=1`,
         },
-        { idempotencyKey: `booking-intent-${row.id}` },
+        { idempotencyKey: `booking-checkout-${row.id}` },
       );
-      clientSecret = intent.client_secret;
-      await supabase
-        .from("bookings")
-        .update({ stripe_payment_intent_id: intent.id })
-        .eq("id", row.id);
+      checkoutUrl = session.url;
+      if (typeof session.payment_intent === "string") {
+        await supabase
+          .from("bookings")
+          .update({ stripe_payment_intent_id: session.payment_intent })
+          .eq("id", row.id);
+      }
     }
 
     return {
@@ -123,6 +143,7 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       totalCents: total,
       feeCents: platformFeeCents,
       vendorCents,
-      clientSecret,
+      checkoutUrl,
     };
   });
+
