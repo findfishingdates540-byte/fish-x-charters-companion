@@ -45,7 +45,7 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     // Resolve service + business owner (captain_id is NOT NULL on bookings)
     const { data: svc, error: svcErr } = await supabase
       .from("bookable_services")
-      .select("id,base_price_cents,business_id,capacity,business:businesses(created_by)")
+      .select("id,title,hero_url,base_price_cents,business_id,capacity,business:businesses(created_by)")
       .eq("id", data.serviceId)
       .maybeSingle();
     if (svcErr) throw new Response(svcErr.message, { status: 500 });
