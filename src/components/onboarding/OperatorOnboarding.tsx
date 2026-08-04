@@ -827,14 +827,24 @@ export function OperatorOnboarding() {
                       const res = await startConnect({
                         data: { returnUrl: `${window.location.origin}/onboarding` },
                       });
-                      window.location.href = res.url;
+                      if (!res?.url) throw new Error("Stripe did not return an onboarding link.");
+                      window.location.assign(res.url);
                     } catch (err) {
-                      const msg = err instanceof Response ? await err.text() : String(err);
-                      showToast(
-                        msg.includes("not configured")
-                          ? "Stripe isn't connected yet — add your Stripe key to enable payouts."
-                          : "Could not start Stripe onboarding.",
-                      );
+                      const msg =
+                        err instanceof Response
+                          ? await err.text()
+                          : err instanceof Error
+                            ? err.message
+                            : String(err);
+                      if (msg.includes("not configured")) {
+                        showToast("Stripe isn't connected yet — add your Stripe key to enable payouts.");
+                      } else if (msg.toLowerCase().includes("signed up for connect")) {
+                        showToast(
+                          "Enable Stripe Connect on your Stripe account (dashboard.stripe.com/connect), then try again.",
+                        );
+                      } else {
+                        showToast(msg.slice(0, 160) || "Could not start Stripe onboarding.");
+                      }
                     }
                   }}
                 />
