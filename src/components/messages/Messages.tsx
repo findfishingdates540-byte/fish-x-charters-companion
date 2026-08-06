@@ -505,6 +505,7 @@ function ThreadView({ bookingId }: { bookingId: string }) {
   return (
     <section
       style={{
+        height: "100%",
         background: V.card,
         border: `1px solid ${V.line}`,
         borderRadius: 20,
