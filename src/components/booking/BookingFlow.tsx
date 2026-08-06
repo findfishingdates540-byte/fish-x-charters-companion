@@ -23,6 +23,45 @@ const V = {
 
 const money = (n: number) => `$${Math.round(n / 100).toLocaleString()}`;
 
+const MONO = "ui-monospace,SFMono-Regular,Menlo,monospace";
+
+const cardDark: CSSProperties = {
+  background: "rgba(255,255,255,.035)",
+  border: `1px solid ${V.lined}`,
+  borderRadius: 16,
+  padding: 28,
+};
+const h2Dark: CSSProperties = {
+  fontFamily: V.serif,
+  fontWeight: 700,
+  fontSize: 28,
+  color: "#fff",
+  margin: "0 0 18px",
+};
+const railLabel: CSSProperties = {
+  display: "block",
+  fontFamily: MONO,
+  fontSize: 10.5,
+  fontWeight: 700,
+  letterSpacing: ".14em",
+  textTransform: "uppercase",
+  color: V.cyan,
+  marginBottom: 8,
+};
+const railField: CSSProperties = {
+  width: "100%",
+  background: "rgba(255,255,255,.05)",
+  border: `1px solid ${V.lined}`,
+  borderRadius: 10,
+  padding: "13px 14px",
+  fontFamily: MONO,
+  fontSize: 15,
+  fontWeight: 600,
+  color: "#fff",
+  outline: "none",
+  colorScheme: "dark",
+};
+
 export const checkoutQuery = (serviceId: string) =>
   queryOptions({
     queryKey: ["checkout", serviceId],
