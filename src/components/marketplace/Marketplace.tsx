@@ -106,6 +106,9 @@ export function Marketplace() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("paid") === "1") {
       setOrderId((params.get("order") ?? "").slice(0, 8).toUpperCase());
+      const stored = window.sessionStorage.getItem("fxc_pending_order_total");
+      setPaidTotal(stored ? Number(stored) : null);
+      window.sessionStorage.removeItem("fxc_pending_order_total");
       setCart({});
       setStep("done");
       setCartOpen(true);
