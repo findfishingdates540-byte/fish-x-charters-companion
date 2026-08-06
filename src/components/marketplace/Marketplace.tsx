@@ -518,7 +518,7 @@ export function Marketplace() {
                 </div>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 26, color: V.ink }}>Order placed &amp; funded</div>
                 <div style={{ fontSize: 13.5, color: V.tmut, margin: "6px 0 22px" }}>
-                  Order {orderId} · {money(total)} secured in escrow
+                  Order {orderId} · {money(paidTotal ?? total)} secured in escrow
                 </div>
                 <Link
                   to="/dashboard"
