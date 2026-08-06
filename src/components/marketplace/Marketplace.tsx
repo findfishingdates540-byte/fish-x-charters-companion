@@ -290,7 +290,7 @@ export function Marketplace() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 1180, margin: "0 auto", padding: "26px 28px 60px" }}>
+      <main style={{ width: "100%", padding: "26px 36px 60px" }}>
         {/* ESCROW RIBBON */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, background: V.card, border: `1px solid ${V.line}`, borderRadius: 14, padding: "12px 18px", marginBottom: 22 }}>
           <span style={{ width: 30, height: 30, borderRadius: 9, background: V.cyansoft, display: "grid", placeItems: "center", color: V.cyan, flex: "none" }}>
