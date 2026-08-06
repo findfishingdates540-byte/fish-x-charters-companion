@@ -55,6 +55,10 @@ export function Marketplace() {
   const fetchProducts = useServerFn(listStoreProducts);
   const startCheckout = useServerFn(createProductCheckout);
   const [cat, setCat] = useState<"all" | Cat>("all");
+  const [query, setQuery] = useState("");
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [seller, setSeller] = useState("all");
+  const [sort, setSort] = useState<"featured" | "price-asc" | "price-desc">("featured");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
