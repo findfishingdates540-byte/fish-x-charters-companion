@@ -123,12 +123,20 @@ function Toast({ toast }: { toast: string }) {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
-      <header style={{ position: "sticky", top: 0, zIndex: 30, background: V.navy, color: V.ond }}>
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        background: V.paper,
+        color: V.ink,
+        fontFamily: V.sans,
+        overflow: "hidden",
+      }}
+    >
+      <header style={{ flex: "none", background: V.navy, color: V.ond }}>
         <div
           style={{
-            maxWidth: 1100,
-            margin: "0 auto",
             padding: "0 28px",
             height: 62,
             display: "flex",
@@ -197,7 +205,7 @@ function Shell({ children }: { children: React.ReactNode }) {
           </span>
         </div>
       </header>
-      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 28px 64px" }}>{children}</main>
+      <main style={{ flex: 1, minHeight: 0, padding: "22px 28px 28px" }}>{children}</main>
     </div>
   );
 }
