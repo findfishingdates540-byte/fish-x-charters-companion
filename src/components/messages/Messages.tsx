@@ -568,8 +568,8 @@ function ThreadView({ bookingId }: { bookingId: string }) {
       <div
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: "auto",
-          maxHeight: "56vh",
           padding: "20px 22px",
           display: "flex",
           flexDirection: "column",
