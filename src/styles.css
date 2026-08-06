@@ -485,3 +485,13 @@ body.dc-body { margin:0; background:#0a2236; }
 
 
 
+
+/* Angler Explore tab — cinematic discovery grids */
+@media (max-width: 1024px) {
+  .explore-hero-grid { grid-template-columns: 1fr !important; }
+  .explore-quad { grid-template-columns: repeat(2, 1fr) !important; }
+  .explore-triple { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 560px) {
+  .explore-quad { grid-template-columns: 1fr !important; }
+}
