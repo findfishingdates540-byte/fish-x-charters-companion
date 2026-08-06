@@ -279,8 +279,11 @@ export function Marketplace() {
         </div>
 
         {/* HEADING */}
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 18, flexWrap: "wrap", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 18, flexWrap: "wrap", marginBottom: 22 }}>
           <div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: V.goldtext, marginBottom: 8 }}>
+              Advanced marketplace filters
+            </div>
             <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 36, letterSpacing: "-.01em", lineHeight: 1.05, margin: "0 0 6px", color: V.ink }}>
               Gear &amp; apparel, from the source.
             </h1>
@@ -288,90 +291,210 @@ export function Marketplace() {
               Tackle shops, gear makers and apparel brands — all verified, all escrow-backed.
             </div>
           </div>
-          <span style={{ fontSize: 12.5, color: V.tmut }}>{visible.length} products</span>
+          <button
+            onClick={() => {
+              setCat("all");
+              setQuery("");
+              setSeller("all");
+              setMaxPrice(1000);
+              setSort("featured");
+            }}
+            style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 30, padding: "10px 18px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 600, color: V.ink, cursor: "pointer" }}
+          >
+            ↺ Reset filters
+          </button>
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 26 }}>
-          {CATS.map((c) => (
-            <button key={c.k} onClick={() => setCat(c.k)} style={catButtonStyle(cat === c.k)}>
-              {c.label}
-            </button>
-          ))}
-        </div>
+        <div className="mkt-layout" style={{ display: "grid", gridTemplateColumns: "270px minmax(0,1fr)", gap: 24, alignItems: "start" }}>
+          {/* FILTER RAIL */}
+          <aside style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 20, position: "sticky", top: 84, display: "flex", flexDirection: "column", gap: 22 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, borderBottom: `1px solid ${V.line}`, paddingBottom: 14 }}>
+              <span style={{ fontFamily: V.serif, fontSize: 20, fontWeight: 600 }}>Filters</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: V.cyan, background: V.cyansoft, borderRadius: 20, padding: "4px 10px" }}>
+                {visible.length} results
+              </span>
+            </div>
 
-        {/* GRID */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
-          {visible.map((p) => {
-            const tile = tileFor(p.cat);
-            const inCart = !!cart[p.id];
-            return (
-              <article
-                key={p.id}
-                onClick={() => navigate({ to: "/marketplace/$productId", params: { productId: p.id } })}
-                style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}
+            <div>
+              <div style={filterLabel}>Search keywords</div>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Rods, lures, apparel…"
+                style={{ width: "100%", border: `1px solid ${V.line}`, borderRadius: 10, padding: "10px 12px", fontFamily: V.sans, fontSize: 13, color: V.ink, outline: "none", background: V.paper }}
+              />
+            </div>
+
+            <div>
+              <div style={filterLabel}>Category</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {CATS.map((c) => (
+                  <button key={c.k} onClick={() => setCat(c.k)} style={railOption(cat === c.k)}>
+                    <span>{c.label}</span>
+                    {cat === c.k && <span>✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div style={filterLabel}>Seller</div>
+              <select
+                value={seller}
+                onChange={(e) => setSeller(e.target.value)}
+                style={{ width: "100%", border: `1px solid ${V.line}`, borderRadius: 10, padding: "10px 12px", fontFamily: V.sans, fontSize: 13, color: V.ink, background: V.paper }}
               >
-                <div style={{ position: "relative", height: 170, background: tile.bg, display: "grid", placeItems: "center" }}>
-                  {p.image ? (
-                    <img
-                      src={p.image}
-                      alt={p.name}
-                      loading="lazy"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  ) : (
-                    <span style={{ color: tile.ink, opacity: 0.9 }}>
-                      <ProductIcon kind={p.icon} />
-                    </span>
-                  )}
+                <option value="all">All sellers</option>
+                {sellers.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-                  {p.badge && (
-                    <span style={{ position: "absolute", top: 12, left: 12, background: "rgba(6,21,31,.72)", color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "5px 10px", borderRadius: 20 }}>
-                      {p.badge}
-                    </span>
-                  )}
-                </div>
-                <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 7 }}>
-                    <span style={{ width: 16, height: 16, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#1c1303", fontSize: 8, flex: "none" }}>✓</span>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: V.tmut }}>{p.seller}</span>
-                    <span style={{ fontSize: 11, color: V.tmut, opacity: 0.7 }}>· {p.sellerType}</span>
-                  </div>
-                  <h3 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 18.5, lineHeight: 1.15, margin: "0 0 8px", color: V.ink }}>
-                    {p.name}
-                  </h3>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: V.tmut, marginBottom: 14 }}>
-                    <span style={{ color: V.sand }}>★</span>
-                    <b style={{ color: V.ink }}>{p.rating}</b>
-                    <span>({p.reviews})</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                    <span style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 600, color: V.goldtext }}>{money(p.price)}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCart((c) => ({ ...c, [p.id]: (c[p.id] ?? 0) + 1 }));
-                        showToast(`${p.name} added — escrow-protected`);
-                      }}
+            <div>
+              <div style={{ ...filterLabel, display: "flex", justifyContent: "space-between" }}>
+                <span>Max price</span>
+                <span style={{ color: V.ink }}>{money(maxPrice)}</span>
+              </div>
+              <input
+                type="range"
+                min={25}
+                max={priceCeiling}
+                step={5}
+                value={Math.min(maxPrice, priceCeiling)}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                style={{ width: "100%", accentColor: V.cyan }}
+              />
+            </div>
+
+            <div>
+              <div style={filterLabel}>Sort by</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {([
+                  { k: "featured", label: "Featured" },
+                  { k: "price-asc", label: "Price ↑" },
+                  { k: "price-desc", label: "Price ↓" },
+                ] as const).map((s) => (
+                  <button key={s.k} onClick={() => setSort(s.k)} style={catButtonStyle(sort === s.k)}>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ background: V.cyansoft, borderRadius: 14, padding: 14 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: V.ink, marginBottom: 4 }}>Fish-X escrow guarantee</div>
+              <div style={{ fontSize: 11.5, color: V.tmut, lineHeight: 1.45 }}>
+                Sellers are paid only after you confirm delivery.
+              </div>
+            </div>
+          </aside>
+
+          {/* GRID */}
+          <div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+              <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600 }}>Available listings ({visible.length})</div>
+              <span style={{ fontSize: 12.5, color: V.tmut }}>
+                {cat === "all" ? "All categories" : CATS.find((c) => c.k === cat)?.label}
+              </span>
+            </div>
+
+            {visible.length === 0 && (
+              <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 48, textAlign: "center", color: V.tmut }}>
+                No products match these filters.
+              </div>
+            )}
+
+            <div className="mkt-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))", gap: 20 }}>
+              {visible.map((p) => {
+                const tile = tileFor(p.cat);
+                const inCart = !!cart[p.id];
+                return (
+                  <article
+                    key={p.id}
+                    onClick={() => navigate({ to: "/marketplace/$productId", params: { productId: p.id } })}
+                    style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}
+                  >
+                    <div
                       style={{
-                        background: inCart ? V.greensoft : V.navy,
-                        color: inCart ? V.green : "#fff",
-                        border: 0,
-                        borderRadius: 10,
-                        padding: "10px 16px",
-                        fontFamily: V.sans,
-                        fontSize: 12,
-                        fontWeight: 700,
-                        cursor: "pointer",
+                        position: "relative",
+                        height: 170,
+                        flex: "0 0 170px",
+                        overflow: "hidden",
+                        background: tile.bg,
+                        display: "grid",
+                        placeItems: "center",
                       }}
                     >
-                      {inCart ? "✓ In cart" : "Add to cart"}
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+                      {p.image ? (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          loading="lazy"
+                          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                        />
+                      ) : (
+                        <span style={{ color: tile.ink, opacity: 0.9 }}>
+                          <ProductIcon kind={p.icon} />
+                        </span>
+                      )}
+
+                      {p.badge && (
+                        <span style={{ position: "absolute", top: 12, left: 12, background: "rgba(6,21,31,.72)", color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "5px 10px", borderRadius: 20 }}>
+                          {p.badge}
+                        </span>
+                      )}
+                      <span style={{ position: "absolute", top: 12, right: 12, background: "rgba(6,21,31,.72)", color: V.sand, fontSize: 11, fontWeight: 700, padding: "5px 10px", borderRadius: 20 }}>
+                        {money(p.price)}
+                      </span>
+                    </div>
+                    <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 7, minWidth: 0 }}>
+                        <span style={{ width: 16, height: 16, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#1c1303", fontSize: 8, flex: "none" }}>✓</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: V.tmut, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.seller}</span>
+                      </div>
+                      <h3 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 18.5, lineHeight: 1.15, margin: "0 0 8px", color: V.ink }}>
+                        {p.name}
+                      </h3>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: V.tmut, marginBottom: 14 }}>
+                        <span style={{ color: V.sand }}>★</span>
+                        <b style={{ color: V.ink }}>{p.rating}</b>
+                        <span>({p.reviews})</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginTop: "auto" }}>
+                        <span style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 600, color: V.goldtext }}>{money(p.price)}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCart((c) => ({ ...c, [p.id]: (c[p.id] ?? 0) + 1 }));
+                            showToast(`${p.name} added — escrow-protected`);
+                          }}
+                          style={{
+                            background: inCart ? V.greensoft : V.navy,
+                            color: inCart ? V.green : "#fff",
+                            border: 0,
+                            borderRadius: 10,
+                            padding: "10px 16px",
+                            fontFamily: V.sans,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {inCart ? "✓ In cart" : "Add to cart"}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
         </div>
+
       </main>
 
       {/* CART DRAWER */}
