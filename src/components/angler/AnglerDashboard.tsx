@@ -310,7 +310,7 @@ function HomeTab(props: {
           <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
             {nextTrip ? (
               <Link
-                to="/bookings/detail"
+                to="/trips/detail"
                 search={{ id: nextTrip.id }}
                 style={{ display: "inline-block", background: "var(--sand)", color: "#1c1303", textDecoration: "none", borderRadius: 11, padding: "13px 20px", fontSize: 13, fontWeight: 700, letterSpacing: ".04em" }}
               >
@@ -321,10 +321,15 @@ function HomeTab(props: {
                 Explore charters
               </Link>
             )}
-            <button style={{ background: "transparent", color: "#fff", border: "1px solid var(--lined)", borderRadius: 11, padding: "13px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            <Link
+              to="/messages"
+              search={nextTrip ? { booking: nextTrip.id } : {}}
+              style={{ background: "transparent", color: "#fff", border: "1px solid var(--lined)", borderRadius: 11, padding: "13px 20px", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
+            >
               Message captain
-            </button>
+            </Link>
           </div>
+
         </div>
       </div>
 
@@ -352,9 +357,11 @@ function HomeTab(props: {
             </div>
           )}
           {upcoming.map((b, i) => (
-            <div
+            <Link
               key={b.id}
-              style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 0", borderBottom: i < upcoming.length - 1 ? "1px solid var(--line)" : "none" }}
+              to="/trips/detail"
+              search={{ id: b.id }}
+              style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 0", textDecoration: "none", cursor: "pointer", borderBottom: i < upcoming.length - 1 ? "1px solid var(--line)" : "none" }}
             >
               <img src={b.service?.hero_url || b.business?.hero_url || "/dashboards/assets/seascape.jpg"} style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} alt="" />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -366,8 +373,9 @@ function HomeTab(props: {
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--cyan)", background: "#e2eef2", borderRadius: 20, padding: "3px 9px", flex: "none" }}>
                 {b.status === "confirmed" || b.status === "in_progress" ? "In escrow" : b.status.replace("_", " ")}
               </span>
-            </div>
+            </Link>
           ))}
+
         </div>
 
         {/* PROTECTION */}
