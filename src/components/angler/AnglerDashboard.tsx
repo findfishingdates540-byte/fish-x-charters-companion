@@ -3,7 +3,7 @@
  * Pixel-close to the DC template, wired to live Supabase data.
  */
 import { useMemo, useState, useEffect } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -72,7 +72,15 @@ function useCountdown(target: Date | null) {
 }
 
 export function AnglerDashboard() {
-  const [tab, setTab] = useState<Tab>("home");
+  const search = useSearch({ strict: false }) as { tab?: string };
+  const initialTab: Tab =
+    search.tab && ["home", "trips", "explore", "wallet", "orders"].includes(search.tab)
+      ? (search.tab as Tab)
+      : "home";
+  const [tab, setTab] = useState<Tab>(initialTab);
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
   const [bellOpen, setBellOpen] = useState(false);
   const navigate = useNavigate();
   const { data: home } = useSuspenseQuery(anglerHomeQO);
