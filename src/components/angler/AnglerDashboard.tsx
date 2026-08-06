@@ -241,7 +241,7 @@ export function AnglerDashboard() {
           />
         )}
         {tab === "trips" && <TripsTab upcoming={home.upcoming} completedCount={home.completedCount} />}
-        {tab === "explore" && <ExploreTab recos={recos} />}
+        {tab === "explore" && <ExploreTab />}
         {tab === "wallet" && <WalletTab escrowCents={home.escrowCents} upcoming={home.upcoming} />}
         {tab === "orders" && <OrdersTab />}
       </main>
