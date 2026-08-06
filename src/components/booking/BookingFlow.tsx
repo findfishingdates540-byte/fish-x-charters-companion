@@ -190,101 +190,200 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
         </div>
       </header>
 
-      <main style={{ maxWidth: 1180, margin: "0 auto", padding: "28px 28px 60px" }}>
+      <main
+        className="fx-booking-main"
+        style={
+          isDetail
+            ? { width: "100%", margin: 0, padding: "26px 40px 80px" }
+            : { maxWidth: 1180, margin: "0 auto", padding: "28px 28px 60px" }
+        }
+      >
         {/* ==== DETAIL ==== */}
         {step === "detail" && (
           <div>
-            <Link to="/dashboard" search={{ tab: "explore" }} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: V.tmut, fontSize: 13.5, fontWeight: 600, textDecoration: "none", marginBottom: 16 }}>
+            <Link
+              to="/dashboard"
+              search={{ tab: "explore" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, fontSize: 13.5, fontWeight: 600, textDecoration: "none", marginBottom: 18 }}
+            >
               ← Back to charters
             </Link>
-            <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 30, alignItems: "start" }}>
-              <div>
-                <div style={{ borderRadius: 20, overflow: "hidden", border: `1px solid ${V.line}`, marginBottom: 24 }}>
-                  <img src={heroUrl} alt={svc.title} style={{ width: "100%", height: 380, objectFit: "cover", objectPosition: "50% 42%" }} />
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: V.tmut, marginBottom: 8 }}>
-                  <span style={{ color: V.sand }}>★</span>
-                  <b style={{ color: V.ink }}>4.9</b> · {[business?.city, business?.region].filter(Boolean).join(", ") || "Coastal charter"}
-                </div>
-                <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 36, lineHeight: 1.04, margin: "0 0 14px" }}>{svc.title}</h1>
-                <p style={{ fontSize: 15.5, lineHeight: 1.65, color: V.tmut, maxWidth: 620, margin: "0 0 24px" }}>
-                  Book with {business?.name ?? "this operator"} through Fish-X escrow. Payment is only released after your trip is complete.
-                </p>
-                {svc.includes && svc.includes.length > 0 && (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 12, maxWidth: 620, marginBottom: 30 }}>
-                    {svc.includes.slice(0, 6).map((inc) => (
-                      <div key={inc} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14 }}>
-                        <span style={{ width: 30, height: 30, borderRadius: 8, background: V.sandsoft, display: "grid", placeItems: "center", color: V.goldtext, flex: "none" }}>✓</span>
-                        {inc}
+
+            {/* TITLE BLOCK */}
+            <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, color: V.cyan, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", marginBottom: 10 }}>
+              <span>◉</span> {locationLine}
+            </div>
+            <h1 style={{ fontFamily: V.serif, fontWeight: 700, fontSize: "clamp(34px,5vw,58px)", lineHeight: 1.02, margin: "0 0 14px", color: "#fff" }}>
+              {svc.title}
+            </h1>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, marginBottom: 26 }}>
+              <span style={{ color: V.sand }}>★ 4.98 <span style={{ opacity: 0.8 }}>(42 reviews)</span></span>
+              <span style={{ color: V.ondmut }}>·</span>
+              <span style={{ color: V.cyan }}>Captain: {business?.name ?? "Fish-X operator"}</span>
+              <span style={{ color: V.ondmut }}>·</span>
+              <span style={{ color: "#4ec98e" }}>⛊ USCG Verified Charter</span>
+            </div>
+
+            {/* GALLERY */}
+            <div className="fx-booking-gallery" style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 18, marginBottom: 34 }}>
+              <img
+                src={galleryUrls[0]}
+                alt={svc.title ?? "Charter"}
+                style={{ width: "100%", height: 520, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.lined}` }}
+              />
+              <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 18 }}>
+                {galleryUrls.slice(1).map((u, i) => (
+                  <img key={i} src={u} alt="" style={{ width: "100%", height: 251, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.lined}` }} />
+                ))}
+              </div>
+            </div>
+
+            {/* BODY + RAIL */}
+            <div className="fx-booking-grid" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 30, alignItems: "start" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+                {/* Charter overview */}
+                <section style={cardDark}>
+                  <h2 style={h2Dark}>Charter Overview</h2>
+                  <p style={{ fontSize: 15.5, lineHeight: 1.7, color: V.ond, opacity: 0.85, margin: "0 0 22px", maxWidth: 760 }}>
+                    {`Experience a world-class day on the water with ${business?.name ?? "this operator"} out of ${locationLine}. Every booking is protected by Fish-X escrow — your payment is only released to the captain after the trip is complete.`}
+                  </p>
+                  <div className="fx-spec-strip" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18, border: `1px solid ${V.lined}`, borderRadius: 12, padding: "18px 22px" }}>
+                    {specs.map((s) => (
+                      <div key={s.k}>
+                        <div style={{ fontSize: 10.5, letterSpacing: ".16em", textTransform: "uppercase", color: V.ondmut, marginBottom: 6 }}>{s.k}</div>
+                        <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 15, fontWeight: 600, color: V.cyan }}>{s.v}</div>
                       </div>
                     ))}
                   </div>
-                )}
-                <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 22, display: "flex", alignItems: "center", gap: 18, maxWidth: 620 }}>
-                  {business?.logo_url ? (
-                    <img src={business.logo_url} alt="" style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover", flex: "none" }} />
-                  ) : (
-                    <div style={{ width: 64, height: 64, borderRadius: "50%", background: V.navy, color: V.sand, display: "grid", placeItems: "center", fontFamily: V.serif, fontSize: 24, flex: "none" }}>
-                      {(business?.name ?? "F").slice(0, 1)}
+                </section>
+
+                {/* Vessel specifications */}
+                <section style={cardDark}>
+                  <h2 style={h2Dark}>Vessel Specifications</h2>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 22 }}>
+                    <span style={{ width: 54, height: 54, borderRadius: 12, background: "rgba(227,192,137,.14)", color: V.sand, display: "grid", placeItems: "center", fontSize: 24, flex: "none" }}>⚓</span>
+                    <div>
+                      <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 700, color: "#fff" }}>Center Console · Twin Outboard</div>
+                      <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, color: V.cyan, marginTop: 3 }}>Capacity: {capacity} anglers</div>
                     </div>
-                  )}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontFamily: V.serif, fontSize: 19, fontWeight: 600 }}>{business?.name ?? "Operator"}</span>
-                      <span style={{ width: 18, height: 18, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#1c1303", fontSize: 10 }}>✓</span>
-                    </div>
-                    <div style={{ fontSize: 13, color: V.tmut, marginTop: 2 }}>Verified operator · Fish-X escrow</div>
                   </div>
-                </div>
+                  <div className="fx-amenities" style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "13px 26px" }}>
+                    {amenities.slice(0, 8).map((a) => (
+                      <div key={a} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14.5, color: V.ond }}>
+                        <span style={{ color: "#4ec98e", flex: "none" }}>⊘</span>
+                        {a}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Captain */}
+                <section style={cardDark}>
+                  <h2 style={h2Dark}>Your Captain</h2>
+                  <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+                    {business?.logo_url ? (
+                      <img src={business.logo_url} alt="" style={{ width: 66, height: 66, borderRadius: "50%", objectFit: "cover", flex: "none" }} />
+                    ) : (
+                      <div style={{ width: 66, height: 66, borderRadius: "50%", background: "rgba(255,255,255,.08)", color: V.sand, display: "grid", placeItems: "center", fontFamily: V.serif, fontSize: 26, flex: "none" }}>
+                        {(business?.name ?? "F").slice(0, 1)}
+                      </div>
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 700, color: "#fff" }}>{business?.name ?? "Fish-X operator"}</div>
+                      <div style={{ fontSize: 13.5, color: V.ondmut, marginTop: 3 }}>Verified operator · Escrow protected · Responds within an hour</div>
+                    </div>
+                    {business?.slug && (
+                      <Link to="/b/$slug" params={{ slug: business.slug }} style={{ border: `1px solid ${V.lined}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: V.ond, textDecoration: "none", whiteSpace: "nowrap" }}>
+                        View profile
+                      </Link>
+                    )}
+                  </div>
+                </section>
+
+                {/* Escrow explainer */}
+                <section style={cardDark}>
+                  <h2 style={h2Dark}>How Payment Works</h2>
+                  <div className="fx-escrow-steps" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
+                    {[
+                      ["1", "You pay", "Funds are captured and held by Fish-X — never sent straight to the captain."],
+                      ["2", "You fish", "The captain runs the trip. Anything goes wrong, open a resolution case."],
+                      ["3", "Captain paid", "Escrow releases 24 hours after the trip is marked complete."],
+                    ].map(([n, t, d]) => (
+                      <div key={n} style={{ border: `1px solid ${V.lined}`, borderRadius: 12, padding: 18 }}>
+                        <span style={{ width: 26, height: 26, borderRadius: "50%", background: V.sand, color: "#1c1303", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{n}</span>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "12px 0 6px" }}>{t}</div>
+                        <div style={{ fontSize: 13.5, lineHeight: 1.55, color: V.ondmut }}>{d}</div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
               </div>
 
               {/* BOOKING RAIL */}
-              <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 18 }}>
-                  <span style={{ fontFamily: V.serif, fontSize: 30, fontWeight: 600 }}>{money(price)}</span>
-                  <span style={{ fontSize: 13, color: V.tmut }}>/ {durLabel}</span>
+              <div className="fx-booking-rail" style={{ position: "sticky", top: 84, ...cardDark, padding: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 22 }}>
+                  <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: "#fff" }}>{money(price)}</span>
+                  <span style={{ fontSize: 13, color: V.ondmut }}>/ {durLabel} trip</span>
+                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#4ec98e", background: "rgba(78,201,142,.12)", border: "1px solid rgba(78,201,142,.35)", borderRadius: 6, padding: "6px 9px", whiteSpace: "nowrap" }}>
+                    Escrow guaranteed
+                  </span>
                 </div>
-                <div style={{ border: `1px solid ${V.line}`, borderRadius: 13, overflow: "hidden", marginBottom: 14 }}>
-                  <label style={{ display: "block", padding: "11px 14px", borderBottom: `1px solid ${V.line}` }}>
-                    <span style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 3 }}>Date</span>
-                    <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }} />
-                  </label>
-                  <label style={{ display: "block", padding: "11px 14px", borderBottom: `1px solid ${V.line}` }}>
-                    <span style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 3 }}>Departure time</span>
-                    <select value={time} onChange={(e) => setTime(e.target.value)} style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 14.5, fontWeight: 600, color: V.ink, width: "100%" }}>
-                      {["05:30", "06:00", "07:00", "08:00", "12:00", "13:00", "15:00"].map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 14px" }}>
-                    <div>
-                      <span style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut }}>Anglers</span>
-                      <span style={{ fontSize: 14.5, fontWeight: 600 }}>{party} of {cap}</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <button onClick={() => setParty((p) => Math.max(1, p - 1))} style={{ width: 28, height: 28, borderRadius: "50%", border: `1px solid ${V.line}`, background: "transparent", fontSize: 16, cursor: "pointer" }}>−</button>
-                      <button onClick={() => setParty((p) => Math.min(cap, p + 1))} style={{ width: 28, height: 28, borderRadius: "50%", border: `1px solid ${V.line}`, background: "transparent", fontSize: 16, cursor: "pointer" }}>+</button>
-                    </div>
+
+                <label style={{ display: "block", marginBottom: 16 }}>
+                  <span style={railLabel}>Select trip date</span>
+                  <input
+                    type="date"
+                    value={date}
+                    min={new Date().toISOString().slice(0, 10)}
+                    onChange={(e) => setDate(e.target.value)}
+                    style={railField}
+                  />
+                </label>
+
+                <label style={{ display: "block", marginBottom: 16 }}>
+                  <span style={railLabel}>Departure time</span>
+                  <select value={time} onChange={(e) => setTime(e.target.value)} style={railField}>
+                    {["05:30", "06:00", "07:00", "08:00", "12:00", "13:00", "15:00"].map((t) => (
+                      <option key={t} value={t} style={{ color: "#0a2236" }}>{t}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <label style={{ display: "block", marginBottom: 22 }}>
+                  <span style={railLabel}>Number of anglers (max {capacity})</span>
+                  <select value={party} onChange={(e) => setParty(Number(e.target.value))} style={railField}>
+                    {Array.from({ length: capacity }, (_, i) => i + 1).map((n) => (
+                      <option key={n} value={n} style={{ color: "#0a2236" }}>{n} {n === 1 ? "Angler" : "Anglers"}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <div style={{ borderTop: `1px solid ${V.lined}`, paddingTop: 16, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
+                    <span>Charter rate ({durLabel})</span><span style={{ color: V.ond }}>{money(price)}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
+                    <span>Fish-X escrow protection fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "14px 0 4px", borderTop: `1px solid ${V.lined}`, marginTop: 10, fontSize: 15.5, fontWeight: 700, color: "#fff" }}>
+                    <span>Total payable</span><span>{money(total)}</span>
                   </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip</span><span style={{ color: V.ink }}>{money(price)}</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
-                  <span>Total</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(total)}</span>
-                </div>
-                <button onClick={() => setStep("checkout")} style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: "pointer", margin: "8px 0 12px" }}>
-                  Continue to checkout
+                <button
+                  onClick={() => setStep("checkout")}
+                  style={{ width: "100%", background: `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})`, color: "#1c1303", border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: "pointer", margin: "20px 0 12px" }}
+                >
+                  Continue to secure checkout →
                 </button>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 9, background: V.cyansoft, borderRadius: 11, padding: "11px 13px" }}>
-                  <span style={{ color: V.cyan, flex: "none", marginTop: 1 }}>🔒</span>
-                  <span style={{ fontSize: 12, lineHeight: 1.5 }}>Funds are held in <b>escrow</b> until your trip is complete.</span>
+                <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
+                  Funds held in escrow — released after your trip.
                 </div>
               </div>
             </div>
           </div>
         )}
+
 
         {/* ==== CHECKOUT ==== */}
         {step === "checkout" && (
