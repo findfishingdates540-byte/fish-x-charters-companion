@@ -453,6 +453,11 @@ export function Marketplace() {
                 )}
               </>
             )}
+                    {!hasDemoOnly && demoLineCount > 0 && (
+                      <div style={{ fontSize: 11.5, color: V.tmut, padding: "4px 0" }}>
+                        {demoLineCount} sample {demoLineCount > 1 ? "items are" : "item is"} not included in this order.
+                      </div>
+                    )}
 
             {step === "checkout" && (
               <>
