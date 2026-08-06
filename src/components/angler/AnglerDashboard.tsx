@@ -10,6 +10,7 @@ import {
   getAnglerDashboard,
   listRecommendedCharters,
 } from "@/lib/angler-dashboard.functions";
+import { ExploreTab } from "./ExploreTab";
 
 const anglerHomeQO = queryOptions({
   queryKey: ["angler-dashboard"],
@@ -518,21 +519,6 @@ function TripsTab({ upcoming, completedCount }: { upcoming: UpcomingBooking[]; c
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function ExploreTab({ recos }: { recos: Reco[] }) {
-  return (
-    <div>
-      <div style={{ fontFamily: "var(--serif)", fontSize: 26, fontWeight: 600, marginBottom: 4 }}>Explore charters</div>
-      <div style={{ fontSize: 13.5, color: "var(--tmut)", marginBottom: 20 }}>
-        Hand-picked and freshly listed trips.{" "}
-        <Link to="/marketplace" style={{ color: "var(--goldtext)", fontWeight: 600 }}>Open full marketplace →</Link>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
-        {recos.map((c) => <RecoCard key={c.id} c={c} />)}
-      </div>
     </div>
   );
 }
