@@ -123,10 +123,31 @@ export function Marketplace() {
     }
   }, []);
 
-  const visible = useMemo(
-    () => allProducts.filter((p) => cat === "all" || p.cat === cat),
-    [allProducts, cat],
+  const sellers = useMemo(
+    () => Array.from(new Set(allProducts.map((p) => p.seller))).sort().slice(0, 12),
+    [allProducts],
   );
+
+  const priceCeiling = useMemo(
+    () => Math.max(100, Math.ceil(Math.max(...allProducts.map((p) => p.price), 100) / 50) * 50),
+    [allProducts],
+  );
+
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const rows = allProducts.filter(
+      (p) =>
+        (cat === "all" || p.cat === cat) &&
+        (seller === "all" || p.seller === seller) &&
+        p.price <= maxPrice &&
+        (!q || p.name.toLowerCase().includes(q) || p.seller.toLowerCase().includes(q)),
+    );
+    if (sort === "price-asc") return [...rows].sort((a, b) => a.price - b.price);
+    if (sort === "price-desc") return [...rows].sort((a, b) => b.price - a.price);
+    return rows;
+  }, [allProducts, cat, seller, maxPrice, query, sort]);
+  void 0;
+
   const lines = useMemo(
     () => allProducts.map((p) => ({ p, qty: cart[p.id] ?? 0 })).filter((l) => l.qty > 0),
     [allProducts, cart],
