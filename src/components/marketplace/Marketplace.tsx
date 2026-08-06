@@ -59,6 +59,7 @@ export function Marketplace() {
   const [cartOpen, setCartOpen] = useState(false);
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [orderId, setOrderId] = useState("");
+  const [paidTotal, setPaidTotal] = useState<number | null>(null);
   const [toast, setToast] = useState("");
   const [paying, setPaying] = useState(false);
 
