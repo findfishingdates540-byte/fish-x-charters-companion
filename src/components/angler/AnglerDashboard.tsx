@@ -109,7 +109,7 @@ export function AnglerDashboard() {
         <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 28px", height: 66, display: "flex", alignItems: "center", gap: 28 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: "0.1em" }}>FISH—X</span>
+            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
           </div>
           <nav style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {(["home", "trips", "explore", "wallet", "orders"] as Tab[]).map((t) => (

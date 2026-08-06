@@ -148,8 +148,8 @@ function Shell({ children, backTo }: { children: React.ReactNode; backTo?: strin
                 borderRadius: 1,
               }}
             />
-            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".1em" }}>
-              FISH—X
+            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>
+              Fish-X Charters
             </span>
             <span
               style={{

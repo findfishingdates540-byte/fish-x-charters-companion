@@ -94,7 +94,7 @@ export function CaptainDashboard() {
       <aside style={{ width: 256, flex: "none", background: "var(--navy)", color: "var(--ond)", display: "flex", flexDirection: "column", padding: "22px 16px", position: "sticky", top: 0, height: "100vh", borderRight: "1px solid rgba(255,255,255,.06)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 10px 22px" }}>
           <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-          <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".1em" }}>FISH—X</span>
+          <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,.05)", border: "1px solid var(--lined)", borderRadius: 13, padding: "11px 12px", marginBottom: 18 }}>
           <span style={{ width: 34, height: 34, borderRadius: 9, background: "rgba(227,192,137,.16)", display: "grid", placeItems: "center", color: "var(--sand)", flex: "none", fontFamily: "var(--serif)", fontWeight: 600 }}>
