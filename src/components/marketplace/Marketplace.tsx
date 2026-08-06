@@ -331,7 +331,7 @@ export function Marketplace() {
           </button>
         </div>
 
-        <div className="mkt-layout" style={{ display: "grid", gridTemplateColumns: "270px minmax(0,1fr)", gap: 24, alignItems: "start" }}>
+        <div className="mkt-layout" style={{ display: "grid", gridTemplateColumns: "300px minmax(0,1fr)", gap: 28, alignItems: "start" }}>
           {/* FILTER RAIL */}
           <aside style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 20, position: "sticky", top: 84, display: "flex", flexDirection: "column", gap: 22 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, borderBottom: `1px solid ${V.line}`, paddingBottom: 14 }}>
