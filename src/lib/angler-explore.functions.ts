@@ -57,7 +57,7 @@ export const getAnglerExplore = createServerFn({ method: "GET" })
       .from("businesses")
       .select("id,slug,name,tagline,city,region,logo_url,hero_url,verified_at")
       .eq("is_published", true)
-      .in("category_key", ["charter", "charters", "guide", "guides", "charter_captain"]);
+      .in("category_key", ["charter", "guide_service"]);
     const businesses = bizRes.data ?? [];
 
     const topCaptains = businesses
