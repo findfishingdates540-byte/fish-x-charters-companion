@@ -267,7 +267,7 @@ export function Marketplace() {
             <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, marginLeft: 4, whiteSpace: "nowrap" }}>Marketplace</span>
           </div>
-          <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", width: 320 }}>
+          <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", flex: "1 1 auto", maxWidth: 420, minWidth: 180 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" strokeWidth={1.8}>
               <circle cx="11" cy="11" r="7" />
               <path d="m21 21-4.3-4.3" />
