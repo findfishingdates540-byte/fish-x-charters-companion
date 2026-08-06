@@ -4,12 +4,12 @@ import { listPublicBusinesses, listCategories } from "@/lib/businesses.functions
 import { PublicHeader } from "@/components/public/PublicHeader";
 
 
-const businessesQO = (category?: string) =>
+export const businessesQO = (category?: string) =>
   queryOptions({
     queryKey: ["businesses", category ?? "all"],
     queryFn: () => listPublicBusinesses({ data: { category } }),
   });
-const categoriesQO = queryOptions({
+export const categoriesQO = queryOptions({
   queryKey: ["business-categories"],
   queryFn: () => listCategories(),
 });
