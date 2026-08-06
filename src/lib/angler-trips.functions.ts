@@ -18,9 +18,9 @@ const PAST: BookingStatus[] = ["completed", "reviewed"];
 
 const SELECT =
   "id,trip_date,start_time,status,total_cents,party_size,escrow_state," +
-  "service:bookable_services(id,title,hero_url,departure_location,duration_minutes)," +
-  "business:businesses(id,slug,name,city,region,hero_url,logo_url)," +
-  "captain:profiles!bookings_captain_id_fkey(id,display_name,full_name,avatar_url)";
+  "service:bookable_services(id,title,hero_url,departure_location)," +
+  "business:businesses(id,slug,name,city,region,hero_url,logo_url)";
+
 
 export const listAnglerTrips = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
