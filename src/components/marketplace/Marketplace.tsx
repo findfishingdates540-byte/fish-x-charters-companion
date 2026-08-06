@@ -258,7 +258,7 @@ export function Marketplace() {
     <div id="mkt" style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
       {/* NAV */}
       <header style={{ position: "sticky", top: 0, zIndex: 40, background: V.navy, color: V.ond }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 28px", height: 64, display: "flex", alignItems: "center", gap: 22 }}>
+        <div style={{ width: "100%", padding: "0 36px", height: 64, display: "flex", alignItems: "center", gap: 22 }}>
           <Link to="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, textDecoration: "none", fontSize: 13, fontWeight: 600 }}>
             <span>←</span> Dashboard
           </Link>
@@ -267,7 +267,7 @@ export function Marketplace() {
             <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, marginLeft: 4, whiteSpace: "nowrap" }}>Marketplace</span>
           </div>
-          <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", width: 250 }}>
+          <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", flex: "1 1 auto", maxWidth: 420, minWidth: 180 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" strokeWidth={1.8}>
               <circle cx="11" cy="11" r="7" />
               <path d="m21 21-4.3-4.3" />
@@ -290,7 +290,7 @@ export function Marketplace() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 1180, margin: "0 auto", padding: "26px 28px 60px" }}>
+      <main style={{ width: "100%", padding: "26px 36px 60px" }}>
         {/* ESCROW RIBBON */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, background: V.card, border: `1px solid ${V.line}`, borderRadius: 14, padding: "12px 18px", marginBottom: 22 }}>
           <span style={{ width: 30, height: 30, borderRadius: 9, background: V.cyansoft, display: "grid", placeItems: "center", color: V.cyan, flex: "none" }}>
@@ -331,7 +331,7 @@ export function Marketplace() {
           </button>
         </div>
 
-        <div className="mkt-layout" style={{ display: "grid", gridTemplateColumns: "270px minmax(0,1fr)", gap: 24, alignItems: "start" }}>
+        <div className="mkt-layout" style={{ display: "grid", gridTemplateColumns: "300px minmax(0,1fr)", gap: 28, alignItems: "start" }}>
           {/* FILTER RAIL */}
           <aside style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 20, position: "sticky", top: 84, display: "flex", flexDirection: "column", gap: 22 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, borderBottom: `1px solid ${V.line}`, paddingBottom: 14 }}>
@@ -433,7 +433,7 @@ export function Marketplace() {
               </div>
             )}
 
-            <div className="mkt-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))", gap: 20 }}>
+            <div className="mkt-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(290px,1fr))", gap: 22 }}>
               {visible.map((p) => {
                 const tile = tileFor(p.cat);
                 const inCart = !!cart[p.id];
