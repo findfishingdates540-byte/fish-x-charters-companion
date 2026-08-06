@@ -517,3 +517,18 @@ body.dc-body { margin:0; background:#0a2236; }
 @media (max-width: 560px) {
   .explore-quad { grid-template-columns: 1fr !important; }
 }
+
+/* Trip detail / booking page responsive */
+@media (max-width: 1024px) {
+  .fx-booking-main { padding: 20px 20px 64px !important; }
+  .fx-booking-gallery { grid-template-columns: 1fr !important; }
+  .fx-booking-gallery img { height: 260px !important; }
+  .fx-booking-grid { grid-template-columns: 1fr !important; }
+  .fx-booking-rail { position: static !important; }
+  .fx-spec-strip,
+  .fx-escrow-steps { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 640px) {
+  .fx-booking-main { padding: 16px 16px 56px !important; }
+  .fx-amenities { grid-template-columns: 1fr !important; }
+}
