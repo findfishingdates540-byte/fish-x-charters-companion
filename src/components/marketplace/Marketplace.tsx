@@ -387,7 +387,10 @@ export function Marketplace() {
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ fontSize: 13.5, fontWeight: 700, color: V.ink, lineHeight: 1.25 }}>{l.p.name}</div>
-                              <div style={{ fontSize: 11.5, color: V.tmut, marginTop: 2 }}>{l.p.seller}</div>
+                              <div style={{ fontSize: 11.5, color: V.tmut, marginTop: 2 }}>
+                                {l.p.seller}
+                                {!hasDemoOnly && !l.p.live ? " · sample item, not charged" : ""}
+                              </div>
                               <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8 }}>
                                 <button
                                   onClick={() => setCart((c) => { const n = { ...c }; if (l.qty <= 1) delete n[l.p.id]; else n[l.p.id] = l.qty - 1; return n; })}
