@@ -2,7 +2,7 @@
  * Angler dashboard — React port of public/dashboards/angler.html.
  * Pixel-close to the DC template, wired to live Supabase data.
  */
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, Suspense } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
