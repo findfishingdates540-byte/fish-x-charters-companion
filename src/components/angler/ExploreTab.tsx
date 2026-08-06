@@ -23,8 +23,9 @@ const FALLBACK = "/dashboards/assets/seascape.jpg";
 const dark: React.CSSProperties = {
   background: "linear-gradient(180deg,#0a2236 0%,#071a2a 100%)",
   color: "#eaf1f6",
-  borderRadius: 22,
-  padding: "clamp(20px,4vw,40px)",
+  width: "100%",
+  minHeight: "calc(100vh - 66px)",
+  padding: "clamp(24px,4vw,56px) clamp(16px,5vw,80px) clamp(56px,8vw,96px)",
 };
 
 const eyebrow: React.CSSProperties = {
