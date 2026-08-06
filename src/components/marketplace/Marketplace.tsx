@@ -258,7 +258,7 @@ export function Marketplace() {
     <div id="mkt" style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
       {/* NAV */}
       <header style={{ position: "sticky", top: 0, zIndex: 40, background: V.navy, color: V.ond }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 28px", height: 64, display: "flex", alignItems: "center", gap: 22 }}>
+        <div style={{ width: "100%", padding: "0 36px", height: 64, display: "flex", alignItems: "center", gap: 22 }}>
           <Link to="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, textDecoration: "none", fontSize: 13, fontWeight: 600 }}>
             <span>←</span> Dashboard
           </Link>
@@ -267,7 +267,7 @@ export function Marketplace() {
             <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, marginLeft: 4, whiteSpace: "nowrap" }}>Marketplace</span>
           </div>
-          <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", width: 250 }}>
+          <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", width: 320 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" strokeWidth={1.8}>
               <circle cx="11" cy="11" r="7" />
               <path d="m21 21-4.3-4.3" />
