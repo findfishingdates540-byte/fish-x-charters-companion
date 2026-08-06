@@ -433,7 +433,7 @@ export function Marketplace() {
               </div>
             )}
 
-            <div className="mkt-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))", gap: 20 }}>
+            <div className="mkt-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(290px,1fr))", gap: 22 }}>
               {visible.map((p) => {
                 const tile = tileFor(p.cat);
                 const inCart = !!cart[p.id];
