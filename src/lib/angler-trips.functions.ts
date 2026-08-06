@@ -16,12 +16,6 @@ const UPCOMING: BookingStatus[] = [
 ];
 const PAST: BookingStatus[] = ["completed", "reviewed"];
 
-const SELECT =
-  "id,trip_date,start_time,status,total_cents,party_size,escrow_state," +
-  "service:bookable_services(id,title,hero_url,departure_location)," +
-  "business:businesses(id,slug,name,city,region,hero_url,logo_url)";
-
-
 export const listAnglerTrips = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -29,10 +23,13 @@ export const listAnglerTrips = createServerFn({ method: "GET" })
 
     const { data, error } = await supabase
       .from("bookings")
-      .select(SELECT)
+      .select(
+        "id,trip_date,start_time,status,total_cents,party_size,escrow_state,service:bookable_services(id,title,hero_url,departure_location),business:businesses(id,slug,name,city,region,hero_url,logo_url)",
+      )
       .eq("angler_id", userId)
       .order("trip_date", { ascending: false })
       .limit(120);
+
 
     if (error) throw new Response(error.message, { status: 500 });
 
