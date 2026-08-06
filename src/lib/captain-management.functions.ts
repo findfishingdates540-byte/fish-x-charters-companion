@@ -163,7 +163,7 @@ export const listCaptainConversations = createServerFn({ method: "GET" })
 
     const { data: bookings, error } = await context.supabase
       .from("bookings")
-      .select("id,customer_name,customer_id,trip_date,status,service:bookable_services(title)")
+      .select("id,customer_id,trip_date,status,service:bookable_services(title),customer:customers(full_name)")
       .eq("business_id", businessId)
       .order("updated_at", { ascending: false })
       .limit(40);
@@ -190,7 +190,7 @@ export const listCaptainConversations = createServerFn({ method: "GET" })
     return bookings
       .map((b: any) => ({
         booking_id: b.id,
-        customer_name: b.customer_name ?? "Guest",
+        customer_name: b.customer?.full_name ?? "Guest",
         trip_title: b.service?.title ?? "Charter",
         trip_date: b.trip_date,
         status: b.status,

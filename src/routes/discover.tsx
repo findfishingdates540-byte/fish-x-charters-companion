@@ -23,9 +23,8 @@ export const Route = createFileRoute("/discover")({
       { property: "og:description", content: "Charters, tackle shops, marinas, guides, lodges, and gear brands." },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({
-    category: typeof s.category === "string" ? s.category : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): { category?: string } =>
+    typeof s.category === "string" ? { category: s.category } : {},
   loaderDeps: ({ search }) => ({ category: search.category }),
   loader: async ({ context, deps }) => {
     await Promise.all([

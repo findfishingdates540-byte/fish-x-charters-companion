@@ -59,6 +59,7 @@ export function Marketplace() {
   const [cartOpen, setCartOpen] = useState(false);
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [orderId, setOrderId] = useState("");
+  const [paidTotal, setPaidTotal] = useState<number | null>(null);
   const [toast, setToast] = useState("");
   const [paying, setPaying] = useState(false);
 
@@ -105,6 +106,9 @@ export function Marketplace() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("paid") === "1") {
       setOrderId((params.get("order") ?? "").slice(0, 8).toUpperCase());
+      const stored = window.sessionStorage.getItem("fxc_pending_order_total");
+      setPaidTotal(stored ? Number(stored) : null);
+      window.sessionStorage.removeItem("fxc_pending_order_total");
       setCart({});
       setStep("done");
       setCartOpen(true);
@@ -124,21 +128,28 @@ export function Marketplace() {
     [allProducts, cart],
   );
   const count = lines.reduce((a, l) => a + l.qty, 0);
-  const subtotal = lines.reduce((a, l) => a + l.p.price * l.qty, 0);
+  const liveLines = lines.filter((l) => l.p.live);
+  const hasDemoOnly = liveLines.length === 0;
+  // Only live vendor items are actually charged, so all displayed money must
+  // come from the same set of lines that Stripe will bill.
+  const chargeLines = hasDemoOnly ? lines : liveLines;
+  const demoLineCount = lines.length - liveLines.length;
+  const subtotal = chargeLines.reduce((a, l) => a + l.p.price * l.qty, 0);
   const freeShip = subtotal >= 150 || subtotal === 0;
   const ship = freeShip ? 0 : 8;
   const total = subtotal + ship;
-  const liveLines = lines.filter((l) => l.p.live);
 
   const placeOrder = async () => {
     // Demo-catalog-only carts keep the simulated confirmation.
-    if (liveLines.length === 0) {
+    if (hasDemoOnly) {
       setOrderId("FX-" + (8400 + Math.floor(Math.random() * 90)));
+      setPaidTotal(total);
       setStep("done");
       return;
     }
     setPaying(true);
     try {
+      window.sessionStorage.setItem("fxc_pending_order_total", String(total));
       const res = await startCheckout({
         data: {
           items: liveLines.map((l) => ({ productId: l.p.id, quantity: l.qty })),
@@ -160,9 +171,11 @@ export function Marketplace() {
   };
 
 
+
+
   const sellerGroups = useMemo(() => {
     const map: Record<string, { total: number; items: number }> = {};
-    lines.forEach((l) => {
+    chargeLines.forEach((l) => {
       const key = l.p.seller;
       if (!map[key]) map[key] = { total: 0, items: 0 };
       map[key].total += l.p.price * l.qty;
@@ -173,7 +186,7 @@ export function Marketplace() {
       total: money(v.total),
       detail: `${v.items} ${v.items > 1 ? "items" : "item"} · escrow-protected`,
     }));
-  }, [lines]);
+  }, [chargeLines]);
 
   const drawerTitle = step === "cart" ? `Your cart${count ? " · " + count : ""}` : step === "checkout" ? "Checkout" : "Confirmed";
 
@@ -374,7 +387,10 @@ export function Marketplace() {
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ fontSize: 13.5, fontWeight: 700, color: V.ink, lineHeight: 1.25 }}>{l.p.name}</div>
-                              <div style={{ fontSize: 11.5, color: V.tmut, marginTop: 2 }}>{l.p.seller}</div>
+                              <div style={{ fontSize: 11.5, color: V.tmut, marginTop: 2 }}>
+                                {l.p.seller}
+                                {!hasDemoOnly && !l.p.live ? " · sample item, not charged" : ""}
+                              </div>
                               <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8 }}>
                                 <button
                                   onClick={() => setCart((c) => { const n = { ...c }; if (l.qty <= 1) delete n[l.p.id]; else n[l.p.id] = l.qty - 1; return n; })}
@@ -427,6 +443,11 @@ export function Marketplace() {
                       <span style={{ color: V.tmut }}>Shipping</span>
                       <span style={{ fontWeight: 600, color: freeShip ? V.green : V.ink }}>{freeShip ? "Free" : money(ship)}</span>
                     </div>
+                    {!hasDemoOnly && demoLineCount > 0 && (
+                      <div style={{ fontSize: 11.5, color: V.tmut, padding: "4px 0" }}>
+                        {demoLineCount} sample {demoLineCount > 1 ? "items are" : "item is"} not included in this order.
+                      </div>
+                    )}
                     <button
                       onClick={() => setStep("checkout")}
                       style={{ width: "100%", marginTop: 14, background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: "pointer" }}
@@ -437,6 +458,8 @@ export function Marketplace() {
                 )}
               </>
             )}
+
+
 
             {step === "checkout" && (
               <>
@@ -495,7 +518,7 @@ export function Marketplace() {
                 </div>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 26, color: V.ink }}>Order placed &amp; funded</div>
                 <div style={{ fontSize: 13.5, color: V.tmut, margin: "6px 0 22px" }}>
-                  Order {orderId} · {money(total)} secured in escrow
+                  Order {orderId} · {money(paidTotal ?? total)} secured in escrow
                 </div>
                 <Link
                   to="/dashboard"
