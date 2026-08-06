@@ -333,7 +333,7 @@ export function Marketplace() {
 
         <div className="mkt-layout" style={{ display: "grid", gridTemplateColumns: "300px minmax(0,1fr)", gap: 28, alignItems: "start" }}>
           {/* FILTER RAIL */}
-          <aside style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 20, position: "sticky", top: 84, display: "flex", flexDirection: "column", gap: 22 }}>
+          <aside style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 20, position: "sticky", top: 84, maxHeight: "calc(100vh - 120px)", overflowY: "auto", display: "flex", flexDirection: "column", gap: 22 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, borderBottom: `1px solid ${V.line}`, paddingBottom: 14 }}>
               <span style={{ fontFamily: V.serif, fontSize: 20, fontWeight: 600 }}>Filters</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: V.cyan, background: V.cyansoft, borderRadius: 20, padding: "4px 10px" }}>
