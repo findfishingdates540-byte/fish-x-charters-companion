@@ -533,6 +533,18 @@ body.dc-body { margin:0; background:#0a2236; }
   .fx-amenities { grid-template-columns: 1fr !important; }
 }
 
+/* Marketplace: full-width surface, no max-width boxing */
+#mkt main,
+#mkt header > div:first-child {
+  max-width: none !important;
+  width: 100%;
+}
+
+/* Marketplace: larger cards on very wide screens */
+@media (min-width: 1600px) {
+  .mkt-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; }
+}
+
 /* Marketplace: stack the filter rail under the grid on small screens */
 @media (max-width: 900px) {
   .mkt-layout { grid-template-columns: minmax(0, 1fr) !important; }
