@@ -262,6 +262,7 @@ function ThreadList({ activeId }: { activeId: string | null }) {
   return (
     <aside
       style={{
+        height: "100%",
         background: V.card,
         border: `1px solid ${V.line}`,
         borderRadius: 20,
