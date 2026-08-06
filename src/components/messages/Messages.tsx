@@ -769,10 +769,11 @@ export function Messages({ bookingId }: { bookingId: string | null }) {
     <Shell>
       <div
         style={{
+          height: "100%",
           display: "grid",
           gridTemplateColumns: "minmax(300px, 380px) 1fr",
           gap: 22,
-          alignItems: "start",
+          alignItems: "stretch",
         }}
       >
         <ThreadList activeId={bookingId} />
