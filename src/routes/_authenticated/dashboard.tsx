@@ -35,9 +35,8 @@ const myProfileQO = queryOptions({
 
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    tab: typeof search.tab === "string" ? search.tab : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { tab?: string } =>
+    typeof search.tab === "string" ? { tab: search.tab } : {},
   head: () => ({ meta: [{ title: "Dashboard — Fish-X Charters" }] }),
   loader: async ({ context }) => {
     const [roles, businesses] = await Promise.all([
