@@ -443,6 +443,11 @@ export function Marketplace() {
                       <span style={{ color: V.tmut }}>Shipping</span>
                       <span style={{ fontWeight: 600, color: freeShip ? V.green : V.ink }}>{freeShip ? "Free" : money(ship)}</span>
                     </div>
+                    {!hasDemoOnly && demoLineCount > 0 && (
+                      <div style={{ fontSize: 11.5, color: V.tmut, padding: "4px 0" }}>
+                        {demoLineCount} sample {demoLineCount > 1 ? "items are" : "item is"} not included in this order.
+                      </div>
+                    )}
                     <button
                       onClick={() => setStep("checkout")}
                       style={{ width: "100%", marginTop: 14, background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: "pointer" }}
@@ -453,11 +458,8 @@ export function Marketplace() {
                 )}
               </>
             )}
-                    {!hasDemoOnly && demoLineCount > 0 && (
-                      <div style={{ fontSize: 11.5, color: V.tmut, padding: "4px 0" }}>
-                        {demoLineCount} sample {demoLineCount > 1 ? "items are" : "item is"} not included in this order.
-                      </div>
-                    )}
+
+
 
             {step === "checkout" && (
               <>
