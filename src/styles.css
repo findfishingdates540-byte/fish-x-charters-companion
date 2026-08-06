@@ -242,6 +242,28 @@ body.dc-body { margin:0; background:#0a2236; }
 }
 
 /* =============================================================
+ * Landing page — full-bleed (unboxed)
+ * The DC template wraps every section in a 1280px centered shell.
+ * Override those outer shells so backgrounds and content span the
+ * full viewport, matching the authed dashboard surfaces.
+ * ============================================================= */
+.dc-landing #fishx-root > header > div[style*="max-width:1280px"],
+.dc-landing #fishx-root > section > div[style*="max-width:1280px"] {
+  max-width: 100% !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+@media (max-width: 900px) {
+  .dc-landing #fishx-root > header > div[style*="max-width:1280px"],
+  .dc-landing #fishx-root > section > div[style*="max-width:1280px"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+
+/* =============================================================
  * Authenticated shell — mobile responsiveness
  *
  * Every authed dashboard uses inline styles with a fixed 256px
