@@ -143,8 +143,30 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const heroUrl = svc.hero_url || business?.hero_url || "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200";
   const businessLine = `${business?.name ?? "Captain"} · ${[business?.city, business?.region].filter(Boolean).join(", ") || "Coastal"}`;
 
+  const isDetail = step === "detail";
+  const galleryUrls = [
+    heroUrl,
+    business?.hero_url && business.hero_url !== heroUrl
+      ? business.hero_url
+      : "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80",
+    "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=900&q=80",
+  ];
+  const locationLine =
+    svc.departure_location || [business?.city, business?.region].filter(Boolean).join(" · ") || "Coastal marina";
+  const capacity = svc.capacity ?? cap;
+  const specs = [
+    { k: "Duration", v: svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} Hours` : "Full day" },
+    { k: "Max capacity", v: `${capacity} Anglers` },
+    { k: "Tackle included", v: (svc.includes && svc.includes[0]) || "Rods & live bait" },
+  ];
+  const amenities =
+    svc.includes && svc.includes.length > 1
+      ? svc.includes
+      : ["Garmin Radar/Sonar", "Live Bait Well", "Shade Top", "Trophy Tackle Provided", "Ice Box", "Safety Gear"];
+
   return (
-    <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
+    <div style={{ minHeight: "100vh", background: isDetail ? V.navy : V.paper, color: isDetail ? V.ond : V.ink, fontFamily: V.sans }}>
+
       {/* TOP BAR */}
       <header style={{ position: "sticky", top: 0, zIndex: 30, background: V.navy, color: V.ond }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 28px", height: 64, display: "flex", alignItems: "center", gap: 24 }}>
