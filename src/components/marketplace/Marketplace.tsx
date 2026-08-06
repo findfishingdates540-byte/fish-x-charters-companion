@@ -50,6 +50,32 @@ const CATS: Array<{ k: "all" | Cat; label: string }> = [
   { k: "electronics", label: "Electronics" },
 ];
 
+const filterLabel: CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".14em",
+  textTransform: "uppercase",
+  color: V.goldtext,
+  marginBottom: 9,
+};
+
+const railOption = (on: boolean): CSSProperties => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  width: "100%",
+  background: on ? V.cyansoft : "transparent",
+  border: `1px solid ${on ? "rgba(31,159,190,.4)" : "transparent"}`,
+  color: on ? V.ink : V.tmut,
+  borderRadius: 10,
+  padding: "9px 12px",
+  fontFamily: V.sans,
+  fontSize: 13,
+  fontWeight: 600,
+  cursor: "pointer",
+  textAlign: "left",
+});
+
 export function Marketplace() {
   const navigate = useNavigate();
   const fetchProducts = useServerFn(listStoreProducts);
