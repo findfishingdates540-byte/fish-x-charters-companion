@@ -156,7 +156,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
     >
       {/* NAV */}
       <header style={{ position: "sticky", top: 0, zIndex: 30, background: V.navy, color: V.ond }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 28px", height: 62, display: "flex", alignItems: "center", gap: 22 }}>
+        <div style={{ width: "100%", padding: "0 clamp(16px,5vw,80px)", height: 62, display: "flex", alignItems: "center", gap: 22 }}>
           <Link to="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, textDecoration: "none", fontSize: 13, fontWeight: 600 }}>
             <span>←</span> My Trips
           </Link>
@@ -170,7 +170,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
         </div>
       </header>
 
-      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 28px 60px" }}>
+      <main style={{ width: "100%", padding: "28px clamp(16px,5vw,80px) 60px" }}>
         {/* CANCELED BANNER */}
         {isCanceled && (
           <div style={{ display: "flex", alignItems: "center", gap: 14, background: V.greensoft, border: "1px solid rgba(31,138,91,.3)", borderRadius: 14, padding: "16px 18px", marginBottom: 22 }}>
