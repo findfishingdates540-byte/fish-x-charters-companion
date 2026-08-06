@@ -170,14 +170,7 @@ export function Marketplace() {
     }
   };
 
-      showToast("Could not start checkout — try again.");
-    } catch (err) {
-      const msg = err instanceof Response ? await err.text() : String(err);
-      showToast(msg.slice(0, 120) || "Checkout failed");
-    } finally {
-      setPaying(false);
-    }
-  };
+
 
 
   const sellerGroups = useMemo(() => {
