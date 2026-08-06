@@ -172,7 +172,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
         {/* ==== DETAIL ==== */}
         {step === "detail" && (
           <div>
-            <Link to="/marketplace" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: V.tmut, fontSize: 13.5, fontWeight: 600, textDecoration: "none", marginBottom: 16 }}>
+            <Link to="/discover" search={{ category: "charter" }} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: V.tmut, fontSize: 13.5, fontWeight: 600, textDecoration: "none", marginBottom: 16 }}>
               ← Back to charters
             </Link>
             <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 30, alignItems: "start" }}>
