@@ -532,3 +532,9 @@ body.dc-body { margin:0; background:#0a2236; }
   .fx-booking-main { padding: 16px 16px 56px !important; }
   .fx-amenities { grid-template-columns: 1fr !important; }
 }
+
+/* Marketplace: stack the filter rail under the grid on small screens */
+@media (max-width: 900px) {
+  .mkt-layout { grid-template-columns: minmax(0, 1fr) !important; }
+  .mkt-layout > aside { position: static !important; }
+}
