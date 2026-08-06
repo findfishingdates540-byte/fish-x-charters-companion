@@ -357,9 +357,11 @@ function HomeTab(props: {
             </div>
           )}
           {upcoming.map((b, i) => (
-            <div
+            <Link
               key={b.id}
-              style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 0", borderBottom: i < upcoming.length - 1 ? "1px solid var(--line)" : "none" }}
+              to="/trips/detail"
+              search={{ id: b.id }}
+              style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 0", textDecoration: "none", cursor: "pointer", borderBottom: i < upcoming.length - 1 ? "1px solid var(--line)" : "none" }}
             >
               <img src={b.service?.hero_url || b.business?.hero_url || "/dashboards/assets/seascape.jpg"} style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} alt="" />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -371,8 +373,9 @@ function HomeTab(props: {
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--cyan)", background: "#e2eef2", borderRadius: 20, padding: "3px 9px", flex: "none" }}>
                 {b.status === "confirmed" || b.status === "in_progress" ? "In escrow" : b.status.replace("_", " ")}
               </span>
-            </div>
+            </Link>
           ))}
+
         </div>
 
         {/* PROTECTION */}
