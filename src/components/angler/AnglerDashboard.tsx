@@ -2,7 +2,7 @@
  * Angler dashboard — React port of public/dashboards/angler.html.
  * Pixel-close to the DC template, wired to live Supabase data.
  */
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, Suspense } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -234,28 +234,49 @@ export function AnglerDashboard() {
             : { maxWidth: 1160, margin: "0 auto", padding: "30px 28px 56px" }
         }
       >
-        {tab === "home" && (
-          <HomeTab
-            firstName={firstName}
-            nextTrip={nextTrip}
-            cd={cd}
-            escrowCents={home.escrowCents}
-            upcomingCount={home.upcomingCount}
-            completedCount={home.completedCount}
-            upcoming={home.upcoming}
-            recos={recos}
-            onGoTrips={() => setTab("trips")}
-            onGoExplore={() => setTab("explore")}
-          />
-        )}
-        {tab === "trips" && <TripsTab />}
-        {tab === "explore" && <ExploreTab />}
-        {tab === "wallet" && <WalletTab escrowCents={home.escrowCents} upcoming={home.upcoming} />}
-        {tab === "orders" && <OrdersTab />}
+        <Suspense fallback={<TabLoading />}>
+          {tab === "home" && (
+            <HomeTab
+              firstName={firstName}
+              nextTrip={nextTrip}
+              cd={cd}
+              escrowCents={home.escrowCents}
+              upcomingCount={home.upcomingCount}
+              completedCount={home.completedCount}
+              upcoming={home.upcoming}
+              recos={recos}
+              onGoTrips={() => setTab("trips")}
+              onGoExplore={() => setTab("explore")}
+            />
+          )}
+          {tab === "trips" && <TripsTab />}
+          {tab === "explore" && <ExploreTab />}
+          {tab === "wallet" && <WalletTab escrowCents={home.escrowCents} upcoming={home.upcoming} />}
+          {tab === "orders" && <OrdersTab />}
+        </Suspense>
       </main>
     </div>
   );
 }
+
+function TabLoading() {
+  return (
+    <div
+      style={{
+        minHeight: 320,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "var(--ondmut, #7d93a6)",
+        fontFamily: "var(--sans)",
+        fontSize: 14,
+      }}
+    >
+      Loading…
+    </div>
+  );
+}
+
 
 /* ------------------------------ HOME TAB ------------------------------ */
 
