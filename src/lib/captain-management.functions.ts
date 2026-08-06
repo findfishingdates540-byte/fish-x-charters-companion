@@ -190,7 +190,7 @@ export const listCaptainConversations = createServerFn({ method: "GET" })
     return bookings
       .map((b: any) => ({
         booking_id: b.id,
-        customer_name: b.customer_name ?? "Guest",
+        customer_name: b.customer?.full_name ?? "Guest",
         trip_title: b.service?.title ?? "Charter",
         trip_date: b.trip_date,
         status: b.status,
