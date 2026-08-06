@@ -175,7 +175,7 @@ export function Marketplace() {
 
   const sellerGroups = useMemo(() => {
     const map: Record<string, { total: number; items: number }> = {};
-    lines.forEach((l) => {
+    chargeLines.forEach((l) => {
       const key = l.p.seller;
       if (!map[key]) map[key] = { total: 0, items: 0 };
       map[key].total += l.p.price * l.qty;
@@ -186,7 +186,7 @@ export function Marketplace() {
       total: money(v.total),
       detail: `${v.items} ${v.items > 1 ? "items" : "item"} · escrow-protected`,
     }));
-  }, [lines]);
+  }, [chargeLines]);
 
   const drawerTitle = step === "cart" ? `Your cart${count ? " · " + count : ""}` : step === "checkout" ? "Checkout" : "Confirmed";
 
