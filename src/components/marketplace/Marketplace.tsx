@@ -128,21 +128,28 @@ export function Marketplace() {
     [allProducts, cart],
   );
   const count = lines.reduce((a, l) => a + l.qty, 0);
-  const subtotal = lines.reduce((a, l) => a + l.p.price * l.qty, 0);
+  const liveLines = lines.filter((l) => l.p.live);
+  const hasDemoOnly = liveLines.length === 0;
+  // Only live vendor items are actually charged, so all displayed money must
+  // come from the same set of lines that Stripe will bill.
+  const chargeLines = hasDemoOnly ? lines : liveLines;
+  const demoLineCount = lines.length - liveLines.length;
+  const subtotal = chargeLines.reduce((a, l) => a + l.p.price * l.qty, 0);
   const freeShip = subtotal >= 150 || subtotal === 0;
   const ship = freeShip ? 0 : 8;
   const total = subtotal + ship;
-  const liveLines = lines.filter((l) => l.p.live);
 
   const placeOrder = async () => {
     // Demo-catalog-only carts keep the simulated confirmation.
-    if (liveLines.length === 0) {
+    if (hasDemoOnly) {
       setOrderId("FX-" + (8400 + Math.floor(Math.random() * 90)));
+      setPaidTotal(total);
       setStep("done");
       return;
     }
     setPaying(true);
     try {
+      window.sessionStorage.setItem("fxc_pending_order_total", String(total));
       const res = await startCheckout({
         data: {
           items: liveLines.map((l) => ({ productId: l.p.id, quantity: l.qty })),
@@ -154,6 +161,15 @@ export function Marketplace() {
         window.location.href = res.checkoutUrl;
         return;
       }
+      showToast("Could not start checkout — try again.");
+    } catch (err) {
+      const msg = err instanceof Response ? await err.text() : String(err);
+      showToast(msg.slice(0, 120) || "Checkout failed");
+    } finally {
+      setPaying(false);
+    }
+  };
+
       showToast("Could not start checkout — try again.");
     } catch (err) {
       const msg = err instanceof Response ? await err.text() : String(err);
