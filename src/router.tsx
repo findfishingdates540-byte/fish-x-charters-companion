@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { RouteLoader } from "./components/RouteLoader";
 
 export const getRouter = () => {
   const queryClient = new QueryClient({
@@ -14,6 +15,11 @@ export const getRouter = () => {
     defaultPreload: "intent",
     defaultPreloadDelay: 50,
     defaultPreloadStaleTime: 0,
+    // Keep the current page on screen for short navigations instead of
+    // flashing the bare page background, then show a branded loader.
+    defaultPendingMs: 600,
+    defaultPendingMinMs: 300,
+    defaultPendingComponent: RouteLoader,
   });
 
   return router;
