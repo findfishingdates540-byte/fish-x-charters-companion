@@ -331,7 +331,7 @@ function ThreadList({ activeId }: { activeId: string | null }) {
           </Link>
         </div>
       ) : (
-        <div style={{ flex: 1, overflowY: "auto", maxHeight: "70vh" }}>
+        <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
           {data.threads.map((t) => {
             const active = t.booking.id === activeId;
             const name = counterpartName(t.business, t.captain);
