@@ -146,7 +146,7 @@ export function Marketplace() {
     if (sort === "price-desc") return [...rows].sort((a, b) => b.price - a.price);
     return rows;
   }, [allProducts, cat, seller, maxPrice, query, sort]);
-  void 0;
+  
 
   const lines = useMemo(
     () => allProducts.map((p) => ({ p, qty: cart[p.id] ?? 0 })).filter((l) => l.qty > 0),
