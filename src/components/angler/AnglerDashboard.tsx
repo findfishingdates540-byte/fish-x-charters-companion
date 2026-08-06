@@ -11,6 +11,7 @@ import {
   listRecommendedCharters,
 } from "@/lib/angler-dashboard.functions";
 import { ExploreTab } from "./ExploreTab";
+import { TripsTab } from "./TripsTab";
 
 const anglerHomeQO = queryOptions({
   queryKey: ["angler-dashboard"],
@@ -228,7 +229,7 @@ export function AnglerDashboard() {
 
       <main
         style={
-          tab === "explore"
+          tab === "explore" || tab === "trips"
             ? { width: "100%", margin: 0, padding: 0 }
             : { maxWidth: 1160, margin: "0 auto", padding: "30px 28px 56px" }
         }
@@ -247,7 +248,7 @@ export function AnglerDashboard() {
             onGoExplore={() => setTab("explore")}
           />
         )}
-        {tab === "trips" && <TripsTab upcoming={home.upcoming} completedCount={home.completedCount} />}
+        {tab === "trips" && <TripsTab />}
         {tab === "explore" && <ExploreTab />}
         {tab === "wallet" && <WalletTab escrowCents={home.escrowCents} upcoming={home.upcoming} />}
         {tab === "orders" && <OrdersTab />}
@@ -492,7 +493,7 @@ function RecoCard({ c }: { c: Reco }) {
 
 /* ------------------------------ OTHER TABS ------------------------------ */
 
-function TripsTab({ upcoming, completedCount }: { upcoming: UpcomingBooking[]; completedCount: number }) {
+function LegacyTripsTab({ upcoming, completedCount }: { upcoming: UpcomingBooking[]; completedCount: number }) {
   return (
     <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 28 }}>
       <div style={{ fontFamily: "var(--serif)", fontSize: 26, fontWeight: 600, marginBottom: 6 }}>My trips</div>
