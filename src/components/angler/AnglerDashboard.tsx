@@ -226,7 +226,13 @@ export function AnglerDashboard() {
         </div>
       )}
 
-      <main style={{ maxWidth: 1160, margin: "0 auto", padding: "30px 28px 56px" }}>
+      <main
+        style={
+          tab === "explore"
+            ? { width: "100%", margin: 0, padding: 0 }
+            : { maxWidth: 1160, margin: "0 auto", padding: "30px 28px 56px" }
+        }
+      >
         {tab === "home" && (
           <HomeTab
             firstName={firstName}
