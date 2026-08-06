@@ -150,7 +150,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
         <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 28px", height: 64, display: "flex", alignItems: "center", gap: 24 }}>
           <Link to="/marketplace" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: V.ond }}>
             <span style={{ width: 11, height: 11, background: V.sand, transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, letterSpacing: ".1em" }}>FISH—X</span>
+            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
           </Link>
           <div style={{ margin: "0 auto", display: "flex", alignItems: "center", gap: 8 }}>
             {CRUMBS.map((c, i) => (

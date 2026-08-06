@@ -663,10 +663,10 @@ export function OperatorOnboarding() {
         <div className="flex items-center gap-[10px] mb-[26px]">
           <span className="inline-block w-[11px] h-[11px] bg-[#e3c089] rotate-45" />
           <span
-            className="font-semibold text-[20px] tracking-[0.1em]"
+            className="font-semibold text-[20px] tracking-[0.02em] whitespace-nowrap"
             style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
           >
-            FISH—X
+            Fish-X Charters
           </span>
         </div>
         <div
