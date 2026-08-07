@@ -16,10 +16,12 @@ import {
   ProductIcon,
   catFromCategory,
   iconFromCategory,
+  sellerCatFromType,
   type Cat,
   type Product,
 } from "./catalog";
 import { listStoreProducts, createProductCheckout } from "@/lib/product-checkout.functions";
+import { listCategories } from "@/lib/businesses.functions";
 
 
 const V = {
@@ -80,10 +82,12 @@ export function Marketplace() {
   const navigate = useNavigate();
   const fetchProducts = useServerFn(listStoreProducts);
   const startCheckout = useServerFn(createProductCheckout);
+  const fetchCategories = useServerFn(listCategories);
   const [cat, setCat] = useState<"all" | Cat>("all");
   const [query, setQuery] = useState("");
   const [maxPrice, setMaxPrice] = useState(1000);
   const [seller, setSeller] = useState("all");
+  const [bizType, setBizType] = useState("all");
   const [sort, setSort] = useState<"featured" | "price-asc" | "price-desc">("featured");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
@@ -97,6 +101,11 @@ export function Marketplace() {
     setToast(m);
     setTimeout(() => setToast(""), 2200);
   };
+
+  const { data: bizCategories } = useQuery({
+    queryKey: ["business-categories"],
+    queryFn: () => fetchCategories(),
+  });
 
   const { data: liveRows } = useQuery({
     queryKey: ["store-products"],
@@ -123,12 +132,17 @@ export function Marketplace() {
           live: true,
           image: r.image,
           stockQty: r.stockQty,
+          sellerCat: r.sellerCategory,
         };
       }),
     [liveRows],
   );
 
-  const allProducts = useMemo(() => [...liveProducts, ...CATALOG], [liveProducts]);
+  const demoProducts = useMemo<Product[]>(
+    () => CATALOG.map((p) => ({ ...p, sellerCat: sellerCatFromType(p.sellerType) })),
+    [],
+  );
+  const allProducts = useMemo(() => [...liveProducts, ...demoProducts], [liveProducts, demoProducts]);
 
   // Returning from Stripe Checkout.
   useEffect(() => {
@@ -165,13 +179,14 @@ export function Marketplace() {
       (p) =>
         (cat === "all" || p.cat === cat) &&
         (seller === "all" || p.seller === seller) &&
+        (bizType === "all" || p.sellerCat === bizType) &&
         p.price <= maxPrice &&
         (!q || p.name.toLowerCase().includes(q) || p.seller.toLowerCase().includes(q)),
     );
     if (sort === "price-asc") return [...rows].sort((a, b) => a.price - b.price);
     if (sort === "price-desc") return [...rows].sort((a, b) => b.price - a.price);
     return rows;
-  }, [allProducts, cat, seller, maxPrice, query, sort]);
+  }, [allProducts, cat, seller, bizType, maxPrice, query, sort]);
   
 
   const lines = useMemo(
@@ -322,6 +337,7 @@ export function Marketplace() {
               setCat("all");
               setQuery("");
               setSeller("all");
+              setBizType("all");
               setMaxPrice(1000);
               setSort("featured");
             }}
@@ -360,6 +376,27 @@ export function Marketplace() {
                     {cat === c.k && <span>✓</span>}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div>
+              <div style={filterLabel}>Business type</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <button onClick={() => setBizType("all")} style={railOption(bizType === "all")}>
+                  <span>All business types</span>
+                  {bizType === "all" && <span>\u2713</span>}
+                </button>
+                {(bizCategories ?? []).map((c) => {
+                  const n = allProducts.filter((p) => p.sellerCat === c.key).length;
+                  return (
+                    <button key={c.key} onClick={() => setBizType(c.key)} style={railOption(bizType === c.key)}>
+                      <span>{c.label}</span>
+                      <span style={{ fontSize: 11, color: bizType === c.key ? V.cyan : V.ondmut }}>
+                        {bizType === c.key ? "\u2713" : n}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
