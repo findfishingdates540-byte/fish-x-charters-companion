@@ -22,7 +22,7 @@ const FALLBACK = "/dashboards/assets/seascape.jpg";
 
 const dark: React.CSSProperties = {
   background: "linear-gradient(180deg,#0a2236 0%,#071a2a 100%)",
-  color: "#eaf1f6",
+  color: "#0d2236",
   width: "100%",
   minHeight: "calc(100vh - 66px)",
   padding: "clamp(24px,4vw,56px) clamp(16px,5vw,80px) clamp(56px,8vw,96px)",
@@ -41,16 +41,16 @@ const serifHead: React.CSSProperties = {
   fontWeight: 600,
   fontSize: "clamp(22px,3vw,30px)",
   lineHeight: 1.1,
-  color: "#fff",
+  color: "#0d2236",
   margin: 0,
 };
 
 function Rule({ label }: { label: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "40px 0 20px" }}>
-      <span style={{ height: 1, flex: 1, background: "rgba(255,255,255,.12)" }} />
+      <span style={{ height: 1, flex: 1, background: "rgba(13,34,54,.10)" }} />
       <span style={eyebrow}>{label}</span>
-      <span style={{ height: 1, flex: 1, background: "rgba(255,255,255,.12)" }} />
+      <span style={{ height: 1, flex: 1, background: "rgba(13,34,54,.10)" }} />
     </div>
   );
 }
@@ -64,13 +64,13 @@ function SectionHead({ title, note, action }: { title: string; note?: string; ac
         justifyContent: "space-between",
         gap: 16,
         flexWrap: "wrap",
-        borderBottom: "1px solid rgba(255,255,255,.08)",
+        borderBottom: "1px solid rgba(13,34,54,.10)",
         paddingBottom: 14,
         marginBottom: 20,
       }}
     >
       <h3 style={serifHead}>{title}</h3>
-      {note && <span style={{ fontSize: 13, color: "var(--ondmut)" }}>{note}</span>}
+      {note && <span style={{ fontSize: 13, color: "#5c6b78" }}>{note}</span>}
       {action}
     </div>
   );
@@ -93,7 +93,7 @@ function HeroCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
         overflow: "hidden",
         minHeight: 420,
         textDecoration: "none",
-        color: "#fff",
+        color: "#0d2236",
         border: "1px solid rgba(227,192,137,.28)",
         boxShadow: "0 24px 60px -30px rgba(0,0,0,.8)",
       }}
@@ -148,21 +148,21 @@ function TallCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
         borderRadius: 18,
         overflow: "hidden",
         textDecoration: "none",
-        background: "rgba(255,255,255,.04)",
-        border: "1px solid rgba(255,255,255,.08)",
-        color: "#eaf1f6",
+        background: "#ffffff",
+        border: "1px solid rgba(13,34,54,.10)",
+        color: "#0d2236",
       }}
     >
       <div style={{ height: 160, overflow: "hidden" }}>
         <img src={s.hero_url || FALLBACK} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </div>
       <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
-        <div style={{ fontSize: 12, color: "var(--ondmut)" }}>
+        <div style={{ fontSize: 12, color: "#5c6b78" }}>
           {[s.business?.city, s.business?.region].filter(Boolean).join(", ") || s.departure_location || "—"}
           {r ? ` · ★ ${r.avg}` : ""}
         </div>
-        <div style={{ fontFamily: "var(--serif)", fontSize: 19, color: "#fff", lineHeight: 1.15 }}>{s.title}</div>
-        <div style={{ marginTop: "auto", fontSize: 12.5, color: "var(--ondmut)" }}>
+        <div style={{ fontFamily: "var(--serif)", fontSize: 19, color: "#0d2236", lineHeight: 1.15 }}>{s.title}</div>
+        <div style={{ marginTop: "auto", fontSize: 12.5, color: "#5c6b78" }}>
           from <b style={{ fontFamily: "var(--serif)", fontSize: 17, color: "var(--sand)" }}>{money(s.base_price_cents)}</b>
         </div>
       </div>
@@ -172,13 +172,13 @@ function TallCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
 
 function MiniCard({ s, r }: { s: Service; r: { avg: number; count: number } | null }) {
   return (
-    <Link to="/booking" search={{ service_id: s.id }} style={{ textDecoration: "none", color: "#eaf1f6", display: "grid", gap: 10 }}>
-      <div style={{ height: 150, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(255,255,255,.08)" }}>
+    <Link to="/booking" search={{ service_id: s.id }} style={{ textDecoration: "none", color: "#0d2236", display: "grid", gap: 10 }}>
+      <div style={{ height: 150, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(13,34,54,.10)" }}>
         <img src={s.hero_url || FALLBACK} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </div>
       <div>
         <div style={{ fontWeight: 700, fontSize: 14 }}>{s.title}</div>
-        <div style={{ fontSize: 12, color: "var(--ondmut)" }}>
+        <div style={{ fontSize: 12, color: "#5c6b78" }}>
           {s.business?.name}
           {r ? ` · ${r.avg} ★` : ""}
         </div>
@@ -199,7 +199,7 @@ export function ExploreTab() {
         <h2 style={{ ...serifHead, fontSize: "clamp(28px,4.4vw,44px)", margin: "6px 0 8px" }}>
           Find your next day on the water
         </h2>
-        <p style={{ margin: 0, fontSize: 14, color: "var(--ondmut)", maxWidth: 620 }}>
+        <p style={{ margin: 0, fontSize: 14, color: "#5c6b78", maxWidth: 620 }}>
           Verified captains, escrow-protected payments, and trips curated from the Fish-X fleet.{" "}
           <Link to="/marketplace" style={{ color: "var(--sand)", fontWeight: 600 }}>
             Open full marketplace →
@@ -208,7 +208,7 @@ export function ExploreTab() {
       </div>
 
       {data.featured.length === 0 ? (
-        <div style={{ padding: 40, textAlign: "center", color: "var(--ondmut)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 18 }}>
+        <div style={{ padding: 40, textAlign: "center", color: "#5c6b78", border: "1px solid rgba(13,34,54,.10)", borderRadius: 18 }}>
           No published charters yet.
         </div>
       ) : (
@@ -266,9 +266,9 @@ export function ExploreTab() {
                   padding: 16,
                   borderRadius: 16,
                   textDecoration: "none",
-                  color: "#eaf1f6",
-                  background: "rgba(255,255,255,.04)",
-                  border: "1px solid rgba(255,255,255,.08)",
+                  color: "#0d2236",
+                  background: "#ffffff",
+                  border: "1px solid rgba(13,34,54,.10)",
                 }}
               >
                 <img
@@ -277,8 +277,8 @@ export function ExploreTab() {
                   style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(227,192,137,.35)" }}
                 />
                 <div>
-                  <div style={{ fontFamily: "var(--serif)", fontSize: 18, color: "#fff" }}>{b.name}</div>
-                  <div style={{ fontSize: 12.5, color: "var(--ondmut)" }}>
+                  <div style={{ fontFamily: "var(--serif)", fontSize: 18, color: "#0d2236" }}>{b.name}</div>
+                  <div style={{ fontSize: 12.5, color: "#5c6b78" }}>
                     {[b.city, b.region].filter(Boolean).join(", ") || b.tagline || "—"}
                     {b.avg_rating ? ` · ★ ${b.avg_rating} (${b.review_count})` : ""}
                   </div>
