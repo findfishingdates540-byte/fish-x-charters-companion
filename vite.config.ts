@@ -12,4 +12,8 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Override the Lovable config's Cloudflare default so CI builds emit a Netlify
+  // Functions SSR bundle. Without this, /_serverFn/* POSTs have no server to hit
+  // on Netlify and return 405 Method Not Allowed.
+  nitro: { preset: "netlify" },
 });

@@ -1,5 +1,17 @@
+# This is an SSR TanStack Start app, NOT a static SPA.
+#
+# The build uses the Nitro `netlify` preset (set in vite.config.ts), which emits
+# a Netlify Function for SSR plus a generated `_redirects` that routes every
+# non-static request — including the POST /_serverFn/* server-function calls
+# (Connect Stripe, save profile, submit verification, publish, etc.) — to that
+# function.
+#
+# DO NOT re-add a `/* -> /index.html` catch-all redirect or publish the bundle
+# as static files. Doing so serves the client statically, so POST /_serverFn/*
+# hits a static host that only allows GET/HEAD and returns 405 Method Not Allowed
+# ("Expected POST. Got GET") on every server function.
 [build]
-  publish = "dist"
+  publish = "dist/client"
   command = "npm run build"
 
 # Prevent stale HTML caching (especially on mobile)
@@ -21,7 +33,6 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# No [[redirects]] here on purpose. The Nitro `netlify` preset generates the
+# SSR function routing (dist/client/_redirects). A manual SPA catch-all would
+# intercept /_serverFn/* before the SSR function and break all POST server fns.
