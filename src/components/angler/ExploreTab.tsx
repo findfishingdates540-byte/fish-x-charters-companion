@@ -21,7 +21,7 @@ const money = (cents: number) =>
 const FALLBACK = "/dashboards/assets/seascape.jpg";
 
 const dark: React.CSSProperties = {
-  background: "linear-gradient(180deg,#0a2236 0%,#071a2a 100%)",
+  background: "#ffffff",
   color: "#0d2236",
   width: "100%",
   minHeight: "calc(100vh - 66px)",
@@ -33,7 +33,7 @@ const eyebrow: React.CSSProperties = {
   fontWeight: 700,
   letterSpacing: ".2em",
   textTransform: "uppercase",
-  color: "var(--sand)",
+  color: "#a97e3c",
 };
 
 const serifHead: React.CSSProperties = {
@@ -93,7 +93,7 @@ function HeroCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
         overflow: "hidden",
         minHeight: 420,
         textDecoration: "none",
-        color: "#0d2236",
+        color: "#fff",
         border: "1px solid rgba(227,192,137,.28)",
         boxShadow: "0 24px 60px -30px rgba(0,0,0,.8)",
       }}
@@ -111,8 +111,8 @@ function HeroCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
         }}
       />
       <div style={{ position: "relative", padding: "clamp(18px,3vw,28px)", display: "flex", flexDirection: "column", height: "100%", minHeight: 420, justifyContent: "flex-end" }}>
-        <span style={{ ...eyebrow, marginBottom: 8 }}>Featured charter</span>
-        <h4 style={{ ...serifHead, fontSize: "clamp(26px,3.4vw,36px)", marginBottom: 8 }}>{s.title}</h4>
+        <span style={{ ...eyebrow, color: "var(--sand)", marginBottom: 8 }}>Featured charter</span>
+        <h4 style={{ ...serifHead, color: "#fff", fontSize: "clamp(26px,3.4vw,36px)", marginBottom: 8 }}>{s.title}</h4>
         <p style={{ margin: "0 0 16px", fontSize: 13.5, color: "#cbd9e4" }}>
           {s.business?.name} · {[s.business?.city, s.business?.region].filter(Boolean).join(", ") || s.departure_location || "—"}
           {r ? ` · ★ ${r.avg} (${r.count})` : ""}
@@ -163,7 +163,7 @@ function TallCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
         </div>
         <div style={{ fontFamily: "var(--serif)", fontSize: 19, color: "#0d2236", lineHeight: 1.15 }}>{s.title}</div>
         <div style={{ marginTop: "auto", fontSize: 12.5, color: "#5c6b78" }}>
-          from <b style={{ fontFamily: "var(--serif)", fontSize: 17, color: "var(--sand)" }}>{money(s.base_price_cents)}</b>
+          from <b style={{ fontFamily: "var(--serif)", fontSize: 17, color: "#a97e3c" }}>{money(s.base_price_cents)}</b>
         </div>
       </div>
     </Link>
@@ -201,7 +201,7 @@ export function ExploreTab() {
         </h2>
         <p style={{ margin: 0, fontSize: 14, color: "#5c6b78", maxWidth: 620 }}>
           Verified captains, escrow-protected payments, and trips curated from the Fish-X fleet.{" "}
-          <Link to="/marketplace" style={{ color: "var(--sand)", fontWeight: 600 }}>
+          <Link to="/marketplace" style={{ color: "#a97e3c", fontWeight: 600 }}>
             Open full marketplace →
           </Link>
         </p>
