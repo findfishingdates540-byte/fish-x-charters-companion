@@ -61,14 +61,14 @@ const STATUS_LABEL: Record<string, string> = {
 const shell: React.CSSProperties = {
   width: "100%",
   minHeight: "calc(100vh - 66px)",
-  background: "linear-gradient(180deg,#0a2236 0%,#071a2a 100%)",
-  color: "#eaf1f6",
+  background: "#ffffff",
+  color: "#0d2236",
   padding: "clamp(24px,4vw,56px) clamp(16px,5vw,80px) clamp(56px,8vw,96px)",
 };
 
 const glass: React.CSSProperties = {
-  background: "rgba(255,255,255,.04)",
-  border: "1px solid rgba(255,255,255,.10)",
+  background: "#ffffff",
+  border: "1px solid rgba(13,34,54,.10)",
   backdropFilter: "blur(20px)",
   borderRadius: 18,
   overflow: "hidden",
@@ -96,7 +96,7 @@ export function TripsTab() {
             fontSize: "clamp(38px,6vw,64px)",
             lineHeight: 1.05,
             letterSpacing: "-.02em",
-            color: "#fff",
+            color: "#0d2236",
             margin: "0 0 22px",
           }}
         >
@@ -106,7 +106,7 @@ export function TripsTab() {
           style={{
             display: "flex",
             gap: 28,
-            borderBottom: "1px solid rgba(255,255,255,.08)",
+            borderBottom: "1px solid rgba(13,34,54,.10)",
             paddingBottom: 2,
             overflowX: "auto",
           }}
@@ -119,8 +119,8 @@ export function TripsTab() {
                 ...eyebrow,
                 background: "transparent",
                 border: 0,
-                borderBottom: `2px solid ${bucket === b ? "var(--sand)" : "transparent"}`,
-                color: bucket === b ? "var(--sand)" : "#93a7b7",
+                borderBottom: `2px solid ${bucket === b ? "#a97e3c" : "transparent"}`,
+                color: bucket === b ? "#a97e3c" : "#5c6b78",
                 padding: "0 0 14px",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
@@ -134,10 +134,10 @@ export function TripsTab() {
 
       {trips.length === 0 ? (
         <div style={{ ...glass, padding: "clamp(32px,6vw,64px)", textAlign: "center" }}>
-          <div style={{ fontFamily: "var(--serif)", fontSize: 26, color: "#fff", marginBottom: 8 }}>
+          <div style={{ fontFamily: "var(--serif)", fontSize: 26, color: "#0d2236", marginBottom: 8 }}>
             Nothing {bucket === "upcoming" ? "on the calendar" : `in ${bucket}`} yet
           </div>
-          <p style={{ color: "#93a7b7", margin: "0 0 20px", fontSize: 15 }}>
+          <p style={{ color: "#5c6b78", margin: "0 0 20px", fontSize: 15 }}>
             Charters you book will appear here with escrow status and captain contact.
           </p>
           <Link
@@ -167,7 +167,7 @@ export function TripsTab() {
       <section
         style={{
           marginTop: 72,
-          borderTop: "1px solid rgba(255,255,255,.08)",
+          borderTop: "1px solid rgba(13,34,54,.10)",
           paddingTop: 44,
           display: "grid",
           gap: 24,
@@ -235,7 +235,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
             padding: "7px 13px",
             borderRadius: 999,
             background: "rgba(7,26,42,.65)",
-            border: "1px solid rgba(255,255,255,.16)",
+            border: "1px solid rgba(13,34,54,.10)",
             color: "var(--sand)",
             fontSize: 10,
             backdropFilter: "blur(10px)",
@@ -254,7 +254,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
               fontWeight: 600,
               fontSize: "clamp(21px,2.4vw,30px)",
               lineHeight: 1.15,
-              color: "#fff",
+              color: "#0d2236",
               margin: 0,
             }}
           >
@@ -269,7 +269,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
                 padding: "9px 14px",
                 borderRadius: 10,
                 background: "rgba(227,192,137,.12)",
-                color: "var(--sand)",
+                color: "#a97e3c",
               }}
             >
               {left}
@@ -277,7 +277,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
           )}
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 26px", color: "#b9c8d5", fontSize: 14.5 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 26px", color: "#5c6b78", fontSize: 14.5 }}>
           <span>{dateLabel(trip.trip_date)}</span>
           <span>{timeLabel(trip.start_time)}</span>
           <span>
@@ -295,7 +295,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
           style={{
             marginTop: "auto",
             paddingTop: 18,
-            borderTop: "1px solid rgba(255,255,255,.08)",
+            borderTop: "1px solid rgba(13,34,54,.10)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -304,8 +304,8 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
           }}
         >
           <div>
-            <div style={{ ...eyebrow, fontSize: 10, color: "#93a7b7" }}>Trip total</div>
-            <div style={{ fontFamily: "var(--serif)", fontSize: 24, color: "var(--sand)", fontWeight: 600 }}>
+            <div style={{ ...eyebrow, fontSize: 10, color: "#5c6b78" }}>Trip total</div>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 24, color: "#a97e3c", fontWeight: 600 }}>
               {money(trip.total_cents)}
             </div>
           </div>
@@ -318,8 +318,8 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
                 fontSize: 11,
                 padding: "13px 20px",
                 borderRadius: 10,
-                border: "1px solid rgba(255,255,255,.18)",
-                color: "#eaf1f6",
+                border: "1px solid rgba(13,34,54,.16)",
+                color: "#0d2236",
                 textDecoration: "none",
               }}
             >
@@ -356,8 +356,8 @@ function Chip({ label }: { label: string }) {
         padding: "6px 12px",
         borderRadius: 999,
         border: "1px solid rgba(227,192,137,.25)",
-        background: "rgba(255,255,255,.04)",
-        color: "#dcc6a0",
+        background: "#ffffff",
+        color: "#a97e3c",
       }}
     >
       {label}
@@ -376,12 +376,12 @@ function HelpCard({
 }) {
   return (
     <div style={{ ...glass, padding: 28 }}>
-      <h3 style={{ fontFamily: "var(--serif)", fontSize: 22, color: "#fff", margin: "0 0 8px" }}>{title}</h3>
-      <p style={{ color: "#93a7b7", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>{body}</p>
+      <h3 style={{ fontFamily: "var(--serif)", fontSize: 22, color: "#0d2236", margin: "0 0 8px" }}>{title}</h3>
+      <p style={{ color: "#5c6b78", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>{body}</p>
       <Link
         to={link.to}
         search={link.search as never}
-        style={{ ...eyebrow, fontSize: 11, color: "var(--sand)", textDecoration: "none" }}
+        style={{ ...eyebrow, fontSize: 11, color: "#a97e3c", textDecoration: "none" }}
       >
         {link.label} →
       </Link>

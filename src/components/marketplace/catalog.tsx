@@ -18,7 +18,23 @@ export type Product = {
   live?: boolean;
   image?: string | null;
   stockQty?: number;
+  /** Fish-X business category key (charter, tackle_shop, apparel_brand, …). */
+  sellerCat?: string | null;
 };
+
+/** Maps a demo seller's free-text type onto a Fish-X business category key. */
+export function sellerCatFromType(sellerType: string): string {
+  const s = sellerType.toLowerCase();
+  if (/apparel/.test(s)) return "apparel_brand";
+  if (/tackle/.test(s)) return "tackle_shop";
+  if (/bait/.test(s)) return "bait_shop";
+  if (/marina/.test(s)) return "marina";
+  if (/lodge/.test(s)) return "lodge";
+  if (/guide/.test(s)) return "guide";
+  if (/charter|captain/.test(s)) return "charter";
+  return "gear_manufacturer";
+}
+
 
 /** Maps a vendor product's free-text category onto a marketplace tab. */
 export function catFromCategory(category: string | null, sellerCategory: string | null): Cat {
