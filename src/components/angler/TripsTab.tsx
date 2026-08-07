@@ -61,7 +61,7 @@ const STATUS_LABEL: Record<string, string> = {
 const shell: React.CSSProperties = {
   width: "100%",
   minHeight: "calc(100vh - 66px)",
-  background: "linear-gradient(180deg,#0a2236 0%,#071a2a 100%)",
+  background: "#ffffff",
   color: "#0d2236",
   padding: "clamp(24px,4vw,56px) clamp(16px,5vw,80px) clamp(56px,8vw,96px)",
 };
@@ -119,8 +119,8 @@ export function TripsTab() {
                 ...eyebrow,
                 background: "transparent",
                 border: 0,
-                borderBottom: `2px solid ${bucket === b ? "var(--sand)" : "transparent"}`,
-                color: bucket === b ? "var(--sand)" : "#93a7b7",
+                borderBottom: `2px solid ${bucket === b ? "#a97e3c" : "transparent"}`,
+                color: bucket === b ? "#a97e3c" : "#5c6b78",
                 padding: "0 0 14px",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
@@ -137,7 +137,7 @@ export function TripsTab() {
           <div style={{ fontFamily: "var(--serif)", fontSize: 26, color: "#0d2236", marginBottom: 8 }}>
             Nothing {bucket === "upcoming" ? "on the calendar" : `in ${bucket}`} yet
           </div>
-          <p style={{ color: "#93a7b7", margin: "0 0 20px", fontSize: 15 }}>
+          <p style={{ color: "#5c6b78", margin: "0 0 20px", fontSize: 15 }}>
             Charters you book will appear here with escrow status and captain contact.
           </p>
           <Link
@@ -269,7 +269,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
                 padding: "9px 14px",
                 borderRadius: 10,
                 background: "rgba(227,192,137,.12)",
-                color: "var(--sand)",
+                color: "#a97e3c",
               }}
             >
               {left}
@@ -277,7 +277,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
           )}
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 26px", color: "#b9c8d5", fontSize: 14.5 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 26px", color: "#5c6b78", fontSize: 14.5 }}>
           <span>{dateLabel(trip.trip_date)}</span>
           <span>{timeLabel(trip.start_time)}</span>
           <span>
@@ -304,8 +304,8 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
           }}
         >
           <div>
-            <div style={{ ...eyebrow, fontSize: 10, color: "#93a7b7" }}>Trip total</div>
-            <div style={{ fontFamily: "var(--serif)", fontSize: 24, color: "var(--sand)", fontWeight: 600 }}>
+            <div style={{ ...eyebrow, fontSize: 10, color: "#5c6b78" }}>Trip total</div>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 24, color: "#a97e3c", fontWeight: 600 }}>
               {money(trip.total_cents)}
             </div>
           </div>
@@ -357,7 +357,7 @@ function Chip({ label }: { label: string }) {
         borderRadius: 999,
         border: "1px solid rgba(227,192,137,.25)",
         background: "#ffffff",
-        color: "#dcc6a0",
+        color: "#a97e3c",
       }}
     >
       {label}
@@ -377,11 +377,11 @@ function HelpCard({
   return (
     <div style={{ ...glass, padding: 28 }}>
       <h3 style={{ fontFamily: "var(--serif)", fontSize: 22, color: "#0d2236", margin: "0 0 8px" }}>{title}</h3>
-      <p style={{ color: "#93a7b7", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>{body}</p>
+      <p style={{ color: "#5c6b78", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>{body}</p>
       <Link
         to={link.to}
         search={link.search as never}
-        style={{ ...eyebrow, fontSize: 11, color: "var(--sand)", textDecoration: "none" }}
+        style={{ ...eyebrow, fontSize: 11, color: "#a97e3c", textDecoration: "none" }}
       >
         {link.label} →
       </Link>
