@@ -11,7 +11,7 @@
 # hits a static host that only allows GET/HEAD and returns 405 Method Not Allowed
 # ("Expected POST. Got GET") on every server function.
 [build]
-  publish = "dist/client"
+  publish = "dist"
   command = "npm run build"
 
 # Prevent stale HTML caching (especially on mobile)
@@ -34,5 +34,6 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 # No [[redirects]] here on purpose. The Nitro `netlify` preset generates the
-# SSR function routing (dist/client/_redirects). A manual SPA catch-all would
-# intercept /_serverFn/* before the SSR function and break all POST server fns.
+# SSR function routing (dist/_redirects + a Netlify Function under
+# .netlify/functions-internal). A manual SPA catch-all would intercept
+# /_serverFn/* before the SSR function and break all POST server fns.
