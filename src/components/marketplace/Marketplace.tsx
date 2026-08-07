@@ -384,7 +384,7 @@ export function Marketplace() {
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <button onClick={() => setBizType("all")} style={railOption(bizType === "all")}>
                   <span>All business types</span>
-                  {bizType === "all" && <span>\u2713</span>}
+                  {bizType === "all" && <span>✓</span>}
                 </button>
                 {(bizCategories ?? []).map((c) => {
                   const n = allProducts.filter((p) => p.sellerCat === c.key).length;
@@ -392,7 +392,7 @@ export function Marketplace() {
                     <button key={c.key} onClick={() => setBizType(c.key)} style={railOption(bizType === c.key)}>
                       <span>{c.label}</span>
                       <span style={{ fontSize: 11, color: bizType === c.key ? V.cyan : V.ondmut }}>
-                        {bizType === c.key ? "\u2713" : n}
+                        {bizType === c.key ? "✓" : n}
                       </span>
                     </button>
                   );
