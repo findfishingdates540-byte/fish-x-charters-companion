@@ -115,7 +115,7 @@ export const createConnectOnboardingLink = createServerFn({ method: "GET" })
   });
 
 /** Express dashboard link so operators can see their balance and payouts. */
-export const createConnectDashboardLink = createServerFn({ method: "POST" })
+export const createConnectDashboardLink = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ businessId: z.string().uuid().optional() }).parse(i ?? {}))
   .handler(async ({ data, context }) => {
