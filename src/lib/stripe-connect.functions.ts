@@ -67,7 +67,9 @@ export const getConnectStatus = createServerFn({ method: "GET" })
     };
   });
 
-export const createConnectOnboardingLink = createServerFn({ method: "POST" })
+// GET on purpose: some hosting layers (Netlify/CDN redirects) downgrade POST
+// to GET on /_serverFn/*, which surfaces as "Expected POST. Got GET".
+export const createConnectOnboardingLink = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z
