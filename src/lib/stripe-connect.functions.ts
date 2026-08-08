@@ -67,7 +67,9 @@ export const getConnectStatus = createServerFn({ method: "GET" })
     };
   });
 
-export const createConnectOnboardingLink = createServerFn({ method: "POST" })
+// GET on purpose: some hosting layers (Netlify/CDN redirects) downgrade POST
+// to GET on /_serverFn/*, which surfaces as "Expected POST. Got GET".
+export const createConnectOnboardingLink = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z
@@ -113,7 +115,7 @@ export const createConnectOnboardingLink = createServerFn({ method: "POST" })
   });
 
 /** Express dashboard link so operators can see their balance and payouts. */
-export const createConnectDashboardLink = createServerFn({ method: "POST" })
+export const createConnectDashboardLink = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ businessId: z.string().uuid().optional() }).parse(i ?? {}))
   .handler(async ({ data, context }) => {
