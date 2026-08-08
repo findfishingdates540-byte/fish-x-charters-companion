@@ -262,6 +262,90 @@ body.dc-body { margin:0; background:#0a2236; }
   }
 }
 
+/* =============================================================
+ * Landing page — mobile responsiveness
+ *
+ * The DC landing template (src/dc-templates/landing.html) is a single
+ * inline-styled document injected via dangerouslySetInnerHTML. Inline
+ * styles can't carry media queries, so every responsive rule lives here,
+ * scoped to `.dc-landing #fishx-root` and forced with !important to beat
+ * the inline styles. (Hero-grid stacking + page gutters are handled in the
+ * block above.)
+ * ============================================================= */
+
+/* Header: drop the primary section links on tablet/phone and keep just the
+   wordmark + primary CTA. The full nav still lives on the inner pages. */
+@media (max-width: 900px) {
+  .dc-landing #fishx-root header nav { display: none !important; }
+  .dc-landing #fishx-root header > div[style*="max-width:1280px"] {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+    gap: 14px !important;
+  }
+  /* Tighter hero: don't force the 560px min-height once the grid stacks */
+  .dc-landing #fishx-root .fx-hero-grid { gap: 36px !important; min-height: 0 !important; }
+}
+
+@media (max-width: 480px) {
+  /* On the smallest screens keep only the gold CTA beside the wordmark */
+  .dc-landing #fishx-root header a[href="/auth"] { display: none !important; }
+}
+
+/* Hero search widget: the 3-column search / location / button grid is too
+   cramped on phones — stack it, flip the divider, and pad the button. */
+@media (max-width: 560px) {
+  .dc-landing #fishx-root [style*="grid-template-columns:1.6fr 1fr auto"] {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .dc-landing #fishx-root [style*="grid-template-columns:1.6fr 1fr auto"] > label[style*="border-left"] {
+    border-left: 0 !important;
+    border-top: 1px solid var(--lined, rgba(255,255,255,.13)) !important;
+  }
+  .dc-landing #fishx-root [style*="grid-template-columns:1.6fr 1fr auto"] > button {
+    padding: 14px 24px !important;
+    justify-content: center !important;
+  }
+}
+
+/* Wide feature grids (escrow 360px / become-a-captain 340px / testimonials
+   330px) overflow a 360px viewport at their min track width — collapse them
+   to a single column early. */
+@media (max-width: 900px) {
+  .dc-landing #fishx-root [style*="minmax(360px,1fr)"],
+  .dc-landing #fishx-root [style*="minmax(340px,1fr)"],
+  .dc-landing #fishx-root [style*="minmax(330px,1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+}
+
+/* Vertical rhythm: the desktop sections use 96–118px top/bottom padding,
+   which is oversized on phones. Match each section by its inline signature. */
+@media (max-width: 640px) {
+  .dc-landing #fishx-root [style*="padding:104px 0"] { padding-top: 60px !important; padding-bottom: 56px !important; }
+  .dc-landing #fishx-root [style*="padding:100px 0"] { padding-top: 60px !important; padding-bottom: 56px !important; }
+  .dc-landing #fishx-root [style*="padding:96px 0"]  { padding-top: 56px !important; padding-bottom: 56px !important; }
+  .dc-landing #fishx-root [style*="padding:24px 0 104px"] { padding-bottom: 56px !important; }
+  .dc-landing #fishx-root [style*="padding:36px 0 86px"] { padding-top: 20px !important; padding-bottom: 52px !important; }
+  .dc-landing #fishx-root [style*="padding:104px 40px"] { padding-top: 56px !important; padding-bottom: 56px !important; }
+  .dc-landing #fishx-root [style*="padding:118px 40px"] { padding-top: 64px !important; padding-bottom: 64px !important; }
+  .dc-landing #fishx-root [style*="padding:72px 40px 0"] { padding-top: 48px !important; }
+}
+
+/* Small-screen polish */
+@media (max-width: 560px) {
+  /* FAQ questions: smaller serif so long questions don't wrap three lines */
+  .dc-landing #fishx-root [data-faq-q] { font-size: 18px !important; padding: 20px 2px !important; }
+  /* Featured-charters heading row: let the "Browse all" link wrap below */
+  .dc-landing #fishx-root #charters [style*="align-items:flex-end"][style*="justify-content:space-between"] {
+    flex-wrap: wrap !important;
+  }
+  /* Stats: swap the vertical dividers for horizontal ones when stacked */
+  .dc-landing #fishx-root [data-stats] > div { border-right: 0 !important; border-bottom: 1px solid var(--line, rgba(13,34,54,.10)) !important; }
+  .dc-landing #fishx-root [data-stats] > div:last-child { border-bottom: 0 !important; }
+}
+
 
 /* =============================================================
  * Authenticated shell — mobile responsiveness
