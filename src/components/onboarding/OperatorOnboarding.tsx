@@ -123,7 +123,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "each", title: "After each trip", desc: "Released as soon as escrow clears." },
       { key: "weekly", title: "Weekly", desc: "Auto-batched every Monday." },
     ],
-    connectLabel: "Connect Stripe for captain payouts",
+    connectLabel: "Connect bank for captain payouts",
     connectDesc: "Verified bank account required before your first release.",
     fineprint: "Stripe Connect linking is enabled after your first booking. Adjustable in Settings.",
   },
@@ -135,7 +135,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "each", title: "After each trip", desc: "Released the day your guided trip wraps." },
       { key: "weekly", title: "Weekly", desc: "Auto-batched every Monday." },
     ],
-    connectLabel: "Connect Stripe for guide payouts",
+    connectLabel: "Connect bank for guide payouts",
     connectDesc: "We'll verify your bank account before your first release.",
     fineprint: "Stripe Connect linking is enabled after your first booking. Adjustable in Settings.",
   },
@@ -147,7 +147,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "weekly", title: "Weekly", desc: "Batched net proceeds every Monday." },
       { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
     ],
-    connectLabel: "Connect Stripe for storefront payouts",
+    connectLabel: "Connect bank for storefront payouts",
     connectDesc: "Needed to receive proceeds from Fish-X orders.",
     fineprint: "Refunds & chargebacks are reconciled automatically against your next payout.",
   },
@@ -159,7 +159,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "weekly", title: "Weekly", desc: "Batched net proceeds every Monday." },
       { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
     ],
-    connectLabel: "Connect Stripe for bait shop payouts",
+    connectLabel: "Connect bank for bait shop payouts",
     connectDesc: "Verified bank account required for storefront proceeds.",
     fineprint: "Perishable-item refunds are handled per your shop policy.",
   },
@@ -171,7 +171,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "weekly", title: "Weekly", desc: "Batched slip & service proceeds every Monday." },
       { key: "monthly", title: "Monthly", desc: "Consolidated payout on the 1st." },
     ],
-    connectLabel: "Connect Stripe for marina payouts",
+    connectLabel: "Connect bank for marina payouts",
     connectDesc: "Used for slip reservations, fuel, and service invoices.",
     fineprint: "Recurring monthly slip holders can be invoiced separately in Settings.",
   },
@@ -183,7 +183,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "each", title: "After each stay", desc: "Payout the day after guest checkout." },
       { key: "weekly", title: "Weekly", desc: "Batched every Monday." },
     ],
-    connectLabel: "Connect Stripe for lodge payouts",
+    connectLabel: "Connect bank for lodge payouts",
     connectDesc: "Verified bank account required before your first release.",
     fineprint: "Damage holds and incidentals can be captured separately at checkout.",
   },
@@ -195,7 +195,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "weekly", title: "Weekly", desc: "Net proceeds every Monday." },
       { key: "each", title: "Rolling (2-day)", desc: "Standard Stripe rolling payout." },
     ],
-    connectLabel: "Connect Stripe for brand payouts",
+    connectLabel: "Connect bank for brand payouts",
     connectDesc: "Required to receive proceeds from apparel orders.",
     fineprint: "Returns are auto-reconciled against your next payout.",
   },
@@ -207,7 +207,7 @@ const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
       { key: "weekly", title: "Weekly", desc: "Net proceeds every Monday." },
       { key: "monthly", title: "Monthly (NET-30)", desc: "Consolidated wholesale settlement." },
     ],
-    connectLabel: "Connect Stripe for manufacturer payouts",
+    connectLabel: "Connect bank for manufacturer payouts",
     connectDesc: "Used for DTC and wholesale order proceeds.",
     fineprint: "Wholesale terms & POs can be configured separately in Settings.",
   },
@@ -1143,7 +1143,7 @@ function PayoutsStep({
               onClick={onConnectStripe}
               className="flex-none bg-[#635bff] text-white border-0 rounded-[10px] px-[18px] py-[10px] text-[12.5px] font-bold cursor-pointer"
             >
-              Connect Stripe
+              Connect bank
             </button>
           )}
         </div>

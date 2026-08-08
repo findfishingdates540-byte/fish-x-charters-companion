@@ -18,6 +18,7 @@ import {
   deleteCaptainService,
   toggleServicePublished,
 } from "@/lib/captain-management.functions";
+import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 
 export const captainDashboardQO = queryOptions({
   queryKey: ["captain-dashboard"],
@@ -644,10 +645,7 @@ function SettingsPanel({ data }: { data: CaptainData }) {
         )}
       </Panel>
       <Panel title="Payouts">
-        <div style={{ fontSize: 13.5, color: "var(--tmut)", lineHeight: 1.6 }}>
-          Fish-X uses Stripe Connect for payouts. Funds are held in escrow and released 24 hours after trip completion.
-          Payout configuration will be enabled once your Stripe account is connected.
-        </div>
+        <PayoutsConnect businessId={biz?.id} />
       </Panel>
     </div>
   );

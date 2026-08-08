@@ -20,6 +20,7 @@ import {
   StatusPill,
   money,
 } from "@/components/operator/OperatorShell";
+import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 
 const overviewQO = (businessId: string) =>
   queryOptions({
@@ -68,6 +69,7 @@ export function GuideDashboard({
       icon: <InboxIcon />,
       badge: data.requests.length || undefined,
     },
+    { key: "payouts", label: "Payouts", icon: <PayoutIcon /> },
   ];
 
   const titles: Record<string, { t: string; s: string }> = {
@@ -79,6 +81,7 @@ export function GuideDashboard({
     guides: { t: "Guides", s: "Your roster & performance." },
     slots: { t: "Availability", s: "Bookable slots across your services." },
     requests: { t: "Requests", s: "New bookings waiting on you." },
+    payouts: { t: "Payouts", s: "Connect your bank and manage payouts." },
   };
 
   return (
@@ -98,6 +101,11 @@ export function GuideDashboard({
       {active === "guides" && <Roster data={data} />}
       {active === "slots" && <Slots businessId={businessId} data={data} />}
       {active === "requests" && <Requests businessId={businessId} data={data} />}
+      {active === "payouts" && (
+        <Card eyebrow="Payouts" title="Bank & payouts">
+          <PayoutsConnect businessId={businessId} />
+        </Card>
+      )}
     </OperatorShell>
   );
 }
@@ -802,6 +810,15 @@ function InboxIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7}>
       <path d="M4 5h16v11H8l-4 4z" />
+    </svg>
+  );
+}
+function PayoutIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7}>
+      <rect x="2" y="5" width="20" height="14" rx="2.5" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
     </svg>
   );
 }

@@ -1,0 +1,203 @@
+/**
+ * Payouts / bank-connection block for operator settings (captain, marina,
+ * tackle/shop, guide). Reads live Stripe Connect status and lets operators
+ * connect their bank via Stripe-hosted onboarding if they haven't yet.
+ *
+ * Renders inner content only — the caller wraps it in its own Panel/Card so
+ * it matches each vertical's chrome.
+ */
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  getConnectStatus,
+  createConnectOnboardingLink,
+  createConnectDashboardLink,
+} from "@/lib/stripe-connect.functions";
+
+async function readErr(e: unknown): Promise<string> {
+  if (e instanceof Response) return (await e.text()).slice(0, 200);
+  if (e instanceof Error) return e.message;
+  return String(e);
+}
+
+export function PayoutsConnect({ businessId }: { businessId?: string }) {
+  const statusFn = useServerFn(getConnectStatus);
+  const startConnect = useServerFn(createConnectOnboardingLink);
+  const openDashboard = useServerFn(createConnectDashboardLink);
+
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const q = useQuery({
+    queryKey: ["connect-status", businessId ?? "me"],
+    queryFn: () => statusFn({ data: businessId ? { businessId } : {} }),
+  });
+
+  const s = q.data;
+  const connected = !!s && s.chargesEnabled && s.payoutsEnabled;
+  const started = !!s?.stripeAccountId;
+
+  function friendly(msg: string): string {
+    if (msg.includes("not configured"))
+      return "Payouts aren't available yet — the platform hasn't finished Stripe setup. Try again later.";
+    if (msg.toLowerCase().includes("signed up for connect"))
+      return "Stripe Connect needs to be enabled on the platform account. Please contact support.";
+    return msg || "Something went wrong. Please try again.";
+  }
+
+  async function connect() {
+    setErr(null);
+    setBusy(true);
+    try {
+      const res = await startConnect({
+        data: {
+          ...(businessId ? { businessId } : {}),
+          returnUrl: window.location.href,
+        },
+      });
+      if (!res?.url) throw new Error("Stripe did not return an onboarding link.");
+      window.location.assign(res.url);
+    } catch (e) {
+      setErr(friendly(await readErr(e)));
+      setBusy(false);
+    }
+  }
+
+  async function manage() {
+    setErr(null);
+    setBusy(true);
+    try {
+      const res = await openDashboard({ data: businessId ? { businessId } : {} });
+      if (!res?.url) throw new Error("Could not open your payout dashboard.");
+      window.location.assign(res.url);
+    } catch (e) {
+      setErr(friendly(await readErr(e)));
+      setBusy(false);
+    }
+  }
+
+  const intro =
+    "Fish-X uses Stripe Connect for payouts. Funds are held in escrow and released 24 hours after trip completion.";
+
+  return (
+    <div style={{ display: "grid", gap: 14 }}>
+      <div style={{ fontSize: 13.5, color: "var(--tmut, #5c6b78)", lineHeight: 1.6 }}>
+        {intro}
+      </div>
+
+      {q.isLoading ? (
+        <div style={{ fontSize: 13, color: "var(--tmut, #5c6b78)" }}>Checking payout status…</div>
+      ) : q.isError ? (
+        <div style={{ fontSize: 13, color: "#d8514a" }}>
+          Couldn't load payout status. Reload the page to try again.
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 14,
+            flexWrap: "wrap",
+            border: "1px solid var(--line, rgba(13,34,54,.10))",
+            borderRadius: 14,
+            padding: "14px 16px",
+          }}
+        >
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "var(--ink, #0d2236)" }}>
+              Bank account
+            </div>
+            <div style={{ fontSize: 12.5, color: "var(--tmut, #5c6b78)", marginTop: 2 }}>
+              {connected
+                ? "Connected — you're set up to receive payouts."
+                : started
+                  ? "Setup started — finish connecting to receive payouts."
+                  : "Connect your bank to receive escrow payouts."}
+            </div>
+            {!connected && s && s.requirementsDue.length > 0 && (
+              <div style={{ fontSize: 12, color: "#a97e3c", marginTop: 4 }}>
+                Stripe still needs a few details to finish setup.
+              </div>
+            )}
+          </div>
+
+          {connected ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "none" }}>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 7,
+                  background: "var(--greensoft, #e2f2ea)",
+                  color: "var(--green, #1f8a5b)",
+                  borderRadius: 20,
+                  padding: "7px 13px",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                }}
+              >
+                <span
+                  style={{
+                    width: 15,
+                    height: 15,
+                    borderRadius: "50%",
+                    background: "var(--green, #1f8a5b)",
+                    color: "#fff",
+                    display: "grid",
+                    placeItems: "center",
+                    fontSize: 10,
+                  }}
+                >
+                  ✓
+                </span>
+                Connected
+              </span>
+              <button
+                onClick={manage}
+                disabled={busy}
+                style={{
+                  background: "transparent",
+                  border: 0,
+                  color: "var(--goldtext, #a97e3c)",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: busy ? "default" : "pointer",
+                }}
+              >
+                {busy ? "Opening…" : "Manage payouts →"}
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={connect}
+              disabled={busy}
+              style={{
+                flex: "none",
+                background: "var(--ink, #0d2236)",
+                color: "#fff",
+                border: 0,
+                borderRadius: 10,
+                padding: "11px 20px",
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: busy ? "default" : "pointer",
+                opacity: busy ? 0.7 : 1,
+              }}
+            >
+              {busy ? "Opening…" : started ? "Finish connecting bank" : "Connect bank"}
+            </button>
+          )}
+        </div>
+      )}
+
+      {err && <div style={{ fontSize: 12.5, color: "#d8514a" }}>{err}</div>}
+
+      <div style={{ fontSize: 11.5, color: "var(--tmut, #8a97a3)" }}>
+        You keep 80% of every sale; the Fish-X platform fee is 20%. Bank details are handled
+        securely by Stripe — Fish-X never sees your account numbers.
+      </div>
+    </div>
+  );
+}

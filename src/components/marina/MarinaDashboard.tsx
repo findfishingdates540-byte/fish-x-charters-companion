@@ -20,6 +20,7 @@ import {
   StatusPill,
   money,
 } from "@/components/operator/OperatorShell";
+import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 
 type Slip = {
   id: string;
@@ -51,6 +52,7 @@ const NAV: OperatorNavItem[] = [
   { key: "slips", label: "Slips", icon: <BoatIcon /> },
   { key: "reservations", label: "Reservations", icon: <CalIcon /> },
   { key: "services", label: "Services", icon: <WrenchIcon /> },
+  { key: "payouts", label: "Payouts", icon: <PayoutIcon /> },
 ];
 
 export function MarinaDashboard({
@@ -75,6 +77,7 @@ export function MarinaDashboard({
     slips: { t: "Slip inventory", s: "Manage berths, rates, and status." },
     reservations: { t: "Reservations", s: "Vessels arriving and staying." },
     services: { t: "Marina services", s: "Amenities and operating settings." },
+    payouts: { t: "Payouts", s: "Connect your bank and manage payouts." },
   };
 
   return (
@@ -120,6 +123,11 @@ export function MarinaDashboard({
         <Reservations businessId={businessId} data={data} />
       )}
       {active === "services" && <Services />}
+      {active === "payouts" && (
+        <Card eyebrow="Payouts" title="Bank & payouts">
+          <PayoutsConnect businessId={businessId} />
+        </Card>
+      )}
     </OperatorShell>
   );
 }
@@ -726,6 +734,15 @@ function WrenchIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7}>
       <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4z" />
+    </svg>
+  );
+}
+function PayoutIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7}>
+      <rect x="2" y="5" width="20" height="14" rx="2.5" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
     </svg>
   );
 }

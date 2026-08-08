@@ -20,6 +20,7 @@ import {
   StatusPill,
   money,
 } from "@/components/operator/OperatorShell";
+import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 
 type Product = {
   id: string;
@@ -131,7 +132,7 @@ export function ShopDashboard({
       {active === "overview" && <Overview data={data} />}
       {active === "products" && <Products businessId={businessId} data={data} />}
       {active === "orders" && <Orders businessId={businessId} data={data} />}
-      {active === "settings" && <Settings />}
+      {active === "settings" && <Settings businessId={businessId} />}
     </OperatorShell>
   );
 }
@@ -558,12 +559,10 @@ function OrderList({
   );
 }
 
-function Settings() {
+function Settings({ businessId }: { businessId: string }) {
   return (
-    <Card eyebrow="Payouts & storefront" title="Coming soon">
-      <p style={{ color: "#5c6b78", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-        Stripe payout linking, tax config, and shipping zones will surface here.
-      </p>
+    <Card eyebrow="Payouts & storefront" title="Payouts">
+      <PayoutsConnect businessId={businessId} />
     </Card>
   );
 }
