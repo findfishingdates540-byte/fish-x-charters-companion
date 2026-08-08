@@ -32,6 +32,18 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
   const q = useQuery({
     queryKey: ["connect-status", businessId ?? "me"],
     queryFn: () => statusFn({ data: businessId ? { businessId } : {} }),
+    // Stripe can finish enabling an account a few seconds AFTER it redirects the
+    // operator back from onboarding. While a Stripe account exists but isn't
+    // fully enabled yet, poll so the card flips to "Connected" on its own
+    // instead of making them reload. Stops polling once connected (or if no
+    // account has been created yet).
+    refetchOnWindowFocus: true,
+    refetchInterval: (query) => {
+      const d = query.state.data;
+      if (!d) return false;
+      const isConnected = d.chargesEnabled && d.payoutsEnabled;
+      return d.stripeAccountId && !isConnected ? 4000 : false;
+    },
   });
 
   const s = q.data;
