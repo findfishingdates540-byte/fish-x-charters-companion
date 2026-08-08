@@ -8,25 +8,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-async function ownedBusiness(supabase: any, userId: string, businessId?: string) {
-  const q = supabase
-    .from("business_members")
-    .select("business_id, role, business:businesses(*)")
-    .eq("user_id", userId)
-    .in("role", ["owner", "manager"]);
-  const { data, error } = businessId ? await q.eq("business_id", businessId) : await q;
-  if (error) throw new Response(error.message, { status: 500 });
-  const row = (data ?? [])[0];
-  if (!row?.business) throw new Response("No business found for this account", { status: 400 });
-  return row.business;
-}
+import { getOwnedBusiness } from "./stripe-connect.server";
 
 export const getConnectStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ businessId: z.string().uuid().optional() }).parse(i ?? {}))
   .handler(async ({ data, context }) => {
-    const biz = await ownedBusiness(context.supabase, context.userId, data.businessId);
+    const biz = await getOwnedBusiness(context.supabase, context.userId, data.businessId);
     const { getStripe } = await import("./stripe.server");
     const stripe = getStripe();
 
@@ -40,8 +28,7 @@ export const getConnectStatus = createServerFn({ method: "GET" })
         chargesEnabled = acct.charges_enabled;
         payoutsEnabled = acct.payouts_enabled;
         requirementsDue = acct.requirements?.currently_due ?? [];
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        await supabaseAdmin
+        const { error } = await context.supabase
           .from("businesses")
           .update({
             charges_enabled: chargesEnabled,
@@ -50,6 +37,7 @@ export const getConnectStatus = createServerFn({ method: "GET" })
               chargesEnabled && payoutsEnabled ? new Date().toISOString() : biz.onboarding_completed_at,
           })
           .eq("id", biz.id);
+        if (error) console.error("[stripe] status sync failed", error.message);
       } catch (err) {
         console.error("[stripe] account retrieve failed", err);
       }
@@ -77,11 +65,9 @@ export const createConnectOnboardingLink = createServerFn({ method: "GET" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
-    const biz = await ownedBusiness(context.supabase, context.userId, data.businessId);
+    const biz = await getOwnedBusiness(context.supabase, context.userId, data.businessId);
     const { requireStripe } = await import("./stripe.server");
     const stripe = requireStripe();
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
     let accountId = biz.stripe_account_id as string | null;
     if (!accountId) {
       const account = await stripe.accounts.create({
@@ -97,11 +83,11 @@ export const createConnectOnboardingLink = createServerFn({ method: "GET" })
         },
       });
       accountId = account.id;
-      const { error } = await supabaseAdmin
+      const { error } = await context.supabase
         .from("businesses")
         .update({ stripe_account_id: accountId, stripe_account_type: "express" })
         .eq("id", biz.id);
-      if (error) throw new Response(error.message, { status: 500 });
+      if (error) throw new Error(error.message);
     }
 
     const link = await stripe.accountLinks.create({
@@ -119,8 +105,8 @@ export const createConnectDashboardLink = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ businessId: z.string().uuid().optional() }).parse(i ?? {}))
   .handler(async ({ data, context }) => {
-    const biz = await ownedBusiness(context.supabase, context.userId, data.businessId);
-    if (!biz.stripe_account_id) throw new Response("Connect your payout account first", { status: 400 });
+    const biz = await getOwnedBusiness(context.supabase, context.userId, data.businessId);
+    if (!biz.stripe_account_id) throw new Error("Connect your payout account first");
     const { requireStripe } = await import("./stripe.server");
     const login = await requireStripe().accounts.createLoginLink(biz.stripe_account_id);
     return { url: login.url };
