@@ -443,12 +443,16 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                     <span>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)} × {party} angler{party === 1 ? "" : "s"}</span><span style={{ color: V.ond }}>{money(price)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
-                    <span>Fish-X escrow protection fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
+                    <span>Fish-X booking fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "14px 0 4px", borderTop: `1px solid ${V.lined}`, marginTop: 10, fontSize: 15.5, fontWeight: 700, color: "#fff" }}>
-                    <span>Total payable</span><span>{money(total)}</span>
+                    <span>Deposit due today (25%)</span><span>{money(deposit)}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", color: V.ondmut }}>
+                    <span>Balance paid to captain on the day</span><span style={{ color: V.ond }}>{money(balanceDue)}</span>
                   </div>
                 </div>
+
 
                 <button
                   onClick={() => setStep("checkout")}
