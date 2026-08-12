@@ -9,12 +9,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   listServiceSlots,
-  createServiceSlots,
   updateServiceSlot,
   deleteServiceSlot,
   updateServiceBookingRules,
   checkSlotConflicts,
+  previewAvailabilityAdjustment,
+  applyAvailabilityAdjustment,
 } from "@/lib/availability.functions";
+
 import { money } from "@/components/operator/OperatorShell";
 import { input, btn } from "@/components/business/BusinessSettings";
 
