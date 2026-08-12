@@ -6,6 +6,8 @@ import { useMemo, useState, useEffect, Suspense } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+
 import {
   getAnglerDashboard,
   listRecommendedCharters,
