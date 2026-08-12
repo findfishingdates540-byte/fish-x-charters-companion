@@ -102,7 +102,7 @@ export const updateBusinessProfile = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     await assertMember(supabase, userId, data.businessId);
 
-    const patch: Record<string, unknown> = {
+    const patch: any = {
       name: data.name.trim(),
       tagline: nullable(data.tagline),
       description: nullable(data.description),
