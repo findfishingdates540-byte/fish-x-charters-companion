@@ -269,16 +269,51 @@ export function AvailabilityCalendar({
             />
             Instant book — limited to published seats
           </label>
-          {mCreate.error && (
-            <div style={{ fontSize: 12.5, color: "#b3261e" }}>{String((mCreate.error as Error).message)}</div>
+          {conflicts.length > 0 && (
+            <div
+              style={{
+                fontSize: 12.5,
+                color: "#8a5a00",
+                background: "#fff7e6",
+                border: "1px solid rgba(201,138,18,.35)",
+                borderRadius: 12,
+                padding: "10px 12px",
+                display: "grid",
+                gap: 4,
+              }}
+            >
+              <strong style={{ color: "#8a5a00" }}>
+                {conflicts.length} conflicting day{conflicts.length === 1 ? "" : "s"}
+              </strong>
+              {conflicts.slice(0, 4).map((c) => (
+                <span key={c.date}>
+                  {c.date} — {c.reason}
+                </span>
+              ))}
+            </div>
+          )}
+          {(mCreate.error || mUpdate.error) && (
+            <div style={{ fontSize: 12.5, color: "#b3261e" }}>
+              {String(((mCreate.error || mUpdate.error) as Error).message)}
+            </div>
           )}
           <button
             style={btn("primary")}
-            disabled={picked.length === 0 || mCreate.isPending}
-            onClick={() => mCreate.mutate()}
+            disabled={picked.length === 0 || mCreate.isPending || conflicts.length >= picked.length}
+            onClick={() => mCreate.mutate(false)}
           >
             {mCreate.isPending ? "Publishing…" : "Publish availability"}
           </button>
+          {conflicts.length > 0 && conflicts.length < picked.length && (
+            <button
+              style={btn("ghost")}
+              disabled={mCreate.isPending}
+              onClick={() => mCreate.mutate(true)}
+            >
+              Publish the {picked.length - conflicts.length} clear day
+              {picked.length - conflicts.length === 1 ? "" : "s"} only
+            </button>
+          )}
         </div>
       </div>
 
