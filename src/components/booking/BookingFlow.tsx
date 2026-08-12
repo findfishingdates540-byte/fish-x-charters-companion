@@ -101,6 +101,10 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const price = (slot?.priceCents ?? svc.base_price_cents ?? 0) * party;
   const fee = 0;
   const total = price + fee;
+  /** 25% booked online; the captain collects the rest on the day. */
+  const deposit = Math.round(total * 0.25);
+  const balanceDue = total - deposit;
+
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
   const date = slot ? slot.startsAt.slice(0, 10) : "";
   const time = slot ? new Date(slot.startsAt).toISOString().slice(11, 16) : "";
