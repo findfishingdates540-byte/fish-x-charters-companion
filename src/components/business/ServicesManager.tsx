@@ -93,6 +93,7 @@ export function ServicesManager({
     queryFn: () => fetchList({ data: { businessId } }),
   });
   const [editing, setEditing] = useState<Draft | null>(null);
+  const [calendarFor, setCalendarFor] = useState<any | null>(null);
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: key });
     qc.invalidateQueries({ queryKey: ["guide-overview", businessId] });
