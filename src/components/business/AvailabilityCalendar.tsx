@@ -42,7 +42,7 @@ export function AvailabilityCalendar({
   const qc = useQueryClient();
   const fetchSlots = useServerFn(listServiceSlots);
   const update = useServerFn(updateServiceSlot);
-  const update = useServerFn(updateServiceSlot);
+
   const remove = useServerFn(deleteServiceSlot);
   const saveRules = useServerFn(updateServiceBookingRules);
 
