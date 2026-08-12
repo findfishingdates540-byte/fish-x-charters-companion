@@ -535,16 +535,21 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
               </div>
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Order summary</div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip</span><span style={{ color: V.ink }}>{money(price)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip total</span><span style={{ color: V.ink }}>{money(price)}</span></div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
-                  <span>Total due today</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(total)}</span>
+                  <span>Deposit due today (25%)</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(deposit)}</span>
                 </div>
                 <div style={{ margin: "6px 0 14px", padding: "12px 14px", border: "1px dashed rgba(31,159,190,.5)", borderRadius: 12, background: "#eef7fa" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5 }}><span style={{ color: V.tmut }}>Held in escrow</span><span style={{ fontWeight: 700, color: V.cyan }}>{money(total)}</span></div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginTop: 5 }}><span style={{ color: V.tmut }}>Released to captain</span><span>After your trip</span></div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5 }}><span style={{ color: V.tmut }}>Deposit held in escrow</span><span style={{ fontWeight: 700, color: V.cyan }}>{money(deposit)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginTop: 5 }}><span style={{ color: V.tmut }}>Balance to captain on the day</span><span style={{ fontWeight: 700 }}>{money(balanceDue)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginTop: 5 }}><span style={{ color: V.tmut }}>Deposit released to captain</span><span>3 days after your trip</span></div>
+                  <div style={{ fontSize: 11.5, color: V.tmut, marginTop: 8, lineHeight: 1.5 }}>
+                    Pay the balance directly to your captain — cash or card, and tips are customary. Anglers are responsible for their own fishing licenses.
+                  </div>
                 </div>
+
                 <button
                   onClick={() => placeMut.mutate()}
                   disabled={placeMut.isPending}
