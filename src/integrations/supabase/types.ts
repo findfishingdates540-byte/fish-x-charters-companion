@@ -2406,10 +2406,31 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_listing_event: {
+        Args: {
+          _event_kind: string
+          _features?: Json
+          _position?: number
+          _query?: Json
+          _service_id: string
+          _session_id?: string
+        }
+        Returns: undefined
+      }
       mark_product_order_delivered: {
         Args: { _order_id: string }
         Returns: undefined
       }
+      rank_listings: {
+        Args: { _city?: string; _kinds?: string[]; _limit?: number }
+        Returns: {
+          business_id: string
+          features: Json
+          score: number
+          service_id: string
+        }[]
+      }
+      recompute_listing_metrics: { Args: never; Returns: number }
       release_delivered_product_payouts: {
         Args: { _limit?: number }
         Returns: number
