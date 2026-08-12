@@ -357,12 +357,32 @@ export function AvailabilityCalendar({
               <input
                 style={{ ...input, width: 78, padding: "6px 8px" }}
                 type="number"
+                min={Math.max(s.seats_booked ?? 0, 1)}
+                title={
+                  (s.seats_booked ?? 0) > 0
+                    ? `Can't go below ${s.seats_booked} already-booked seat(s)`
+                    : undefined
+                }
                 defaultValue={s.seats_available}
                 onBlur={(e) => {
-                  const v = Math.max(1, Number(e.target.value));
+                  const floor = Math.max(s.seats_booked ?? 0, 1);
+                  const v = Math.max(floor, Number(e.target.value));
+                  e.target.value = String(v);
                   if (v !== s.seats_available) mUpdate.mutate({ slotId: s.id, seats: v });
                 }}
               />
+              <button
+                style={btn("ghost")}
+                disabled={(s.seats_booked ?? 0) > 0 && !s.is_blackout}
+                title={
+                  (s.seats_booked ?? 0) > 0 && !s.is_blackout
+                    ? "Cancel the existing bookings before blocking this day"
+                    : undefined
+                }
+                onClick={() => mUpdate.mutate({ slotId: s.id, isBlackout: !s.is_blackout })}
+              >
+                {s.is_blackout ? "Unblock" : "Block"}
+              </button>
               <button
                 style={btn("ghost")}
                 onClick={() => mUpdate.mutate({ slotId: s.id, isBlackout: !s.is_blackout })}
