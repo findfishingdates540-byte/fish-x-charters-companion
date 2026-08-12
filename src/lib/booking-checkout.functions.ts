@@ -77,6 +77,8 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     const row = booking as unknown as {
       id: string;
       total_cents: number;
+      deposit_cents: number;
+      balance_due_cents: number | null;
       payout_cents: number;
       application_fee_cents: number | null;
       party_size: number;
@@ -88,6 +90,11 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       hold_expires_at: string | null;
     };
 
+    // Only the deposit is charged online; the captain collects the balance
+    // on the day of the trip (cash, card, split cards, tips).
+    const chargeCents = row.deposit_cents > 0 ? row.deposit_cents : row.total_cents;
+    const balanceCents = row.balance_due_cents ?? Math.max(row.total_cents - chargeCents, 0);
+
     const { data: svc } = await supabase
       .from("bookable_services")
       .select("title,hero_url")
@@ -97,30 +104,36 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     const { getStripe } = await import("./stripe.server");
     const stripe = getStripe();
 
+    const result = {
+      bookingId: row.id,
+      totalCents: row.total_cents,
+      depositCents: chargeCents,
+      balanceDueCents: balanceCents,
+      feeCents: row.application_fee_cents ?? 0,
+      vendorCents: row.payout_cents,
+      instantBook: row.instant_book,
+      holdExpiresAt: row.hold_expires_at,
+    };
+
     // 2) Without Stripe configured (preview), settle immediately so the flow
     //    stays demoable; otherwise Stripe + the webhook drive the state.
     if (!stripe) {
       const { settlePaidBooking } = await import("./booking-settle.server");
       await settlePaidBooking(supabase as never, row.id);
-      return {
-        bookingId: row.id,
-        totalCents: row.total_cents,
-        feeCents: row.application_fee_cents ?? 0,
-        vendorCents: row.payout_cents,
-        instantBook: row.instant_book,
-        holdExpiresAt: row.hold_expires_at,
-        checkoutUrl: null as string | null,
-      };
+      return { ...result, checkoutUrl: null as string | null };
     }
 
     const origin = data.origin ?? "https://fishx-charter-hub.lovable.app";
     const metadata = {
       booking_id: row.id,
       slot_id: data.slotId,
+      deposit_cents: String(chargeCents),
+      balance_due_cents: String(balanceCents),
       vendor_cents: String(row.payout_cents),
       platform_fee_cents: String(row.application_fee_cents ?? 0),
     };
 
+    const money = (c: number) => `$${(c / 100).toFixed(2)}`;
     const session = await stripe.checkout.sessions.create(
       {
         mode: "payment",
@@ -129,10 +142,14 @@ export const createBookingFromService = createServerFn({ method: "POST" })
             quantity: 1,
             price_data: {
               currency: "usd",
-              unit_amount: row.total_cents,
+              unit_amount: chargeCents,
               product_data: {
-                name: svc?.title ?? "Fishing charter",
-                description: `${row.trip_date}${row.start_time ? ` · ${row.start_time.slice(0, 5)}` : ""} · ${row.party_size} angler(s)`,
+                name: `Deposit — ${svc?.title ?? "Fishing charter"}`,
+                description:
+                  `${row.trip_date}${row.start_time ? ` · ${row.start_time.slice(0, 5)}` : ""} · ${row.party_size} angler(s)` +
+                  (balanceCents > 0
+                    ? ` · Trip total ${money(row.total_cents)}, balance of ${money(balanceCents)} paid to the captain on the day`
+                    : ""),
                 ...(svc?.hero_url ? { images: [svc.hero_url] } : {}),
               },
             },
@@ -158,13 +175,6 @@ export const createBookingFromService = createServerFn({ method: "POST" })
         .eq("id", row.id);
     }
 
-    return {
-      bookingId: row.id,
-      totalCents: row.total_cents,
-      feeCents: row.application_fee_cents ?? 0,
-      vendorCents: row.payout_cents,
-      instantBook: row.instant_book,
-      holdExpiresAt: row.hold_expires_at,
-      checkoutUrl: session.url,
-    };
+    return { ...result, checkoutUrl: session.url };
   });
+
