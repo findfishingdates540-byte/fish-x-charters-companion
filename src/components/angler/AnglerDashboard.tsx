@@ -166,6 +166,8 @@ export function AnglerDashboard() {
             </Link>
           </nav>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
+            <NotificationBell />
+
             <label style={{ display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", borderRadius: 30, padding: "9px 15px", width: 230 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" strokeWidth="1.8">
                 <circle cx="11" cy="11" r="7" />
