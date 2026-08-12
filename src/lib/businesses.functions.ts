@@ -117,3 +117,53 @@ export const getBusinessBySlug = createServerFn({ method: "GET" })
     if (!biz) throw new Response("Not found", { status: 404 });
     return biz;
   });
+
+/**
+ * Public availability for one published listing — anonymous anglers can see
+ * released days, seats left and instant-book eligibility before signing in.
+ */
+export const getPublicServiceAvailability = createServerFn({ method: "GET" })
+  .inputValidator((input: { serviceId: string }) =>
+    z.object({ serviceId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const sb = publicClient();
+    const { data: svc, error: svcErr } = await sb
+      .from("bookable_services")
+      .select("id,capacity,base_price_cents,instant_book,accept_window_hours,duration_minutes")
+      .eq("id", data.serviceId)
+      .eq("is_published", true)
+      .maybeSingle();
+    if (svcErr) throw new Response(svcErr.message, { status: 500 });
+    if (!svc) throw new Response("Listing not found", { status: 404 });
+
+    const { data: rows, error } = await sb
+      .from("service_availability")
+      .select("id,starts_at,ends_at,seats_available,seats_booked,price_cents,is_blackout")
+      .eq("service_id", data.serviceId)
+      .eq("is_blackout", false)
+      .gte("starts_at", new Date().toISOString())
+      .order("starts_at", { ascending: true })
+      .limit(180);
+    if (error) throw new Response(error.message, { status: 500 });
+
+    const slots = (rows ?? [])
+      .map((s) => ({
+        id: s.id,
+        startsAt: s.starts_at,
+        endsAt: s.ends_at,
+        seatsLeft: Math.max((s.seats_available ?? 0) - (s.seats_booked ?? 0), 0),
+        seatsTotal: s.seats_available ?? 0,
+        priceCents: s.price_cents ?? svc.base_price_cents ?? 0,
+      }))
+      .filter((s) => s.seatsLeft > 0);
+
+    return {
+      serviceId: svc.id,
+      instantBook: svc.instant_book !== false,
+      acceptWindowHours: svc.accept_window_hours ?? 24,
+      durationMinutes: svc.duration_minutes,
+      capacity: svc.capacity ?? 0,
+      slots,
+    };
+  });
