@@ -79,6 +79,9 @@ export function AvailabilityCalendar({
     return out;
   }, [cursor]);
 
+  // Policy for touching days that already have published departures.
+  const [mode, setMode] = useState<"keep" | "replace">("keep");
+
   // Live conflict detection for the pending selection.
   const checkConflicts = useServerFn(checkSlotConflicts);
   const { data: conflictCheck } = useQuery({
@@ -91,24 +94,41 @@ export function AvailabilityCalendar({
   });
   const conflicts = conflictCheck?.conflicts ?? [];
 
+  // Immediate impact preview for the chosen policy.
+  const previewAdjust = useServerFn(previewAvailabilityAdjustment);
+  const adjustPayload = {
+    serviceId: service.id,
+    dates: picked,
+    startTime,
+    durationMinutes: duration,
+    seats,
+    priceCents: Math.round(price * 100) || null,
+    mode,
+  };
+  const { data: preview, isFetching: previewing } = useQuery({
+    queryKey: [
+      "slot-adjust-preview",
+      service.id,
+      picked.join(","),
+      startTime,
+      duration,
+      seats,
+      price,
+      mode,
+    ],
+    enabled: picked.length > 0,
+    queryFn: () => previewAdjust({ data: adjustPayload }),
+  });
+
+  const applyAdjust = useServerFn(applyAvailabilityAdjustment);
   const mCreate = useMutation({
-    mutationFn: (skipConflicts: boolean) =>
-      create({
-        data: {
-          serviceId: service.id,
-          dates: picked,
-          startTime,
-          durationMinutes: duration,
-          seats,
-          priceCents: Math.round(price * 100) || null,
-          skipConflicts,
-        },
-      }),
+    mutationFn: () => applyAdjust({ data: adjustPayload }),
     onSuccess: () => {
       setPicked([]);
       invalidate();
     },
   });
+
   const mUpdate = useMutation({
     mutationFn: (v: { slotId: string; seats?: number; isBlackout?: boolean }) => update({ data: v }),
     onSuccess: invalidate,
