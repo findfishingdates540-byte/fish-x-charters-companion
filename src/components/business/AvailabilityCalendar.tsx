@@ -13,6 +13,7 @@ import {
   updateServiceSlot,
   deleteServiceSlot,
   updateServiceBookingRules,
+  checkSlotConflicts,
 } from "@/lib/availability.functions";
 import { money } from "@/components/operator/OperatorShell";
 import { input, btn } from "@/components/business/BusinessSettings";
@@ -78,8 +79,20 @@ export function AvailabilityCalendar({
     return out;
   }, [cursor]);
 
+  // Live conflict detection for the pending selection.
+  const checkConflicts = useServerFn(checkSlotConflicts);
+  const { data: conflictCheck } = useQuery({
+    queryKey: ["slot-conflicts", service.id, picked.join(","), startTime, duration],
+    enabled: picked.length > 0,
+    queryFn: () =>
+      checkConflicts({
+        data: { serviceId: service.id, dates: picked, startTime, durationMinutes: duration },
+      }),
+  });
+  const conflicts = conflictCheck?.conflicts ?? [];
+
   const mCreate = useMutation({
-    mutationFn: () =>
+    mutationFn: (skipConflicts: boolean) =>
       create({
         data: {
           serviceId: service.id,
@@ -88,6 +101,7 @@ export function AvailabilityCalendar({
           durationMinutes: duration,
           seats,
           priceCents: Math.round(price * 100) || null,
+          skipConflicts,
         },
       }),
     onSuccess: () => {
@@ -255,16 +269,51 @@ export function AvailabilityCalendar({
             />
             Instant book — limited to published seats
           </label>
-          {mCreate.error && (
-            <div style={{ fontSize: 12.5, color: "#b3261e" }}>{String((mCreate.error as Error).message)}</div>
+          {conflicts.length > 0 && (
+            <div
+              style={{
+                fontSize: 12.5,
+                color: "#8a5a00",
+                background: "#fff7e6",
+                border: "1px solid rgba(201,138,18,.35)",
+                borderRadius: 12,
+                padding: "10px 12px",
+                display: "grid",
+                gap: 4,
+              }}
+            >
+              <strong style={{ color: "#8a5a00" }}>
+                {conflicts.length} conflicting day{conflicts.length === 1 ? "" : "s"}
+              </strong>
+              {conflicts.slice(0, 4).map((c) => (
+                <span key={c.date}>
+                  {c.date} — {c.reason}
+                </span>
+              ))}
+            </div>
+          )}
+          {(mCreate.error || mUpdate.error) && (
+            <div style={{ fontSize: 12.5, color: "#b3261e" }}>
+              {String(((mCreate.error || mUpdate.error) as Error).message)}
+            </div>
           )}
           <button
             style={btn("primary")}
-            disabled={picked.length === 0 || mCreate.isPending}
-            onClick={() => mCreate.mutate()}
+            disabled={picked.length === 0 || mCreate.isPending || conflicts.length >= picked.length}
+            onClick={() => mCreate.mutate(false)}
           >
             {mCreate.isPending ? "Publishing…" : "Publish availability"}
           </button>
+          {conflicts.length > 0 && conflicts.length < picked.length && (
+            <button
+              style={btn("ghost")}
+              disabled={mCreate.isPending}
+              onClick={() => mCreate.mutate(true)}
+            >
+              Publish the {picked.length - conflicts.length} clear day
+              {picked.length - conflicts.length === 1 ? "" : "s"} only
+            </button>
+          )}
         </div>
       </div>
 
@@ -308,14 +357,28 @@ export function AvailabilityCalendar({
               <input
                 style={{ ...input, width: 78, padding: "6px 8px" }}
                 type="number"
+                min={Math.max(s.seats_booked ?? 0, 1)}
+                title={
+                  (s.seats_booked ?? 0) > 0
+                    ? `Can't go below ${s.seats_booked} already-booked seat(s)`
+                    : undefined
+                }
                 defaultValue={s.seats_available}
                 onBlur={(e) => {
-                  const v = Math.max(1, Number(e.target.value));
+                  const floor = Math.max(s.seats_booked ?? 0, 1);
+                  const v = Math.max(floor, Number(e.target.value));
+                  e.target.value = String(v);
                   if (v !== s.seats_available) mUpdate.mutate({ slotId: s.id, seats: v });
                 }}
               />
               <button
                 style={btn("ghost")}
+                disabled={(s.seats_booked ?? 0) > 0 && !s.is_blackout}
+                title={
+                  (s.seats_booked ?? 0) > 0 && !s.is_blackout
+                    ? "Cancel the existing bookings before blocking this day"
+                    : undefined
+                }
                 onClick={() => mUpdate.mutate({ slotId: s.id, isBlackout: !s.is_blackout })}
               >
                 {s.is_blackout ? "Unblock" : "Block"}
