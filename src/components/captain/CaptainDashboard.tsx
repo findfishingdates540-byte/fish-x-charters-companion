@@ -19,6 +19,7 @@ import {
   toggleServicePublished,
 } from "@/lib/captain-management.functions";
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+import { BusinessSettings } from "@/components/business/BusinessSettings";
 
 export const captainDashboardQO = queryOptions({
   queryKey: ["captain-dashboard"],
@@ -625,28 +626,10 @@ function MessagesPanel() {
 
 function SettingsPanel({ data }: { data: CaptainData }) {
   const biz = data.business;
+  if (!biz) return <Empty text="Complete onboarding to set up your business." />;
   return (
-    <div style={{ display: "grid", gap: 18 }}>
-      <Panel title="Business profile">
-        {!biz && <Empty text="Complete onboarding to set up your business." />}
-        {biz && (
-          <div style={{ display: "grid", gap: 10, fontSize: 13.5 }}>
-            <Row k="Name" v={biz.name} />
-            <Row k="Location" v={[biz.city, biz.region].filter(Boolean).join(", ") || "—"} />
-            <Row k="Category" v={biz.category_key ?? "—"} />
-            <Row k="Status" v={biz.is_published ? "Published" : "Draft"} />
-            <Row k="Verification" v={biz.verified_at ? "★ Verified" : "Pending"} />
-            <div style={{ marginTop: 8 }}>
-              <Link to="/onboarding" style={{ color: "var(--goldtext)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
-                Edit business →
-              </Link>
-            </div>
-          </div>
-        )}
-      </Panel>
-      <Panel title="Payouts">
-        <PayoutsConnect businessId={biz?.id} />
-      </Panel>
+    <div style={{ background: "#eef2f5", margin: -4, padding: 4, borderRadius: 18 }}>
+      <BusinessSettings businessId={biz.id} />
     </div>
   );
 }
