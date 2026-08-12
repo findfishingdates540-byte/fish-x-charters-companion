@@ -83,13 +83,10 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const business = svc.business as { id: string; slug: string; name: string; city: string | null; region: string | null; logo_url: string | null; hero_url: string | null } | null;
 
   const [step, setStep] = useState<Step>("detail");
-  const [date, setDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 14);
-    return d.toISOString().slice(0, 10);
-  });
+  const openSlots = svc.openSlots ?? [];
+  const [slotId, setSlotId] = useState(() => openSlots[0]?.id ?? "");
+  const slot = openSlots.find((s) => s.id === slotId) ?? openSlots[0] ?? null;
   const [party, setParty] = useState(2);
-  const [time, setTime] = useState("07:00");
 
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
@@ -98,15 +95,20 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const [reviewed, setReviewed] = useState(false);
   const [toast, setToast] = useState("");
 
-  const cap = 8;
-  const price = svc.base_price_cents ?? 0;
+  const instantBook = svc.instant_book !== false;
+  const seatsLeft = slot?.seatsLeft ?? 0;
+  const cap = Math.max(1, Math.min(svc.capacity ?? 8, seatsLeft || svc.capacity || 8));
+  const price = (slot?.priceCents ?? svc.base_price_cents ?? 0) * party;
   const fee = 0;
   const total = price + fee;
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
+  const date = slot ? slot.startsAt.slice(0, 10) : "";
+  const time = slot ? new Date(slot.startsAt).toISOString().slice(11, 16) : "";
   const dateLabel = useMemo(() => {
-    try { return new Date(date + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }); }
-    catch { return date; }
-  }, [date]);
+    if (!slot) return "No dates released";
+    return new Date(slot.startsAt).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  }, [slot]);
+
 
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 2400); };
 
