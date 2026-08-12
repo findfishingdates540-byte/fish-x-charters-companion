@@ -230,6 +230,228 @@ export const deleteServiceSlot = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* ------------------------------------------------------------------ *
+ * Adjusting FUTURE published availability with an explicit policy.
+ *
+ * `keep`    — never touch a day that already has published departures.
+ * `replace` — republish the day at the new time/seats/price, but any
+ *             departure with booked seats is preserved (never cancelled);
+ *             it is repriced/resized in place when that is safe.
+ * ------------------------------------------------------------------ */
+
+const AdjustInput = CreateInput.omit({ skipConflicts: true }).extend({
+  mode: z.enum(["keep", "replace"]),
+});
+
+type DayPlan = {
+  date: string;
+  action: "create" | "replace" | "keep" | "skip";
+  existingSlots: number;
+  bookedSeats: number;
+  seatsBefore: number;
+  seatsAfter: number;
+  detail: string;
+};
+
+async function planAdjustment(
+  supabase: any,
+  data: z.infer<typeof AdjustInput>,
+): Promise<{ plan: DayPlan[]; windows: Window[] }> {
+  const windows = windowsFor(data.dates, data.startTime, data.durationMinutes);
+  const dayStart = `${data.dates.slice().sort()[0]}T00:00:00.000Z`;
+  const lastDate = data.dates.slice().sort().at(-1)!;
+  const dayEnd = new Date(new Date(`${lastDate}T00:00:00.000Z`).getTime() + 2 * 86400_000).toISOString();
+
+  const { data: existing } = await supabase
+    .from("service_availability")
+    .select("id,starts_at,ends_at,seats_available,seats_booked,is_blackout,price_cents")
+    .eq("service_id", data.serviceId)
+    .gte("starts_at", dayStart)
+    .lt("starts_at", dayEnd);
+
+  const nowIso = new Date().toISOString();
+  const plan: DayPlan[] = windows.map((w) => {
+    const same = (existing ?? []).filter((e: any) => e.starts_at.slice(0, 10) === w.date);
+    const booked = same.reduce((n: number, e: any) => n + (e.seats_booked ?? 0), 0);
+    const seatsBefore = same.reduce((n: number, e: any) => n + (e.seats_available ?? 0), 0);
+    const isPast = w.starts < nowIso;
+
+    if (isPast)
+      return {
+        date: w.date,
+        action: "skip",
+        existingSlots: same.length,
+        bookedSeats: booked,
+        seatsBefore,
+        seatsAfter: seatsBefore,
+        detail: "in the past — left alone",
+      };
+    if (same.length === 0)
+      return {
+        date: w.date,
+        action: "create",
+        existingSlots: 0,
+        bookedSeats: 0,
+        seatsBefore: 0,
+        seatsAfter: data.seats,
+        detail: `new departure at ${data.startTime} · ${data.seats} seats`,
+      };
+    if (data.mode === "keep")
+      return {
+        date: w.date,
+        action: "keep",
+        existingSlots: same.length,
+        bookedSeats: booked,
+        seatsBefore,
+        seatsAfter: seatsBefore,
+        detail: booked
+          ? `left as-is — ${booked} booked seat(s)`
+          : "left as-is — already published",
+      };
+
+    // replace
+    const bookedSlots = same.filter((e: any) => (e.seats_booked ?? 0) > 0);
+    const clearSlots = same.filter((e: any) => (e.seats_booked ?? 0) === 0);
+    const keptSeats = bookedSlots.reduce(
+      (n: number, e: any) => n + Math.max(data.seats, e.seats_booked ?? 0),
+      0,
+    );
+    return {
+      date: w.date,
+      action: "replace",
+      existingSlots: same.length,
+      bookedSeats: booked,
+      seatsBefore,
+      seatsAfter: bookedSlots.length ? keptSeats : data.seats,
+      detail: bookedSlots.length
+        ? `${bookedSlots.length} booked departure(s) kept and updated${
+            clearSlots.length ? `, ${clearSlots.length} empty one(s) replaced` : ""
+          }`
+        : `republished at ${data.startTime} · ${data.seats} seats`,
+    };
+  });
+
+  return { plan, windows };
+}
+
+function summarise(plan: DayPlan[], seats: number) {
+  const created = plan.filter((p) => p.action === "create").length;
+  const replaced = plan.filter((p) => p.action === "replace").length;
+  const kept = plan.filter((p) => p.action === "keep").length;
+  const skipped = plan.filter((p) => p.action === "skip").length;
+  const bookingsTouched = plan
+    .filter((p) => p.action === "replace")
+    .reduce((n, p) => n + p.bookedSeats, 0);
+  const seatDelta = plan.reduce((n, p) => n + (p.seatsAfter - p.seatsBefore), 0);
+  const parts: string[] = [];
+  if (created) parts.push(`${created} new day${created === 1 ? "" : "s"} published at ${seats} seats`);
+  if (replaced) parts.push(`${replaced} day${replaced === 1 ? "" : "s"} republished`);
+  if (kept) parts.push(`${kept} day${kept === 1 ? "" : "s"} left untouched`);
+  if (skipped) parts.push(`${skipped} past day${skipped === 1 ? "" : "s"} ignored`);
+  parts.push(
+    bookingsTouched
+      ? `${bookingsTouched} booked seat(s) preserved — no angler loses a trip`
+      : "no existing bookings affected",
+  );
+  if (seatDelta !== 0)
+    parts.push(`${seatDelta > 0 ? "+" : ""}${seatDelta} bookable seat${Math.abs(seatDelta) === 1 ? "" : "s"} overall`);
+  return {
+    created,
+    replaced,
+    kept,
+    skipped,
+    bookingsTouched,
+    seatDelta,
+    headline: parts.join(" · "),
+  };
+}
+
+/** Dry run — what would happen if this policy were applied. */
+export const previewAvailabilityAdjustment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => AdjustInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { plan } = await planAdjustment(context.supabase, data);
+    return { plan, summary: summarise(plan, data.seats) };
+  });
+
+/** Apply the adjustment. Booked departures are never deleted. */
+export const applyAvailabilityAdjustment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => AdjustInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { plan, windows } = await planAdjustment(context.supabase, data);
+    const priceCents = data.priceCents ?? null;
+    const byDate = new Map(windows.map((w) => [w.date, w]));
+
+    const toInsert: any[] = [];
+    for (const p of plan) {
+      const w = byDate.get(p.date)!;
+      if (p.action === "create") {
+        toInsert.push({
+          service_id: data.serviceId,
+          starts_at: w.starts,
+          ends_at: w.ends,
+          seats_available: data.seats,
+          price_cents: priceCents,
+          notes: data.notes ?? null,
+          is_blackout: false,
+        });
+        continue;
+      }
+      if (p.action !== "replace") continue;
+
+      const { data: same } = await context.supabase
+        .from("service_availability")
+        .select("id,seats_booked,seats_available")
+        .eq("service_id", data.serviceId)
+        .gte("starts_at", `${p.date}T00:00:00.000Z`)
+        .lt("starts_at", `${p.date}T23:59:59.999Z`);
+
+      const booked = (same ?? []).filter((s: any) => (s.seats_booked ?? 0) > 0);
+      const clear = (same ?? []).filter((s: any) => (s.seats_booked ?? 0) === 0);
+
+      // Keep booked departures — just resize/reprice them safely.
+      for (const s of booked) {
+        const seats = Math.max(data.seats, s.seats_booked ?? 0);
+        const { error } = await context.supabase
+          .from("service_availability")
+          .update({ seats_available: seats, price_cents: priceCents, is_blackout: false })
+          .eq("id", s.id);
+        if (error) throw new Response(error.message, { status: 400 });
+      }
+      // Empty departures can be swapped out for the new window.
+      if (clear.length > 0) {
+        const { error } = await context.supabase
+          .from("service_availability")
+          .delete()
+          .in(
+            "id",
+            clear.map((s: any) => s.id),
+          );
+        if (error) throw new Response(error.message, { status: 400 });
+      }
+      if (booked.length === 0) {
+        toInsert.push({
+          service_id: data.serviceId,
+          starts_at: w.starts,
+          ends_at: w.ends,
+          seats_available: data.seats,
+          price_cents: priceCents,
+          notes: data.notes ?? null,
+          is_blackout: false,
+        });
+      }
+    }
+
+    if (toInsert.length > 0) {
+      const { error } = await context.supabase.from("service_availability").insert(toInsert);
+      if (error) throw new Response(error.message, { status: 400 });
+    }
+    return { plan, summary: summarise(plan, data.seats) };
+  });
+
+
 
 /** Listing-level booking rules: instant book, accept window, cancellation policy. */
 export const updateServiceBookingRules = createServerFn({ method: "POST" })

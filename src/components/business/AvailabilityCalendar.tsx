@@ -9,12 +9,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   listServiceSlots,
-  createServiceSlots,
   updateServiceSlot,
   deleteServiceSlot,
   updateServiceBookingRules,
   checkSlotConflicts,
+  previewAvailabilityAdjustment,
+  applyAvailabilityAdjustment,
 } from "@/lib/availability.functions";
+
 import { money } from "@/components/operator/OperatorShell";
 import { input, btn } from "@/components/business/BusinessSettings";
 
@@ -39,8 +41,8 @@ export function AvailabilityCalendar({
 }) {
   const qc = useQueryClient();
   const fetchSlots = useServerFn(listServiceSlots);
-  const create = useServerFn(createServiceSlots);
   const update = useServerFn(updateServiceSlot);
+
   const remove = useServerFn(deleteServiceSlot);
   const saveRules = useServerFn(updateServiceBookingRules);
 
@@ -79,6 +81,9 @@ export function AvailabilityCalendar({
     return out;
   }, [cursor]);
 
+  // Policy for touching days that already have published departures.
+  const [mode, setMode] = useState<"keep" | "replace">("keep");
+
   // Live conflict detection for the pending selection.
   const checkConflicts = useServerFn(checkSlotConflicts);
   const { data: conflictCheck } = useQuery({
@@ -91,24 +96,41 @@ export function AvailabilityCalendar({
   });
   const conflicts = conflictCheck?.conflicts ?? [];
 
+  // Immediate impact preview for the chosen policy.
+  const previewAdjust = useServerFn(previewAvailabilityAdjustment);
+  const adjustPayload = {
+    serviceId: service.id,
+    dates: picked,
+    startTime,
+    durationMinutes: duration,
+    seats,
+    priceCents: Math.round(price * 100) || null,
+    mode,
+  };
+  const { data: preview, isFetching: previewing } = useQuery({
+    queryKey: [
+      "slot-adjust-preview",
+      service.id,
+      picked.join(","),
+      startTime,
+      duration,
+      seats,
+      price,
+      mode,
+    ],
+    enabled: picked.length > 0,
+    queryFn: () => previewAdjust({ data: adjustPayload }),
+  });
+
+  const applyAdjust = useServerFn(applyAvailabilityAdjustment);
   const mCreate = useMutation({
-    mutationFn: (skipConflicts: boolean) =>
-      create({
-        data: {
-          serviceId: service.id,
-          dates: picked,
-          startTime,
-          durationMinutes: duration,
-          seats,
-          priceCents: Math.round(price * 100) || null,
-          skipConflicts,
-        },
-      }),
+    mutationFn: () => applyAdjust({ data: adjustPayload }),
     onSuccess: () => {
       setPicked([]);
       invalidate();
     },
   });
+
   const mUpdate = useMutation({
     mutationFn: (v: { slotId: string; seats?: number; isBlackout?: boolean }) => update({ data: v }),
     onSuccess: invalidate,
@@ -269,7 +291,88 @@ export function AvailabilityCalendar({
             />
             Instant book — limited to published seats
           </label>
-          {conflicts.length > 0 && (
+          <Field label="If a selected day is already published">
+            <div style={{ display: "grid", gap: 6 }}>
+              {(
+                [
+                  {
+                    v: "keep" as const,
+                    t: "Keep existing departures",
+                    d: "Only brand-new days are published. Nothing already on the calendar changes.",
+                  },
+                  {
+                    v: "replace" as const,
+                    t: "Replace with these settings",
+                    d: "Empty departures are republished at the new time, seats and price. Days with bookings are kept and updated — never cancelled.",
+                  },
+                ]
+              ).map((o) => (
+                <label
+                  key={o.v}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "auto 1fr",
+                    gap: 8,
+                    alignItems: "start",
+                    padding: "9px 11px",
+                    borderRadius: 12,
+                    cursor: "pointer",
+                    border:
+                      mode === o.v ? "1px solid #0a2236" : "1px solid rgba(13,34,54,.12)",
+                    background: mode === o.v ? "rgba(10,34,54,.04)" : "#fbfcfd",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="availability-mode"
+                    checked={mode === o.v}
+                    onChange={() => setMode(o.v)}
+                    style={{ accentColor: "#0a2236", marginTop: 3 }}
+                  />
+                  <span>
+                    <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236" }}>{o.t}</span>
+                    <span style={{ display: "block", fontSize: 12, color: "#7b8b99" }}>{o.d}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </Field>
+
+          {picked.length > 0 && (
+            <div
+              style={{
+                fontSize: 12.5,
+                color: "#0d2236",
+                background: "rgba(31,122,77,.07)",
+                border: "1px solid rgba(31,122,77,.28)",
+                borderRadius: 12,
+                padding: "10px 12px",
+                display: "grid",
+                gap: 5,
+              }}
+            >
+              <strong style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: "#1f7a4d" }}>
+                What happens when you save
+              </strong>
+              {previewing && !preview ? (
+                <span style={{ color: "#7b8b99" }}>Checking impact…</span>
+              ) : (
+                <>
+                  <span>{preview?.summary.headline}</span>
+                  {(preview?.plan ?? [])
+                    .filter((p) => p.action !== "create")
+                    .slice(0, 4)
+                    .map((p) => (
+                      <span key={p.date} style={{ color: "#44586a" }}>
+                        {p.date} — {p.detail}
+                      </span>
+                    ))}
+                </>
+              )}
+            </div>
+          )}
+
+          {mode === "keep" && conflicts.length > 0 && (
             <div
               style={{
                 fontSize: 12.5,
@@ -283,13 +386,14 @@ export function AvailabilityCalendar({
               }}
             >
               <strong style={{ color: "#8a5a00" }}>
-                {conflicts.length} conflicting day{conflicts.length === 1 ? "" : "s"}
+                {conflicts.length} day{conflicts.length === 1 ? "" : "s"} already published — skipped
               </strong>
               {conflicts.slice(0, 4).map((c) => (
                 <span key={c.date}>
                   {c.date} — {c.reason}
                 </span>
               ))}
+              <span>Switch to “Replace with these settings” to update them instead.</span>
             </div>
           )}
           {(mCreate.error || mUpdate.error) && (
@@ -299,21 +403,25 @@ export function AvailabilityCalendar({
           )}
           <button
             style={btn("primary")}
-            disabled={picked.length === 0 || mCreate.isPending || conflicts.length >= picked.length}
-            onClick={() => mCreate.mutate(false)}
+            disabled={
+              picked.length === 0 ||
+              mCreate.isPending ||
+              (preview ? preview.summary.created + preview.summary.replaced === 0 : false)
+            }
+            onClick={() => mCreate.mutate()}
           >
-            {mCreate.isPending ? "Publishing…" : "Publish availability"}
+            {mCreate.isPending
+              ? "Saving…"
+              : mode === "replace"
+                ? "Apply to selected days"
+                : "Publish availability"}
           </button>
-          {conflicts.length > 0 && conflicts.length < picked.length && (
-            <button
-              style={btn("ghost")}
-              disabled={mCreate.isPending}
-              onClick={() => mCreate.mutate(true)}
-            >
-              Publish the {picked.length - conflicts.length} clear day
-              {picked.length - conflicts.length === 1 ? "" : "s"} only
-            </button>
+          {preview && preview.summary.created + preview.summary.replaced === 0 && (
+            <div style={{ fontSize: 12, color: "#7b8b99" }}>
+              Nothing to change with this policy — every selected day is already published.
+            </div>
           )}
+
         </div>
       </div>
 
