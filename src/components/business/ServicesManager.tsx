@@ -158,6 +158,10 @@ export function ServicesManager({
         />
       )}
 
+      {calendarFor && (
+        <AvailabilityCalendar service={calendarFor} onClose={() => setCalendarFor(null)} />
+      )}
+
       {isLoading && <div style={{ fontSize: 13, color: "#7b8b99" }}>Loading listings…</div>}
       {!isLoading && (rows ?? []).length === 0 && !editing && (
         <div style={{ fontSize: 13.5, color: "#7b8b99" }}>{emptyText}</div>
