@@ -21,6 +21,8 @@ import {
   money,
 } from "@/components/operator/OperatorShell";
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+import { BusinessSettings } from "@/components/business/BusinessSettings";
+import { ServicesManager } from "@/components/business/ServicesManager";
 
 type Slip = {
   id: string;
@@ -52,7 +54,9 @@ const NAV: OperatorNavItem[] = [
   { key: "slips", label: "Slips", icon: <BoatIcon /> },
   { key: "reservations", label: "Reservations", icon: <CalIcon /> },
   { key: "services", label: "Services", icon: <WrenchIcon /> },
+  { key: "listings", label: "Listings", icon: <MTagIcon /> },
   { key: "payouts", label: "Payouts", icon: <PayoutIcon /> },
+  { key: "settings", label: "Settings", icon: <MGearIcon /> },
 ];
 
 export function MarinaDashboard({
@@ -77,7 +81,9 @@ export function MarinaDashboard({
     slips: { t: "Slip inventory", s: "Manage berths, rates, and status." },
     reservations: { t: "Reservations", s: "Vessels arriving and staying." },
     services: { t: "Marina services", s: "Amenities and operating settings." },
+    listings: { t: "Bookable listings", s: "Transient slips, lodging and experiences." },
     payouts: { t: "Payouts", s: "Connect your bank and manage payouts." },
+    settings: { t: "Settings", s: "Profile, team, notifications and payouts." },
   };
 
   return (
@@ -123,11 +129,21 @@ export function MarinaDashboard({
         <Reservations businessId={businessId} data={data} />
       )}
       {active === "services" && <Services />}
+      {active === "listings" && (
+        <ServicesManager
+          businessId={businessId}
+          kinds={["slip_rental", "lodging", "workshop", "rental", "charter_trip", "other"]}
+          eyebrow="Listings"
+          title="Bookable listings"
+          emptyText="No bookable listings yet — publish transient slips, lodging or experiences."
+        />
+      )}
       {active === "payouts" && (
         <Card eyebrow="Payouts" title="Bank & payouts">
           <PayoutsConnect businessId={businessId} />
         </Card>
       )}
+      {active === "settings" && <BusinessSettings businessId={businessId} />}
     </OperatorShell>
   );
 }
@@ -749,3 +765,21 @@ function PayoutIcon() {
 
 // keep useMemo import used to avoid unused warning if we add filters later
 void useMemo;
+
+function MTagIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <path d="M20.6 13.4 12 4.8H4.8V12l8.6 8.6a1.7 1.7 0 0 0 2.4 0l4.8-4.8a1.7 1.7 0 0 0 0-2.4Z" />
+      <circle cx="8.3" cy="8.3" r="1.2" />
+    </svg>
+  );
+}
+
+function MGearIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M4 12h2m12 0h2M12 4v2m0 12v2M6.5 6.5 8 8m8 8 1.5 1.5M17.5 6.5 16 8M8 16l-1.5 1.5" />
+    </svg>
+  );
+}

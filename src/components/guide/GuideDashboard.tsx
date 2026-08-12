@@ -21,6 +21,8 @@ import {
   money,
 } from "@/components/operator/OperatorShell";
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+import { BusinessSettings } from "@/components/business/BusinessSettings";
+import { ServicesManager } from "@/components/business/ServicesManager";
 
 const overviewQO = (businessId: string) =>
   queryOptions({
@@ -69,7 +71,9 @@ export function GuideDashboard({
       icon: <InboxIcon />,
       badge: data.requests.length || undefined,
     },
+    { key: "listings", label: "Listings", icon: <TagIcon /> },
     { key: "payouts", label: "Payouts", icon: <PayoutIcon /> },
+    { key: "settings", label: "Settings", icon: <GearIcon /> },
   ];
 
   const titles: Record<string, { t: string; s: string }> = {
@@ -81,7 +85,9 @@ export function GuideDashboard({
     guides: { t: "Guides", s: "Your roster & performance." },
     slots: { t: "Availability", s: "Bookable slots across your services." },
     requests: { t: "Requests", s: "New bookings waiting on you." },
+    listings: { t: "Listings", s: "Your bookable guided trips and clinics." },
     payouts: { t: "Payouts", s: "Connect your bank and manage payouts." },
+    settings: { t: "Settings", s: "Profile, team, notifications and payouts." },
   };
 
   return (
@@ -101,11 +107,21 @@ export function GuideDashboard({
       {active === "guides" && <Roster data={data} />}
       {active === "slots" && <Slots businessId={businessId} data={data} />}
       {active === "requests" && <Requests businessId={businessId} data={data} />}
+      {active === "listings" && (
+        <ServicesManager
+          businessId={businessId}
+          kinds={["guided_trip", "charter_trip", "workshop", "rental", "lodging", "other"]}
+          eyebrow="Listings"
+          title="Guided trips & clinics"
+          emptyText="No listings yet — publish a guided trip so anglers can book you."
+        />
+      )}
       {active === "payouts" && (
         <Card eyebrow="Payouts" title="Bank & payouts">
           <PayoutsConnect businessId={businessId} />
         </Card>
       )}
+      {active === "settings" && <BusinessSettings businessId={businessId} />}
     </OperatorShell>
   );
 }
@@ -819,6 +835,24 @@ function PayoutIcon() {
       <rect x="2" y="5" width="20" height="14" rx="2.5" />
       <path d="M2 10h20" />
       <path d="M6 15h4" />
+    </svg>
+  );
+}
+
+function TagIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <path d="M20.6 13.4 12 4.8H4.8V12l8.6 8.6a1.7 1.7 0 0 0 2.4 0l4.8-4.8a1.7 1.7 0 0 0 0-2.4Z" />
+      <circle cx="8.3" cy="8.3" r="1.2" />
+    </svg>
+  );
+}
+
+function GearIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z" />
     </svg>
   );
 }

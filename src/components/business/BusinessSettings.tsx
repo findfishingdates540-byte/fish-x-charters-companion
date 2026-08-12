@@ -1,0 +1,563 @@
+/**
+ * Shared operator Settings screen — mounted by every business vertical
+ * (charter, guide, marina/lodge, tackle/bait/gear/apparel).
+ *
+ * Sections: public profile, storefront visibility + public page link,
+ * team & roles, notification preferences, payouts.
+ */
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  getBusinessSettings,
+  updateBusinessProfile,
+  setBusinessPublished,
+  updateTeamMemberRole,
+  removeTeamMember,
+} from "@/lib/business-settings.functions";
+import {
+  getNotificationPreferences,
+  updateNotificationPreferences,
+} from "@/lib/notifications.functions";
+import { Card } from "@/components/operator/OperatorShell";
+import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+
+const NOTIF_CATEGORIES: Array<{ key: string; label: string; hint: string }> = [
+  { key: "booking", label: "Bookings", hint: "New requests, confirmations, cancellations." },
+  { key: "payment", label: "Payments & payouts", hint: "Deposits captured, payouts released." },
+  { key: "message", label: "Messages", hint: "Angler messages and enquiries." },
+  { key: "review", label: "Reviews", hint: "New reviews on your listings." },
+  { key: "system", label: "Account & verification", hint: "Verification and compliance updates." },
+];
+
+export function BusinessSettings({ businessId }: { businessId: string }) {
+  const qc = useQueryClient();
+  const fetchSettings = useServerFn(getBusinessSettings);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["business-settings", businessId],
+    queryFn: () => fetchSettings({ data: { businessId } }),
+  });
+
+  if (isLoading) return <Muted>Loading your business settings…</Muted>;
+  if (error) return <Muted>Couldn't load settings: {String((error as Error).message)}</Muted>;
+  if (!data) return null;
+
+  const canEdit = data.myRole === "owner" || data.myRole === "manager";
+
+  return (
+    <div style={{ display: "grid", gap: 20 }}>
+      <VisibilityCard business={data.business} canEdit={canEdit} onDone={() => qc.invalidateQueries({ queryKey: ["business-settings", businessId] })} />
+      <ProfileCard business={data.business} canEdit={canEdit} />
+      <TeamCard businessId={businessId} team={data.team} myRole={data.myRole} />
+      <NotificationsCard />
+      <Card eyebrow="Money" title="Payouts">
+        <PayoutsConnect businessId={businessId} />
+      </Card>
+    </div>
+  );
+}
+
+/* ------------------------------- visibility ------------------------------ */
+
+function VisibilityCard({
+  business,
+  canEdit,
+  onDone,
+}: {
+  business: any;
+  canEdit: boolean;
+  onDone: () => void;
+}) {
+  const toggle = useServerFn(setBusinessPublished);
+  const m = useMutation({
+    mutationFn: (v: boolean) => toggle({ data: { businessId: business.id, isPublished: v } }),
+    onSuccess: onDone,
+  });
+
+  return (
+    <Card
+      eyebrow="Storefront"
+      title="Visibility"
+      right={
+        <Link
+          to="/b/$slug"
+          params={{ slug: business.slug }}
+          target="_blank"
+          style={{ fontSize: 13, fontWeight: 700, color: "#a97e3c", textDecoration: "none" }}
+        >
+          View public page ↗
+        </Link>
+      }
+    >
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 14, justifyContent: "space-between" }}>
+        <div style={{ fontSize: 13.5, color: "#44586a", maxWidth: 520 }}>
+          {business.is_published
+            ? "Your business is live in the Fish-X directory and can receive bookings."
+            : "Your business is hidden. Publish it to appear in search and accept bookings."}
+          <div style={{ marginTop: 8, display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <Pill tone={business.verified_at ? "good" : "warn"}>
+              {business.verified_at ? "★ Verified" : "Verification pending"}
+            </Pill>
+            <Pill tone={business.payouts_enabled ? "good" : "warn"}>
+              {business.payouts_enabled ? "Payouts enabled" : "Payouts not connected"}
+            </Pill>
+            <Pill tone="neutral">fish-x.com/b/{business.slug}</Pill>
+          </div>
+        </div>
+        <button
+          disabled={!canEdit || m.isPending}
+          onClick={() => m.mutate(!business.is_published)}
+          style={btn(business.is_published ? "ghost" : "primary")}
+        >
+          {m.isPending ? "Saving…" : business.is_published ? "Unpublish" : "Publish storefront"}
+        </button>
+      </div>
+    </Card>
+  );
+}
+
+/* -------------------------------- profile -------------------------------- */
+
+type ProfileDraft = {
+  name: string;
+  tagline: string;
+  description: string;
+  hero_url: string;
+  logo_url: string;
+  website: string;
+  phone: string;
+  email: string;
+  address: string;
+  city: string;
+  region: string;
+  country: string;
+};
+
+const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+
+function ProfileCard({ business, canEdit }: { business: any; canEdit: boolean }) {
+  const qc = useQueryClient();
+  const save = useServerFn(updateBusinessProfile);
+  const [draft, setDraft] = useState<ProfileDraft>(() => toDraft(business));
+  const [hours, setHours] = useState<Record<string, string>>(() => {
+    const h = (business.hours_json ?? {}) as Record<string, any>;
+    return Object.fromEntries(DAYS.map((d) => [d, typeof h[d] === "string" ? h[d] : ""]));
+  });
+  const [amenities, setAmenities] = useState<string>(() => {
+    const a = (business.amenities_json ?? {}) as any;
+    return Array.isArray(a?.list) ? a.list.join(", ") : "";
+  });
+
+  useEffect(() => setDraft(toDraft(business)), [business.id]);
+
+  const m = useMutation({
+    mutationFn: () =>
+      save({
+        data: {
+          businessId: business.id,
+          ...draft,
+          hours,
+          amenities: amenities
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+        },
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["business-settings", business.id] });
+      qc.invalidateQueries({ queryKey: ["my-businesses"] });
+    },
+  });
+
+  const set = (k: keyof ProfileDraft) => (v: string) => setDraft((d) => ({ ...d, [k]: v }));
+
+  return (
+    <Card eyebrow="Public profile" title="How anglers see you">
+      <div style={{ display: "grid", gap: 16 }}>
+        <Grid2>
+          <Field label="Business name">
+            <input style={input} value={draft.name} onChange={(e) => set("name")(e.target.value)} disabled={!canEdit} />
+          </Field>
+          <Field label="Tagline">
+            <input
+              style={input}
+              placeholder="Offshore bluewater specialists since 1998"
+              value={draft.tagline}
+              onChange={(e) => set("tagline")(e.target.value)}
+              disabled={!canEdit}
+            />
+          </Field>
+        </Grid2>
+
+        <Field label="About">
+          <textarea
+            style={{ ...input, minHeight: 110, resize: "vertical", lineHeight: 1.55 }}
+            value={draft.description}
+            onChange={(e) => set("description")(e.target.value)}
+            disabled={!canEdit}
+            placeholder="Tell anglers who you are, what you target, and what makes a day with you different."
+          />
+        </Field>
+
+        <Grid2>
+          <Field label="Cover image URL">
+            <input style={input} value={draft.hero_url} onChange={(e) => set("hero_url")(e.target.value)} disabled={!canEdit} />
+          </Field>
+          <Field label="Logo URL">
+            <input style={input} value={draft.logo_url} onChange={(e) => set("logo_url")(e.target.value)} disabled={!canEdit} />
+          </Field>
+        </Grid2>
+
+        {(draft.hero_url || draft.logo_url) && (
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            {draft.hero_url && (
+              <img
+                src={draft.hero_url}
+                alt="Cover preview"
+                style={{ width: 190, height: 108, objectFit: "cover", borderRadius: 12, border: "1px solid rgba(13,34,54,.12)" }}
+              />
+            )}
+            {draft.logo_url && (
+              <img
+                src={draft.logo_url}
+                alt="Logo preview"
+                style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 12, border: "1px solid rgba(13,34,54,.12)" }}
+              />
+            )}
+          </div>
+        )}
+
+        <Grid2>
+          <Field label="Phone">
+            <input style={input} value={draft.phone} onChange={(e) => set("phone")(e.target.value)} disabled={!canEdit} />
+          </Field>
+          <Field label="Booking email">
+            <input style={input} value={draft.email} onChange={(e) => set("email")(e.target.value)} disabled={!canEdit} />
+          </Field>
+        </Grid2>
+
+        <Grid2>
+          <Field label="Website">
+            <input style={input} value={draft.website} onChange={(e) => set("website")(e.target.value)} disabled={!canEdit} />
+          </Field>
+          <Field label="Street address / dock">
+            <input style={input} value={draft.address} onChange={(e) => set("address")(e.target.value)} disabled={!canEdit} />
+          </Field>
+        </Grid2>
+
+        <Grid3>
+          <Field label="City">
+            <input style={input} value={draft.city} onChange={(e) => set("city")(e.target.value)} disabled={!canEdit} />
+          </Field>
+          <Field label="State / region">
+            <input style={input} value={draft.region} onChange={(e) => set("region")(e.target.value)} disabled={!canEdit} />
+          </Field>
+          <Field label="Country">
+            <input style={input} value={draft.country} onChange={(e) => set("country")(e.target.value)} disabled={!canEdit} />
+          </Field>
+        </Grid3>
+
+        <Field label="Opening hours">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 10 }}>
+            {DAYS.map((d) => (
+              <div key={d} style={{ display: "grid", gap: 4 }}>
+                <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: "#7b8b99", fontWeight: 700 }}>{d}</span>
+                <input
+                  style={{ ...input, padding: "8px 10px", fontSize: 13 }}
+                  placeholder="06:00 – 18:00"
+                  value={hours[d] ?? ""}
+                  onChange={(e) => setHours((h) => ({ ...h, [d]: e.target.value }))}
+                  disabled={!canEdit}
+                />
+              </div>
+            ))}
+          </div>
+        </Field>
+
+        <Field label="Amenities & features (comma separated)">
+          <input
+            style={input}
+            placeholder="Restrooms on board, Rods & tackle provided, Parking, Fish cleaning"
+            value={amenities}
+            onChange={(e) => setAmenities(e.target.value)}
+            disabled={!canEdit}
+          />
+        </Field>
+
+        {m.error && <Muted tone="bad">{String((m.error as Error).message)}</Muted>}
+
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <button disabled={!canEdit || m.isPending} onClick={() => m.mutate()} style={btn("primary")}>
+            {m.isPending ? "Saving…" : "Save profile"}
+          </button>
+          {m.isSuccess && !m.isPending && <span style={{ fontSize: 13, color: "#1f7a4d", fontWeight: 600 }}>Saved ✓</span>}
+          {!canEdit && <Muted>Only owners and managers can edit the business profile.</Muted>}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function toDraft(b: any): ProfileDraft {
+  return {
+    name: b.name ?? "",
+    tagline: b.tagline ?? "",
+    description: b.description ?? "",
+    hero_url: b.hero_url ?? "",
+    logo_url: b.logo_url ?? "",
+    website: b.website ?? "",
+    phone: b.phone ?? "",
+    email: b.email ?? "",
+    address: b.address ?? "",
+    city: b.city ?? "",
+    region: b.region ?? "",
+    country: b.country ?? "",
+  };
+}
+
+/* ---------------------------------- team --------------------------------- */
+
+function TeamCard({
+  businessId,
+  team,
+  myRole,
+}: {
+  businessId: string;
+  team: any[];
+  myRole: string;
+}) {
+  const qc = useQueryClient();
+  const setRole = useServerFn(updateTeamMemberRole);
+  const remove = useServerFn(removeTeamMember);
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["business-settings", businessId] });
+
+  const mRole = useMutation({
+    mutationFn: (v: { memberId: string; role: "owner" | "manager" | "staff" }) =>
+      setRole({ data: { businessId, ...v } }),
+    onSuccess: invalidate,
+  });
+  const mRemove = useMutation({
+    mutationFn: (memberId: string) => remove({ data: { businessId, memberId } }),
+    onSuccess: invalidate,
+  });
+
+  const isOwner = myRole === "owner";
+
+  return (
+    <Card eyebrow="Access" title="Team & roles">
+      <div style={{ display: "grid", gap: 10 }}>
+        {team.map((m) => (
+          <div
+            key={m.id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "12px 14px",
+              border: "1px solid rgba(13,34,54,.10)",
+              borderRadius: 14,
+              background: "#fbfcfd",
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                background: "#0a2236",
+                color: "#fff",
+                display: "grid",
+                placeItems: "center",
+                fontSize: 13,
+                fontWeight: 700,
+                overflow: "hidden",
+                flex: "none",
+              }}
+            >
+              {m.profile?.avatar_url ? (
+                <img src={m.profile.avatar_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                (m.profile?.display_name ?? m.profile?.full_name ?? "?").slice(0, 1).toUpperCase()
+              )}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>
+                {m.profile?.display_name ?? m.profile?.full_name ?? "Team member"}
+                {m.isMe && <span style={{ color: "#7b8b99", fontWeight: 500 }}> · you</span>}
+              </div>
+              <div style={{ fontSize: 12, color: "#7b8b99" }}>
+                Joined {new Date(m.created_at).toLocaleDateString()}
+              </div>
+            </div>
+            <select
+              value={m.role}
+              disabled={!isOwner || m.isMe || mRole.isPending}
+              onChange={(e) => mRole.mutate({ memberId: m.id, role: e.target.value as any })}
+              style={{ ...input, width: 130, padding: "8px 10px", fontSize: 13 }}
+            >
+              <option value="owner">Owner</option>
+              <option value="manager">Manager</option>
+              <option value="staff">Staff</option>
+            </select>
+            {isOwner && !m.isMe && (
+              <button onClick={() => mRemove.mutate(m.id)} style={btn("ghost")} disabled={mRemove.isPending}>
+                Remove
+              </button>
+            )}
+          </div>
+        ))}
+        {(mRole.error || mRemove.error) && (
+          <Muted tone="bad">{String(((mRole.error ?? mRemove.error) as Error).message)}</Muted>
+        )}
+        <Muted>
+          To add a teammate, ask them to create a Fish-X Charters account, then share their sign-up email with support to
+          be attached to this business.
+        </Muted>
+      </div>
+    </Card>
+  );
+}
+
+/* ----------------------------- notifications ----------------------------- */
+
+function NotificationsCard() {
+  const qc = useQueryClient();
+  const fetchPrefs = useServerFn(getNotificationPreferences);
+  const savePrefs = useServerFn(updateNotificationPreferences);
+
+  const { data } = useQuery({ queryKey: ["notification-prefs"], queryFn: () => fetchPrefs() });
+  const m = useMutation({
+    mutationFn: (v: { emailEnabled?: boolean; categories?: Record<string, boolean> }) => savePrefs({ data: v }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notification-prefs"] }),
+  });
+
+  if (!data) return null;
+  const cats = data.categories ?? {};
+
+  return (
+    <Card eyebrow="Alerts" title="Notifications">
+      <div style={{ display: "grid", gap: 12 }}>
+        <Toggle
+          label="Email notifications"
+          hint="Turn off to receive in-app alerts only."
+          checked={data.emailEnabled}
+          onChange={(v) => m.mutate({ emailEnabled: v })}
+        />
+        <div style={{ height: 1, background: "rgba(13,34,54,.08)" }} />
+        {NOTIF_CATEGORIES.map((c) => (
+          <Toggle
+            key={c.key}
+            label={c.label}
+            hint={c.hint}
+            checked={cats[c.key] !== false}
+            onChange={(v) => m.mutate({ categories: { ...cats, [c.key]: v } })}
+          />
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+/* --------------------------------- atoms --------------------------------- */
+
+function Toggle({
+  label,
+  hint,
+  checked,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label style={{ display: "flex", alignItems: "center", gap: 14, cursor: "pointer" }}>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        style={{ width: 18, height: 18, accentColor: "#0a2236" }}
+      />
+      <span style={{ flex: 1 }}>
+        <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#0d2236" }}>{label}</span>
+        {hint && <span style={{ display: "block", fontSize: 12.5, color: "#7b8b99" }}>{hint}</span>}
+      </span>
+    </label>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label style={{ display: "grid", gap: 6 }}>
+      <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#7b8b99", fontWeight: 700 }}>
+        {label}
+      </span>
+      {children}
+    </label>
+  );
+}
+
+function Grid2({ children }: { children: React.ReactNode }) {
+  return <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>{children}</div>;
+}
+function Grid3({ children }: { children: React.ReactNode }) {
+  return <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 14 }}>{children}</div>;
+}
+
+function Pill({ children, tone }: { children: React.ReactNode; tone: "good" | "warn" | "neutral" }) {
+  const map = {
+    good: { bg: "rgba(31,122,77,.10)", c: "#1f7a4d" },
+    warn: { bg: "rgba(169,126,60,.12)", c: "#a97e3c" },
+    neutral: { bg: "rgba(13,34,54,.06)", c: "#44586a" },
+  }[tone];
+  return (
+    <span style={{ background: map.bg, color: map.c, fontSize: 12, fontWeight: 700, padding: "5px 10px", borderRadius: 999 }}>
+      {children}
+    </span>
+  );
+}
+
+function Muted({ children, tone }: { children: React.ReactNode; tone?: "bad" }) {
+  return <div style={{ fontSize: 12.5, color: tone === "bad" ? "#b3261e" : "#7b8b99" }}>{children}</div>;
+}
+
+export const input: React.CSSProperties = {
+  width: "100%",
+  padding: "11px 13px",
+  borderRadius: 12,
+  border: "1px solid rgba(13,34,54,.16)",
+  background: "#fff",
+  fontSize: 14,
+  color: "#0d2236",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
+export function btn(kind: "primary" | "ghost"): React.CSSProperties {
+  return kind === "primary"
+    ? {
+        background: "#0a2236",
+        color: "#fff",
+        border: "1px solid #0a2236",
+        borderRadius: 12,
+        padding: "11px 20px",
+        fontSize: 13.5,
+        fontWeight: 700,
+        cursor: "pointer",
+        fontFamily: "inherit",
+      }
+    : {
+        background: "transparent",
+        color: "#44586a",
+        border: "1px solid rgba(13,34,54,.18)",
+        borderRadius: 12,
+        padding: "10px 16px",
+        fontSize: 13,
+        fontWeight: 600,
+        cursor: "pointer",
+        fontFamily: "inherit",
+      };
+}

@@ -20,7 +20,7 @@ import {
   StatusPill,
   money,
 } from "@/components/operator/OperatorShell";
-import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+import { BusinessSettings } from "@/components/business/BusinessSettings";
 
 type Product = {
   id: string;
@@ -560,11 +560,7 @@ function OrderList({
 }
 
 function Settings({ businessId }: { businessId: string }) {
-  return (
-    <Card eyebrow="Payouts & storefront" title="Payouts">
-      <PayoutsConnect businessId={businessId} />
-    </Card>
-  );
+  return <BusinessSettings businessId={businessId} />;
 }
 
 /* --- shared UI helpers --- */
