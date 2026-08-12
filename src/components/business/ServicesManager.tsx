@@ -14,6 +14,7 @@ import {
 } from "@/lib/business-listings.functions";
 import { Card, money } from "@/components/operator/OperatorShell";
 import { input, btn } from "@/components/business/BusinessSettings";
+import { AvailabilityCalendar } from "@/components/business/AvailabilityCalendar";
 
 export type ServiceKindKey =
   | "charter_trip"
@@ -92,6 +93,7 @@ export function ServicesManager({
     queryFn: () => fetchList({ data: { businessId } }),
   });
   const [editing, setEditing] = useState<Draft | null>(null);
+  const [calendarFor, setCalendarFor] = useState<any | null>(null);
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: key });
     qc.invalidateQueries({ queryKey: ["guide-overview", businessId] });
@@ -156,6 +158,10 @@ export function ServicesManager({
         />
       )}
 
+      {calendarFor && (
+        <AvailabilityCalendar service={calendarFor} onClose={() => setCalendarFor(null)} />
+      )}
+
       {isLoading && <div style={{ fontSize: 13, color: "#7b8b99" }}>Loading listings…</div>}
       {!isLoading && (rows ?? []).length === 0 && !editing && (
         <div style={{ fontSize: 13.5, color: "#7b8b99" }}>{emptyText}</div>
@@ -210,6 +216,12 @@ export function ServicesManager({
               onClick={() => mPublish.mutate({ id: s.id, isPublished: !s.is_published })}
             >
               {s.is_published ? "Unpublish" : "Publish"}
+            </button>
+            <button
+              style={btn("ghost")}
+              onClick={() => setCalendarFor(calendarFor?.id === s.id ? null : s)}
+            >
+              Availability
             </button>
             <button style={btn("ghost")} onClick={() => setEditing(toDraft(s))}>
               Edit
