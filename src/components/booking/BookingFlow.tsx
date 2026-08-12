@@ -382,51 +382,17 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                   </span>
                 </div>
 
-                <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ ...railLabel, marginBottom: 0 }}>Available departures</span>
-                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: instantBook ? "#4ec98e" : V.sand }}>
-                    {instantBook ? "Instant book" : "Request to book"}
-                  </span>
+                <div style={{ marginBottom: 14 }}>
+                  <PublicAvailabilityCalendar
+                    serviceId={serviceId}
+                    selectedSlotId={slot?.id ?? null}
+                    partySize={party}
+                    theme="dark"
+                    onSelectSlot={(s) => setSlotId(s.id)}
+                  />
                 </div>
 
-                {openSlots.length === 0 ? (
-                  <div style={{ border: `1px dashed ${V.lined}`, borderRadius: 12, padding: "18px 14px", fontSize: 13, color: V.ondmut, lineHeight: 1.5, marginBottom: 20 }}>
-                    This captain hasn’t released dates yet. Message them and we’ll notify you the moment a departure opens.
-                  </div>
-                ) : (
-                  <div style={{ display: "grid", gap: 8, maxHeight: 232, overflowY: "auto", marginBottom: 18, paddingRight: 2 }}>
-                    {openSlots.map((s) => {
-                      const active = s.id === slot?.id;
-                      const d = new Date(s.startsAt);
-                      const scarce = s.seatsLeft <= 2;
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          onClick={() => setSlotId(s.id)}
-                          style={{
-                            display: "flex", alignItems: "center", gap: 10, textAlign: "left", width: "100%",
-                            background: active ? "rgba(227,192,137,.14)" : "rgba(255,255,255,.04)",
-                            border: `1px solid ${active ? V.sand : V.lined}`,
-                            borderRadius: 12, padding: "11px 13px", cursor: "pointer", color: V.ond,
-                          }}
-                        >
-                          <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
-                            <span style={{ fontSize: 13.5, fontWeight: 600, color: "#fff" }}>
-                              {d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
-                            </span>
-                            <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut }}>
-                              {d.toISOString().slice(11, 16)} departure
-                            </span>
-                          </span>
-                          <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: scarce ? "#e0a03c" : V.ondmut, whiteSpace: "nowrap" }}>
-                            {s.seatsLeft} seat{s.seatsLeft === 1 ? "" : "s"} left
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+
 
 
                 <label style={{ display: "block", marginBottom: 22 }}>
