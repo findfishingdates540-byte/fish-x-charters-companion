@@ -113,17 +113,22 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 2400); };
 
   const createBookingRPC = useServerFn(createBookingFromService);
+  // Stable per attempt: a double-click or retry returns the same booking
+  // instead of reserving a second set of seats.
+  const [attemptKey, setAttemptKey] = useState(() => crypto.randomUUID());
   const placeMut = useMutation({
-    mutationFn: () =>
-      createBookingRPC({
+    mutationFn: () => {
+      if (!slot) throw new Error("Pick an available departure first.");
+      return createBookingRPC({
         data: {
-          serviceId,
-          tripDate: date,
-          startTime: time,
+          slotId: slot.id,
           partySize: party,
+          idempotencyKey: attemptKey,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
         },
-      }),
+      });
+    },
+
     onMutate: () => setProcessing(true),
     onSuccess: (res) => {
       if (res.checkoutUrl) {
