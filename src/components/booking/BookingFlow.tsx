@@ -555,7 +555,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                   disabled={placeMut.isPending}
                   style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
                 >
-                  Place booking · hold in escrow
+                  Place booking · pay 25% deposit
                 </button>
               </div>
             </div>
@@ -577,7 +577,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                 <span style={{ width: 38, height: 38, borderRadius: "50%", background: V.cyansoft, display: "grid", placeItems: "center", color: V.cyan, fontSize: 18 }}>🔒</span>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.cyan }}>Escrow status</div>
-                  <div style={{ fontFamily: V.serif, fontSize: 20 }}>{released ? "Trip complete — captain paid" : `Your ${money(total)} is held safely`}</div>
+                  <div style={{ fontFamily: V.serif, fontSize: 20 }}>{released ? "Trip complete — captain paid" : `Your ${money(deposit)} deposit is held safely`}</div>
                 </div>
               </div>
               <div style={{ position: "relative", display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
@@ -632,7 +632,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                       <span style={{ width: 26, height: 26, borderRadius: "50%", background: V.greensoft, display: "grid", placeItems: "center", color: V.green, fontSize: 13 }}>✓</span>
                       <div style={{ fontFamily: V.serif, fontSize: 20, fontWeight: 600 }}>Trip complete — captain paid</div>
                     </div>
-                    <p style={{ fontSize: 14, color: V.tmut, margin: "0 0 16px 36px" }}>{money(total)} released from escrow. How was your day on the water?</p>
+                    <p style={{ fontSize: 14, color: V.tmut, margin: "0 0 16px 36px" }}>Deposit released to your captain. How was your day on the water?</p>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, margin: "0 0 14px 36px" }}>
                       {[1, 2, 3, 4, 5].map((n) => (
                         <button key={n} onClick={() => setStars(n)} style={{ background: "none", border: 0, cursor: "pointer", fontSize: 30, padding: 0, color: n <= stars ? V.sand : V.line }}>★</button>
