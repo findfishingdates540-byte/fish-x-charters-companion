@@ -301,18 +301,18 @@ export function OperatorShell({
               <div style={{ fontSize: 13, color: "#5c6b78", marginTop: 1 }}>{pageSub}</div>
             )}
           </div>
-          {headerRight && (
-            <div
-              style={{
-                marginLeft: "auto",
-                display: "flex",
-                alignItems: "center",
-                gap: 14,
-              }}
-            >
-              {headerRight}
-            </div>
-          )}
+          <div
+            style={{
+              marginLeft: "auto",
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+            }}
+          >
+            {headerRight}
+            <NotificationBell />
+          </div>
+
         </header>
 
         <main
