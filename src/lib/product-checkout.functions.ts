@@ -81,7 +81,7 @@ export const createProductCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { splitAmount, requireStripe } = await import("./stripe.server");
+    const { splitAmount, requireStripe, PRODUCT_FEE_RATE } = await import("./stripe.server");
 
     const ids = data.items.map((i) => i.productId);
     const { data: products, error } = await supabaseAdmin
@@ -125,7 +125,7 @@ export const createProductCheckout = createServerFn({ method: "POST" })
       // Shipping is charged once on the first vendor group.
       const shipping = orderIds.length === 0 ? shippingTotal : 0;
       const total = subtotal + shipping;
-      const { platformFeeCents, vendorCents } = splitAmount(total);
+      const { platformFeeCents, vendorCents } = splitAmount(total, PRODUCT_FEE_RATE);
 
       const { data: order, error: ordErr } = await supabaseAdmin
         .from("product_orders")

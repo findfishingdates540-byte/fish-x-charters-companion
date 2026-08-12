@@ -101,6 +101,10 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const price = (slot?.priceCents ?? svc.base_price_cents ?? 0) * party;
   const fee = 0;
   const total = price + fee;
+  /** 25% booked online; the captain collects the rest on the day. */
+  const deposit = Math.round(total * 0.25);
+  const balanceDue = total - deposit;
+
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
   const date = slot ? slot.startsAt.slice(0, 10) : "";
   const time = slot ? new Date(slot.startsAt).toISOString().slice(11, 16) : "";
@@ -439,12 +443,16 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                     <span>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)} × {party} angler{party === 1 ? "" : "s"}</span><span style={{ color: V.ond }}>{money(price)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
-                    <span>Fish-X escrow protection fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
+                    <span>Fish-X booking fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "14px 0 4px", borderTop: `1px solid ${V.lined}`, marginTop: 10, fontSize: 15.5, fontWeight: 700, color: "#fff" }}>
-                    <span>Total payable</span><span>{money(total)}</span>
+                    <span>Deposit due today (25%)</span><span>{money(deposit)}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", color: V.ondmut }}>
+                    <span>Balance paid to captain on the day</span><span style={{ color: V.ond }}>{money(balanceDue)}</span>
                   </div>
                 </div>
+
 
                 <button
                   onClick={() => setStep("checkout")}
@@ -527,22 +535,27 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
               </div>
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Order summary</div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip</span><span style={{ color: V.ink }}>{money(price)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip total</span><span style={{ color: V.ink }}>{money(price)}</span></div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
-                  <span>Total due today</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(total)}</span>
+                  <span>Deposit due today (25%)</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(deposit)}</span>
                 </div>
                 <div style={{ margin: "6px 0 14px", padding: "12px 14px", border: "1px dashed rgba(31,159,190,.5)", borderRadius: 12, background: "#eef7fa" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5 }}><span style={{ color: V.tmut }}>Held in escrow</span><span style={{ fontWeight: 700, color: V.cyan }}>{money(total)}</span></div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginTop: 5 }}><span style={{ color: V.tmut }}>Released to captain</span><span>After your trip</span></div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5 }}><span style={{ color: V.tmut }}>Deposit held in escrow</span><span style={{ fontWeight: 700, color: V.cyan }}>{money(deposit)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginTop: 5 }}><span style={{ color: V.tmut }}>Balance to captain on the day</span><span style={{ fontWeight: 700 }}>{money(balanceDue)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginTop: 5 }}><span style={{ color: V.tmut }}>Deposit released to captain</span><span>3 days after your trip</span></div>
+                  <div style={{ fontSize: 11.5, color: V.tmut, marginTop: 8, lineHeight: 1.5 }}>
+                    Pay the balance directly to your captain — cash or card, and tips are customary. Anglers are responsible for their own fishing licenses.
+                  </div>
                 </div>
+
                 <button
                   onClick={() => placeMut.mutate()}
                   disabled={placeMut.isPending}
                   style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
                 >
-                  Place booking · hold in escrow
+                  Place booking · pay 25% deposit
                 </button>
               </div>
             </div>
@@ -564,7 +577,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                 <span style={{ width: 38, height: 38, borderRadius: "50%", background: V.cyansoft, display: "grid", placeItems: "center", color: V.cyan, fontSize: 18 }}>🔒</span>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.cyan }}>Escrow status</div>
-                  <div style={{ fontFamily: V.serif, fontSize: 20 }}>{released ? "Trip complete — captain paid" : `Your ${money(total)} is held safely`}</div>
+                  <div style={{ fontFamily: V.serif, fontSize: 20 }}>{released ? "Trip complete — captain paid" : `Your ${money(deposit)} deposit is held safely`}</div>
                 </div>
               </div>
               <div style={{ position: "relative", display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
@@ -619,7 +632,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                       <span style={{ width: 26, height: 26, borderRadius: "50%", background: V.greensoft, display: "grid", placeItems: "center", color: V.green, fontSize: 13 }}>✓</span>
                       <div style={{ fontFamily: V.serif, fontSize: 20, fontWeight: 600 }}>Trip complete — captain paid</div>
                     </div>
-                    <p style={{ fontSize: 14, color: V.tmut, margin: "0 0 16px 36px" }}>{money(total)} released from escrow. How was your day on the water?</p>
+                    <p style={{ fontSize: 14, color: V.tmut, margin: "0 0 16px 36px" }}>Deposit released to your captain. How was your day on the water?</p>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, margin: "0 0 14px 36px" }}>
                       {[1, 2, 3, 4, 5].map((n) => (
                         <button key={n} onClick={() => setStars(n)} style={{ background: "none", border: 0, cursor: "pointer", fontSize: 30, padding: 0, color: n <= stars ? V.sand : V.line }}>★</button>

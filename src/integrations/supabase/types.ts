@@ -308,6 +308,8 @@ export type Database = {
           angler_id: string | null
           application_fee_cents: number | null
           assigned_guide_id: string | null
+          balance_collected_at: string | null
+          balance_due_cents: number
           boat_id: string | null
           business_id: string | null
           cancellation_policy: Json
@@ -346,6 +348,8 @@ export type Database = {
           angler_id?: string | null
           application_fee_cents?: number | null
           assigned_guide_id?: string | null
+          balance_collected_at?: string | null
+          balance_due_cents?: number
           boat_id?: string | null
           business_id?: string | null
           cancellation_policy?: Json
@@ -384,6 +388,8 @@ export type Database = {
           angler_id?: string | null
           application_fee_cents?: number | null
           assigned_guide_id?: string | null
+          balance_collected_at?: string | null
+          balance_due_cents?: number
           boat_id?: string | null
           business_id?: string | null
           cancellation_policy?: Json
@@ -751,6 +757,7 @@ export type Database = {
           country: string | null
           created_at: string
           created_by: string
+          deposit_rate: number
           description: string | null
           email: string | null
           fishx_business_id: string | null
@@ -767,6 +774,7 @@ export type Database = {
           payouts_enabled: boolean
           phone: string | null
           premium_until: string | null
+          product_commission_rate: number
           region: string | null
           slug: string
           stripe_account_id: string | null
@@ -786,6 +794,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           created_by: string
+          deposit_rate?: number
           description?: string | null
           email?: string | null
           fishx_business_id?: string | null
@@ -802,6 +811,7 @@ export type Database = {
           payouts_enabled?: boolean
           phone?: string | null
           premium_until?: string | null
+          product_commission_rate?: number
           region?: string | null
           slug: string
           stripe_account_id?: string | null
@@ -821,6 +831,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           created_by?: string
+          deposit_rate?: number
           description?: string | null
           email?: string | null
           fishx_business_id?: string | null
@@ -837,6 +848,7 @@ export type Database = {
           payouts_enabled?: boolean
           phone?: string | null
           premium_until?: string | null
+          product_commission_rate?: number
           region?: string | null
           slug?: string
           stripe_account_id?: string | null
@@ -1824,11 +1836,14 @@ export type Database = {
           buyer_id: string | null
           buyer_name: string | null
           created_at: string
+          delivered_at: string | null
           id: string
           notes: string | null
           paid_at: string | null
           payout_cents: number | null
+          payout_due_at: string | null
           payout_released_at: string | null
+          shipped_at: string | null
           shipping_address: Json | null
           shipping_cents: number
           status: string
@@ -1848,11 +1863,14 @@ export type Database = {
           buyer_id?: string | null
           buyer_name?: string | null
           created_at?: string
+          delivered_at?: string | null
           id?: string
           notes?: string | null
           paid_at?: string | null
           payout_cents?: number | null
+          payout_due_at?: string | null
           payout_released_at?: string | null
+          shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
           status?: string
@@ -1872,11 +1890,14 @@ export type Database = {
           buyer_id?: string | null
           buyer_name?: string | null
           created_at?: string
+          delivered_at?: string | null
           id?: string
           notes?: string | null
           paid_at?: string | null
           payout_cents?: number | null
+          payout_due_at?: string | null
           payout_released_at?: string | null
+          shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
           status?: string
@@ -2318,6 +2339,7 @@ export type Database = {
           country: string | null
           created_at: string
           created_by: string
+          deposit_rate: number
           description: string | null
           email: string | null
           fishx_business_id: string | null
@@ -2334,6 +2356,7 @@ export type Database = {
           payouts_enabled: boolean
           phone: string | null
           premium_until: string | null
+          product_commission_rate: number
           region: string | null
           slug: string
           stripe_account_id: string | null
@@ -2383,6 +2406,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      mark_product_order_delivered: {
+        Args: { _order_id: string }
+        Returns: undefined
+      }
+      release_delivered_product_payouts: {
+        Args: { _limit?: number }
+        Returns: number
+      }
+      release_due_booking_payouts: {
+        Args: { _limit?: number }
+        Returns: number
+      }
       reserve_slot: {
         Args: {
           _hold_minutes?: number
@@ -2396,6 +2431,8 @@ export type Database = {
           angler_id: string | null
           application_fee_cents: number | null
           assigned_guide_id: string | null
+          balance_collected_at: string | null
+          balance_due_cents: number
           boat_id: string | null
           business_id: string | null
           cancellation_policy: Json
@@ -2448,6 +2485,8 @@ export type Database = {
           angler_id: string | null
           application_fee_cents: number | null
           assigned_guide_id: string | null
+          balance_collected_at: string | null
+          balance_due_cents: number
           boat_id: string | null
           business_id: string | null
           cancellation_policy: Json

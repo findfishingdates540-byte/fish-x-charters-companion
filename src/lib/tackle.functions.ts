@@ -162,8 +162,20 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertMember(context, data.businessId);
+
+    // Marking delivered starts the 72h buyer-protection clock; the scheduled
+    // job releases the vendor payout (order total minus the 8% commission)
+    // once that window closes.
+    if (data.status === "delivered") {
+      const { error: rpcErr } = await context.supabase.rpc("mark_product_order_delivered", {
+        _order_id: data.id,
+      });
+      if (rpcErr) throw new Response(rpcErr.message, { status: 400 });
+    }
+
     const patch: any = { status: data.status };
     if (data.trackingNumber) patch.tracking_number = data.trackingNumber;
+    if (data.status === "shipped") patch.shipped_at = new Date().toISOString();
     const { data: row, error } = await context.supabase
       .from("product_orders")
       .update(patch)
@@ -174,3 +186,4 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 400 });
     return row;
   });
+
