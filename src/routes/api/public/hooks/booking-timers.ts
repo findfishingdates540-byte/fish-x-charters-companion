@@ -40,12 +40,23 @@ export const Route = createFileRoute("/api/public/hooks/booking-timers")({
           );
         }
 
+        // Captain's share of the deposit releases 72h after the trip; vendor
+        // merch payouts release 72h after the order is marked delivered.
+        const tripPayouts = await supabaseAdmin.rpc("release_due_booking_payouts", { _limit: 200 });
+        const orderPayouts = await supabaseAdmin.rpc("release_delivered_product_payouts", {
+          _limit: 200,
+        });
+
         return Response.json({
           ok: true,
           expiredHolds: holds.data ?? 0,
           autoDeclined: declines.data ?? 0,
           lifecycle: lifecycle.data ?? {},
+          tripPayoutsReleased: tripPayouts.data ?? 0,
+          orderPayoutsReleased: orderPayouts.data ?? 0,
+          payoutErrors: [tripPayouts.error?.message, orderPayouts.error?.message].filter(Boolean),
         });
+
       },
     },
   },
