@@ -5,6 +5,8 @@
 import { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+
 
 async function signOut() {
   await supabase.auth.signOut();
