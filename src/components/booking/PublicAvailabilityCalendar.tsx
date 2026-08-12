@@ -44,6 +44,8 @@ const THEMES = {
   },
 } as const;
 
+type Palette = { text: string; muted: string; line: string; cell: string; open: string; selBg: string; selText: string; accent: string };
+
 const money = (c: number) => `$${Math.round((c ?? 0) / 100).toLocaleString()}`;
 
 export function PublicAvailabilityCalendar({
@@ -59,7 +61,7 @@ export function PublicAvailabilityCalendar({
   theme?: "dark" | "light";
   partySize?: number;
 }) {
-  const T = THEMES[theme];
+  const T: Palette = THEMES[theme];
   const { data, isLoading } = useQuery({
     queryKey: ["public-availability", serviceId],
     queryFn: () => getPublicServiceAvailability({ data: { serviceId } }),
@@ -275,7 +277,7 @@ export function PublicAvailabilityCalendar({
   );
 }
 
-const navBtn = (T: (typeof THEMES)["dark"]) => ({
+const navBtn = (T: Palette) => ({
   background: "transparent",
   border: `1px solid ${T.line}`,
   borderRadius: 9,
