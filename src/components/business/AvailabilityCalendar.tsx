@@ -13,6 +13,7 @@ import {
   updateServiceSlot,
   deleteServiceSlot,
   updateServiceBookingRules,
+  checkSlotConflicts,
 } from "@/lib/availability.functions";
 import { money } from "@/components/operator/OperatorShell";
 import { input, btn } from "@/components/business/BusinessSettings";
