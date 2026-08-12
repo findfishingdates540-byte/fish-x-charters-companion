@@ -426,9 +426,9 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
 
                 <label style={{ display: "block", marginBottom: 22 }}>
-                  <span style={railLabel}>Number of anglers (max {capacity})</span>
+                  <span style={railLabel}>Number of anglers (max {cap})</span>
                   <select value={party} onChange={(e) => setParty(Number(e.target.value))} style={railField}>
-                    {Array.from({ length: capacity }, (_, i) => i + 1).map((n) => (
+                    {Array.from({ length: cap }, (_, i) => i + 1).map((n) => (
                       <option key={n} value={n} style={{ color: "#0a2236" }}>{n} {n === 1 ? "Angler" : "Anglers"}</option>
                     ))}
                   </select>
@@ -436,7 +436,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
                 <div style={{ borderTop: `1px solid ${V.lined}`, paddingTop: 16, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
-                    <span>Charter rate ({durLabel})</span><span style={{ color: V.ond }}>{money(price)}</span>
+                    <span>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)} × {party} angler{party === 1 ? "" : "s"}</span><span style={{ color: V.ond }}>{money(price)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
                     <span>Fish-X escrow protection fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
@@ -448,13 +448,17 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
                 <button
                   onClick={() => setStep("checkout")}
-                  style={{ width: "100%", background: `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})`, color: "#1c1303", border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: "pointer", margin: "20px 0 12px" }}
+                  disabled={!slot}
+                  style={{ width: "100%", background: slot ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: slot ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
-                  Continue to secure checkout →
+                  {slot ? "Continue to secure checkout →" : "No dates available"}
                 </button>
                 <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
-                  Funds held in escrow — released after your trip.
+                  {instantBook
+                    ? "Seats held for 15 minutes. Funds released after your trip."
+                    : "Card authorised, not charged — the captain has 24 hours to accept."}
                 </div>
+
               </div>
             </div>
           </div>
