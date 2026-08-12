@@ -39,8 +39,21 @@ export const Route = createFileRoute("/api/public/hooks/dispatch-events")({
         let dispatched = 0;
         let failed = 0;
 
+        const { handleDomainEvent } = await import("@/lib/notifications.server");
+
         for (const evt of events) {
           try {
+            // Consumer 1 — notifications (in-app + email). Never inline in the
+            // booking service, so a failing email can't fail a booking.
+            await handleDomainEvent(supabaseAdmin as never, {
+              id: evt.id,
+              topic: evt.topic,
+              aggregate_type: evt.aggregate_type,
+              aggregate_id: evt.aggregate_id,
+              payload: (evt.payload ?? {}) as Record<string, unknown>,
+            });
+
+            // Consumer 2 — optional external webhook.
             if (webhookUrl) {
               const res = await fetch(webhookUrl, {
                 method: "POST",
@@ -58,10 +71,8 @@ export const Route = createFileRoute("/api/public/hooks/dispatch-events")({
                 }),
               });
               if (!res.ok) throw new Error(`Consumer ${res.status}: ${await res.text()}`);
-            } else {
-              // No consumer wired yet — log and drain so the outbox stays healthy.
-              console.log(`[outbox] ${evt.topic} ${evt.aggregate_type}:${evt.aggregate_id}`);
             }
+
 
             await supabaseAdmin
               .from("domain_events")
