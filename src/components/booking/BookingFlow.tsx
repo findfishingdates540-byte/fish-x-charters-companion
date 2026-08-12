@@ -389,7 +389,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                     selectedSlotId={slot?.id ?? null}
                     partySize={party}
                     theme="dark"
-                    onSelectSlot={(s) => setSlotId(s.id)}
+                    onSelectSlot={(s: PublicSlot) => setSlotId(s.id)}
                   />
                 </div>
 
