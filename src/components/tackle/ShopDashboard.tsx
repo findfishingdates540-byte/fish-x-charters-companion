@@ -20,7 +20,6 @@ import {
   StatusPill,
   money,
 } from "@/components/operator/OperatorShell";
-import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 
 type Product = {

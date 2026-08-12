@@ -18,7 +18,6 @@ import {
   deleteCaptainService,
   toggleServicePublished,
 } from "@/lib/captain-management.functions";
-import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 
 export const captainDashboardQO = queryOptions({
