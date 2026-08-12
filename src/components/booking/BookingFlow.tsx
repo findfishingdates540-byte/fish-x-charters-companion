@@ -370,33 +370,60 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
               {/* BOOKING RAIL */}
               <div className="fx-booking-rail" style={{ position: "sticky", top: 84, ...cardDark, padding: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 22 }}>
-                  <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: "#fff" }}>{money(price)}</span>
-                  <span style={{ fontSize: 13, color: V.ondmut }}>/ {durLabel} trip</span>
+                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 18 }}>
+                  <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: "#fff" }}>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)}</span>
+                  <span style={{ fontSize: 13, color: V.ondmut }}>/ angler · {durLabel}</span>
                   <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#4ec98e", background: "rgba(78,201,142,.12)", border: "1px solid rgba(78,201,142,.35)", borderRadius: 6, padding: "6px 9px", whiteSpace: "nowrap" }}>
                     Escrow guaranteed
                   </span>
                 </div>
 
-                <label style={{ display: "block", marginBottom: 16 }}>
-                  <span style={railLabel}>Select trip date</span>
-                  <input
-                    type="date"
-                    value={date}
-                    min={new Date().toISOString().slice(0, 10)}
-                    onChange={(e) => setDate(e.target.value)}
-                    style={railField}
-                  />
-                </label>
+                <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ ...railLabel, marginBottom: 0 }}>Available departures</span>
+                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: instantBook ? "#4ec98e" : V.sand }}>
+                    {instantBook ? "Instant book" : "Request to book"}
+                  </span>
+                </div>
 
-                <label style={{ display: "block", marginBottom: 16 }}>
-                  <span style={railLabel}>Departure time</span>
-                  <select value={time} onChange={(e) => setTime(e.target.value)} style={railField}>
-                    {["05:30", "06:00", "07:00", "08:00", "12:00", "13:00", "15:00"].map((t) => (
-                      <option key={t} value={t} style={{ color: "#0a2236" }}>{t}</option>
-                    ))}
-                  </select>
-                </label>
+                {openSlots.length === 0 ? (
+                  <div style={{ border: `1px dashed ${V.lined}`, borderRadius: 12, padding: "18px 14px", fontSize: 13, color: V.ondmut, lineHeight: 1.5, marginBottom: 20 }}>
+                    This captain hasn’t released dates yet. Message them and we’ll notify you the moment a departure opens.
+                  </div>
+                ) : (
+                  <div style={{ display: "grid", gap: 8, maxHeight: 232, overflowY: "auto", marginBottom: 18, paddingRight: 2 }}>
+                    {openSlots.map((s) => {
+                      const active = s.id === slot?.id;
+                      const d = new Date(s.startsAt);
+                      const scarce = s.seatsLeft <= 2;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setSlotId(s.id)}
+                          style={{
+                            display: "flex", alignItems: "center", gap: 10, textAlign: "left", width: "100%",
+                            background: active ? "rgba(227,192,137,.14)" : "rgba(255,255,255,.04)",
+                            border: `1px solid ${active ? V.sand : V.lined}`,
+                            borderRadius: 12, padding: "11px 13px", cursor: "pointer", color: V.ond,
+                          }}
+                        >
+                          <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
+                            <span style={{ fontSize: 13.5, fontWeight: 600, color: "#fff" }}>
+                              {d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                            </span>
+                            <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut }}>
+                              {d.toISOString().slice(11, 16)} departure
+                            </span>
+                          </span>
+                          <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: scarce ? "#e0a03c" : V.ondmut, whiteSpace: "nowrap" }}>
+                            {s.seatsLeft} seat{s.seatsLeft === 1 ? "" : "s"} left
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
 
                 <label style={{ display: "block", marginBottom: 22 }}>
                   <span style={railLabel}>Number of anglers (max {capacity})</span>
