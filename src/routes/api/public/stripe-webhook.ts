@@ -134,27 +134,24 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
 
         let bookingId: string | null = null;
 
+        const { settlePaidBooking } = await import("@/lib/booking-settle.server");
+
         try {
           switch (event.type) {
             case "checkout.session.completed": {
               const session = event.data.object as Stripe.Checkout.Session;
               bookingId = bookingIdOf(session);
-              if (bookingId && session.payment_status === "paid") {
-                await supabaseAdmin
-                  .from("bookings")
-                  .update({
-                    status: "confirmed",
-                    escrow_state: "held",
-                    ...(typeof session.payment_intent === "string"
-                      ? { stripe_payment_intent_id: session.payment_intent }
-                      : {}),
-                  })
-                  .eq("id", bookingId);
+              const piId =
+                typeof session.payment_intent === "string" ? session.payment_intent : null;
+              // `unpaid` here means a manual-capture authorisation on a
+              // request-to-book listing — still a valid hold.
+              if (bookingId && (session.payment_status === "paid" || piId)) {
+                await settlePaidBooking(supabaseAdmin as never, bookingId, {
+                  paymentIntentId: piId,
+                });
               }
               const orderIds = orderIdsOf(session);
               if (orderIds.length && session.payment_status === "paid") {
-                const piId =
-                  typeof session.payment_intent === "string" ? session.payment_intent : null;
                 let chargeId: string | null = null;
                 if (piId) {
                   const pi = await stripe.paymentIntents.retrieve(piId);
@@ -165,23 +162,18 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               break;
             }
 
+            case "payment_intent.amount_capturable_updated":
             case "payment_intent.succeeded": {
-
               const pi = event.data.object as Stripe.PaymentIntent;
               bookingId = bookingIdOf(pi);
               if (bookingId) {
-                await supabaseAdmin
-                  .from("bookings")
-                  .update({
-                    status: "confirmed",
-                    escrow_state: "held",
-                    stripe_payment_intent_id: pi.id,
-                    stripe_charge_id: (pi.latest_charge as string | null) ?? null,
-                  })
-                  .eq("id", bookingId);
+                await settlePaidBooking(supabaseAdmin as never, bookingId, {
+                  paymentIntentId: pi.id,
+                  chargeId: typeof pi.latest_charge === "string" ? pi.latest_charge : null,
+                });
               }
               const piOrderIds = orderIdsOf(pi);
-              if (piOrderIds.length) {
+              if (piOrderIds.length && event.type === "payment_intent.succeeded") {
                 await settleProductOrders(
                   piOrderIds,
                   pi.id,
@@ -190,6 +182,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               }
               break;
             }
+
 
             case "payment_intent.payment_failed": {
               const pi = event.data.object as Stripe.PaymentIntent;

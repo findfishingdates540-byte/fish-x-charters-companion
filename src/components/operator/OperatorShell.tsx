@@ -5,6 +5,8 @@
 import { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+
 
 async function signOut() {
   await supabase.auth.signOut();
@@ -301,18 +303,18 @@ export function OperatorShell({
               <div style={{ fontSize: 13, color: "#5c6b78", marginTop: 1 }}>{pageSub}</div>
             )}
           </div>
-          {headerRight && (
-            <div
-              style={{
-                marginLeft: "auto",
-                display: "flex",
-                alignItems: "center",
-                gap: 14,
-              }}
-            >
-              {headerRight}
-            </div>
-          )}
+          <div
+            style={{
+              marginLeft: "auto",
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+            }}
+          >
+            {headerRight}
+            <NotificationBell />
+          </div>
+
         </header>
 
         <main

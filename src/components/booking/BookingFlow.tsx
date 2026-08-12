@@ -83,13 +83,10 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const business = svc.business as { id: string; slug: string; name: string; city: string | null; region: string | null; logo_url: string | null; hero_url: string | null } | null;
 
   const [step, setStep] = useState<Step>("detail");
-  const [date, setDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 14);
-    return d.toISOString().slice(0, 10);
-  });
+  const openSlots = svc.openSlots ?? [];
+  const [slotId, setSlotId] = useState(() => openSlots[0]?.id ?? "");
+  const slot = openSlots.find((s) => s.id === slotId) ?? openSlots[0] ?? null;
   const [party, setParty] = useState(2);
-  const [time, setTime] = useState("07:00");
 
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
@@ -98,30 +95,40 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const [reviewed, setReviewed] = useState(false);
   const [toast, setToast] = useState("");
 
-  const cap = 8;
-  const price = svc.base_price_cents ?? 0;
+  const instantBook = svc.instant_book !== false;
+  const seatsLeft = slot?.seatsLeft ?? 0;
+  const cap = Math.max(1, Math.min(svc.capacity ?? 8, seatsLeft || svc.capacity || 8));
+  const price = (slot?.priceCents ?? svc.base_price_cents ?? 0) * party;
   const fee = 0;
   const total = price + fee;
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
+  const date = slot ? slot.startsAt.slice(0, 10) : "";
+  const time = slot ? new Date(slot.startsAt).toISOString().slice(11, 16) : "";
   const dateLabel = useMemo(() => {
-    try { return new Date(date + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }); }
-    catch { return date; }
-  }, [date]);
+    if (!slot) return "No dates released";
+    return new Date(slot.startsAt).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  }, [slot]);
+
 
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 2400); };
 
   const createBookingRPC = useServerFn(createBookingFromService);
+  // Stable per attempt: a double-click or retry returns the same booking
+  // instead of reserving a second set of seats.
+  const [attemptKey, setAttemptKey] = useState(() => crypto.randomUUID());
   const placeMut = useMutation({
-    mutationFn: () =>
-      createBookingRPC({
+    mutationFn: () => {
+      if (!slot) throw new Error("Pick an available departure first.");
+      return createBookingRPC({
         data: {
-          serviceId,
-          tripDate: date,
-          startTime: time,
+          slotId: slot.id,
           partySize: party,
+          idempotencyKey: attemptKey,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
         },
-      }),
+      });
+    },
+
     onMutate: () => setProcessing(true),
     onSuccess: (res) => {
       if (res.checkoutUrl) {
@@ -154,7 +161,10 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   }, []);
 
 
-  useEffect(() => { if (party > cap) setParty(cap); }, [party]);
+  useEffect(() => { if (party > cap) setParty(cap); }, [party, cap]);
+  // Changing what you're buying starts a fresh reservation attempt.
+  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party]);
+
 
   const crumbStyle = (k: Step | "results"): CSSProperties => {
     const order: Array<Step | "results"> = ["results", "detail", "checkout", "confirmed"];
@@ -360,38 +370,65 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
               {/* BOOKING RAIL */}
               <div className="fx-booking-rail" style={{ position: "sticky", top: 84, ...cardDark, padding: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 22 }}>
-                  <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: "#fff" }}>{money(price)}</span>
-                  <span style={{ fontSize: 13, color: V.ondmut }}>/ {durLabel} trip</span>
+                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 18 }}>
+                  <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: "#fff" }}>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)}</span>
+                  <span style={{ fontSize: 13, color: V.ondmut }}>/ angler · {durLabel}</span>
                   <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#4ec98e", background: "rgba(78,201,142,.12)", border: "1px solid rgba(78,201,142,.35)", borderRadius: 6, padding: "6px 9px", whiteSpace: "nowrap" }}>
                     Escrow guaranteed
                   </span>
                 </div>
 
-                <label style={{ display: "block", marginBottom: 16 }}>
-                  <span style={railLabel}>Select trip date</span>
-                  <input
-                    type="date"
-                    value={date}
-                    min={new Date().toISOString().slice(0, 10)}
-                    onChange={(e) => setDate(e.target.value)}
-                    style={railField}
-                  />
-                </label>
+                <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ ...railLabel, marginBottom: 0 }}>Available departures</span>
+                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: instantBook ? "#4ec98e" : V.sand }}>
+                    {instantBook ? "Instant book" : "Request to book"}
+                  </span>
+                </div>
 
-                <label style={{ display: "block", marginBottom: 16 }}>
-                  <span style={railLabel}>Departure time</span>
-                  <select value={time} onChange={(e) => setTime(e.target.value)} style={railField}>
-                    {["05:30", "06:00", "07:00", "08:00", "12:00", "13:00", "15:00"].map((t) => (
-                      <option key={t} value={t} style={{ color: "#0a2236" }}>{t}</option>
-                    ))}
-                  </select>
-                </label>
+                {openSlots.length === 0 ? (
+                  <div style={{ border: `1px dashed ${V.lined}`, borderRadius: 12, padding: "18px 14px", fontSize: 13, color: V.ondmut, lineHeight: 1.5, marginBottom: 20 }}>
+                    This captain hasn’t released dates yet. Message them and we’ll notify you the moment a departure opens.
+                  </div>
+                ) : (
+                  <div style={{ display: "grid", gap: 8, maxHeight: 232, overflowY: "auto", marginBottom: 18, paddingRight: 2 }}>
+                    {openSlots.map((s) => {
+                      const active = s.id === slot?.id;
+                      const d = new Date(s.startsAt);
+                      const scarce = s.seatsLeft <= 2;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setSlotId(s.id)}
+                          style={{
+                            display: "flex", alignItems: "center", gap: 10, textAlign: "left", width: "100%",
+                            background: active ? "rgba(227,192,137,.14)" : "rgba(255,255,255,.04)",
+                            border: `1px solid ${active ? V.sand : V.lined}`,
+                            borderRadius: 12, padding: "11px 13px", cursor: "pointer", color: V.ond,
+                          }}
+                        >
+                          <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
+                            <span style={{ fontSize: 13.5, fontWeight: 600, color: "#fff" }}>
+                              {d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                            </span>
+                            <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut }}>
+                              {d.toISOString().slice(11, 16)} departure
+                            </span>
+                          </span>
+                          <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: scarce ? "#e0a03c" : V.ondmut, whiteSpace: "nowrap" }}>
+                            {s.seatsLeft} seat{s.seatsLeft === 1 ? "" : "s"} left
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
 
                 <label style={{ display: "block", marginBottom: 22 }}>
-                  <span style={railLabel}>Number of anglers (max {capacity})</span>
+                  <span style={railLabel}>Number of anglers (max {cap})</span>
                   <select value={party} onChange={(e) => setParty(Number(e.target.value))} style={railField}>
-                    {Array.from({ length: capacity }, (_, i) => i + 1).map((n) => (
+                    {Array.from({ length: cap }, (_, i) => i + 1).map((n) => (
                       <option key={n} value={n} style={{ color: "#0a2236" }}>{n} {n === 1 ? "Angler" : "Anglers"}</option>
                     ))}
                   </select>
@@ -399,7 +436,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
                 <div style={{ borderTop: `1px solid ${V.lined}`, paddingTop: 16, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
-                    <span>Charter rate ({durLabel})</span><span style={{ color: V.ond }}>{money(price)}</span>
+                    <span>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)} × {party} angler{party === 1 ? "" : "s"}</span><span style={{ color: V.ond }}>{money(price)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
                     <span>Fish-X escrow protection fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
@@ -411,13 +448,17 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
                 <button
                   onClick={() => setStep("checkout")}
-                  style={{ width: "100%", background: `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})`, color: "#1c1303", border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: "pointer", margin: "20px 0 12px" }}
+                  disabled={!slot}
+                  style={{ width: "100%", background: slot ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: slot ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
-                  Continue to secure checkout →
+                  {slot ? "Continue to secure checkout →" : "No dates available"}
                 </button>
                 <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
-                  Funds held in escrow — released after your trip.
+                  {instantBook
+                    ? "Seats held for 15 minutes. Funds released after your trip."
+                    : "Card authorised, not charged — the captain has 24 hours to accept."}
                 </div>
+
               </div>
             </div>
           </div>

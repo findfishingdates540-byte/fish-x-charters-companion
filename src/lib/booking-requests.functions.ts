@@ -1,0 +1,91 @@
+/**
+ * Request-to-book: operator accepts or declines a `pending_confirmation`
+ * booking. Money moves first (capture / cancel the authorised PaymentIntent),
+ * then the state machine RPC records the transition and emits the event.
+ */
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+export const respondToBookingRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        bookingId: z.string().uuid(),
+        action: z.enum(["accept", "decline"]),
+        reason: z.string().max(500).optional(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+
+    const { data: booking, error } = await supabase
+      .from("bookings")
+      .select("id,status,stripe_payment_intent_id,accept_deadline_at")
+      .eq("id", data.bookingId)
+      .maybeSingle();
+    if (error) throw new Response(error.message, { status: 500 });
+    if (!booking) throw new Response("Booking not found", { status: 404 });
+    if (booking.status !== "pending_confirmation") {
+      throw new Response(`This request is no longer awaiting a response (${booking.status}).`, {
+        status: 400,
+      });
+    }
+
+    const { getStripe } = await import("./stripe.server");
+    const stripe = getStripe();
+    const pi = booking.stripe_payment_intent_id;
+
+    if (stripe && pi) {
+      try {
+        const intent = await stripe.paymentIntents.retrieve(pi);
+        if (data.action === "accept") {
+          if (intent.status === "requires_capture") {
+            await stripe.paymentIntents.capture(pi, undefined, {
+              idempotencyKey: `capture-${booking.id}`,
+            });
+          }
+        } else if (["requires_capture", "requires_payment_method", "requires_confirmation"].includes(intent.status)) {
+          await stripe.paymentIntents.cancel(pi, undefined, {
+            idempotencyKey: `cancel-${booking.id}`,
+          });
+        } else if (intent.status === "succeeded") {
+          await stripe.refunds.create(
+            { payment_intent: pi, reason: "requested_by_customer" },
+            { idempotencyKey: `decline-refund-${booking.id}` },
+          );
+        }
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        throw new Response(`Payment step failed: ${msg}`, { status: 400 });
+      }
+    }
+
+    const { data: row, error: rpcErr } = await supabase.rpc("transition_booking", {
+      _booking_id: data.bookingId,
+      _to_status: data.action === "accept" ? "confirmed" : "declined",
+      _reason: data.reason ?? (data.action === "accept" ? "captain_accept" : "captain_decline"),
+      _metadata: {} as never,
+    });
+    if (rpcErr) throw new Response(rpcErr.message, { status: 400 });
+
+    return row;
+  });
+
+/** Operator/angler view of pending requests awaiting an accept decision. */
+export const listPendingRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("bookings")
+      .select(
+        "id,trip_date,start_time,party_size,total_cents,accept_deadline_at,angler_id,service:bookable_services(title)",
+      )
+      .eq("status", "pending_confirmation")
+      .order("accept_deadline_at", { ascending: true })
+      .limit(50);
+    if (error) throw new Response(error.message, { status: 500 });
+    return data ?? [];
+  });

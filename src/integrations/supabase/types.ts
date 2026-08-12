@@ -94,8 +94,10 @@ export type Database = {
       }
       bookable_services: {
         Row: {
+          accept_window_hours: number
           base_price_cents: number
           business_id: string
+          cancellation_policy: string
           capacity: number
           created_at: string
           departure_location: string | null
@@ -105,6 +107,7 @@ export type Database = {
           hero_url: string | null
           id: string
           includes: string[]
+          instant_book: boolean
           is_published: boolean
           kind: Database["public"]["Enums"]["service_kind"]
           policies_json: Json
@@ -115,8 +118,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          accept_window_hours?: number
           base_price_cents?: number
           business_id: string
+          cancellation_policy?: string
           capacity?: number
           created_at?: string
           departure_location?: string | null
@@ -126,6 +131,7 @@ export type Database = {
           hero_url?: string | null
           id?: string
           includes?: string[]
+          instant_book?: boolean
           is_published?: boolean
           kind: Database["public"]["Enums"]["service_kind"]
           policies_json?: Json
@@ -136,8 +142,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          accept_window_hours?: number
           base_price_cents?: number
           business_id?: string
+          cancellation_policy?: string
           capacity?: number
           created_at?: string
           departure_location?: string | null
@@ -147,6 +155,7 @@ export type Database = {
           hero_url?: string | null
           id?: string
           includes?: string[]
+          instant_book?: boolean
           is_published?: boolean
           kind?: Database["public"]["Enums"]["service_kind"]
           policies_json?: Json
@@ -1510,6 +1519,102 @@ export type Database = {
           },
         ]
       }
+      notification_deliveries: {
+        Row: {
+          channel: string
+          created_at: string
+          dedupe_key: string
+          error: string | null
+          event_id: string | null
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          dedupe_key: string
+          error?: string | null
+          event_id?: string | null
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          dedupe_key?: string
+          error?: string | null
+          event_id?: string | null
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          categories: Json
+          created_at: string
+          email_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categories?: Json
+          created_at?: string
+          email_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categories?: Json
+          created_at?: string
+          email_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          category: string
+          created_at: string
+          id: string
+          link: string | null
+          meta: Json
+          read_at: string | null
+          severity: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          category: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          meta?: Json
+          read_at?: string | null
+          severity?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          meta?: Json
+          read_at?: string | null
+          severity?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payment_events: {
         Row: {
           booking_id: string | null
@@ -1935,7 +2040,10 @@ export type Database = {
           ends_at: string
           id: string
           is_blackout: boolean
+          notes: string | null
+          price_cents: number | null
           seats_available: number
+          seats_booked: number
           service_id: string
           starts_at: string
         }
@@ -1945,7 +2053,10 @@ export type Database = {
           ends_at: string
           id?: string
           is_blackout?: boolean
+          notes?: string | null
+          price_cents?: number | null
           seats_available?: number
+          seats_booked?: number
           service_id: string
           starts_at: string
         }
@@ -1955,7 +2066,10 @@ export type Database = {
           ends_at?: string
           id?: string
           is_blackout?: boolean
+          notes?: string | null
+          price_cents?: number | null
           seats_available?: number
+          seats_booked?: number
           service_id?: string
           starts_at?: string
         }
@@ -2173,6 +2287,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      advance_trip_lifecycle: {
+        Args: { _grace_hours?: number; _limit?: number }
+        Returns: Json
+      }
+      auto_decline_expired_requests: {
+        Args: { _limit?: number }
+        Returns: number
+      }
+      booking_status_releases_seats: {
+        Args: { _s: Database["public"]["Enums"]["booking_status"] }
+        Returns: boolean
+      }
       create_business_with_owner: {
         Args: {
           _category_key: string
@@ -2234,6 +2360,7 @@ export type Database = {
         }
         Returns: string
       }
+      expire_stale_holds: { Args: { _limit?: number }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2255,6 +2382,59 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      reserve_slot: {
+        Args: {
+          _hold_minutes?: number
+          _idempotency_key?: string
+          _notes?: string
+          _party_size: number
+          _slot_id: string
+        }
+        Returns: {
+          accept_deadline_at: string | null
+          angler_id: string | null
+          application_fee_cents: number | null
+          assigned_guide_id: string | null
+          boat_id: string | null
+          business_id: string | null
+          cancellation_policy: Json
+          captain_id: string
+          commission_rate: number | null
+          completed_at: string | null
+          created_at: string
+          customer_id: string | null
+          deposit_cents: number
+          dispute_window_ends_at: string | null
+          escrow_state: string
+          hold_expires_at: string | null
+          id: string
+          idempotency_key: string | null
+          instant_book: boolean
+          notes: string | null
+          party_size: number
+          payout_cents: number
+          payout_released_at: string | null
+          refunded_cents: number
+          service_id: string | null
+          slot_id: string | null
+          start_time: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          stripe_charge_id: string | null
+          stripe_fee_cents: number | null
+          stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
+          template_id: string | null
+          total_cents: number
+          trip_date: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       transition_booking: {
         Args: {
