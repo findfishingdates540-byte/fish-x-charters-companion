@@ -79,8 +79,20 @@ export function AvailabilityCalendar({
     return out;
   }, [cursor]);
 
+  // Live conflict detection for the pending selection.
+  const checkConflicts = useServerFn(checkSlotConflicts);
+  const { data: conflictCheck } = useQuery({
+    queryKey: ["slot-conflicts", service.id, picked.join(","), startTime, duration],
+    enabled: picked.length > 0,
+    queryFn: () =>
+      checkConflicts({
+        data: { serviceId: service.id, dates: picked, startTime, durationMinutes: duration },
+      }),
+  });
+  const conflicts = conflictCheck?.conflicts ?? [];
+
   const mCreate = useMutation({
-    mutationFn: () =>
+    mutationFn: (skipConflicts: boolean) =>
       create({
         data: {
           serviceId: service.id,
@@ -89,6 +101,7 @@ export function AvailabilityCalendar({
           durationMinutes: duration,
           seats,
           priceCents: Math.round(price * 100) || null,
+          skipConflicts,
         },
       }),
     onSuccess: () => {
