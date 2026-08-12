@@ -10,6 +10,7 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createBookingFromService, getCheckoutContext } from "@/lib/booking-checkout.functions";
+import { PublicAvailabilityCalendar, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
