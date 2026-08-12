@@ -384,12 +384,6 @@ export function AvailabilityCalendar({
                 {s.is_blackout ? "Unblock" : "Block"}
               </button>
               <button
-                style={btn("ghost")}
-                onClick={() => mUpdate.mutate({ slotId: s.id, isBlackout: !s.is_blackout })}
-              >
-                {s.is_blackout ? "Unblock" : "Block"}
-              </button>
-              <button
                 style={{ ...btn("ghost"), color: "#b3261e" }}
                 disabled={(s.seats_booked ?? 0) > 0}
                 onClick={() => mDelete.mutate(s.id)}
