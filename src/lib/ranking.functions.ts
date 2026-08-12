@@ -15,7 +15,7 @@ export type RankedListing = {
   service_id: string;
   business_id: string;
   score: number;
-  features: Record<string, unknown>;
+  features: Record<string, string | number | boolean | null>;
 };
 
 /** Score published listings; safe for signed-out discovery too. */
@@ -31,8 +31,8 @@ export const getRankedListings = createServerFn({ method: "GET" })
   )
   .handler(async ({ data }) => {
     const { data: rows, error } = await supabase.rpc("rank_listings", {
-      _city: data.city ?? null,
-      _kinds: data.kinds ?? null,
+      _city: data.city ?? undefined,
+      _kinds: data.kinds ?? undefined,
       _limit: data.limit ?? 24,
     });
     if (error) throw new Response(error.message, { status: 500 });
@@ -48,8 +48,8 @@ export const logListingEvent = createServerFn({ method: "POST" })
         serviceId: z.string().uuid(),
         kind: z.enum(["impression", "click", "book"]),
         position: z.number().int().nullable().optional(),
-        query: z.record(z.string(), z.unknown()).optional(),
-        features: z.record(z.string(), z.unknown()).optional(),
+        query: z.record(z.string(), z.string()).optional(),
+        features: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
         sessionId: z.string().nullable().optional(),
       })
       .parse(d),
@@ -58,10 +58,10 @@ export const logListingEvent = createServerFn({ method: "POST" })
     const { error } = await context.supabase.rpc("log_listing_event", {
       _service_id: data.serviceId,
       _event_kind: data.kind,
-      _position: data.position ?? null,
+      _position: data.position ?? undefined,
       _query: (data.query ?? {}) as never,
       _features: (data.features ?? {}) as never,
-      _session_id: data.sessionId ?? null,
+      _session_id: data.sessionId ?? undefined,
     });
     if (error) return { ok: false as const };
     return { ok: true as const };
