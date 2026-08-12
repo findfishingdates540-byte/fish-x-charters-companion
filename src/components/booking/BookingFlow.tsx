@@ -161,7 +161,10 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   }, []);
 
 
-  useEffect(() => { if (party > cap) setParty(cap); }, [party]);
+  useEffect(() => { if (party > cap) setParty(cap); }, [party, cap]);
+  // Changing what you're buying starts a fresh reservation attempt.
+  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party]);
+
 
   const crumbStyle = (k: Step | "results"): CSSProperties => {
     const order: Array<Step | "results"> = ["results", "detail", "checkout", "confirmed"];
