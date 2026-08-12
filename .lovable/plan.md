@@ -1,88 +1,96 @@
-# Convert dashboards to React + wire to Supabase
+# Fish-X Charters — Road to Onboarding Real Businesses
 
-Goal: Replace the iframe-rendered HTML dashboards with real React routes that read/write live Supabase data. Keep the current visual design pixel-close so nothing looks off-brand. Seed demo data so screens have something to show on day one.
+A phased plan measured against the marketplace deep spec (booking state machine, Stripe escrow, ranking) plus the notification layer the spec assumes but never details.
 
-## Scope (all 15 templates)
+## Where we are today
 
-Public pages
-- `/marketplace` — trip/charter grid, filters, search
-- `/trips/detail` → `/trips/$id` — trip detail
-- `/captains/profile` → `/captains/$slug` — captain public profile
-- `/guides/profile` → `/guides/$slug` — guide public profile
+| Spec area | Status |
+|---|---|
+| Booking state enum + guarded transitions + audit log (`transition_booking`) | Done |
+| Domain event outbox + dispatcher cron (every minute) | Done (drains, but no consumers) |
+| Stripe Connect Express onboarding, separate charges & transfers, 80/20 split | Done |
+| Escrow release job (24h after completion, dispute-aware), cron every 15 min | Done |
+| Stripe webhooks: checkout, payment succeeded/failed, refund, chargeback, account.updated | Done |
+| Disputes + resolution center, reviews, messaging, marketplace/product checkout | Done |
+| **Slot inventory, soft holds, hard lock, per-booking idempotency** | **Missing — bookings can clash** |
+| **Non-instant-book (`pending_confirmation`) + accept/hold timers** | **Missing** |
+| **Cancellation policy engine / prorated refunds & reversals** | **Missing** |
+| **Notifications: email + in-app + alerts** | **Missing entirely** |
+| **Ranking: weighted-sum scoring, impression logging use** | Tables exist, scoring not implemented |
 
-Authenticated dashboards (routed by role + business category)
-- Angler dashboard
-- Captain dashboard
-- Tackle shop dashboard
-- Marina dashboard
-- Gear manufacturer dashboard
-- Apparel brand dashboard
-- Guide service dashboard
-- Onboarding wizard
-- Booking flow (`/book/$serviceId`)
-- Booking detail (angler + captain views)
-- Resolution center
+---
 
-## Approach
+## Phase 1 — Never double-sell a slot (blocking for onboarding)
 
-**Pixel-match, not redesign.** For each page I take the existing `public/dashboards/*.html`, port the markup 1:1 into a React component tree under `src/components/<persona>/`, keep the same Tailwind/utility classes, and reuse `support.js` behaviors as small React hooks (parallax, tab state, modals). No visual drift.
+The spec's three mechanisms (§1.4). Without this, four anglers can book the same trip.
 
-**Shared primitives first.** Before converting individual pages I extract the pieces every dashboard reuses:
-- `<DashboardShell>` — sidebar + topbar chrome
-- `<KpiCard>`, `<StatTile>`, `<EmptyState>`, `<StatusPill>`
-- `<Sidebar>` per persona (nav items differ by role)
-- Motion/parallax hooks distilled from `support.js`
+1. Operator availability: publish real `service_availability` rows from each vertical's dashboard (dates, times, seats, price override, blackouts). Angler booking flow picks a slot instead of a free-text date.
+2. `reserve_slot` SECURITY DEFINER RPC: locks the slot row `FOR UPDATE`, asserts remaining seats, writes a `booking_holds` row with a 15-minute TTL and the booking in `pending_payment` — all in one transaction.
+3. Hard lock at confirm: partial unique index so one slot can carry only one confirmed booking beyond its seat count; `seats_available` decremented in the same transaction as the `→ confirmed` transition.
+4. Idempotency: client-generated key on booking creation stored in `idempotency_keys`; a retry returns the original booking instead of creating a second one.
+5. Expiry job on the existing hooks route: release stale holds, move `pending_payment → expired`, restore seats.
 
-**One route at a time, ship as we go.** Each conversion is: build components → swap iframe route to React → verify against the HTML reference (kept in `public/dashboards/` per your answer) → move on.
+## Phase 2 — Request-to-book & the timers
 
-## Data layer
+1. Per-service `instant_book` flag. When off: capture-on-accept (`capture_method: manual`), booking lands in `pending_confirmation`, captain has 24h.
+2. Accept / decline actions in the operator dashboards, with the accept deadline visible and counting down.
+3. Timer job: accept window elapsed → auto-decline + void authorization; trip date reached → `in_progress`; trip end + grace → `completed`.
+4. Cancellation policy engine (flexible / moderate / strict) stored per service, computing the refundable fraction; refund executes with `reverse_transfer` when the payout already left.
 
-Server functions in `src/lib/*.functions.ts` behind `requireSupabaseAuth`, called via TanStack Query. New functions grouped by domain:
+## Phase 3 — Notifications: email, in-app, alerts
 
-- `bookings.functions.ts` — list/get bookings by role, transition via `transition_booking` RPC
-- `services.functions.ts` — list/create/update `bookable_services` and `trip_templates`
-- `businesses.functions.ts` — my business, members, followers
-- `messages.functions.ts` — `booking_messages` + `business_messages`
-- `reviews.functions.ts`
-- `marketplace.functions.ts` — public search over businesses/services (publishable-key client, anon SELECT policies)
-- `dashboard.functions.ts` — persona-specific KPI aggregations (angler upcoming trips, captain revenue/occupancy, etc.)
+Everything hangs off the existing outbox, so nothing sends synchronously.
 
-Loaders in `_authenticated/*` routes `ensureQueryData` for critical widgets, `prefetchQuery` for below-the-fold panels.
+**Infrastructure**
+- Email domain + Lovable Emails setup, then branded transactional templates in the Fish-X palette.
+- `notifications` table (recipient, kind, title, body, link, read_at, channel state) with owner-scoped RLS.
+- `notification_preferences` per user: per-category email on/off, plus a global digest toggle.
+- New consumer route `/api/public/hooks/notify` invoked by the dispatcher for each domain event — maps topic → recipients → in-app row + queued email. Idempotent per `(event_id, recipient, channel)`.
 
-## Demo seed
+**Event → notification matrix**
 
-One migration inserts:
-- 6 demo captain accounts (via `auth.users` + profiles + `user_roles`)
-- 6 businesses across every vertical (Charter, Tackle, Marina, Gear, Apparel, Guide)
-- 12 bookable services / trip templates with photos hotlinked from existing CDN assets
-- 30 bookings spanning statuses (inquiry → confirmed → completed → reviewed)
-- 15 reviews, 10 followers, sample messages
-- One demo angler for logged-in previews
+| Event | Angler | Operator |
+|---|---|---|
+| `booking.created` / `pending_confirmation` | "Request sent, captain has 24h" | "New booking request — accept within 24h" |
+| `booking.confirmed` | Confirmation + trip card | "Trip confirmed" |
+| Accept window T-4h | — | Escalating reminder |
+| Trip T-48h / T-24h | Reminder + what to bring | Manifest reminder |
+| `booking.completed` | "Leave a review" | "Payout releases in 24h" |
+| `payout.released` | — | "Payout sent" |
+| `booking.cancelled_*` / `refunded` | Refund breakdown | Cancellation notice + penalty note |
+| `dispute.opened` / `resolved` | Both sides + admin | Both sides + admin |
+| New message | Unread-message nudge after 10 min | Same |
+| Low stock / new order (retail) | — | Inventory + order alerts |
+| Stripe requirements due / payouts disabled | — | "Action needed to keep getting paid" |
 
-Seed uses deterministic UUIDs so re-running is idempotent.
+**In-app surface**
+- Bell in the header with unread count, dropdown list, mark-read, deep links into the trip/booking/message.
+- Realtime subscription on the `notifications` table so badges update live.
+- Inline dashboard alert banners for the blocking cases: Stripe requirements due, verification rejected, accept deadline near, payout failed.
 
-## Rollout order
+## Phase 4 — Ranking & discovery quality
 
-1. **Foundations** — shared shell, sidebar, hooks, query wiring, demo seed migration
-2. **Marketplace + trip detail + captain/guide public profiles** (SEO-critical, drives everything)
-3. **Angler dashboard + booking flow + booking detail**
-4. **Captain dashboard** (biggest — pipeline, calendar, listings, payouts)
-5. **Tackle / Marina / Gear / Apparel / Guide dashboards** (share the business-owner shell, differ in KPIs and modules)
-6. **Onboarding wizard** (writes to `businesses` + `business_categories` + `business_members`)
-7. **Resolution center** (reads `disputes`, `booking_transitions`, `booking_messages`)
+1. Weighted-sum scorer over the existing `listing_metrics` (relevance, quality, reliability, conversion, freshness), normalized to [0,1] with hand-set weights.
+2. Nightly job to recompute `listing_metrics` from bookings, reviews, response times, cancellations.
+3. Log impressions and clicks with the full feature vector into `listing_impressions` (table already exists) for later tuning.
+4. Cold-start boost for new listings, decaying as data accumulates; cap per-signal influence to deter gaming.
 
-At the end of each step you get working routes to click through. HTML files stay in `public/dashboards/` as reference.
+## Phase 5 — Operator readiness gate & launch ops
+
+1. Onboarding completeness gate: a business becomes discoverable only with verification approved, Stripe payouts enabled, at least one published listing, and published availability.
+2. Admin console: verification queue, dispute queue, payout/refund ledger, booking timeline viewer.
+3. Reconciliation job comparing Stripe balance transactions against `payouts` / `refunds` rows, flagging drift.
+4. Operator playbook page + email onboarding sequence for newly approved businesses.
+
+---
 
 ## Technical notes
 
-- Route file naming stays flat-dot per TanStack convention; dynamic segments use `$id` / `$slug`
-- All mutations go through `createServerFn` + `useMutation` + `queryClient.invalidateQueries`
-- Booking state changes always call the `transition_booking` RPC (never direct UPDATE) so the audit trail + outbox stay consistent
-- Public marketplace reads use the server publishable client + existing `TO anon` SELECT policies; no admin client on public paths
-- New `og:image` on trip/captain/guide detail pages derived from loader data
+- Timers stay as pg_cron → `/api/public/hooks/*` routes (already the pattern); no in-process timers.
+- All new money/state mutations go through SECURITY DEFINER RPCs so the transaction boundary holds, with the existing `transition_booking` remaining the only writer of `bookings.status`.
+- Notification sends are consumers of `domain_events`, never inline in a server function, so a failing email never fails a booking.
+- New tables (`notifications`, `notification_preferences`) ship with GRANTs plus owner-scoped RLS; the notify consumer writes with the service role.
 
-## Deliverable of step 1 (this next turn)
+## Recommendation
 
-Shared shell + hooks + query setup + seed migration + one converted page (angler dashboard) so you can see the pattern end-to-end before I steamroll the rest.
-
-Reply "go" and I start with step 1.
+Phases 1 and 2 are prerequisites for taking real money from real anglers. Phase 3 can run in parallel once the event topics from Phase 2 exist. Suggest building Phase 1 first as a single vertical slice on charters, then generalizing to guides, marinas, and lodging.
