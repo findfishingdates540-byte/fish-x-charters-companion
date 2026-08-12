@@ -54,8 +54,9 @@ export function requireStripe(): Stripe {
   return stripe;
 }
 
-/** Splits a gross trip amount into vendor / platform shares (cents). */
-export function splitAmount(totalCents: number) {
-  const platformFeeCents = Math.round(totalCents * PLATFORM_FEE_RATE);
+/** Splits a gross amount into vendor / platform shares (cents). */
+export function splitAmount(totalCents: number, rate: number = PLATFORM_FEE_RATE) {
+  const platformFeeCents = Math.round(totalCents * rate);
   return { platformFeeCents, vendorCents: totalCents - platformFeeCents };
 }
+
