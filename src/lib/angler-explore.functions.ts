@@ -35,7 +35,22 @@ export const getAnglerExplore = createServerFn({ method: "GET" })
       .limit(12);
     if (featuredRes.error) throw new Response(featuredRes.error.message, { status: 500 });
 
-    const all = featuredRes.data ?? [];
+    let all = featuredRes.data ?? [];
+
+    // Ranking (deep spec Part 3): order by the weighted-sum scorer so quality,
+    // reliability, conversion and freshness decide placement — not recency.
+    const ranked = await supabase.rpc("rank_listings", {
+      _city: city ?? undefined,
+      _kinds: ["charter_trip", "guided_trip"],
+      _limit: 100,
+    });
+    if (!ranked.error && ranked.data) {
+      const scores = new Map<string, number>(
+        ranked.data.map((r) => [r.service_id as string, Number(r.score)]),
+      );
+      all = [...all].sort((a, b) => (scores.get(b.id) ?? 0) - (scores.get(a.id) ?? 0));
+    }
+
     const featured = all.slice(0, 6);
 
     // "Near you": same city when we know it, otherwise the freshest listings.
