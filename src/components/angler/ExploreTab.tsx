@@ -6,6 +6,12 @@
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { getAnglerExplore } from "@/lib/angler-explore.functions";
+import { logListingEvent } from "@/lib/ranking.functions";
+
+/** Fire-and-forget click logging so ranking weights can be tuned later. */
+const trackClick = (serviceId: string) => {
+  void logListingEvent({ data: { serviceId, kind: "click" } }).catch(() => {});
+};
 
 export const anglerExploreQO = queryOptions({
   queryKey: ["angler-explore"],
@@ -86,6 +92,7 @@ function HeroCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
     <Link
       to="/booking"
       search={{ service_id: s.id }}
+      onClick={() => trackClick(s.id)}
       style={{
         position: "relative",
         display: "block",
@@ -142,6 +149,7 @@ function TallCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
     <Link
       to="/booking"
       search={{ service_id: s.id }}
+      onClick={() => trackClick(s.id)}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -172,7 +180,7 @@ function TallCard({ s, r }: { s: Service; r: { avg: number; count: number } | nu
 
 function MiniCard({ s, r }: { s: Service; r: { avg: number; count: number } | null }) {
   return (
-    <Link to="/booking" search={{ service_id: s.id }} style={{ textDecoration: "none", color: "#0d2236", display: "grid", gap: 10 }}>
+    <Link to="/booking" search={{ service_id: s.id }} onClick={() => trackClick(s.id)} style={{ textDecoration: "none", color: "#0d2236", display: "grid", gap: 10 }}>
       <div style={{ height: 150, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(13,34,54,.10)" }}>
         <img src={s.hero_url || FALLBACK} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </div>
