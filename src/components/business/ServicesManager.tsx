@@ -213,6 +213,12 @@ export function ServicesManager({
             >
               {s.is_published ? "Unpublish" : "Publish"}
             </button>
+            <button
+              style={btn("ghost")}
+              onClick={() => setCalendarFor(calendarFor?.id === s.id ? null : s)}
+            >
+              Availability
+            </button>
             <button style={btn("ghost")} onClick={() => setEditing(toDraft(s))}>
               Edit
             </button>
