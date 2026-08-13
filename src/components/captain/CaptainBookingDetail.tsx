@@ -68,8 +68,15 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
   const send = useServerFn(captainSendMessage);
   const doWeather = useServerFn(weatherCancel);
   const doComplete = useServerFn(markTripComplete);
+  const collectBalance = useServerFn(markBalanceCollected);
+  const refundDeposit = useServerFn(refundBookingDeposit);
 
+  const [busyMoney, setBusyMoney] = useState(false);
+  const [balanceMethod, setBalanceMethod] = useState<"cash" | "card_in_person" | "bank_transfer" | "other">("cash");
+  const [refundOpen, setRefundOpen] = useState(false);
+  const [refundNote, setRefundNote] = useState("");
   const [weatherOpen, setWeatherOpen] = useState(false);
+
   const [weatherChoice, setWeatherChoice] = useState<"rebook" | "cancel">("rebook");
   const [weatherNote, setWeatherNote] = useState(
     "Squall line building for midday — not safe for a party with first-timers. Let's get you back out on a clean window.",
