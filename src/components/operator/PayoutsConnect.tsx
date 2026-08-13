@@ -90,7 +90,7 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
   }
 
   const intro =
-    "Fish-X uses Stripe Connect for payouts. Funds are held in escrow and released 24 hours after trip completion.";
+    "Fish-X uses Stripe Connect for payouts. Funds are held in escrow and released 72 hours after trip completion.";
 
   return (
     <div style={{ display: "grid", gap: 14 }}>
