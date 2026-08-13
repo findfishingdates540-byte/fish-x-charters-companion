@@ -200,7 +200,46 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
     }
   };
 
+  const depositPaid = b.deposit_cents || total;
+  const balanceDue = b.balance_due_cents ?? Math.max(0, total - depositPaid);
+  const refundedCents = b.refunded_cents ?? 0;
+  const balanceCollected = !!b.balance_collected_at;
+  const refundable = Math.max(0, depositPaid - refundedCents);
+
+  const doCollectBalance = async () => {
+    if (busyMoney) return;
+    setBusyMoney(true);
+    try {
+      await collectBalance({ data: { bookingId, method: balanceMethod } });
+      showToast(`Balance of ${money(balanceDue)} marked collected`);
+      await queryClient.invalidateQueries({ queryKey: ["captain-booking", bookingId] });
+    } catch (e) {
+      showToast(e instanceof Response ? await e.text() : e instanceof Error ? e.message : "Failed");
+    } finally {
+      setBusyMoney(false);
+    }
+  };
+
+  const doRefund = async () => {
+    if (busyMoney) return;
+    setBusyMoney(true);
+    try {
+      const res = await refundDeposit({
+        data: { bookingId, reason: refundNote || undefined, policy: "operator_manual" },
+      });
+      showToast(`${money(res.amountCents)} refunded to ${anglerName}`);
+      setRefundOpen(false);
+      setRefundNote("");
+      await queryClient.invalidateQueries({ queryKey: ["captain-booking", bookingId] });
+    } catch (e) {
+      showToast(e instanceof Response ? await e.text() : e instanceof Error ? e.message : "Refund failed");
+    } finally {
+      setBusyMoney(false);
+    }
+  };
+
   const rebook = weatherChoice === "rebook";
+
 
   return (
     <div
