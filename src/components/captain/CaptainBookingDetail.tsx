@@ -107,7 +107,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
   const business = data.business;
 
   const total = b.total_cents ?? service?.base_price_cents ?? 0;
-  const fee = Math.round(total * 0.1);
+  const fee = Math.round(total * 0.15);
   const payoutCents = Math.max(0, total - fee);
 
   const statusLabel = isActive
@@ -445,7 +445,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                 <span style={{ color: "#fff", fontWeight: 600 }}>{money(total)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "5px 0" }}>
-                <span style={{ color: V.ondmut }}>Fish-X fee (10%)</span>
+                <span style={{ color: V.ondmut }}>Fish-X fee (15%)</span>
                 <span style={{ color: "#fff", fontWeight: 600 }}>−{money(fee)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, padding: "12px 0 0", borderTop: "1px solid rgba(255,255,255,.12)", marginTop: 8 }}>
@@ -457,6 +457,93 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                 <span style={{ fontSize: 12, color: V.ond }}>{payoutNote}</span>
               </div>
             </div>
+
+            {/* BALANCE + REFUND */}
+            {!isCanceled && (
+              <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: "20px 22px" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.goldtext, marginBottom: 12 }}>
+                  Money on the day
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
+                  <span style={{ color: V.tmut }}>Deposit paid online</span>
+                  <span style={{ fontWeight: 600 }}>{money(depositPaid)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
+                  <span style={{ color: V.tmut }}>Balance you collect</span>
+                  <span style={{ fontWeight: 600 }}>{money(balanceDue)}</span>
+                </div>
+                {refundedCents > 0 && (
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
+                    <span style={{ color: V.tmut }}>Refunded to guest</span>
+                    <span style={{ fontWeight: 600, color: "#d8514a" }}>−{money(refundedCents)}</span>
+                  </div>
+                )}
+
+                {balanceCollected ? (
+                  <div style={{ marginTop: 14, background: V.greensoft, color: V.green, borderRadius: 11, padding: "11px 13px", fontSize: 12.5, fontWeight: 600 }}>
+                    Balance collected ✓
+                  </div>
+                ) : (
+                  <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
+                    <select
+                      value={balanceMethod}
+                      onChange={(e) => setBalanceMethod(e.target.value as typeof balanceMethod)}
+                      style={{ width: "100%", border: `1px solid ${V.line}`, borderRadius: 10, padding: "10px 12px", fontFamily: V.sans, fontSize: 13, color: V.ink, background: "#fff" }}
+                    >
+                      <option value="cash">Cash</option>
+                      <option value="card_in_person">Card in person</option>
+                      <option value="bank_transfer">Bank transfer</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <button
+                      onClick={doCollectBalance}
+                      disabled={busyMoney}
+                      style={{ background: V.ink, color: "#fff", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                    >
+                      {busyMoney ? "Saving…" : `Mark ${money(balanceDue)} balance collected`}
+                    </button>
+                  </div>
+                )}
+
+                {refundable > 0 && !b.payout_released_at && (
+                  <div style={{ marginTop: 14, borderTop: `1px solid ${V.line}`, paddingTop: 14 }}>
+                    {refundOpen ? (
+                      <div style={{ display: "grid", gap: 10 }}>
+                        <textarea
+                          value={refundNote}
+                          onChange={(e) => setRefundNote(e.target.value)}
+                          placeholder="Why are you refunding this deposit?"
+                          rows={3}
+                          style={{ width: "100%", border: `1px solid ${V.line}`, borderRadius: 10, padding: "10px 12px", fontFamily: V.sans, fontSize: 13, resize: "vertical" }}
+                        />
+                        <div style={{ display: "flex", gap: 10 }}>
+                          <button
+                            onClick={doRefund}
+                            disabled={busyMoney}
+                            style={{ flex: 1, background: "#d8514a", color: "#fff", border: 0, borderRadius: 10, padding: "11px 14px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                          >
+                            {busyMoney ? "Refunding…" : `Refund ${money(refundable)}`}
+                          </button>
+                          <button
+                            onClick={() => setRefundOpen(false)}
+                            style={{ background: "transparent", border: `1px solid ${V.line}`, borderRadius: 10, padding: "11px 14px", fontFamily: V.sans, fontSize: 13, fontWeight: 600, color: V.tmut, cursor: "pointer" }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setRefundOpen(true)}
+                        style={{ background: "transparent", border: 0, padding: 0, fontFamily: V.sans, fontSize: 13, fontWeight: 600, color: "#d8514a", cursor: "pointer" }}
+                      >
+                        Refund deposit to guest →
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* ACTIONS */}
             {isActive && (

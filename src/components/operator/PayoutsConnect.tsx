@@ -207,7 +207,7 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
       {err && <div style={{ fontSize: 12.5, color: "#d8514a" }}>{err}</div>}
 
       <div style={{ fontSize: 11.5, color: "var(--tmut, #8a97a3)" }}>
-        You keep 80% of every sale; the Fish-X platform fee is 20%. Bank details are handled
+        Charters: you keep 85% of the deposit (15% platform fee) plus the balance you collect on the day. Merchandise: 92% to you, 8% platform fee. Bank details are handled
         securely by Stripe — Fish-X never sees your account numbers.
       </div>
     </div>
