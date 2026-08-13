@@ -12,6 +12,7 @@ import {
   markTripComplete,
   weatherCancel,
 } from "@/lib/captain-booking-detail.functions";
+import { markBalanceCollected, refundBookingDeposit } from "@/lib/booking-money.functions";
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
