@@ -19,6 +19,7 @@ import {
   toggleServicePublished,
 } from "@/lib/captain-management.functions";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
+import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 export const captainDashboardQO = queryOptions({
   queryKey: ["captain-dashboard"],
@@ -223,7 +224,7 @@ function OverviewPanel({ data, onGoto }: { data: CaptainData; onGoto: (t: Tab) =
               search={{ id: b.id }}
               style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 0", borderBottom: i < upcoming.length - 1 ? "1px solid var(--line)" : "none", textDecoration: "none", color: "inherit" }}
             >
-              <img src={b.service?.hero_url || "/dashboards/assets/seascape.jpg"} alt="" style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} />
+              <img src={b.service?.hero_url || DEFAULT_HERO} alt="" style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>{b.service?.title ?? "Charter"}</div>
                 <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
@@ -242,7 +243,7 @@ function OverviewPanel({ data, onGoto }: { data: CaptainData; onGoto: (t: Tab) =
           {services.length === 0 && <Empty text="Publish a trip to start receiving bookings." />}
           {services.map((s, i) => (
             <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < services.length - 1 ? "1px solid var(--line)" : "none" }}>
-              <img src={s.hero_url || "/dashboards/assets/seascape.jpg"} alt="" style={{ width: 46, height: 46, borderRadius: 10, objectFit: "cover", flex: "none" }} />
+              <img src={s.hero_url || DEFAULT_HERO} alt="" style={{ width: 46, height: 46, borderRadius: 10, objectFit: "cover", flex: "none" }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</div>
                 <div style={{ fontSize: 12, color: "var(--tmut)" }}>{money(s.base_price_cents ?? 0)} · up to {s.capacity ?? "—"}</div>
@@ -308,7 +309,7 @@ function BookingsPanel() {
           search={{ id: b.id }}
           style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i < rows.length - 1 ? "1px solid var(--line)" : "none", textDecoration: "none", color: "inherit" }}
         >
-          <img src={b.service?.hero_url || "/dashboards/assets/seascape.jpg"} alt="" style={{ width: 52, height: 52, borderRadius: 11, objectFit: "cover", flex: "none" }} />
+          <img src={b.service?.hero_url || DEFAULT_HERO} alt="" style={{ width: 52, height: 52, borderRadius: 11, objectFit: "cover", flex: "none" }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{b.service?.title ?? "Charter"}</div>
             <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
@@ -420,7 +421,7 @@ function ServicesPanel({ data }: { data: CaptainData }) {
             borderBottom: i < data.services.length - 1 ? "1px solid var(--line)" : "none",
           }}
         >
-          <img src={s.hero_url || "/dashboards/assets/seascape.jpg"} alt="" style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} />
+          <img src={s.hero_url || DEFAULT_HERO} alt="" style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{s.title}</div>
             <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>{money(s.base_price_cents ?? 0)} · up to {s.capacity ?? "—"} guests</div>

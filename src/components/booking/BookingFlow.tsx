@@ -11,6 +11,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createBookingFromService, getCheckoutContext } from "@/lib/booking-checkout.functions";
 import { PublicAvailabilityCalendar, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
+import { DEFAULT_HERO, PLATFORM_GALLERY } from "@/lib/platform-photos";
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
@@ -194,7 +195,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
     };
   };
 
-  const heroUrl = svc.hero_url || business?.hero_url || "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200";
+  const heroUrl = svc.hero_url || business?.hero_url || DEFAULT_HERO;
   const businessLine = `${business?.name ?? "Captain"} · ${[business?.city, business?.region].filter(Boolean).join(", ") || "Coastal"}`;
 
   const isDetail = step === "detail";
@@ -202,8 +203,8 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
     heroUrl,
     business?.hero_url && business.hero_url !== heroUrl
       ? business.hero_url
-      : "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80",
-    "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=900&q=80",
+      : PLATFORM_GALLERY[1],
+    PLATFORM_GALLERY[2],
   ];
   const locationLine =
     svc.departure_location || [business?.city, business?.region].filter(Boolean).join(" · ") || "Coastal marina";

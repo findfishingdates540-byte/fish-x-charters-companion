@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { cancelTrip, getTripDetail, sendTripMessage } from "@/lib/trip-detail.functions";
+import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 type Reason = "Weather concerns" | "Plans changed" | "Booked by mistake" | "Something else";
 const REASONS: Reason[] = ["Weather concerns", "Plans changed", "Booked by mistake", "Something else"];
@@ -75,7 +76,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
   const captainName = captain?.display_name ?? captain?.full_name ?? "Your captain";
   const boatName = data.business?.name ?? "the vessel";
   const location = [data.business?.city, data.business?.region].filter(Boolean).join(", ");
-  const heroImg = data.service?.hero_url || data.business?.hero_url || "/dashboards/assets/seascape.jpg";
+  const heroImg = data.service?.hero_url || data.business?.hero_url || DEFAULT_HERO;
   const captainAvatar = captain?.avatar_url || "/dashboards/assets/james.jpg";
 
   const escrowLabel = money(b.total_cents);

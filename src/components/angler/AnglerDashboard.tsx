@@ -14,6 +14,7 @@ import {
 } from "@/lib/angler-dashboard.functions";
 import { ExploreTab } from "./ExploreTab";
 import { TripsTab } from "./TripsTab";
+import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 const anglerHomeQO = queryOptions({
   queryKey: ["angler-dashboard"],
@@ -300,7 +301,7 @@ function HomeTab(props: {
   onGoExplore: () => void;
 }) {
   const { nextTrip, cd, escrowCents, upcomingCount, completedCount, upcoming, recos } = props;
-  const nextHero = nextTrip?.service?.hero_url || nextTrip?.business?.hero_url || "/dashboards/assets/seascape.jpg";
+  const nextHero = nextTrip?.service?.hero_url || nextTrip?.business?.hero_url || DEFAULT_HERO;
   const nextTitle = nextTrip?.service?.title ?? "No trips booked yet";
   const nextPlace = nextTrip?.service?.departure_location || [nextTrip?.business?.city, nextTrip?.business?.region].filter(Boolean).join(", ") || "—";
   const nextDateStr = nextTrip
@@ -404,7 +405,7 @@ function HomeTab(props: {
               search={{ id: b.id }}
               style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 0", textDecoration: "none", cursor: "pointer", borderBottom: i < upcoming.length - 1 ? "1px solid var(--line)" : "none" }}
             >
-              <img src={b.service?.hero_url || b.business?.hero_url || "/dashboards/assets/seascape.jpg"} style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} alt="" />
+              <img src={b.service?.hero_url || b.business?.hero_url || DEFAULT_HERO} style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} alt="" />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>{b.service?.title ?? "Charter"}</div>
                 <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
@@ -490,7 +491,7 @@ function RecoCard({ c }: { c: Reco }) {
   return (
     <article style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 18, overflow: "hidden" }}>
       <div style={{ position: "relative", height: 150 }}>
-        <div style={{ width: "100%", height: "100%", backgroundImage: `url(${c.hero_url ?? "/dashboards/assets/seascape.jpg"})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+        <div style={{ width: "100%", height: "100%", backgroundImage: `url(${c.hero_url ?? DEFAULT_HERO})`, backgroundSize: "cover", backgroundPosition: "center" }} />
       </div>
       <div style={{ padding: "16px 18px 18px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--tmut)", marginBottom: 6 }}>

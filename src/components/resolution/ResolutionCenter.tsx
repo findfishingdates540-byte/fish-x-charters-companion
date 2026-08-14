@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
+import { DEFAULT_HERO } from "@/lib/platform-photos";
   addCaseMessage,
   getResolutionContext,
   listDisputableBookings,
@@ -277,7 +278,7 @@ function BookingPicker() {
                 }}
               >
                 <img
-                  src={b.service?.hero_url ?? "assets/seascape.jpg"}
+                  src={b.service?.hero_url ?? DEFAULT_HERO}
                   alt=""
                   style={{ width: 64, height: 52, borderRadius: 10, objectFit: "cover", flex: "none" }}
                 />
@@ -423,7 +424,7 @@ function ResolutionForBooking({ bookingId }: { bookingId: string }) {
       }}
     >
       <img
-        src={data.service?.hero_url ?? "assets/seascape.jpg"}
+        src={data.service?.hero_url ?? DEFAULT_HERO}
         alt=""
         style={{ width: 64, height: 52, borderRadius: 10, objectFit: "cover", flex: "none" }}
       />
