@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { listAnglerTrips } from "@/lib/angler-trips.functions";
+import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 export const anglerTripsQO = queryOptions({
   queryKey: ["angler-trips"],
@@ -17,7 +18,7 @@ type TripsData = Awaited<ReturnType<typeof listAnglerTrips>>;
 type Trip = TripsData["upcoming"][number];
 type Bucket = "upcoming" | "past" | "cancelled";
 
-const FALLBACK = "/dashboards/assets/seascape.jpg";
+const FALLBACK = DEFAULT_HERO;
 
 const money = (cents: number | null | undefined) =>
   `$${Math.round((cents ?? 0) / 100).toLocaleString()}`;

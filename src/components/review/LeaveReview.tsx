@@ -9,6 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getReviewContext, submitReview } from "@/lib/review.functions";
+import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
@@ -260,7 +261,7 @@ function ContextCard({ data }: { data: ReviewContext }) {
       }}
     >
       <img
-        src={data.service?.hero_url ?? "assets/seascape.jpg"}
+        src={data.service?.hero_url ?? DEFAULT_HERO}
         alt=""
         style={{ width: 64, height: 52, borderRadius: 10, objectFit: "cover", flex: "none" }}
       />
@@ -369,7 +370,7 @@ function SuccessState({
           }}
         >
           <img
-            src={data.service?.hero_url ?? "assets/seascape.jpg"}
+            src={data.service?.hero_url ?? DEFAULT_HERO}
             alt=""
             style={{ width: 72, height: 72, borderRadius: 12, objectFit: "cover", flex: "none" }}
           />

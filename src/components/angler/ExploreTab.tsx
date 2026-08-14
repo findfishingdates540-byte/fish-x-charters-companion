@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { getAnglerExplore } from "@/lib/angler-explore.functions";
 import { logListingEvent } from "@/lib/ranking.functions";
+import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 /** Fire-and-forget click logging so ranking weights can be tuned later. */
 const trackClick = (serviceId: string) => {
@@ -24,7 +25,7 @@ type Service = ExploreData["featured"][number];
 const money = (cents: number) =>
   `$${(Math.max(0, cents) / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
-const FALLBACK = "/dashboards/assets/seascape.jpg";
+const FALLBACK = DEFAULT_HERO;
 
 const dark: React.CSSProperties = {
   background: "#ffffff",
