@@ -1,6 +1,7 @@
 // Utilities for rendering the `.dc.html` templates that ship the Fish-X
 // Charters landing page pixel-for-pixel. The templates are copied verbatim
 // into src/dc-templates/*.html and imported as raw strings.
+import { PLATFORM_GALLERY } from "@/lib/platform-photos";
 
 // The landing/auth template images ship in public/dashboards/assets/, which
 // Vite copies to the site root so they serve at /dashboards/assets/<name> on
@@ -9,6 +10,19 @@
 export function resolveAsset(name: string): string {
   return `/dashboards/assets/${name}`;
 }
+
+// Scenic (non-portrait) template images get swapped for real Fish-X marina
+// photography. Portraits/avatars stay as-is.
+const SCENIC = new Set([
+  "seascape.jpg",
+  "yacht-coast.png",
+  "seraphina.jpg",
+  "helm.png",
+  "sunset-tall.jpg",
+  "bedroom.png",
+  "dining.png",
+]);
+
 
 /** Extract innerHTML of <x-dc>...</x-dc> and the DC <script> body. */
 export function parseDcHtml(src: string): { template: string; script: string } {
@@ -31,8 +45,17 @@ export function cleanTemplate(template: string): string {
   let out = template;
   out = out.replace(/<helmet[\s\S]*?<\/helmet>/g, "");
   out = out.replace(/<template[\s\S]*?<\/template>/g, "");
-  // rewrite asset paths → CDN
-  out = out.replace(/assets\/([a-zA-Z0-9_.-]+)/g, (_m, name) => resolveAsset(name));
+  // rewrite asset paths → real platform photos (scenic) or local assets
+  let scenicIdx = 0;
+  out = out.replace(/assets\/([a-zA-Z0-9_.-]+)/g, (_m, name: string) => {
+    if (SCENIC.has(name)) {
+      const url = PLATFORM_GALLERY[scenicIdx % PLATFORM_GALLERY.length];
+      scenicIdx += 1;
+      return url;
+    }
+    return resolveAsset(name);
+  });
+
   // internal cross-page links
   out = out.replace(/href="Fish-X Charters\.dc\.html"/g, 'href="/"');
   out = out.replace(/href="Fish-X Auth\.dc\.html"/g, 'href="/auth"');
