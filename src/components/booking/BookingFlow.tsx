@@ -201,11 +201,9 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const isDetail = step === "detail";
   const galleryUrls = [
     heroUrl,
-    business?.hero_url && business.hero_url !== heroUrl
-      ? business.hero_url
-      : PLATFORM_GALLERY[1],
-    PLATFORM_GALLERY[2],
-  ];
+    ...galleryFor(svc.id, 5).filter((u) => u !== heroUrl),
+  ].slice(0, 5);
+
   const locationLine =
     svc.departure_location || [business?.city, business?.region].filter(Boolean).join(" · ") || "Coastal marina";
   const capacity = svc.capacity ?? cap;
