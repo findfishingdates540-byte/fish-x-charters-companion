@@ -11,7 +11,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createBookingFromService, getCheckoutContext } from "@/lib/booking-checkout.functions";
 import { PublicAvailabilityCalendar, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
-import { DEFAULT_HERO, PLATFORM_GALLERY } from "@/lib/platform-photos";
+import { DEFAULT_HERO, galleryFor } from "@/lib/platform-photos";
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
