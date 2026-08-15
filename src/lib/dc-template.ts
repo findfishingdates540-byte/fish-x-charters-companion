@@ -45,8 +45,17 @@ export function cleanTemplate(template: string): string {
   let out = template;
   out = out.replace(/<helmet[\s\S]*?<\/helmet>/g, "");
   out = out.replace(/<template[\s\S]*?<\/template>/g, "");
-  // rewrite asset paths → CDN
-  out = out.replace(/assets\/([a-zA-Z0-9_.-]+)/g, (_m, name) => resolveAsset(name));
+  // rewrite asset paths → real platform photos (scenic) or local assets
+  let scenicIdx = 0;
+  out = out.replace(/assets\/([a-zA-Z0-9_.-]+)/g, (_m, name: string) => {
+    if (SCENIC.has(name)) {
+      const url = PLATFORM_GALLERY[scenicIdx % PLATFORM_GALLERY.length];
+      scenicIdx += 1;
+      return url;
+    }
+    return resolveAsset(name);
+  });
+
   // internal cross-page links
   out = out.replace(/href="Fish-X Charters\.dc\.html"/g, 'href="/"');
   out = out.replace(/href="Fish-X Auth\.dc\.html"/g, 'href="/auth"');
