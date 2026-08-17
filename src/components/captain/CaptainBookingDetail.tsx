@@ -494,9 +494,10 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                   <span style={{ fontWeight: 600 }}>{money(depositPaid)}</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
-                  <span style={{ color: V.tmut }}>Balance you collect</span>
+                  <span style={{ color: V.tmut }}>{balanceCollected ? "Balance collected" : "Balance you collect"}</span>
                   <span style={{ fontWeight: 600 }}>{money(balanceDue)}</span>
                 </div>
+
                 {refundedCents > 0 && (
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
                     <span style={{ color: V.tmut }}>Refunded to guest</span>
