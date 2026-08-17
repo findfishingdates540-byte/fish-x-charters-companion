@@ -22,7 +22,6 @@ import {
 } from "@/lib/notifications.functions";
 import { Card } from "@/components/operator/OperatorShell";
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
-import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { ImageUpload } from "@/components/business/ImageUpload";
 
 const NOTIF_CATEGORIES: Array<{ key: string; label: string; hint: string }> = [
