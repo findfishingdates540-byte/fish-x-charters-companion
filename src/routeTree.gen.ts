@@ -34,6 +34,7 @@ import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
 import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
 import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 import { Route as ApiPublicHooksReleaseEscrowRouteImport } from './routes/api/public/hooks/release-escrow'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 import { Route as ApiPublicHooksBookingTimersRouteImport } from './routes/api/public/hooks/booking-timers'
@@ -166,6 +167,11 @@ const AuthenticatedBookingsDetailRoute =
     path: '/bookings/detail',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksReleaseEscrowRoute =
   ApiPublicHooksReleaseEscrowRouteImport.update({
     id: '/api/public/hooks/release-escrow',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -242,6 +249,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -273,6 +281,7 @@ export interface FileRoutesById {
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
+    | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
+    | '/api/public/media/$'
   id:
     | '__root__'
     | '/'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
+    | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -384,6 +396,7 @@ export interface RootRouteChildren {
   ApiPublicHooksBookingTimersRoute: typeof ApiPublicHooksBookingTimersRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
   ApiPublicHooksReleaseEscrowRoute: typeof ApiPublicHooksReleaseEscrowRoute
+  ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -563,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBookingsDetailRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/release-escrow': {
       id: '/api/public/hooks/release-escrow'
       path: '/api/public/hooks/release-escrow'
@@ -635,6 +655,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksBookingTimersRoute: ApiPublicHooksBookingTimersRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
   ApiPublicHooksReleaseEscrowRoute: ApiPublicHooksReleaseEscrowRoute,
+  ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
