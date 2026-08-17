@@ -108,9 +108,15 @@ export function OperatorBookings({
                   day: "numeric",
                 })}
                 {b.party_size ? ` · ${b.party_size} guests` : ""}
-                {b.balance_due_cents
-                  ? ` · ${money(b.balance_due_cents)} due ${b.balance_collected_at ? "(collected)" : "on arrival"}`
-                  : ""}
+                {(() => {
+                  // balance_due_cents drops to 0 once collected — fall back to
+                  // total minus deposit so the figure stays visible.
+                  const bal =
+                    b.balance_due_cents ||
+                    Math.max(0, (b.total_cents ?? 0) - (b.deposit_cents ?? 0));
+                  if (!bal) return "";
+                  return ` · ${money(bal)} ${b.balance_collected_at ? "balance collected" : "due on arrival"}`;
+                })()}
               </div>
             </div>
             <StatusPill label={String(b.status).replace(/_/g, " ")} tone={toneFor(b.status)} />

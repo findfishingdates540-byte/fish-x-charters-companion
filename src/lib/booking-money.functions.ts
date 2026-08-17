@@ -37,8 +37,9 @@ const SELECT =
 async function loadOwnedBooking(
   supabase: any,
   bookingId: string,
+  userId: string,
 ): Promise<BookingMoneyRow> {
-  // RLS already limits operators to their own bookings.
+  // RLS lets anglers read their own bookings too — money actions are operator-only.
   const { data, error } = await supabase
     .from("bookings")
     .select(SELECT)
@@ -46,6 +47,18 @@ async function loadOwnedBooking(
     .maybeSingle();
   if (error) throw new Response(error.message, { status: 500 });
   if (!data) throw new Response("Booking not found", { status: 404 });
+
+  let authorized = data.captain_id === userId;
+  if (!authorized && data.business_id) {
+    const { data: ok } = await supabase.rpc("is_business_member", {
+      _business_id: data.business_id,
+      _user_id: userId,
+      _min_role: "staff",
+    });
+    authorized = ok === true;
+  }
+  if (!authorized) throw new Response("Forbidden", { status: 403 });
+
   return data as BookingMoneyRow;
 }
 
@@ -63,7 +76,7 @@ export const markBalanceCollected = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const booking = await loadOwnedBooking(context.supabase, data.bookingId);
+    const booking = await loadOwnedBooking(context.supabase, data.bookingId, context.userId);
     if (booking.balance_collected_at) {
       return { ok: true as const, alreadyCollected: true, collectedAt: booking.balance_collected_at };
     }
@@ -71,13 +84,15 @@ export const markBalanceCollected = createServerFn({ method: "POST" })
     const amount = data.amountCents ?? expected;
 
     const now = new Date().toISOString();
-    const { error } = await context.supabase
+    // Caller is already verified as captain or business staff; non-captain staff
+    // have no UPDATE policy on bookings, so the ledger write runs with admin.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("bookings")
       .update({ balance_collected_at: now, balance_due_cents: Math.max(0, expected - amount), updated_at: now })
       .eq("id", booking.id);
     if (error) throw new Response(error.message, { status: 400 });
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("domain_events").insert({
       topic: "booking.balance_collected",
       aggregate_type: "booking",
@@ -114,7 +129,7 @@ export const refundBookingDeposit = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const booking = await loadOwnedBooking(context.supabase, data.bookingId);
+    const booking = await loadOwnedBooking(context.supabase, data.bookingId, context.userId);
     const paid = booking.deposit_cents || booking.total_cents;
     const refundable = Math.max(0, paid - (booking.refunded_cents ?? 0));
     if (refundable === 0) throw new Response("Nothing left to refund on this booking.", { status: 400 });
@@ -233,7 +248,7 @@ export const releaseBookingPayout = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const booking = await loadOwnedBooking(context.supabase, data.bookingId);
+    const booking = await loadOwnedBooking(context.supabase, data.bookingId, context.userId);
 
     if (booking.payout_released_at || booking.escrow_state === "released") {
       return { ok: true as const, alreadyReleased: true, transferId: booking.stripe_transfer_id };
