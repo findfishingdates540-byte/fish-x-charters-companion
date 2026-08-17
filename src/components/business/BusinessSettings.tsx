@@ -22,6 +22,7 @@ import {
 } from "@/lib/notifications.functions";
 import { Card } from "@/components/operator/OperatorShell";
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+import { ImageUpload } from "@/components/business/ImageUpload";
 
 const NOTIF_CATEGORIES: Array<{ key: string; label: string; hint: string }> = [
   { key: "booking", label: "Bookings", hint: "New requests, confirmations, cancellations." },
@@ -202,32 +203,23 @@ function ProfileCard({ business, canEdit }: { business: any; canEdit: boolean })
         </Field>
 
         <Grid2>
-          <Field label="Cover image URL">
-            <input style={input} value={draft.hero_url} onChange={(e) => set("hero_url")(e.target.value)} disabled={!canEdit} />
-          </Field>
-          <Field label="Logo URL">
-            <input style={input} value={draft.logo_url} onChange={(e) => set("logo_url")(e.target.value)} disabled={!canEdit} />
-          </Field>
+          <ImageUpload
+            businessId={business.id}
+            label="Cover image"
+            value={draft.hero_url}
+            onChange={set("hero_url")}
+            disabled={!canEdit}
+          />
+          <ImageUpload
+            businessId={business.id}
+            label="Logo"
+            aspect="1 / 1"
+            value={draft.logo_url}
+            onChange={set("logo_url")}
+            disabled={!canEdit}
+          />
         </Grid2>
 
-        {(draft.hero_url || draft.logo_url) && (
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            {draft.hero_url && (
-              <img
-                src={draft.hero_url}
-                alt="Cover preview"
-                style={{ width: 190, height: 108, objectFit: "cover", borderRadius: 12, border: "1px solid rgba(13,34,54,.12)" }}
-              />
-            )}
-            {draft.logo_url && (
-              <img
-                src={draft.logo_url}
-                alt="Logo preview"
-                style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 12, border: "1px solid rgba(13,34,54,.12)" }}
-              />
-            )}
-          </div>
-        )}
 
         <Grid2>
           <Field label="Phone">

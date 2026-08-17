@@ -15,6 +15,7 @@ import {
 import { Card, money } from "@/components/operator/OperatorShell";
 import { input, btn } from "@/components/business/BusinessSettings";
 import { AvailabilityCalendar } from "@/components/business/AvailabilityCalendar";
+import { ImageUpload } from "@/components/business/ImageUpload";
 
 export type ServiceKindKey =
   | "charter_trip"
@@ -148,6 +149,7 @@ export function ServicesManager({
     >
       {editing && (
         <Editor
+          businessId={businessId}
           draft={editing}
           kinds={kinds}
           onChange={setEditing}
@@ -267,6 +269,7 @@ const splitList = (v: string) =>
     .filter(Boolean);
 
 function Editor({
+  businessId,
   draft,
   kinds,
   onChange,
@@ -275,6 +278,7 @@ function Editor({
   saving,
   error,
 }: {
+  businessId: string;
   draft: Draft;
   kinds: ServiceKindKey[];
   onChange: (d: Draft) => void;
@@ -365,9 +369,12 @@ function Editor({
             onChange={(e) => set({ departure_location: e.target.value })}
           />
         </F>
-        <F label="Cover image URL">
-          <input style={input} value={draft.hero_url} onChange={(e) => set({ hero_url: e.target.value })} />
-        </F>
+        <ImageUpload
+          businessId={businessId}
+          label="Cover image"
+          value={draft.hero_url}
+          onChange={(url) => set({ hero_url: url })}
+        />
       </Row>
 
       <Row>

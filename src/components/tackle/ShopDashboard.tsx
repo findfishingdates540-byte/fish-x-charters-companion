@@ -20,6 +20,7 @@ import {
   StatusPill,
   money,
 } from "@/components/operator/OperatorShell";
+import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 
 type Product = {
@@ -107,6 +108,7 @@ export function ShopDashboard({
       icon: <CartIcon />,
       badge: data.kpis.toShip || undefined,
     },
+    { key: "payments", label: "Payments", icon: <TagIcon /> },
     { key: "settings", label: "Settings", icon: <GearIcon /> },
   ];
 
@@ -114,6 +116,7 @@ export function ShopDashboard({
     overview: { t: "Shop overview", s: "Revenue, orders and inventory health." },
     products: { t: `${copy.productLabel} catalog`, s: "Publish, edit, restock." },
     orders: { t: copy.ordersLabel, s: "Fulfillment queue and history." },
+    payments: { t: "Payments & payouts", s: "Revenue, fees, escrow and bank transfers." },
     settings: { t: "Settings", s: "Storefront profile and payouts." },
   };
 
@@ -132,6 +135,7 @@ export function ShopDashboard({
       {active === "overview" && <Overview data={data} />}
       {active === "products" && <Products businessId={businessId} data={data} />}
       {active === "orders" && <Orders businessId={businessId} data={data} />}
+      {active === "payments" && <PaymentsDashboard businessId={businessId} />}
       {active === "settings" && <Settings businessId={businessId} />}
     </OperatorShell>
   );
