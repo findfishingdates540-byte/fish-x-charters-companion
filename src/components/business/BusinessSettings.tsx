@@ -22,6 +22,8 @@ import {
 } from "@/lib/notifications.functions";
 import { Card } from "@/components/operator/OperatorShell";
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
+import { ImageUpload } from "@/components/business/ImageUpload";
 
 const NOTIF_CATEGORIES: Array<{ key: string; label: string; hint: string }> = [
   { key: "booking", label: "Bookings", hint: "New requests, confirmations, cancellations." },
@@ -203,14 +205,14 @@ function ProfileCard({ business, canEdit }: { business: any; canEdit: boolean })
 
         <Grid2>
           <ImageUpload
-            businessId={businessId}
+            businessId={business.id}
             label="Cover image"
             value={draft.hero_url}
             onChange={set("hero_url")}
             disabled={!canEdit}
           />
           <ImageUpload
-            businessId={businessId}
+            businessId={business.id}
             label="Logo"
             aspect="1 / 1"
             value={draft.logo_url}
