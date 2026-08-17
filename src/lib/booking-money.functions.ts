@@ -84,13 +84,15 @@ export const markBalanceCollected = createServerFn({ method: "POST" })
     const amount = data.amountCents ?? expected;
 
     const now = new Date().toISOString();
-    const { error } = await context.supabase
+    // Caller is already verified as captain or business staff; non-captain staff
+    // have no UPDATE policy on bookings, so the ledger write runs with admin.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("bookings")
       .update({ balance_collected_at: now, balance_due_cents: Math.max(0, expected - amount), updated_at: now })
       .eq("id", booking.id);
     if (error) throw new Response(error.message, { status: 400 });
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("domain_events").insert({
       topic: "booking.balance_collected",
       aggregate_type: "booking",
