@@ -599,7 +599,14 @@ function EarningsPanel({ businessId }: { businessId: string | null }) {
           </div>
         ))}
       </Panel>
+
+      {businessId && (
+        <div style={{ background: "#eef2f5", margin: -4, padding: 4, borderRadius: 18 }}>
+          <PaymentsDashboard businessId={businessId} />
+        </div>
+      )}
     </div>
+
   );
 }
 
