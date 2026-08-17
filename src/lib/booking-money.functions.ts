@@ -37,8 +37,9 @@ const SELECT =
 async function loadOwnedBooking(
   supabase: any,
   bookingId: string,
+  userId: string,
 ): Promise<BookingMoneyRow> {
-  // RLS already limits operators to their own bookings.
+  // RLS lets anglers read their own bookings too — money actions are operator-only.
   const { data, error } = await supabase
     .from("bookings")
     .select(SELECT)
@@ -46,6 +47,18 @@ async function loadOwnedBooking(
     .maybeSingle();
   if (error) throw new Response(error.message, { status: 500 });
   if (!data) throw new Response("Booking not found", { status: 404 });
+
+  let authorized = data.captain_id === userId;
+  if (!authorized && data.business_id) {
+    const { data: ok } = await supabase.rpc("is_business_member", {
+      _business_id: data.business_id,
+      _user_id: userId,
+      _min_role: "staff",
+    });
+    authorized = ok === true;
+  }
+  if (!authorized) throw new Response("Forbidden", { status: 403 });
+
   return data as BookingMoneyRow;
 }
 
