@@ -19,15 +19,28 @@ export const respondToBookingRequest = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
 
     const { data: booking, error } = await supabase
       .from("bookings")
-      .select("id,status,stripe_payment_intent_id,accept_deadline_at")
+      .select("id,status,captain_id,business_id,stripe_payment_intent_id,accept_deadline_at")
       .eq("id", data.bookingId)
       .maybeSingle();
     if (error) throw new Response(error.message, { status: 500 });
     if (!booking) throw new Response("Booking not found", { status: 404 });
+
+    // RLS also exposes this row to the angler — only the operator side may decide.
+    let authorized = booking.captain_id === userId;
+    if (!authorized && booking.business_id) {
+      const { data: ok } = await supabase.rpc("is_business_member", {
+        _business_id: booking.business_id,
+        _user_id: userId,
+        _min_role: "staff",
+      });
+      authorized = ok === true;
+    }
+    if (!authorized) throw new Response("Forbidden", { status: 403 });
+
     if (booking.status !== "pending_confirmation") {
       throw new Response(`This request is no longer awaiting a response (${booking.status}).`, {
         status: 400,
