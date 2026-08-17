@@ -18,6 +18,7 @@ import {
   deleteCaptainService,
   toggleServicePublished,
 } from "@/lib/captain-management.functions";
+import { ImageUpload } from "@/components/business/ImageUpload";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
@@ -417,6 +418,7 @@ function ServicesPanel({ data }: { data: CaptainData }) {
     >
       {editing && (
         <ServiceForm
+          businessId={data.business?.id ?? null}
           draft={editing}
           onChange={setEditing}
           onCancel={() => setEditing(null)}
@@ -477,7 +479,8 @@ function ServicesPanel({ data }: { data: CaptainData }) {
   );
 }
 
-function ServiceForm({ draft, onChange, onCancel, onSave, saving, error }: {
+function ServiceForm({ businessId, draft, onChange, onCancel, onSave, saving, error }: {
+  businessId: string | null;
   draft: ServiceDraft;
   onChange: (d: ServiceDraft) => void;
   onCancel: () => void;
@@ -516,7 +519,11 @@ function ServiceForm({ draft, onChange, onCancel, onSave, saving, error }: {
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
         <Field label="Departure location"><input value={draft.departure_location} onChange={(e) => upd({ departure_location: e.target.value })} style={input} /></Field>
-        <Field label="Hero image URL"><input value={draft.hero_url} onChange={(e) => upd({ hero_url: e.target.value })} style={input} placeholder="https://…" /></Field>
+        {businessId ? (
+          <ImageUpload businessId={businessId} label="Hero image" value={draft.hero_url} onChange={(url) => upd({ hero_url: url })} />
+        ) : (
+          <Field label="Hero image URL"><input value={draft.hero_url} onChange={(e) => upd({ hero_url: e.target.value })} style={input} placeholder="https://…" /></Field>
+        )}
       </div>
       <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
         <input type="checkbox" checked={draft.is_published} onChange={(e) => upd({ is_published: e.target.checked })} />
