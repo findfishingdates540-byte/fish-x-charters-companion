@@ -23,6 +23,8 @@ import {
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { ServicesManager } from "@/components/business/ServicesManager";
+import { OperatorBookings } from "@/components/operator/OperatorBookings";
+import { ReadinessGate } from "@/components/operator/ReadinessGate";
 
 type Slip = {
   id: string;
@@ -52,6 +54,7 @@ const overviewQO = (businessId: string) =>
 const NAV: OperatorNavItem[] = [
   { key: "overview", label: "Overview", icon: <BoxIcon /> },
   { key: "slips", label: "Slips", icon: <BoatIcon /> },
+  { key: "bookings", label: "Bookings", icon: <CalIcon /> },
   { key: "reservations", label: "Reservations", icon: <CalIcon /> },
   { key: "services", label: "Services", icon: <WrenchIcon /> },
   { key: "listings", label: "Listings", icon: <MTagIcon /> },
@@ -79,6 +82,7 @@ export function MarinaDashboard({
   const titles: Record<string, { t: string; s: string }> = {
     overview: { t: "Harbor overview", s: "Occupancy, reservations, dock health." },
     slips: { t: "Slip inventory", s: "Manage berths, rates, and status." },
+    bookings: { t: "Bookings", s: "Guest bookings and requests from Fish-X." },
     reservations: { t: "Reservations", s: "Vessels arriving and staying." },
     services: { t: "Marina services", s: "Amenities and operating settings." },
     listings: { t: "Bookable listings", s: "Transient slips, lodging and experiences." },
@@ -123,7 +127,18 @@ export function MarinaDashboard({
         </div>
       }
     >
-      {active === "overview" && <Overview businessId={businessId} data={data} />}
+      {active === "overview" && (
+        <>
+          <ReadinessGate businessId={businessId} onNav={setActive} compact />
+          <Overview businessId={businessId} data={data} />
+        </>
+      )}
+      {active === "bookings" && (
+        <OperatorBookings
+          businessId={businessId}
+          requestsEmptyText="No slip or lodging requests waiting on you right now."
+        />
+      )}
       {active === "slips" && <Slips businessId={businessId} data={data} />}
       {active === "reservations" && (
         <Reservations businessId={businessId} data={data} />

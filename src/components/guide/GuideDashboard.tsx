@@ -23,6 +23,8 @@ import {
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { ServicesManager } from "@/components/business/ServicesManager";
+import { RequestInbox } from "@/components/operator/RequestInbox";
+import { ReadinessGate } from "@/components/operator/ReadinessGate";
 
 const overviewQO = (businessId: string) =>
   queryOptions({
@@ -102,11 +104,26 @@ export function GuideDashboard({
       pageTitle={titles[active].t}
       pageSub={titles[active].s}
     >
-      {active === "overview" && <Overview data={data} />}
+      {active === "overview" && (
+        <>
+          <ReadinessGate businessId={businessId} onNav={setActive} compact />
+          <Overview data={data} />
+        </>
+      )}
       {active === "trips" && <Trips businessId={businessId} data={data} />}
       {active === "guides" && <Roster data={data} />}
       {active === "slots" && <Slots businessId={businessId} data={data} />}
-      {active === "requests" && <Requests businessId={businessId} data={data} />}
+      {active === "requests" && (
+        <div style={{ display: "grid", gap: 18 }}>
+          <Card eyebrow="Request to book" title="Waiting on your decision">
+            <RequestInbox
+              businessId={businessId}
+              emptyText="No trip requests waiting on you right now."
+            />
+          </Card>
+          <Requests businessId={businessId} data={data} />
+        </div>
+      )}
       {active === "listings" && (
         <ServicesManager
           businessId={businessId}
