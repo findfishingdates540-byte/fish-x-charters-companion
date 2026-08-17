@@ -21,27 +21,35 @@ import m15 from "@/assets/platform/marina-15.jpg.asset.json";
 import m16 from "@/assets/platform/marina-16.jpg.asset.json";
 import m19 from "@/assets/platform/marina-19.jpg.asset.json";
 
+/**
+ * Asset pointers are served from Lovable's CDN at a root-relative path, which
+ * only resolves on Lovable hosting. On other hosts (e.g. Netlify) that path
+ * 404s and every photo breaks, so make the URLs absolute.
+ */
+const ASSET_CDN_ORIGIN = "https://fishx-charter-hub.lovable.app";
+const abs = (u: string) => (u.startsWith("/__l5e/") ? ASSET_CDN_ORIGIN + u : u);
+
 export const PLATFORM_PHOTOS = {
-  marinaSunset: marinaSunset.url,
-  harbourFleet: harbourFleet.url,
-  marinaWide: marinaWide.url,
-  morningMarina: morningMarina.url,
-  blueHarbour: blueHarbour.url,
-  eveningBerth: eveningBerth.url,
-  quietBasin: quietBasin.url,
-  dockLines: m03.url,
-  boatyard: m04.url,
-  openWater: m05.url,
-  slipway: m06.url,
-  transom: m07.url,
-  moorings: m08.url,
-  goldenDock: m09.url,
-  pontoon: m11.url,
-  hullside: m12.url,
-  breakwater: m13.url,
-  tideOut: m15.url,
-  duskFleet: m16.url,
-  channel: m19.url,
+  marinaSunset: abs(marinaSunset.url),
+  harbourFleet: abs(harbourFleet.url),
+  marinaWide: abs(marinaWide.url),
+  morningMarina: abs(morningMarina.url),
+  blueHarbour: abs(blueHarbour.url),
+  eveningBerth: abs(eveningBerth.url),
+  quietBasin: abs(quietBasin.url),
+  dockLines: abs(m03.url),
+  boatyard: abs(m04.url),
+  openWater: abs(m05.url),
+  slipway: abs(m06.url),
+  transom: abs(m07.url),
+  moorings: abs(m08.url),
+  goldenDock: abs(m09.url),
+  pontoon: abs(m11.url),
+  hullside: abs(m12.url),
+  breakwater: abs(m13.url),
+  tideOut: abs(m15.url),
+  duskFleet: abs(m16.url),
+  channel: abs(m19.url),
 } as const;
 
 /** Every real photo, in a pleasing display order. */
