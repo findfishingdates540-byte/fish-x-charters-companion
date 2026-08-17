@@ -149,6 +149,7 @@ export function ServicesManager({
     >
       {editing && (
         <Editor
+          businessId={businessId}
           draft={editing}
           kinds={kinds}
           onChange={setEditing}
@@ -268,6 +269,7 @@ const splitList = (v: string) =>
     .filter(Boolean);
 
 function Editor({
+  businessId,
   draft,
   kinds,
   onChange,
@@ -276,6 +278,7 @@ function Editor({
   saving,
   error,
 }: {
+  businessId: string;
   draft: Draft;
   kinds: ServiceKindKey[];
   onChange: (d: Draft) => void;
