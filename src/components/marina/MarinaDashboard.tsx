@@ -21,6 +21,7 @@ import {
   money,
 } from "@/components/operator/OperatorShell";
 import { PayoutsConnect } from "@/components/operator/PayoutsConnect";
+import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { ServicesManager } from "@/components/business/ServicesManager";
 import { OperatorBookings } from "@/components/operator/OperatorBookings";
@@ -154,9 +155,12 @@ export function MarinaDashboard({
         />
       )}
       {active === "payouts" && (
-        <Card eyebrow="Payouts" title="Bank & payouts">
-          <PayoutsConnect businessId={businessId} />
-        </Card>
+        <div style={{ display: "grid", gap: 18 }}>
+          <Card eyebrow="Payouts" title="Bank & payouts">
+            <PayoutsConnect businessId={businessId} />
+          </Card>
+          <PaymentsDashboard businessId={businessId} />
+        </div>
       )}
       {active === "settings" && <BusinessSettings businessId={businessId} />}
     </OperatorShell>
