@@ -76,7 +76,7 @@ export const markBalanceCollected = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const booking = await loadOwnedBooking(context.supabase, data.bookingId);
+    const booking = await loadOwnedBooking(context.supabase, data.bookingId, context.userId);
     if (booking.balance_collected_at) {
       return { ok: true as const, alreadyCollected: true, collectedAt: booking.balance_collected_at };
     }
@@ -127,7 +127,7 @@ export const refundBookingDeposit = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const booking = await loadOwnedBooking(context.supabase, data.bookingId);
+    const booking = await loadOwnedBooking(context.supabase, data.bookingId, context.userId);
     const paid = booking.deposit_cents || booking.total_cents;
     const refundable = Math.max(0, paid - (booking.refunded_cents ?? 0));
     if (refundable === 0) throw new Response("Nothing left to refund on this booking.", { status: 400 });
@@ -246,7 +246,7 @@ export const releaseBookingPayout = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const booking = await loadOwnedBooking(context.supabase, data.bookingId);
+    const booking = await loadOwnedBooking(context.supabase, data.bookingId, context.userId);
 
     if (booking.payout_released_at || booking.escrow_state === "released") {
       return { ok: true as const, alreadyReleased: true, transferId: booking.stripe_transfer_id };
