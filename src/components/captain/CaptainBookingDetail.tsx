@@ -12,7 +12,7 @@ import {
   markTripComplete,
   weatherCancel,
 } from "@/lib/captain-booking-detail.functions";
-import { markBalanceCollected, refundBookingDeposit } from "@/lib/booking-money.functions";
+import { markBalanceCollected, refundBookingDeposit, releaseBookingPayout } from "@/lib/booking-money.functions";
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
@@ -70,6 +70,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
   const doComplete = useServerFn(markTripComplete);
   const collectBalance = useServerFn(markBalanceCollected);
   const refundDeposit = useServerFn(refundBookingDeposit);
+  const releasePayout = useServerFn(releaseBookingPayout);
 
   const [busyMoney, setBusyMoney] = useState(false);
   const [balanceMethod, setBalanceMethod] = useState<"cash" | "card_in_person" | "bank_transfer" | "other">("cash");
@@ -223,6 +224,26 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
       await queryClient.invalidateQueries({ queryKey: ["captain-booking", bookingId] });
     } catch (e) {
       showToast(e instanceof Response ? await e.text() : e instanceof Error ? e.message : "Failed");
+    } finally {
+      setBusyMoney(false);
+    }
+  };
+
+  const doReleasePayout = async () => {
+    if (busyMoney) return;
+    setBusyMoney(true);
+    try {
+      const res = await releasePayout({
+        data: { bookingId, markBalanceCollected: !balanceCollected, balanceMethod },
+      });
+      showToast(
+        res.alreadyReleased
+          ? "Payout already released"
+          : `${money(res.amountCents ?? 0)} transferred to your account`,
+      );
+      await queryClient.invalidateQueries({ queryKey: ["captain-booking", bookingId] });
+    } catch (e) {
+      showToast(e instanceof Response ? await e.text() : e instanceof Error ? e.message : "Payout failed");
     } finally {
       setBusyMoney(false);
     }
@@ -503,6 +524,22 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                       {busyMoney ? "Saving…" : `Mark ${money(balanceDue)} balance collected`}
                     </button>
                   </div>
+                )}
+
+                {b.payout_released_at ? (
+                  <div style={{ marginTop: 14, background: V.greensoft, color: V.green, borderRadius: 11, padding: "11px 13px", fontSize: 12.5, fontWeight: 600 }}>
+                    Payout released ✓ {money(payoutCents)} on its way to your bank
+                  </div>
+                ) : (
+                  (status === "confirmed" || status === "in_progress" || status === "completed") && (
+                    <button
+                      onClick={doReleasePayout}
+                      disabled={busyMoney}
+                      style={{ marginTop: 10, width: "100%", background: V.goldtext, color: "#fff", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                    >
+                      {busyMoney ? "Releasing…" : `Release ${money(payoutCents)} payout${balanceCollected ? "" : " & mark balance collected"}`}
+                    </button>
+                  )
                 )}
 
                 {refundable > 0 && !b.payout_released_at && (

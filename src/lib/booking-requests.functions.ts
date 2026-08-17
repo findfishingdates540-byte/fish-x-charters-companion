@@ -42,10 +42,24 @@ export const respondToBookingRequest = createServerFn({ method: "POST" })
       try {
         const intent = await stripe.paymentIntents.retrieve(pi);
         if (data.action === "accept") {
+          let captured = intent;
           if (intent.status === "requires_capture") {
-            await stripe.paymentIntents.capture(pi, undefined, {
+            captured = await stripe.paymentIntents.capture(pi, undefined, {
               idempotencyKey: `capture-${booking.id}`,
             });
+          }
+          if (captured.status === "succeeded") {
+            const chargeId =
+              typeof captured.latest_charge === "string" ? captured.latest_charge : null;
+            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+            await supabaseAdmin
+              .from("bookings")
+              .update({
+                escrow_state: "held",
+                ...(chargeId ? { stripe_charge_id: chargeId } : {}),
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", booking.id);
           }
         } else if (["requires_capture", "requires_payment_method", "requires_confirmation"].includes(intent.status)) {
           await stripe.paymentIntents.cancel(pi, undefined, {
