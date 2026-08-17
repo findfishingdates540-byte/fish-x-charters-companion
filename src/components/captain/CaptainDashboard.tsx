@@ -19,6 +19,7 @@ import {
   toggleServicePublished,
 } from "@/lib/captain-management.functions";
 import { ImageUpload } from "@/components/business/ImageUpload";
+import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
