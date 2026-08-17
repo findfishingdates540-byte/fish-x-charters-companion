@@ -20,6 +20,8 @@ import {
 } from "@/lib/captain-management.functions";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
+import { ReadinessGate } from "@/components/operator/ReadinessGate";
+import { RequestInbox } from "@/components/operator/RequestInbox";
 
 export const captainDashboardQO = queryOptions({
   queryKey: ["captain-dashboard"],
@@ -205,8 +207,15 @@ type CaptainData = Awaited<ReturnType<typeof getCaptainDashboard>>;
 
 function OverviewPanel({ data, onGoto }: { data: CaptainData; onGoto: (t: Tab) => void }) {
   const { stats, upcoming, services } = data;
+  const navToTab: Record<string, Tab> = {
+    payouts: "settings",
+    listings: "services",
+    slots: "services",
+    settings: "settings",
+  };
   return (
     <div>
+      <ReadinessGate onNav={(k) => onGoto(navToTab[k] ?? "settings")} compact />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18, marginBottom: 22 }}>
         <KpiCard label="This month" value={money(stats.grossCents)} sub="Gross earnings" />
         <KpiCard label="Upcoming" value={String(stats.upcomingCount)} sub="Trips booked" />
@@ -279,6 +288,11 @@ function BookingsPanel() {
   });
   const rows = data?.rows ?? [];
   return (
+    <div>
+      <Panel title="Requests awaiting your response">
+        <RequestInbox emptyText="No booking requests waiting on you right now." />
+      </Panel>
+      <div style={{ height: 18 }} />
     <Panel title="All bookings">
       <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
         {BOOKING_FILTERS.map((f) => (
@@ -323,6 +337,7 @@ function BookingsPanel() {
         </Link>
       ))}
     </Panel>
+    </div>
   );
 }
 
