@@ -24,11 +24,15 @@ type BookingMoneyRow = {
   escrow_state: string;
   stripe_payment_intent_id: string | null;
   stripe_charge_id: string | null;
+  stripe_transfer_id: string | null;
   payout_released_at: string | null;
+  business_id: string | null;
+  payout_cents: number;
+  application_fee_cents: number | null;
 };
 
 const SELECT =
-  "id,status,captain_id,total_cents,deposit_cents,balance_due_cents,balance_collected_at,refunded_cents,escrow_state,stripe_payment_intent_id,stripe_charge_id,payout_released_at";
+  "id,status,captain_id,total_cents,deposit_cents,balance_due_cents,balance_collected_at,refunded_cents,escrow_state,stripe_payment_intent_id,stripe_charge_id,stripe_transfer_id,payout_released_at,business_id,payout_cents,application_fee_cents";
 
 async function loadOwnedBooking(
   supabase: any,
@@ -207,4 +211,155 @@ export const refundBookingDeposit = createServerFn({ method: "POST" })
       console.error("[stripe] refund failed", message);
       throw new Response(`Refund failed: ${message}`, { status: 400 });
     }
+  });
+
+/**
+ * Releases the operator's share of the captured deposit as a Stripe transfer
+ * to their connected account, and optionally records the on-the-day balance
+ * as collected in the same step.
+ *
+ * Guards: booking must be confirmed (or further along), the deposit must be
+ * captured and held in escrow, no open dispute, payouts enabled on Connect.
+ */
+export const releaseBookingPayout = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        bookingId: z.string().uuid(),
+        markBalanceCollected: z.boolean().default(false),
+        balanceMethod: z.enum(BALANCE_METHODS).default("cash"),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const booking = await loadOwnedBooking(context.supabase, data.bookingId);
+
+    if (booking.payout_released_at || booking.escrow_state === "released") {
+      return { ok: true as const, alreadyReleased: true, transferId: booking.stripe_transfer_id };
+    }
+    const releasable = ["confirmed", "in_progress", "completed", "reviewed"];
+    if (!releasable.includes(booking.status)) {
+      throw new Response(`Payout can only be released once the trip is confirmed (currently ${booking.status}).`, {
+        status: 400,
+      });
+    }
+    if (booking.escrow_state === "frozen") {
+      throw new Response("This payout is frozen while a dispute is open.", { status: 400 });
+    }
+    if (!booking.stripe_charge_id && !booking.stripe_payment_intent_id) {
+      throw new Response("No captured deposit is attached to this booking yet.", { status: 400 });
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: dispute } = await supabaseAdmin
+      .from("disputes")
+      .select("id")
+      .eq("booking_id", booking.id)
+      .in("status", ["open", "investigating"])
+      .maybeSingle();
+    if (dispute) throw new Response("A dispute is open on this booking — payout stays frozen.", { status: 400 });
+
+    const { data: biz } = await supabaseAdmin
+      .from("businesses")
+      .select("id,stripe_account_id,payouts_enabled")
+      .eq("id", booking.business_id ?? "")
+      .maybeSingle();
+    if (!biz?.stripe_account_id || !biz.payouts_enabled) {
+      throw new Response("Finish Stripe payouts setup before releasing this payout.", { status: 400 });
+    }
+
+    const paidCents = booking.deposit_cents || booking.total_cents;
+    const vendorCents = Math.max(0, (booking.payout_cents ?? 0) - (booking.refunded_cents ?? 0));
+    if (vendorCents <= 0) throw new Response("Nothing left to pay out on this booking.", { status: 400 });
+    if (vendorCents > paidCents) {
+      throw new Response("Payout exceeds the captured deposit — review this booking.", { status: 400 });
+    }
+
+    const { requireStripe } = await import("./stripe.server");
+    const stripe = requireStripe();
+
+    let transferId: string;
+    try {
+      const transfer = await stripe.transfers.create(
+        {
+          amount: vendorCents,
+          currency: "usd",
+          destination: biz.stripe_account_id,
+          ...(booking.stripe_charge_id ? { source_transaction: booking.stripe_charge_id } : {}),
+          metadata: {
+            booking_id: booking.id,
+            platform_fee_cents: String(booking.application_fee_cents ?? 0),
+          },
+        },
+        { idempotencyKey: `booking-payout-${booking.id}` },
+      );
+      transferId = transfer.id;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("[stripe] booking transfer failed", message);
+      throw new Response(`Payout failed: ${message}`, { status: 400 });
+    }
+
+    const now = new Date().toISOString();
+    const expectedBalance =
+      booking.balance_due_cents || Math.max(0, booking.total_cents - booking.deposit_cents);
+    const collectBalance = data.markBalanceCollected && !booking.balance_collected_at;
+
+    await supabaseAdmin
+      .from("bookings")
+      .update({
+        escrow_state: "released",
+        stripe_transfer_id: transferId,
+        payout_released_at: now,
+        ...(collectBalance ? { balance_collected_at: now, balance_due_cents: 0 } : {}),
+        updated_at: now,
+      })
+      .eq("id", booking.id);
+
+    await supabaseAdmin.from("payouts").insert({
+      business_id: biz.id,
+      booking_id: booking.id,
+      stripe_payout_id: transferId,
+      amount_cents: vendorCents,
+      currency: "usd",
+      status: "paid",
+      paid_at: now,
+    });
+
+    await supabaseAdmin.from("domain_events").insert({
+      topic: "payout.released",
+      aggregate_type: "booking",
+      aggregate_id: booking.id,
+      payload: {
+        booking_id: booking.id,
+        amount_cents: vendorCents,
+        transfer_id: transferId,
+        released_by: context.userId,
+      },
+    });
+
+    if (collectBalance) {
+      await supabaseAdmin.from("domain_events").insert({
+        topic: "booking.balance_collected",
+        aggregate_type: "booking",
+        aggregate_id: booking.id,
+        payload: {
+          booking_id: booking.id,
+          amount_cents: expectedBalance,
+          method: data.balanceMethod,
+          collected_by: context.userId,
+        },
+      });
+    }
+
+    return {
+      ok: true as const,
+      alreadyReleased: false,
+      transferId,
+      amountCents: vendorCents,
+      balanceCollected: collectBalance,
+      balanceCents: collectBalance ? expectedBalance : 0,
+    };
   });
