@@ -161,7 +161,7 @@ export function CaptainDashboard() {
           {tab === "bookings" && <BookingsPanel />}
           {tab === "services" && <ServicesPanel data={data} />}
           {tab === "messages" && <MessagesPanel />}
-          {tab === "earnings" && <EarningsPanel />}
+          {tab === "earnings" && <EarningsPanel businessId={data.business?.id ?? null} />}
           {tab === "settings" && <SettingsPanel data={data} />}
         </main>
       </div>
@@ -553,7 +553,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 /* ---------------- EARNINGS ---------------- */
 
-function EarningsPanel() {
+function EarningsPanel({ businessId }: { businessId: string | null }) {
   const fn = useServerFn(getCaptainEarnings);
   const { data, isLoading } = useQuery({ queryKey: ["captain-earnings"], queryFn: () => fn() });
   if (isLoading || !data) return <Empty text="Loading…" />;
