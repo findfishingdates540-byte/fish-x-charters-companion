@@ -210,10 +210,14 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
   };
 
   const depositPaid = b.deposit_cents || total;
-  const balanceDue = b.balance_due_cents ?? Math.max(0, total - depositPaid);
   const refundedCents = b.refunded_cents ?? 0;
   const balanceCollected = !!b.balance_collected_at;
+  // Once collected (or collected as part of a payout release) the stored due
+  // amount drops to 0 — keep showing the figure the captain actually took.
+  const grossBalance = Math.max(0, total - depositPaid);
+  const balanceDue = balanceCollected ? grossBalance : (b.balance_due_cents ?? grossBalance);
   const refundable = Math.max(0, depositPaid - refundedCents);
+
 
   const doCollectBalance = async () => {
     if (busyMoney) return;
@@ -490,9 +494,10 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                   <span style={{ fontWeight: 600 }}>{money(depositPaid)}</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
-                  <span style={{ color: V.tmut }}>Balance you collect</span>
+                  <span style={{ color: V.tmut }}>{balanceCollected ? "Balance collected" : "Balance you collect"}</span>
                   <span style={{ fontWeight: 600 }}>{money(balanceDue)}</span>
                 </div>
+
                 {refundedCents > 0 && (
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
                     <span style={{ color: V.tmut }}>Refunded to guest</span>
