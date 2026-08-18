@@ -273,7 +273,7 @@ function AuthPage() {
   return (
     <div className="dc-auth" style={{
       ...cssVars, minHeight: "100vh", display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(468px,1fr))",
+      gridTemplateColumns: "repeat(auto-fit,minmax(min(468px,100%),1fr))",
       fontFamily: "var(--sans)", color: "var(--ink)",
     }}>
       {/* ============ BRAND PANEL ============ */}

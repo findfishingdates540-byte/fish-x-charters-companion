@@ -47,6 +47,7 @@ export function OperatorShell({
 }) {
   return (
     <div
+      className="fx-shell"
       style={{
         display: "flex",
         minHeight: "100vh",
@@ -57,6 +58,7 @@ export function OperatorShell({
     >
       {/* SIDEBAR */}
       <aside
+        className="fx-side"
         style={{
           width: 256,
           flex: "none",
@@ -273,6 +275,7 @@ export function OperatorShell({
       {/* MAIN */}
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
         <header
+          className="fx-topbar"
           style={{
             position: "sticky",
             top: 0,
@@ -318,6 +321,7 @@ export function OperatorShell({
         </header>
 
         <main
+          className="fx-main"
           style={{
             flex: 1,
             padding: "30px 34px 48px",
