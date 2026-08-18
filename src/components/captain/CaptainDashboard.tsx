@@ -95,9 +95,9 @@ export function CaptainDashboard() {
   }
 
   return (
-    <div style={shell}>
+    <div className="fx-shell" style={shell}>
       {/* SIDEBAR */}
-      <aside style={{ width: 256, flex: "none", background: "var(--navy)", color: "var(--ond)", display: "flex", flexDirection: "column", padding: "22px 16px", position: "sticky", top: 0, height: "100vh", borderRight: "1px solid rgba(255,255,255,.06)" }}>
+      <aside className="fx-side" style={{ width: 256, flex: "none", background: "var(--navy)", color: "var(--ond)", display: "flex", flexDirection: "column", padding: "22px 16px", position: "sticky", top: 0, height: "100vh", borderRight: "1px solid rgba(255,255,255,.06)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 10px 22px" }}>
           <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
           <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
@@ -136,7 +136,7 @@ export function CaptainDashboard() {
 
       {/* MAIN */}
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-        <header style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(238,242,245,.86)", backdropFilter: "saturate(140%) blur(12px)", borderBottom: "1px solid var(--line)", padding: "18px 34px", display: "flex", alignItems: "center", gap: 24 }}>
+        <header className="fx-topbar" style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(238,242,245,.86)", backdropFilter: "saturate(140%) blur(12px)", borderBottom: "1px solid var(--line)", padding: "18px 34px", display: "flex", alignItems: "center", gap: 24 }}>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 26, lineHeight: 1.1, color: "var(--ink)" }}>{pageTitle[tab]}</div>
             <div style={{ fontSize: 13, color: "var(--tmut)", marginTop: 1 }}>{pageSub[tab]}</div>
@@ -157,7 +157,7 @@ export function CaptainDashboard() {
           </div>
         </header>
 
-        <main style={{ flex: 1, padding: "30px 34px 48px", maxWidth: 1180, width: "100%" }}>
+        <main className="fx-main" style={{ flex: 1, padding: "30px 34px 48px", maxWidth: 1180, width: "100%" }}>
           {tab === "overview" && <OverviewPanel data={data} onGoto={setTab} />}
           {tab === "bookings" && <BookingsPanel />}
           {tab === "services" && <ServicesPanel data={data} />}
