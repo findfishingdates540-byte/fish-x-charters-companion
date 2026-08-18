@@ -764,3 +764,12 @@ body.dc-body { margin:0; background:#0a2236; }
     padding: 16px !important; gap: 16px !important;
   }
 }
+
+/* Auth: hide the brand panel on phones, keep the form full-width */
+@media (max-width: 780px) {
+  .dc-auth > aside { display: none !important; }
+  .dc-auth > * { min-height: 100dvh; }
+}
+@media (max-width: 560px) {
+  .dc-auth section, .dc-auth > div { padding-left: 18px !important; padding-right: 18px !important; }
+}
