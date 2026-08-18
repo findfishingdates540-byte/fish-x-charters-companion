@@ -756,3 +756,11 @@ body.dc-body { margin:0; background:#0a2236; }
 @media (max-width: 400px) {
   .mkt-grid { grid-template-columns: minmax(0, 1fr) !important; }
 }
+
+/* Marketplace: keep the filter rail compact above the grid on phones */
+@media (max-width: 900px) {
+  .mkt-layout > aside {
+    max-height: 280px !important; overflow-y: auto !important;
+    padding: 16px !important; gap: 16px !important;
+  }
+}
