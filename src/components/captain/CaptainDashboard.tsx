@@ -379,6 +379,11 @@ function ServicesPanel({ data }: { data: CaptainData }) {
   const del = useServerFn(deleteCaptainService);
   const toggle = useServerFn(toggleServicePublished);
   const [editing, setEditing] = useState<ServiceDraft | null>(null);
+  const [datesFor, setDatesFor] = useState<{
+    id: string; title: string; capacity: number; base_price_cents: number;
+    duration_minutes: number; instant_book: boolean;
+  } | null>(null);
+
 
   const mUpsert = useMutation({
     mutationFn: (draft: ServiceDraft) => upsert({ data: {
