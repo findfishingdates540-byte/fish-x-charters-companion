@@ -451,6 +451,20 @@ function ServicesPanel({ data }: { data: CaptainData }) {
             {s.is_published ? "Live" : "Draft"}
           </button>
           <button
+            onClick={() => setDatesFor({
+              id: s.id,
+              title: s.title,
+              capacity: s.capacity ?? 4,
+              base_price_cents: s.base_price_cents ?? 0,
+              duration_minutes: (s as any).duration_minutes ?? 240,
+              instant_book: (s as any).instant_book ?? true,
+            })}
+            style={{ border: "1px solid var(--line)", background: "transparent", borderRadius: 20, padding: "5px 11px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+          >
+            Dates
+          </button>
+          <button
+
             onClick={() => setEditing({
               id: s.id,
               title: s.title,
