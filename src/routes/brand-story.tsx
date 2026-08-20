@@ -51,10 +51,10 @@ const TOKENS: React.CSSProperties = {
 };
 
 const STATS = [
-  { n: "10+", l: "Years On The Water" },
-  { n: "800+", l: "Verified Captains" },
-  { n: "45k", l: "Trips Booked" },
-  { n: "12", l: "Coastal Regions" },
+  { n: "Verified", l: "Licence & identity checks" },
+  { n: "Escrow", l: "Funds held until delivery" },
+  { n: "6", l: "Industry categories" },
+  { n: "One", l: "Fish-X account, everywhere" },
 ];
 
 const VALUES = [
