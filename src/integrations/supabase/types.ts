@@ -2494,6 +2494,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      set_cron_secret: { Args: { _value: string }; Returns: undefined }
       transition_booking: {
         Args: {
           _booking_id: string

@@ -8,6 +8,7 @@
  * outbox does not grow unbounded during development.
  */
 import { createFileRoute } from "@tanstack/react-router";
+import { assertCronCaller } from "@/lib/cron-auth.server";
 
 const BATCH_SIZE = 50;
 const MAX_ATTEMPTS = 8;
@@ -15,7 +16,10 @@ const MAX_ATTEMPTS = 8;
 export const Route = createFileRoute("/api/public/hooks/dispatch-events")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const denied = assertCronCaller(request);
+        if (denied) return denied;
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         const { data: pending, error: fetchErr } = await supabaseAdmin
