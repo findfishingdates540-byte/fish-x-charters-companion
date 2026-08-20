@@ -24,6 +24,8 @@ import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
 import { RequestInbox } from "@/components/operator/RequestInbox";
+import { AvailabilityCalendar } from "@/components/business/AvailabilityCalendar";
+
 
 export const captainDashboardQO = queryOptions({
   queryKey: ["captain-dashboard"],
@@ -379,6 +381,11 @@ function ServicesPanel({ data }: { data: CaptainData }) {
   const del = useServerFn(deleteCaptainService);
   const toggle = useServerFn(toggleServicePublished);
   const [editing, setEditing] = useState<ServiceDraft | null>(null);
+  const [datesFor, setDatesFor] = useState<{
+    id: string; title: string; capacity: number; base_price_cents: number;
+    duration_minutes: number; instant_book: boolean;
+  } | null>(null);
+
 
   const mUpsert = useMutation({
     mutationFn: (draft: ServiceDraft) => upsert({ data: {
@@ -429,6 +436,13 @@ function ServicesPanel({ data }: { data: CaptainData }) {
         />
       )}
 
+      {datesFor && (
+        <div style={{ marginBottom: 16 }}>
+          <AvailabilityCalendar service={datesFor} onClose={() => setDatesFor(null)} />
+        </div>
+      )}
+
+
       {data.services.length === 0 && !editing && <Empty text="No services yet. Add your first trip." />}
 
       {data.services.map((s: ServiceRow, i: number) => (
@@ -451,6 +465,20 @@ function ServicesPanel({ data }: { data: CaptainData }) {
             {s.is_published ? "Live" : "Draft"}
           </button>
           <button
+            onClick={() => setDatesFor({
+              id: s.id,
+              title: s.title,
+              capacity: s.capacity ?? 4,
+              base_price_cents: s.base_price_cents ?? 0,
+              duration_minutes: (s as any).duration_minutes ?? 240,
+              instant_book: (s as any).instant_book ?? true,
+            })}
+            style={{ border: "1px solid var(--line)", background: "transparent", borderRadius: 20, padding: "5px 11px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+          >
+            Dates
+          </button>
+          <button
+
             onClick={() => setEditing({
               id: s.id,
               title: s.title,
