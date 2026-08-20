@@ -42,7 +42,12 @@ export const updateMyProfile = createServerFn({ method: "POST" })
         full_name: z.string().max(120).optional(),
         display_name: z.string().max(80).optional(),
         phone: z.string().max(40).optional(),
-        avatar_url: z.string().url().max(2000).optional().or(z.literal("")),
+        avatar_url: z
+          .string()
+          .max(2000)
+          .refine((v) => v === "" || /^(https?:\/\/|\/)/.test(v), "Invalid image URL")
+          .optional(),
+
       })
       .parse(input),
   )
