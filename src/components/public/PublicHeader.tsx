@@ -93,7 +93,7 @@ export function PublicHeader() {
             }}
           />
           <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 21, letterSpacing: ".02em" }}>
-            Fish-X Charters
+            FISH-X.COM
           </span>
         </Link>
 

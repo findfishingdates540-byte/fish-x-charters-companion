@@ -171,7 +171,7 @@ function Shell({ children, backTo }: { children: React.ReactNode; backTo?: strin
               }}
             />
             <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>
-              Fish-X Charters
+              FISH-X.COM
             </span>
             <span
               style={{

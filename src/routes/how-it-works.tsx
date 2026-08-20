@@ -576,7 +576,7 @@ function HowItWorksPage() {
                 }}
               />
               <span style={{ fontFamily: "var(--serif)", fontSize: 20, color: "var(--ond)", fontWeight: 600 }}>
-                Fish-X Charters
+                FISH-X.COM
               </span>
             </div>
             <p style={{ fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/trust")({
       {
         name: "description",
         content:
-          "How Fish-X Charters protects your booking — escrow-secured payments, verified captains, and dispute support at every stage of the trip.",
+          "How FISH-X.COM Bookings & Marketplace protects your booking — escrow-secured payments, verified captains, and dispute support at every stage of the trip.",
       },
       { property: "og:title", content: "Trust & Protection | FISH-X.COM Bookings & Marketplace" },
       {
@@ -472,7 +472,7 @@ function TrustPage() {
             opacity: 0.85,
           }}
         >
-          This page is maintained by Fish-X Charters to answer common questions about how bookings on Fish-X are protected. It describes app-visible controls we operate today and is not an independent certification, audit report, or legal guarantee. Payment processing, hosting and card handling are provided by third-party platforms under a shared-responsibility model, and captains remain responsible for the safe operation of their vessels.
+          This page is maintained by FISH-X.COM Bookings & Marketplace to answer common questions about how bookings on Fish-X are protected. It describes app-visible controls we operate today and is not an independent certification, audit report, or legal guarantee. Payment processing, hosting and card handling are provided by third-party platforms under a shared-responsibility model, and captains remain responsible for the safe operation of their vessels.
         </div>
       </section>
 
@@ -500,7 +500,7 @@ function TrustPage() {
                 }}
               />
               <span style={{ fontFamily: "var(--serif)", fontSize: 20, color: "var(--ond)", fontWeight: 600 }}>
-                Fish-X Charters
+                FISH-X.COM
               </span>
             </div>
             <p style={{ fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>

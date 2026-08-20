@@ -12,7 +12,7 @@ export const Route = createFileRoute("/become-a-captain")({
       {
         name: "description",
         content:
-          "Join Fish-X Charters — the escrow-secured marketplace for elite charter captains. Set your prices, own your calendar, and get paid every week.",
+          "Join FISH-X.COM Bookings & Marketplace — the escrow-secured marketplace for elite charter captains. Set your prices, own your calendar, and get paid every week.",
       },
       { property: "og:title", content: "Become a Captain | FISH-X.COM Bookings & Marketplace" },
       {
@@ -585,7 +585,7 @@ function BecomeCaptainPage() {
                 }}
               />
               <span style={{ fontFamily: "var(--serif)", fontSize: 20, color: "var(--ond)", fontWeight: 600 }}>
-                Fish-X Charters
+                FISH-X.COM
               </span>
             </div>
             <p style={{ fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>

@@ -172,7 +172,7 @@ function Shell({ children }: { children: React.ReactNode }) {
             <span
               style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}
             >
-              Fish-X Charters
+              FISH-X.COM
             </span>
             <span
               style={{

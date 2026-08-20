@@ -285,8 +285,8 @@ function emailHtml(draft: NotificationDraft) {
     <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em">FISH-X.COM</div>
     <h1 style="font-family:Georgia,serif;font-size:26px;margin:24px 0 10px">${escapeHtml(draft.title)}</h1>
     <p style="font-size:15px;line-height:1.6;color:#5c6b78;margin:0 0 24px">${escapeHtml(draft.body ?? "")}</p>
-    <a href="${link}" style="display:inline-block;background:#0d2236;color:#ffffff;text-decoration:none;border-radius:10px;padding:13px 22px;font-size:14px;font-weight:700">Open Fish-X Charters</a>
-    <p style="font-size:12px;color:#8a97a3;margin-top:32px">You're receiving this because of activity on your Fish-X Charters account. Manage notification settings in your account page.</p>
+    <a href="${link}" style="display:inline-block;background:#0d2236;color:#ffffff;text-decoration:none;border-radius:10px;padding:13px 22px;font-size:14px;font-weight:700">Open FISH-X.COM</a>
+    <p style="font-size:12px;color:#8a97a3;margin-top:32px">You're receiving this because of activity on your FISH-X.COM account. Manage notification settings in your account page.</p>
   </div></body></html>`;
 }
 

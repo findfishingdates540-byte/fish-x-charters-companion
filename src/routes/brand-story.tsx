@@ -275,7 +275,7 @@ function BrandStoryPage() {
             <Link to="/brand-story" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>Our Story</Link>
           </div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)", letterSpacing: ".08em" }}>
-            © {new Date().getFullYear()} Fish-X Charters. All rights reserved.
+            © {new Date().getFullYear()} FISH-X.COM Bookings & Marketplace. All rights reserved.
           </div>
         </div>
       </footer>
