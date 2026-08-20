@@ -80,6 +80,10 @@ export const upsertBusinessService = createServerFn({ method: "POST" })
           .single()
       : await context.supabase.from("bookable_services").insert(payload).select().single();
     if (error) throw new Response(error.message, { status: 400 });
+    if (row?.is_published) {
+      const { ensureFutureAvailability } = await import("./availability-seed.server");
+      await ensureFutureAvailability(context.supabase, row);
+    }
     return row;
   });
 
@@ -92,14 +96,21 @@ export const setBusinessServicePublished = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertManager(context.supabase, context.userId, data.businessId);
-    const { error } = await context.supabase
+    const { data: row, error } = await context.supabase
       .from("bookable_services")
       .update({ is_published: data.isPublished })
       .eq("id", data.id)
-      .eq("business_id", data.businessId);
+      .eq("business_id", data.businessId)
+      .select("id,capacity,duration_minutes,base_price_cents")
+      .single();
     if (error) throw new Response(error.message, { status: 400 });
+    if (data.isPublished && row) {
+      const { ensureFutureAvailability } = await import("./availability-seed.server");
+      await ensureFutureAvailability(context.supabase, row);
+    }
     return { ok: true as const };
   });
+
 
 export const deleteBusinessService = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

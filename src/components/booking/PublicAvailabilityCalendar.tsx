@@ -219,8 +219,24 @@ export function PublicAvailabilityCalendar({
 
       {isLoading && <div style={{ fontSize: 12.5, color: T.muted }}>Loading dates…</div>}
       {!isLoading && slots.length === 0 && (
-        <div style={{ fontSize: 12.5, color: T.muted }}>No dates released yet for this listing.</div>
+        <div
+          style={{
+            fontSize: 12.5,
+            lineHeight: 1.5,
+            color: T.muted,
+            border: `1px solid ${T.line}`,
+            borderRadius: 12,
+            padding: "10px 12px",
+          }}
+        >
+          <strong style={{ color: T.text, display: "block", fontSize: 13 }}>
+            No departures released yet
+          </strong>
+          This operator hasn&rsquo;t opened dates for this listing. Message them to request a date and
+          they can release it for you.
+        </div>
       )}
+
 
       {dayShown.length > 0 && (
         <div style={{ display: "grid", gap: 8 }}>
