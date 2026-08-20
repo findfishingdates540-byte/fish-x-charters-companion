@@ -12,6 +12,8 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyProfile, updateMyProfile } from "@/lib/angler-profile.functions";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
+
 
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
@@ -390,16 +392,15 @@ export function AnglerAccount() {
             />
           </div>
           <div style={{ gridColumn: "1 / -1" }}>
-            {label("Avatar URL")}
-            <input
+            {label("Profile photo")}
+            <AvatarUpload
+              userId={data.viewerId}
               value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
-              maxLength={2000}
-              type="url"
-              placeholder="https://…"
-              style={inputStyle}
+              onChange={setAvatarUrl}
+              fallback={initials}
             />
           </div>
+
         </div>
 
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24 }}>

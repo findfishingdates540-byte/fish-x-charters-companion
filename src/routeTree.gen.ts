@@ -39,6 +39,7 @@ import { Route as ApiPublicHooksSyncCronSecretRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksReleaseEscrowRouteImport } from './routes/api/public/hooks/release-escrow'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 import { Route as ApiPublicHooksBookingTimersRouteImport } from './routes/api/public/hooks/booking-timers'
+import { Route as ApiPublicAvatarsSplatRouteImport } from './routes/api/public/avatars/$'
 
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
@@ -197,6 +198,11 @@ const ApiPublicHooksBookingTimersRoute =
     path: '/api/public/hooks/booking-timers',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicAvatarsSplatRoute = ApiPublicAvatarsSplatRouteImport.update({
+  id: '/api/public/avatars/$',
+  path: '/api/public/avatars/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/avatars/$': typeof ApiPublicAvatarsSplatRoute
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
@@ -254,6 +261,7 @@ export interface FileRoutesByTo {
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/avatars/$': typeof ApiPublicAvatarsSplatRoute
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
@@ -287,6 +295,7 @@ export interface FileRoutesById {
   '/_authenticated/trips/detail': typeof AuthenticatedTripsDetailRoute
   '/api/public/fishx-webhook': typeof ApiPublicFishxWebhookRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/avatars/$': typeof ApiPublicAvatarsSplatRoute
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/stripe-webhook'
+    | '/api/public/avatars/$'
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/stripe-webhook'
+    | '/api/public/avatars/$'
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trips/detail'
     | '/api/public/fishx-webhook'
     | '/api/public/stripe-webhook'
+    | '/api/public/avatars/$'
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/release-escrow'
@@ -406,6 +418,7 @@ export interface RootRouteChildren {
   MarketplaceIndexRoute: typeof MarketplaceIndexRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  ApiPublicAvatarsSplatRoute: typeof ApiPublicAvatarsSplatRoute
   ApiPublicHooksBookingTimersRoute: typeof ApiPublicHooksBookingTimersRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
   ApiPublicHooksReleaseEscrowRoute: typeof ApiPublicHooksReleaseEscrowRoute
@@ -625,6 +638,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBookingTimersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/avatars/$': {
+      id: '/api/public/avatars/$'
+      path: '/api/public/avatars/$'
+      fullPath: '/api/public/avatars/$'
+      preLoaderRoute: typeof ApiPublicAvatarsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -673,6 +693,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketplaceIndexRoute: MarketplaceIndexRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  ApiPublicAvatarsSplatRoute: ApiPublicAvatarsSplatRoute,
   ApiPublicHooksBookingTimersRoute: ApiPublicHooksBookingTimersRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
   ApiPublicHooksReleaseEscrowRoute: ApiPublicHooksReleaseEscrowRoute,
