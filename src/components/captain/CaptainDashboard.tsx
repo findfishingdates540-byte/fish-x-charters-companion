@@ -24,6 +24,8 @@ import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
 import { RequestInbox } from "@/components/operator/RequestInbox";
+import { AvailabilityCalendar } from "@/components/business/AvailabilityCalendar";
+
 
 export const captainDashboardQO = queryOptions({
   queryKey: ["captain-dashboard"],
