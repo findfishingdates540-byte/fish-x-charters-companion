@@ -92,8 +92,23 @@ export function PublicHeader() {
               borderRadius: 1,
             }}
           />
-          <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 21, letterSpacing: ".02em" }}>
-            FISH-X.COM
+          <span style={{ display: "grid", lineHeight: 1.05 }}>
+            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 21, letterSpacing: ".02em" }}>
+              FISH-X.COM
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--sans)",
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: ".22em",
+                textTransform: "uppercase",
+                color: "var(--sand, #e3c089)",
+                marginTop: 3,
+              }}
+            >
+              Bookings &amp; Marketplace
+            </span>
           </span>
         </Link>
 
