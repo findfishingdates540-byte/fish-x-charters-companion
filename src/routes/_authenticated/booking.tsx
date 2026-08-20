@@ -13,9 +13,9 @@ const search = z.object({
 export const Route = createFileRoute("/_authenticated/booking")({
   head: () => ({
     meta: [
-      { title: "Book your trip — Fish-X Charters" },
+      { title: "Book your trip — FISH-X.COM Bookings & Marketplace" },
       { name: "description", content: "Secure your fishing charter with Fish-X — every booking escrow-protected." },
-      { property: "og:title", content: "Book your trip — Fish-X Charters" },
+      { property: "og:title", content: "Book your trip — FISH-X.COM Bookings & Marketplace" },
       { property: "og:description", content: "Escrow-protected charter booking on Fish-X." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

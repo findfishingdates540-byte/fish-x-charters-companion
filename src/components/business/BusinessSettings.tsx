@@ -404,7 +404,7 @@ function TeamCard({
           <Muted tone="bad">{String(((mRole.error ?? mRemove.error) as Error).message)}</Muted>
         )}
         <Muted>
-          To add a teammate, ask them to create a Fish-X Charters account, then share their sign-up email with support to
+          To add a teammate, ask them to create a FISH-X.COM account, then share their sign-up email with support to
           be attached to this business.
         </Muted>
       </div>

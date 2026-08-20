@@ -666,7 +666,7 @@ export function OperatorOnboarding() {
             className="font-semibold text-[20px] tracking-[0.02em] whitespace-nowrap"
             style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
           >
-            Fish-X Charters
+            FISH-X.COM
           </span>
         </div>
         <div

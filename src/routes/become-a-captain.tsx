@@ -8,13 +8,13 @@ export const Route = createFileRoute("/become-a-captain")({
   component: BecomeCaptainPage,
   head: () => ({
     meta: [
-      { title: "Become a Captain | Fish-X Charters" },
+      { title: "Become a Captain | FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content:
-          "Join Fish-X Charters — the escrow-secured marketplace for elite charter captains. Set your prices, own your calendar, and get paid every week.",
+          "Join FISH-X.COM Bookings & Marketplace — the escrow-secured marketplace for elite charter captains. Set your prices, own your calendar, and get paid every week.",
       },
-      { property: "og:title", content: "Become a Captain | Fish-X Charters" },
+      { property: "og:title", content: "Become a Captain | FISH-X.COM Bookings & Marketplace" },
       {
         property: "og:description",
         content:
@@ -454,51 +454,6 @@ function BecomeCaptainPage() {
         </div>
       </section>
 
-      {/* ============ TESTIMONIALS ============ */}
-      <section style={{ padding: "100px 40px", background: "var(--paper)" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 60 }}>
-            <div style={eyebrow}>Voices from the fleet</div>
-            <h2 style={h2Style}>Captains earning with Fish-X</h2>
-          </div>
-          <div
-            className="bc-3col"
-            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}
-          >
-            {[
-              { q: "The caliber of clientele on Fish-X is incomparable. It's transformed how I manage my charter operations.", n: "Capt. Julian Vane", p: "Port of Monaco", r: "$420k Revenue to date" },
-              { q: "Fish-X gave me the data to realize I was underpricing my sunrise cruises. My revenue is up 35% in one season.", n: "Capt. Elena Rossi", p: "Amalfi Coast", r: "$285k Revenue to date" },
-              { q: "The insurance disclosure and safety standards provide the peace of mind needed when hosting serious anglers.", n: "Capt. Soren Lund", p: "Copenhagen", r: "$190k Revenue to date" },
-            ].map((t) => (
-              <div key={t.n} className="bc-card" style={{ padding: 32, display: "flex", flexDirection: "column" }}>
-                <div style={{ color: "var(--sand)", fontSize: 16, letterSpacing: 2, marginBottom: 14 }}>
-                  ★★★★★
-                </div>
-                <p
-                  style={{
-                    fontFamily: "var(--serif)",
-                    fontStyle: "italic",
-                    fontSize: 19,
-                    lineHeight: 1.5,
-                    color: "var(--ink)",
-                    margin: "0 0 24px",
-                    flex: 1,
-                  }}
-                >
-                  &ldquo;{t.q}&rdquo;
-                </p>
-                <div style={{ borderTop: "1px solid var(--line)", paddingTop: 16 }}>
-                  <div style={{ fontWeight: 700, color: "var(--ink)" }}>{t.n}</div>
-                  <div style={{ fontSize: 13, color: "var(--tmut)", margin: "2px 0 6px" }}>{t.p}</div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--goldtext)", letterSpacing: ".05em" }}>
-                    {t.r}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ============ TRUST STRIP ============ */}
       <section id="trust" style={{ padding: "60px 40px", background: "var(--navy)", color: "var(--ond)" }}>
@@ -585,7 +540,7 @@ function BecomeCaptainPage() {
                 }}
               />
               <span style={{ fontFamily: "var(--serif)", fontSize: 20, color: "var(--ond)", fontWeight: 600 }}>
-                Fish-X Charters
+                FISH-X.COM
               </span>
             </div>
             <p style={{ fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>
@@ -593,7 +548,7 @@ function BecomeCaptainPage() {
             </p>
           </div>
           <div style={{ fontSize: 12.5 }}>
-            <div style={{ marginBottom: 8 }}>&copy; 2026 Fish-X Charters. All rights reserved.</div>
+            <div style={{ marginBottom: 8 }}>&copy; 2026 FISH-X.COM Bookings & Marketplace. All rights reserved.</div>
             <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
               <a href="#" style={footLink}>Privacy</a>
               <a href="#" style={footLink}>Terms</a>

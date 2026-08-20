@@ -11,13 +11,13 @@ export const Route = createFileRoute("/how-it-works")({
   component: HowItWorksPage,
   head: () => ({
     meta: [
-      { title: "How It Works | Fish-X Charters" },
+      { title: "How It Works | FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content:
           "Discover, book, coordinate and experience — Fish-X makes charter fishing simple, with escrow-secured payments and 24/7 concierge support.",
       },
-      { property: "og:title", content: "How It Works | Fish-X Charters" },
+      { property: "og:title", content: "How It Works | FISH-X.COM Bookings & Marketplace" },
       {
         property: "og:description",
         content:
@@ -576,7 +576,7 @@ function HowItWorksPage() {
                 }}
               />
               <span style={{ fontFamily: "var(--serif)", fontSize: 20, color: "var(--ond)", fontWeight: 600 }}>
-                Fish-X Charters
+                FISH-X.COM
               </span>
             </div>
             <p style={{ fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>
@@ -584,7 +584,7 @@ function HowItWorksPage() {
             </p>
           </div>
           <div style={{ fontSize: 12.5 }}>
-            <div style={{ marginBottom: 8 }}>&copy; 2026 Fish-X Charters. All rights reserved.</div>
+            <div style={{ marginBottom: 8 }}>&copy; 2026 FISH-X.COM Bookings & Marketplace. All rights reserved.</div>
             <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
               <a href="#" style={{ color: "var(--ondmut)", textDecoration: "none" }}>Privacy</a>
               <a href="#" style={{ color: "var(--ondmut)", textDecoration: "none" }}>Terms</a>

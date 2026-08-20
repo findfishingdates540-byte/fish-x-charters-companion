@@ -22,11 +22,11 @@ export const Route = createFileRoute("/b/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Operator not found — Fish-X Charters" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Operator not found — FISH-X.COM Bookings & Marketplace" }, { name: "robots", content: "noindex" }] };
     }
     const b = loaderData.business;
     const location = [b.city, b.region, b.country].filter(Boolean).join(", ");
-    const title = `${b.name}${location ? ` — ${location}` : ""} · Fish-X Charters`;
+    const title = `${b.name}${location ? ` — ${location}` : ""} · FISH-X.COM Bookings & Marketplace`;
     const description =
       b.tagline ??
       (b.description ? b.description.slice(0, 155) : `Book ${b.name} on Fish-X — verified reviews, live availability, escrow-protected payment.`);

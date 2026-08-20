@@ -9,13 +9,13 @@ export const Route = createFileRoute("/brand-story")({
   component: BrandStoryPage,
   head: () => ({
     meta: [
-      { title: "Our Story | Fish-X Charters" },
+      { title: "Our Story | FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content:
           "The Fish-X story — how a marketplace built by captains and anglers is redefining the sport-fishing charter industry.",
       },
-      { property: "og:title", content: "Our Story | Fish-X Charters" },
+      { property: "og:title", content: "Our Story | FISH-X.COM Bookings & Marketplace" },
       {
         property: "og:description",
         content:
@@ -51,10 +51,10 @@ const TOKENS: React.CSSProperties = {
 };
 
 const STATS = [
-  { n: "10+", l: "Years On The Water" },
-  { n: "800+", l: "Verified Captains" },
-  { n: "45k", l: "Trips Booked" },
-  { n: "12", l: "Coastal Regions" },
+  { n: "Verified", l: "Licence & identity checks" },
+  { n: "Escrow", l: "Funds held until delivery" },
+  { n: "6", l: "Industry categories" },
+  { n: "One", l: "Fish-X account, everywhere" },
 ];
 
 const VALUES = [
@@ -267,7 +267,7 @@ function BrandStoryPage() {
       {/* Footer */}
       <footer style={{ background: "var(--navy)", padding: "64px 24px", borderTop: "1px solid var(--line)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-          <div className="bs-serif" style={{ fontSize: 32, color: "var(--sand)", letterSpacing: "-.02em" }}>Fish-X Charters</div>
+          <div className="bs-serif" style={{ fontSize: 32, color: "var(--sand)", letterSpacing: "-.02em" }}>FISH-X.COM</div>
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 32 }}>
             <Link to="/trust" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>Trust</Link>
             <Link to="/how-it-works" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>How It Works</Link>
@@ -275,7 +275,7 @@ function BrandStoryPage() {
             <Link to="/brand-story" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>Our Story</Link>
           </div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)", letterSpacing: ".08em" }}>
-            © {new Date().getFullYear()} Fish-X Charters. All rights reserved.
+            © {new Date().getFullYear()} FISH-X.COM Bookings & Marketplace. All rights reserved.
           </div>
         </div>
       </footer>
