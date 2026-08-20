@@ -9,11 +9,15 @@
  *                      in_progress becomes completed after the grace window
  */
 import { createFileRoute } from "@tanstack/react-router";
+import { assertCronCaller } from "@/lib/cron-auth.server";
 
 export const Route = createFileRoute("/api/public/hooks/booking-timers")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const denied = assertCronCaller(request);
+        if (denied) return denied;
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         const holds = await supabaseAdmin.rpc("expire_stale_holds", { _limit: 200 });

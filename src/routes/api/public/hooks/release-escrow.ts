@@ -10,13 +10,17 @@
  *   - the vendor's connected account has payouts enabled
  */
 import { createFileRoute } from "@tanstack/react-router";
+import { assertCronCaller } from "@/lib/cron-auth.server";
 
 const BATCH_SIZE = 25;
 
 export const Route = createFileRoute("/api/public/hooks/release-escrow")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const denied = assertCronCaller(request);
+        if (denied) return denied;
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { getStripe, splitAmount, ESCROW_HOLD_HOURS } = await import("@/lib/stripe.server");
 
