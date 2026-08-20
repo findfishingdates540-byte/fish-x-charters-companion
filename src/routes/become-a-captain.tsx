@@ -454,51 +454,6 @@ function BecomeCaptainPage() {
         </div>
       </section>
 
-      {/* ============ TESTIMONIALS ============ */}
-      <section style={{ padding: "100px 40px", background: "var(--paper)" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 60 }}>
-            <div style={eyebrow}>Voices from the fleet</div>
-            <h2 style={h2Style}>Captains earning with Fish-X</h2>
-          </div>
-          <div
-            className="bc-3col"
-            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}
-          >
-            {[
-              { q: "The caliber of clientele on Fish-X is incomparable. It's transformed how I manage my charter operations.", n: "Capt. Julian Vane", p: "Port of Monaco", r: "$420k Revenue to date" },
-              { q: "Fish-X gave me the data to realize I was underpricing my sunrise cruises. My revenue is up 35% in one season.", n: "Capt. Elena Rossi", p: "Amalfi Coast", r: "$285k Revenue to date" },
-              { q: "The insurance disclosure and safety standards provide the peace of mind needed when hosting serious anglers.", n: "Capt. Soren Lund", p: "Copenhagen", r: "$190k Revenue to date" },
-            ].map((t) => (
-              <div key={t.n} className="bc-card" style={{ padding: 32, display: "flex", flexDirection: "column" }}>
-                <div style={{ color: "var(--sand)", fontSize: 16, letterSpacing: 2, marginBottom: 14 }}>
-                  ★★★★★
-                </div>
-                <p
-                  style={{
-                    fontFamily: "var(--serif)",
-                    fontStyle: "italic",
-                    fontSize: 19,
-                    lineHeight: 1.5,
-                    color: "var(--ink)",
-                    margin: "0 0 24px",
-                    flex: 1,
-                  }}
-                >
-                  &ldquo;{t.q}&rdquo;
-                </p>
-                <div style={{ borderTop: "1px solid var(--line)", paddingTop: 16 }}>
-                  <div style={{ fontWeight: 700, color: "var(--ink)" }}>{t.n}</div>
-                  <div style={{ fontSize: 13, color: "var(--tmut)", margin: "2px 0 6px" }}>{t.p}</div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--goldtext)", letterSpacing: ".05em" }}>
-                    {t.r}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ============ TRUST STRIP ============ */}
       <section id="trust" style={{ padding: "60px 40px", background: "var(--navy)", color: "var(--ond)" }}>
