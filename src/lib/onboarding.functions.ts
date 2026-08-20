@@ -304,7 +304,10 @@ export const publishListing = createServerFn({ method: "POST" })
         : await context.supabase.from("bookable_services").insert(payload).select().single();
       if (svc.error) throw new Response(svc.error.message, { status: 400 });
       resultRow = svc.data;
+      const { ensureFutureAvailability } = await import("./availability-seed.server");
+      await ensureFutureAvailability(context.supabase, svc.data);
     }
+
 
     const { error: bErr } = await context.supabase
       .from("businesses")
