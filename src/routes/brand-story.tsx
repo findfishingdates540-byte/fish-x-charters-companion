@@ -9,13 +9,13 @@ export const Route = createFileRoute("/brand-story")({
   component: BrandStoryPage,
   head: () => ({
     meta: [
-      { title: "Our Story | Fish-X Charters" },
+      { title: "Our Story | FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content:
           "The Fish-X story — how a marketplace built by captains and anglers is redefining the sport-fishing charter industry.",
       },
-      { property: "og:title", content: "Our Story | Fish-X Charters" },
+      { property: "og:title", content: "Our Story | FISH-X.COM Bookings & Marketplace" },
       {
         property: "og:description",
         content:
@@ -267,7 +267,7 @@ function BrandStoryPage() {
       {/* Footer */}
       <footer style={{ background: "var(--navy)", padding: "64px 24px", borderTop: "1px solid var(--line)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-          <div className="bs-serif" style={{ fontSize: 32, color: "var(--sand)", letterSpacing: "-.02em" }}>Fish-X Charters</div>
+          <div className="bs-serif" style={{ fontSize: 32, color: "var(--sand)", letterSpacing: "-.02em" }}>FISH-X.COM</div>
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 32 }}>
             <Link to="/trust" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>Trust</Link>
             <Link to="/how-it-works" className="bs-eyebrow" style={{ color: "rgba(255,255,255,.55)" }}>How It Works</Link>

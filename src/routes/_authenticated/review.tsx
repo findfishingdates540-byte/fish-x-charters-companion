@@ -15,12 +15,12 @@ export const Route = createFileRoute("/_authenticated/review")({
     }),
   head: () => ({
     meta: [
-      { title: "Leave a review — Fish-X Charters" },
+      { title: "Leave a review — FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content: "Rate your charter and share your story to help future anglers on Fish-X.",
       },
-      { property: "og:title", content: "Leave a review — Fish-X Charters" },
+      { property: "og:title", content: "Leave a review — FISH-X.COM Bookings & Marketplace" },
       { property: "og:description", content: "Rate your captain and boat — verified booking review." },
     ],
   }),

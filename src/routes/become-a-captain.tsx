@@ -8,13 +8,13 @@ export const Route = createFileRoute("/become-a-captain")({
   component: BecomeCaptainPage,
   head: () => ({
     meta: [
-      { title: "Become a Captain | Fish-X Charters" },
+      { title: "Become a Captain | FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content:
           "Join Fish-X Charters — the escrow-secured marketplace for elite charter captains. Set your prices, own your calendar, and get paid every week.",
       },
-      { property: "og:title", content: "Become a Captain | Fish-X Charters" },
+      { property: "og:title", content: "Become a Captain | FISH-X.COM Bookings & Marketplace" },
       {
         property: "og:description",
         content:
@@ -593,7 +593,7 @@ function BecomeCaptainPage() {
             </p>
           </div>
           <div style={{ fontSize: 12.5 }}>
-            <div style={{ marginBottom: 8 }}>&copy; 2026 Fish-X Charters. All rights reserved.</div>
+            <div style={{ marginBottom: 8 }}>&copy; 2026 FISH-X.COM Bookings & Marketplace. All rights reserved.</div>
             <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
               <a href="#" style={footLink}>Privacy</a>
               <a href="#" style={footLink}>Terms</a>

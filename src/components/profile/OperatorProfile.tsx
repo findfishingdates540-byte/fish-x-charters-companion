@@ -70,7 +70,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
         <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 28px", height: 62, display: "flex", alignItems: "center", gap: 24 }}>
           <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "#eaf1f6" }}>
             <span style={{ width: 11, height: 11, background: "#e3c089", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-            <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
+            <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
           </Link>
           <Link to="/discover" style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "#93a7b7", textDecoration: "none", fontSize: 13, fontWeight: 500 }}>
             <span>←</span> Back to directory

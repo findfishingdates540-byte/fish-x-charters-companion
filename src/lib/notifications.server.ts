@@ -282,7 +282,7 @@ function emailHtml(draft: NotificationDraft) {
   const link = draft.link ? `${APP_URL}${draft.link}` : APP_URL;
   return `<!doctype html><html><body style="margin:0;background:#ffffff;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#0d2236">
   <div style="max-width:560px;margin:0 auto;padding:32px 24px">
-    <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em">Fish-X Charters</div>
+    <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em">FISH-X.COM</div>
     <h1 style="font-family:Georgia,serif;font-size:26px;margin:24px 0 10px">${escapeHtml(draft.title)}</h1>
     <p style="font-size:15px;line-height:1.6;color:#5c6b78;margin:0 0 24px">${escapeHtml(draft.body ?? "")}</p>
     <a href="${link}" style="display:inline-block;background:#0d2236;color:#ffffff;text-decoration:none;border-radius:10px;padding:13px 22px;font-size:14px;font-weight:700">Open Fish-X Charters</a>

@@ -22,12 +22,12 @@ export const Route = createFileRoute("/_authenticated/messages")({
   },
   head: () => ({
     meta: [
-      { title: "Messages — Fish-X Charters" },
+      { title: "Messages — FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content: "Message your captain about each booking — one thread per trip.",
       },
-      { property: "og:title", content: "Messages — Fish-X Charters" },
+      { property: "og:title", content: "Messages — FISH-X.COM Bookings & Marketplace" },
       { property: "og:description", content: "Your conversations with each captain, tied to your bookings." },
     ],
   }),

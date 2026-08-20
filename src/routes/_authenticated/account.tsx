@@ -10,12 +10,12 @@ export const Route = createFileRoute("/_authenticated/account")({
     }),
   head: () => ({
     meta: [
-      { title: "Account — Fish-X Charters" },
+      { title: "Account — FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content: "Manage your Fish-X angler account — your name, contact details and avatar.",
       },
-      { property: "og:title", content: "Account — Fish-X Charters" },
+      { property: "og:title", content: "Account — FISH-X.COM Bookings & Marketplace" },
       { property: "og:description", content: "Manage your Fish-X angler account details." },
     ],
   }),

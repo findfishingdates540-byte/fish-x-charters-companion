@@ -163,7 +163,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "0 auto" }}>
             <span style={{ width: 10, height: 10, background: V.sand, transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
+            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
           </div>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 7, border: `1px solid ${V.lined}`, borderRadius: 30, padding: "8px 14px", fontSize: 11.5, fontWeight: 600, color: V.ond }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: V.cyan }} /> Escrow-protected

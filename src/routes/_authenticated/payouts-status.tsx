@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/payouts-status")({
   validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
   head: () => ({
     meta: [
-      { title: "Payouts verification — Fish-X Charters" },
+      { title: "Payouts verification — FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content: "Connect and verify your payout account so your charter earnings land safely.",

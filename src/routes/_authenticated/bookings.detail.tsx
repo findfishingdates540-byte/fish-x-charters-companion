@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/bookings/detail")({
       queryKey: ["captain-booking", deps.id],
       queryFn: () => getCaptainBooking({ data: { id: deps.id } }),
     }),
-  head: () => ({ meta: [{ title: "Booking detail — Fish-X Charters" }] }),
+  head: () => ({ meta: [{ title: "Booking detail — FISH-X.COM Bookings & Marketplace" }] }),
   component: BookingDetailPage,
   errorComponent: ({ error }) => (
     <div style={{ padding: 40, fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>

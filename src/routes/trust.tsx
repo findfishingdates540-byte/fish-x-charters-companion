@@ -6,13 +6,13 @@ export const Route = createFileRoute("/trust")({
   component: TrustPage,
   head: () => ({
     meta: [
-      { title: "Trust & Protection | Fish-X Charters" },
+      { title: "Trust & Protection | FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content:
           "How Fish-X Charters protects your booking — escrow-secured payments, verified captains, and dispute support at every stage of the trip.",
       },
-      { property: "og:title", content: "Trust & Protection | Fish-X Charters" },
+      { property: "og:title", content: "Trust & Protection | FISH-X.COM Bookings & Marketplace" },
       {
         property: "og:description",
         content:
@@ -508,7 +508,7 @@ function TrustPage() {
             </p>
           </div>
           <div style={{ fontSize: 12.5 }}>
-            <div style={{ marginBottom: 8 }}>&copy; 2026 Fish-X Charters. All rights reserved.</div>
+            <div style={{ marginBottom: 8 }}>&copy; 2026 FISH-X.COM Bookings & Marketplace. All rights reserved.</div>
             <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
               <a href="#" style={{ color: "var(--ondmut)", textDecoration: "none" }}>Privacy</a>
               <a href="#" style={{ color: "var(--ondmut)", textDecoration: "none" }}>Terms</a>

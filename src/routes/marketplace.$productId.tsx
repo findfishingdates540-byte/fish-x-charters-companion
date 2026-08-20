@@ -44,7 +44,7 @@ export const Route = createFileRoute("/marketplace/$productId")({
   },
 
   head: ({ loaderData }) => {
-    if (!loaderData) return { meta: [{ title: "Product not found — Fish-X Charters" }, { name: "robots", content: "noindex" }] };
+    if (!loaderData) return { meta: [{ title: "Product not found — FISH-X.COM Bookings & Marketplace" }, { name: "robots", content: "noindex" }] };
     const { product } = loaderData;
     const title = `${product.name} — Fish-X Marketplace`;
     const description = product.description ?? `${product.name} from ${product.seller}. Escrow-protected on Fish-X.`;
@@ -126,7 +126,7 @@ function ProductDetail() {
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             <span style={{ width: 10, height: 10, background: V.sand, transform: "rotate(45deg)", display: "inline-block", borderRadius: 1, flexShrink: 0 }} />
-            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>Fish-X Charters</span>
+            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, marginLeft: 4, whiteSpace: "nowrap" }}>Product</span>
           </div>
         </div>

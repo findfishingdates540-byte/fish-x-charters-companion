@@ -20,12 +20,12 @@ export const Route = createFileRoute("/_authenticated/resolution-center")({
         }),
   head: () => ({
     meta: [
-      { title: "Resolution center — Fish-X Charters" },
+      { title: "Resolution center — FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
         content: "Open or track a case on your booking. Your money stays safe in escrow throughout.",
       },
-      { property: "og:title", content: "Resolution center — Fish-X Charters" },
+      { property: "og:title", content: "Resolution center — FISH-X.COM Bookings & Marketplace" },
       { property: "og:description", content: "Fair, fast dispute resolution — escrow protected." },
     ],
   }),
