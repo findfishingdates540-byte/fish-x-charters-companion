@@ -74,8 +74,13 @@ export const upsertCaptainService = createServerFn({ method: "POST" })
       ? await context.supabase.from("bookable_services").update(payload).eq("id", data.id).eq("business_id", businessId).select().single()
       : await context.supabase.from("bookable_services").insert(payload).select().single();
     if (error) throw new Response(error.message, { status: 400 });
+    if (row?.is_published) {
+      const { ensureFutureAvailability } = await import("./availability-seed.server");
+      await ensureFutureAvailability(context.supabase, row);
+    }
     return row;
   });
+
 
 export const deleteCaptainService = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
