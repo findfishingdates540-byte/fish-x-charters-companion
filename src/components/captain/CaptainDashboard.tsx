@@ -434,6 +434,13 @@ function ServicesPanel({ data }: { data: CaptainData }) {
         />
       )}
 
+      {datesFor && (
+        <div style={{ marginBottom: 16 }}>
+          <AvailabilityCalendar service={datesFor} onClose={() => setDatesFor(null)} />
+        </div>
+      )}
+
+
       {data.services.length === 0 && !editing && <Empty text="No services yet. Add your first trip." />}
 
       {data.services.map((s: ServiceRow, i: number) => (
