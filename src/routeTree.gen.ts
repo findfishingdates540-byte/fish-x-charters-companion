@@ -18,6 +18,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
+import { Route as ChartersIndexRouteImport } from './routes/charters.index'
 import { Route as MarketplaceProductIdRouteImport } from './routes/marketplace.$productId'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
 import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
@@ -83,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
 const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/marketplace/',
   path: '/marketplace/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChartersIndexRoute = ChartersIndexRouteImport.update({
+  id: '/charters/',
+  path: '/charters/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceProductIdRoute = MarketplaceProductIdRouteImport.update({
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/charters/': typeof ChartersIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
@@ -256,6 +263,7 @@ export interface FileRoutesByTo {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/charters': typeof ChartersIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/trips/detail': typeof AuthenticatedTripsDetailRoute
@@ -290,6 +298,7 @@ export interface FileRoutesById {
   '/captains/profile': typeof CaptainsProfileRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/charters/': typeof ChartersIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/_authenticated/bookings/detail': typeof AuthenticatedBookingsDetailRoute
   '/_authenticated/trips/detail': typeof AuthenticatedTripsDetailRoute
@@ -324,6 +333,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/charters/'
     | '/marketplace/'
     | '/bookings/detail'
     | '/trips/detail'
@@ -356,6 +366,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/charters'
     | '/marketplace'
     | '/bookings/detail'
     | '/trips/detail'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/captains/profile'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/charters/'
     | '/marketplace/'
     | '/_authenticated/bookings/detail'
     | '/_authenticated/trips/detail'
@@ -415,6 +427,7 @@ export interface RootRouteChildren {
   CaptainsProfileRoute: typeof CaptainsProfileRoute
   GuidesProfileRoute: typeof GuidesProfileRoute
   MarketplaceProductIdRoute: typeof MarketplaceProductIdRoute
+  ChartersIndexRoute: typeof ChartersIndexRoute
   MarketplaceIndexRoute: typeof MarketplaceIndexRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
@@ -489,6 +502,13 @@ declare module '@tanstack/react-router' {
       path: '/marketplace'
       fullPath: '/marketplace/'
       preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/charters/': {
+      id: '/charters/'
+      path: '/charters'
+      fullPath: '/charters/'
+      preLoaderRoute: typeof ChartersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace/$productId': {
@@ -690,6 +710,7 @@ const rootRouteChildren: RootRouteChildren = {
   CaptainsProfileRoute: CaptainsProfileRoute,
   GuidesProfileRoute: GuidesProfileRoute,
   MarketplaceProductIdRoute: MarketplaceProductIdRoute,
+  ChartersIndexRoute: ChartersIndexRoute,
   MarketplaceIndexRoute: MarketplaceIndexRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
