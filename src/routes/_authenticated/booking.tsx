@@ -4,6 +4,9 @@ import { BookingFlow, checkoutQuery } from "@/components/booking/BookingFlow";
 
 const search = z.object({
   service_id: z.string().uuid(),
+  /** The listing the angler originally opened — keeps page identity stable
+   *  when they switch between trip packages of the same operator. */
+  base: z.string().uuid().optional(),
   paid: z.string().optional(),
   canceled: z.string().optional(),
   booking_id: z.string().optional(),
