@@ -156,7 +156,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const instantBook = svc.instant_book !== false;
   const seatsLeft = slot?.seatsLeft ?? 0;
   const cap = Math.max(1, Math.min(svc.capacity ?? 8, seatsLeft || svc.capacity || 8));
-  const price = (slot?.priceCents ?? svc.base_price_cents ?? 0) * party;
+  /** The listed fee is the price of the whole trip — it is NOT multiplied by party size. */
+  const price = slot?.priceCents ?? svc.base_price_cents ?? 0;
   const addonLines = addons
     .filter((a) => selectedAddons.includes(a.id))
     .map((a) => {
