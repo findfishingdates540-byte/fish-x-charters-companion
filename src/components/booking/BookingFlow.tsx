@@ -168,6 +168,8 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
           slotId: slot.id,
           partySize: party,
           idempotencyKey: attemptKey,
+          addonIds: selectedAddons,
+          notes: notes.trim() || undefined,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
         },
       });
@@ -207,18 +209,18 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
   useEffect(() => { if (party > cap) setParty(cap); }, [party, cap]);
   // Changing what you're buying starts a fresh reservation attempt.
-  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party]);
+  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party, selectedAddons, notes]);
 
 
   const crumbStyle = (k: Step | "results"): CSSProperties => {
-    const order: Array<Step | "results"> = ["results", "detail", "checkout", "confirmed"];
+    const order = STEP_ORDER;
     const i = order.indexOf(k);
     const cur = order.indexOf(step);
     const done = i < cur, active = i === cur;
     return { display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, color: done ? V.sand : active ? "#fff" : V.ondmut };
   };
   const crumbNumStyle = (k: Step | "results", n: number): { style: CSSProperties; label: string } => {
-    const order: Array<Step | "results"> = ["results", "detail", "checkout", "confirmed"];
+    const order = STEP_ORDER;
     const i = order.indexOf(k);
     const cur = order.indexOf(step);
     const done = i < cur, active = i === cur;
