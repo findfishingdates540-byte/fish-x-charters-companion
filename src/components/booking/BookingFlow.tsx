@@ -464,7 +464,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                               </span>
                             </span>
                             <span style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
-                              {money(p.base_price_cents)}<span style={{ fontSize: 11.5, color: V.ondmut }}> /angler</span>
+                              {money(p.base_price_cents)}<span style={{ fontSize: 11.5, color: V.ondmut }}> / trip</span>
                             </span>
                           </button>
                         );
@@ -556,7 +556,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               <div className="fx-booking-rail" style={{ position: "sticky", top: 84, ...cardDark, padding: 24 }}>
                 <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 18 }}>
                   <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: "#fff" }}>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)}</span>
-                  <span style={{ fontSize: 13, color: V.ondmut }}>/ angler · {durLabel}</span>
+                  <span style={{ fontSize: 13, color: V.ondmut }}>/ trip · {durLabel}</span>
                   <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#4ec98e", background: "rgba(78,201,142,.12)", border: "1px solid rgba(78,201,142,.35)", borderRadius: 6, padding: "6px 9px", whiteSpace: "nowrap" }}>
                     Escrow guaranteed
                   </span>
@@ -586,7 +586,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
                 <div style={{ borderTop: `1px solid ${V.lined}`, paddingTop: 16, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
-                    <span>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)} × {party} angler{party === 1 ? "" : "s"}</span><span style={{ color: V.ond }}>{money(price)}</span>
+                    <span>Trip fee ({party} angler{party === 1 ? "" : "s"})</span><span style={{ color: V.ond }}>{money(price)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
                     <span>Fish-X booking fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
@@ -717,7 +717,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Your trip</div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
-                  <span>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)} × {party}</span><span style={{ color: V.ink }}>{money(price)}</span>
+                  <span>Trip fee</span><span style={{ color: V.ink }}>{money(price)}</span>
                 </div>
                 {addonLines.map((l) => (
                   <div key={l.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
@@ -944,7 +944,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                             {s.seatsLeft} seat{s.seatsLeft === 1 ? "" : "s"} open
                           </span>
                           <span style={{ display: "block", fontSize: 13, fontWeight: 700, marginTop: 3 }}>
-                            {money(s.priceCents)}<span style={{ color: V.tmut, fontWeight: 500 }}> /angler</span>
+                            {money(s.priceCents)}<span style={{ color: V.tmut, fontWeight: 500 }}> / trip</span>
                           </span>
                         </span>
                       </button>
