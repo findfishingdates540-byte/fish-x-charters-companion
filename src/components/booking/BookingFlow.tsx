@@ -6,10 +6,10 @@
  */
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
-import { createBookingFromService, getCheckoutContext } from "@/lib/booking-checkout.functions";
+import { createBookingFromService, getAddonAvailability, getCheckoutContext } from "@/lib/booking-checkout.functions";
 import { PublicAvailabilityCalendar, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
 import { DEFAULT_HERO, galleryFor } from "@/lib/platform-photos";
 
@@ -134,6 +134,18 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const toggleAddon = (id: string) =>
     setSelectedAddons((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
+  // Per-departure add-on availability (capacity, per-booking caps, lead time).
+  const fetchAddonAvail = useServerFn(getAddonAvailability);
+  const { data: addonAvail } = useQuery({
+    queryKey: ["addon-availability", serviceId, slotId, party],
+    enabled: Boolean(slotId) && addons.length > 0,
+    queryFn: () =>
+      fetchAddonAvail({ data: { serviceId, slotId, partySize: party } }),
+    staleTime: 15_000,
+  });
+  const addonRule = (id: string) =>
+    (addonAvail ?? []).find((r) => r.id === id) ?? { available: true, reason: null as string | null, remaining: null as number | null };
+
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [released, setReleased] = useState(false);
@@ -214,6 +226,13 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
         window.scrollTo(0, 0);
         return;
       }
+      if (/ADDON_UNAVAILABLE/i.test(msg)) {
+        void qc.invalidateQueries({ queryKey: ["addon-availability", serviceId] });
+        setStep("extras");
+        showToast(msg.replace(/^.*ADDON_UNAVAILABLE:\s*/i, ""));
+        window.scrollTo(0, 0);
+        return;
+      }
       showToast(msg);
     },
   });
@@ -233,6 +252,12 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
 
   useEffect(() => { if (party > cap) setParty(cap); }, [party, cap]);
+  // Drop any extra that the captain can no longer fulfil on this departure.
+  useEffect(() => {
+    if (!addonAvail?.length) return;
+    const blocked = new Set(addonAvail.filter((r) => !r.available).map((r) => r.id));
+    setSelectedAddons((cur) => (cur.some((id) => blocked.has(id)) ? cur.filter((id) => !blocked.has(id)) : cur));
+  }, [addonAvail]);
   // Changing what you're buying starts a fresh reservation attempt.
   useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party, selectedAddons, notes]);
 
@@ -575,25 +600,37 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                     <div style={{ fontSize: 13, color: V.tmut, marginBottom: 16 }}>Added to your trip total — the deposit is recalculated automatically.</div>
                     <div style={{ display: "grid", gap: 10 }}>
                       {addons.map((a) => {
-                        const on = selectedAddons.includes(a.id);
+                        const rule = addonRule(a.id);
+                        const blocked = !rule.available;
+                        const on = selectedAddons.includes(a.id) && !blocked;
                         const qty = a.unit === "per_person" ? party : 1;
                         return (
                           <label
                             key={a.id}
                             style={{
-                              display: "flex", alignItems: "flex-start", gap: 13, cursor: "pointer",
+                              display: "flex", alignItems: "flex-start", gap: 13,
+                              cursor: blocked ? "not-allowed" : "pointer",
+                              opacity: blocked ? 0.55 : 1,
                               background: on ? "#f3f8fa" : V.paper,
                               border: `1px solid ${on ? "rgba(31,159,190,.5)" : V.line}`,
                               borderRadius: 13, padding: "14px 16px",
                             }}
                           >
-                            <input type="checkbox" checked={on} onChange={() => toggleAddon(a.id)} style={{ marginTop: 3, accentColor: V.cyan, width: 17, height: 17 }} />
+                            <input type="checkbox" disabled={blocked} checked={on} onChange={() => toggleAddon(a.id)} style={{ marginTop: 3, accentColor: V.cyan, width: 17, height: 17 }} />
                             <span style={{ flex: 1 }}>
                               <span style={{ display: "block", fontSize: 14.5, fontWeight: 700 }}>{a.title}</span>
                               {a.description && <span style={{ display: "block", fontSize: 12.5, color: V.tmut, marginTop: 3, lineHeight: 1.5 }}>{a.description}</span>}
                               <span style={{ display: "block", fontSize: 11.5, color: V.tmut, marginTop: 4 }}>
                                 {a.unit === "per_person" ? `Per angler · ×${qty}` : "Per trip"}
+                                {!blocked && rule.remaining != null && rule.remaining <= 3
+                                  ? ` · only ${rule.remaining} left on this departure`
+                                  : ""}
                               </span>
+                              {blocked && (
+                                <span style={{ display: "block", fontSize: 11.5, fontWeight: 700, color: "#b3261e", marginTop: 5 }}>
+                                  {rule.reason ?? "Not available on this departure."}
+                                </span>
+                              )}
                             </span>
                             <span style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, whiteSpace: "nowrap" }}>{money(a.price_cents * qty)}</span>
                           </label>
