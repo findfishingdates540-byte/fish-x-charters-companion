@@ -17,8 +17,8 @@ export const getRouter = () => {
     defaultPreloadStaleTime: 0,
     // Keep the current page on screen for short navigations instead of
     // flashing the bare page background, then show a branded loader.
-    defaultPendingMs: 600,
-    defaultPendingMinMs: 300,
+    defaultPendingMs: 3000,
+    defaultPendingMinMs: 0,
     defaultPendingComponent: RouteLoader,
   });
 
