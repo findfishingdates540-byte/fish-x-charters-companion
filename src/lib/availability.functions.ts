@@ -69,7 +69,15 @@ function windowsFor(dates: string[], startTime: string, durationMinutes: number)
   });
 }
 
-/** Existing slots that would overlap the proposed windows. */
+/**
+ * Existing slots that would overlap the proposed windows.
+ *
+ * Two levels of clash:
+ *  - same listing: any overlapping departure (you can't publish twice).
+ *  - sibling listings of the same operator: only *booked* overlapping
+ *    departures matter — the boat/crew is already at sea in that time block,
+ *    so a new departure there could never be honoured.
+ */
 async function findConflicts(
   supabase: any,
   serviceId: string,
@@ -84,6 +92,24 @@ async function findConflicts(
     .eq("service_id", serviceId)
     .lt("starts_at", to)
     .gt("ends_at", from);
+
+  const { data: svc } = await supabase
+    .from("bookable_services")
+    .select("business_id,kind")
+    .eq("id", serviceId)
+    .maybeSingle();
+
+  let siblings: any[] = [];
+  if (svc?.business_id) {
+    const { data: rows } = await supabase
+      .from("service_availability")
+      .select("id,starts_at,ends_at,seats_booked,service:bookable_services!inner(id,business_id,title)")
+      .eq("service.business_id", svc.business_id)
+      .gt("seats_booked", 0)
+      .lt("starts_at", to)
+      .gt("ends_at", from);
+    siblings = (rows ?? []).filter((r: any) => r.service?.id !== serviceId);
+  }
 
   const out: { date: string; reason: string }[] = [];
   for (const w of windows) {
@@ -100,6 +126,14 @@ async function findConflicts(
           (hit.seats_booked ?? 0) > 0
             ? `already has ${hit.seats_booked} booked seat(s) at an overlapping time`
             : "overlaps a departure you already published",
+      });
+      continue;
+    }
+    const busy = siblings.find((e: any) => e.starts_at < w.ends && e.ends_at > w.starts);
+    if (busy) {
+      out.push({
+        date: w.date,
+        reason: `you're already booked out in that time block on "${busy.service?.title ?? "another listing"}"`,
       });
     }
   }
