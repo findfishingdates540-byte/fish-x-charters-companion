@@ -31,6 +31,6 @@ export const Route = createFileRoute("/_authenticated/booking")({
 });
 
 function RouteComponent() {
-  const { service_id } = Route.useSearch();
-  return <BookingFlow serviceId={service_id} />;
+  const { service_id, base } = Route.useSearch();
+  return <BookingFlow serviceId={service_id} baseId={base ?? service_id} />;
 }
