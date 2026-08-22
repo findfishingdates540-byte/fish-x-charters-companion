@@ -21,6 +21,7 @@ import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index
 import { Route as ChartersIndexRouteImport } from './routes/charters.index'
 import { Route as MarketplaceProductIdRouteImport } from './routes/marketplace.$productId'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
+import { Route as ChartersSearchRouteImport } from './routes/charters.search'
 import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
 import { Route as BSlugRouteImport } from './routes/b.$slug'
 import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
@@ -99,6 +100,11 @@ const MarketplaceProductIdRoute = MarketplaceProductIdRouteImport.update({
 const GuidesProfileRoute = GuidesProfileRouteImport.update({
   id: '/guides/profile',
   path: '/guides/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChartersSearchRoute = ChartersSearchRouteImport.update({
+  id: '/charters/search',
+  path: '/charters/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CaptainsProfileRoute = CaptainsProfileRouteImport.update({
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/review': typeof AuthenticatedReviewRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
+  '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
   '/charters/': typeof ChartersIndexRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/review': typeof AuthenticatedReviewRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
+  '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
   '/charters': typeof ChartersIndexRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/_authenticated/review': typeof AuthenticatedReviewRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
+  '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
   '/charters/': typeof ChartersIndexRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/b/$slug'
     | '/captains/profile'
+    | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
     | '/charters/'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/b/$slug'
     | '/captains/profile'
+    | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
     | '/charters'
@@ -398,6 +409,7 @@ export interface FileRouteTypes {
     | '/_authenticated/review'
     | '/b/$slug'
     | '/captains/profile'
+    | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
     | '/charters/'
@@ -425,6 +437,7 @@ export interface RootRouteChildren {
   TrustRoute: typeof TrustRoute
   BSlugRoute: typeof BSlugRoute
   CaptainsProfileRoute: typeof CaptainsProfileRoute
+  ChartersSearchRoute: typeof ChartersSearchRoute
   GuidesProfileRoute: typeof GuidesProfileRoute
   MarketplaceProductIdRoute: typeof MarketplaceProductIdRoute
   ChartersIndexRoute: typeof ChartersIndexRoute
@@ -523,6 +536,13 @@ declare module '@tanstack/react-router' {
       path: '/guides/profile'
       fullPath: '/guides/profile'
       preLoaderRoute: typeof GuidesProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/charters/search': {
+      id: '/charters/search'
+      path: '/charters/search'
+      fullPath: '/charters/search'
+      preLoaderRoute: typeof ChartersSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/captains/profile': {
@@ -708,6 +728,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrustRoute: TrustRoute,
   BSlugRoute: BSlugRoute,
   CaptainsProfileRoute: CaptainsProfileRoute,
+  ChartersSearchRoute: ChartersSearchRoute,
   GuidesProfileRoute: GuidesProfileRoute,
   MarketplaceProductIdRoute: MarketplaceProductIdRoute,
   ChartersIndexRoute: ChartersIndexRoute,
