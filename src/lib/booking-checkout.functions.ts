@@ -166,6 +166,17 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     });
     const addonCents = addonLines.reduce((sum, l) => sum + l.total_cents, 0);
 
+    // 0b) Availability gate — capacity per departure, per-booking caps and
+    // lead-time cutoffs are checked before any seat is held.
+    for (const l of addonLines) {
+      const { data: reason } = await supabase.rpc("addon_block_reason", {
+        _addon_id: l.id,
+        _slot_id: data.slotId,
+        _quantity: l.quantity,
+      } as never);
+      if (reason) throw new Response(`ADDON_UNAVAILABLE: ${reason}`, { status: 409 });
+    }
+
     // 1) Reserve the seats atomically. Throws if the slot is full/blacked out.
     const { data: booking, error: rpcErr } = await supabase.rpc("reserve_slot", {
       _slot_id: data.slotId,
@@ -195,27 +206,24 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       hold_expires_at: string | null;
     };
 
-    // 1b) Persist the add-on lines (idempotent: skip if already recorded).
+    // 1b) Claim the add-on lines atomically (re-validates every rule under a
+    // row lock, so two anglers can't take the last unit). Idempotent.
     if (addonLines.length) {
-      const { data: existing } = await (supabase as any)
-        .from("booking_addons")
-        .select("id")
-        .eq("booking_id", row.id)
-        .limit(1);
-      if (!existing?.length) {
-        await (supabase as any).from("booking_addons").insert(
-          addonLines.map((l) => ({
-            booking_id: row.id,
-            addon_id: l.id,
-            title: l.title,
-            unit: l.unit,
-            unit_price_cents: l.price_cents,
-            quantity: l.quantity,
-            total_cents: l.total_cents,
-          })),
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { error: addonErr } = await (supabaseAdmin as any).rpc("reserve_booking_addons", {
+        _booking_id: row.id,
+        _lines: addonLines.map((l) => ({ addon_id: l.id, quantity: l.quantity })),
+      });
+      if (addonErr) {
+        throw new Response(
+          addonErr.message?.includes("ADDON_UNAVAILABLE")
+            ? addonErr.message
+            : `ADDON_UNAVAILABLE: ${addonErr.message}`,
+          { status: 409 },
         );
       }
     }
+
 
 
 
