@@ -29,6 +29,26 @@ export type NotificationDraft = {
   meta?: Record<string, unknown>;
   /** Skip the email channel for chatty categories. */
   email?: boolean;
+  /** Full booking receipt — renders the detailed confirmation email. */
+  receipt?: BookingReceipt;
+};
+
+/** Everything the angler confirmation email needs, resolved server-side. */
+export type BookingReceipt = {
+  reference: string;
+  packageTitle: string;
+  businessName: string;
+  dateLabel: string;
+  timeLabel: string | null;
+  partySize: number;
+  durationLabel: string | null;
+  departure: string | null;
+  addons: Array<{ title: string; quantity: number; unit: string; totalCents: number }>;
+  note: string | null;
+  totalCents: number;
+  depositCents: number;
+  balanceDueCents: number;
+  instant: boolean;
 };
 
 const APP_URL =
@@ -44,7 +64,7 @@ async function bookingAudience(admin: Admin, bookingId: string) {
   const { data: booking } = await admin
     .from("bookings")
     .select(
-      "id,angler_id,captain_id,business_id,trip_date,start_time,party_size,total_cents,payout_cents,accept_deadline_at,service:bookable_services(title),business:businesses(name)",
+      "id,angler_id,captain_id,business_id,trip_date,start_time,party_size,total_cents,deposit_cents,balance_due_cents,payout_cents,notes,instant_book,accept_deadline_at,service:bookable_services(title,duration_minutes,departure_location),business:businesses(name)",
     )
     .eq("id", bookingId)
     .maybeSingle();
@@ -65,6 +85,9 @@ async function bookingAudience(admin: Admin, bookingId: string) {
     booking,
     anglerId: booking.angler_id as string | null,
     operatorIds: [...operators],
+    service: (booking.service ?? null) as
+      | { title?: string; duration_minutes?: number | null; departure_location?: string | null }
+      | null,
     tripLabel:
       (booking.service as { title?: string } | null)?.title ?? "your trip",
     businessName:
@@ -76,6 +99,49 @@ async function bookingAudience(admin: Admin, bookingId: string) {
           day: "numeric",
         })
       : "",
+  };
+}
+
+/** Resolve the selected package, add-ons and captain note for one booking. */
+async function bookingReceipt(
+  admin: Admin,
+  ctx: NonNullable<Awaited<ReturnType<typeof bookingAudience>>>,
+): Promise<BookingReceipt> {
+  const { booking, service, tripLabel, businessName, dateLabel } = ctx;
+
+  const { data: addonRows } = await admin
+    .from("booking_addons")
+    .select("title,unit,quantity,total_cents")
+    .eq("booking_id", booking.id);
+
+  const total = (booking.total_cents as number) ?? 0;
+  const deposit = (booking.deposit_cents as number) ?? 0;
+  const balance =
+    typeof booking.balance_due_cents === "number"
+      ? booking.balance_due_cents
+      : Math.max(total - deposit, 0);
+  const mins = service?.duration_minutes ?? null;
+
+  return {
+    reference: String(booking.id).slice(0, 8).toUpperCase(),
+    packageTitle: tripLabel,
+    businessName,
+    dateLabel,
+    timeLabel: booking.start_time ? String(booking.start_time).slice(0, 5) : null,
+    partySize: (booking.party_size as number) ?? 1,
+    durationLabel: mins ? `${Math.round((mins / 60) * 10) / 10} hrs` : null,
+    departure: service?.departure_location ?? null,
+    addons: (addonRows ?? []).map((a: any) => ({
+      title: a.title as string,
+      quantity: (a.quantity as number) ?? 1,
+      unit: (a.unit as string) ?? "per_trip",
+      totalCents: (a.total_cents as number) ?? 0,
+    })),
+    note: (booking.notes as string | null)?.trim() || null,
+    totalCents: total,
+    depositCents: deposit,
+    balanceDueCents: balance,
+    instant: booking.instant_book !== false,
   };
 }
 
@@ -116,7 +182,15 @@ export async function draftsForEvent(
         });
         break;
       }
-      case "booking.pending_confirmation":
+      case "booking.pending_confirmation": {
+        const receipt = await bookingReceipt(admin, ctx);
+        push([anglerId], {
+          category: "booking",
+          title: `Request sent — ${tripLabel} on ${dateLabel}`,
+          body: `${businessName} has 24 hours to accept. Your card is authorised but not charged until they confirm.`,
+          link: anglerLink,
+          receipt,
+        });
         push(operatorIds, {
           category: "booking",
           title: "New booking request",
@@ -125,13 +199,16 @@ export async function draftsForEvent(
           severity: "warning",
         });
         break;
-      case "booking.confirmed":
+      }
+      case "booking.confirmed": {
+        const receipt = await bookingReceipt(admin, ctx);
         push([anglerId], {
           category: "booking",
-          title: "Your trip is confirmed",
+          title: `Your trip is confirmed — ${tripLabel} on ${dateLabel}`,
           body: `${tripLabel} with ${businessName} on ${dateLabel}. Funds are held in escrow until 24h after the trip.`,
           link: anglerLink,
           severity: "success",
+          receipt,
         });
         push(operatorIds, {
           category: "booking",
@@ -141,6 +218,7 @@ export async function draftsForEvent(
           severity: "success",
         });
         break;
+      }
       case "booking.in_progress":
         push([anglerId, ...operatorIds], {
           category: "booking",
@@ -269,7 +347,7 @@ async function sendEmail(to: string, draft: NotificationDraft) {
       from,
       to: [to],
       subject: draft.title,
-      html: emailHtml(draft),
+      html: draft.receipt ? receiptHtml(draft) : emailHtml(draft),
     }),
   });
   if (!res.ok) {
@@ -287,6 +365,83 @@ function emailHtml(draft: NotificationDraft) {
     <p style="font-size:15px;line-height:1.6;color:#5c6b78;margin:0 0 24px">${escapeHtml(draft.body ?? "")}</p>
     <a href="${link}" style="display:inline-block;background:#0d2236;color:#ffffff;text-decoration:none;border-radius:10px;padding:13px 22px;font-size:14px;font-weight:700">Open FISH-X.COM</a>
     <p style="font-size:12px;color:#8a97a3;margin-top:32px">You're receiving this because of activity on your FISH-X.COM account. Manage notification settings in your account page.</p>
+  </div></body></html>`;
+}
+
+/** Detailed booking confirmation: package, add-ons, note and money split. */
+function receiptHtml(draft: NotificationDraft) {
+  const r = draft.receipt!;
+  const link = draft.link ? `${APP_URL}${draft.link}` : APP_URL;
+  const row = (label: string, value: string, strong = false) =>
+    `<tr>
+      <td style="padding:9px 0;font-size:13.5px;color:#5c6b78">${escapeHtml(label)}</td>
+      <td style="padding:9px 0;font-size:${strong ? "15px;font-weight:700" : "13.5px"};color:#0d2236;text-align:right">${escapeHtml(value)}</td>
+    </tr>`;
+
+  const addonRows = r.addons.length
+    ? r.addons
+        .map(
+          (a) =>
+            `<tr>
+              <td style="padding:8px 0;font-size:13.5px;color:#0d2236">${escapeHtml(a.title)}${
+                a.unit === "per_person" ? ` <span style="color:#8a97a3">× ${a.quantity} anglers</span>` : ""
+              }</td>
+              <td style="padding:8px 0;font-size:13.5px;color:#0d2236;text-align:right">${money(a.totalCents)}</td>
+            </tr>`,
+        )
+        .join("")
+    : `<tr><td style="padding:8px 0;font-size:13.5px;color:#8a97a3">No add-ons selected</td><td></td></tr>`;
+
+  const noteBlock = r.note
+    ? `<div style="margin-top:22px;background:#f4f7f9;border-left:3px solid #1f9fbe;border-radius:0 12px 12px 0;padding:16px 18px">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1f9fbe;font-weight:700;margin-bottom:7px">Your note to ${escapeHtml(r.businessName)}</div>
+        <div style="font-size:14px;line-height:1.6;color:#0d2236;white-space:pre-wrap">${escapeHtml(r.note)}</div>
+      </div>`
+    : "";
+
+  const when = `${r.dateLabel}${r.timeLabel ? ` · ${r.timeLabel}` : ""}`;
+
+  return `<!doctype html><html><body style="margin:0;background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#0d2236">
+  <div style="max-width:600px;margin:0 auto;padding:30px 18px">
+    <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em;margin-bottom:16px">FISH-X.COM</div>
+    <div style="background:#0d2236;color:#ffffff;border-radius:18px 18px 0 0;padding:28px 26px">
+      <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#e3c089;font-weight:700">${
+        r.instant ? "Booking confirmed" : "Request sent to the captain"
+      }</div>
+      <h1 style="font-family:Georgia,serif;font-size:29px;margin:10px 0 6px;font-weight:600">${escapeHtml(r.packageTitle)}</h1>
+      <div style="font-size:14px;color:#93a7b7">${escapeHtml(r.businessName)} · ${escapeHtml(when)}</div>
+      <div style="margin-top:16px;display:inline-block;background:rgba(255,255,255,.09);border-radius:999px;padding:7px 14px;font-size:12px;color:#eaf1f6">Reference #${escapeHtml(r.reference)}</div>
+    </div>
+    <div style="background:#ffffff;border-radius:0 0 18px 18px;padding:26px">
+      <div style="font-family:Georgia,serif;font-size:19px;margin-bottom:6px">Trip package</div>
+      <table style="width:100%;border-collapse:collapse;border-bottom:1px solid rgba(13,34,54,.10)">
+        ${row("Package", r.packageTitle)}
+        ${row("Departure", when)}
+        ${r.durationLabel ? row("Duration", r.durationLabel) : ""}
+        ${row("Party size", `${r.partySize} angler${r.partySize === 1 ? "" : "s"}`)}
+        ${r.departure ? row("Meeting point", r.departure) : ""}
+      </table>
+
+      <div style="font-family:Georgia,serif;font-size:19px;margin:24px 0 6px">Add-ons</div>
+      <table style="width:100%;border-collapse:collapse;border-bottom:1px solid rgba(13,34,54,.10)">${addonRows}</table>
+
+      ${noteBlock}
+
+      <div style="font-family:Georgia,serif;font-size:19px;margin:24px 0 6px">Payment</div>
+      <table style="width:100%;border-collapse:collapse">
+        ${row("Trip total", money(r.totalCents))}
+        ${row(r.instant ? "Deposit paid today" : "Deposit authorised", money(r.depositCents), true)}
+        ${row("Balance due to the captain on the day", money(r.balanceDueCents))}
+      </table>
+
+      <p style="font-size:13px;line-height:1.6;color:#5c6b78;margin:20px 0 22px">${
+        r.instant
+          ? "Your deposit is held in Fish-X escrow and only released to the captain 24 hours after the trip is completed."
+          : "Nothing is captured until the captain accepts. If they can't take the date, the authorisation is released in full."
+      }</p>
+      <a href="${link}" style="display:inline-block;background:#e3c089;color:#1c1303;text-decoration:none;border-radius:11px;padding:14px 24px;font-size:14px;font-weight:700">View your trip</a>
+      <p style="font-size:12px;color:#8a97a3;margin-top:28px">Cancel 7+ days out for a full deposit refund. Captain-declared weather calls are always fully refundable or free to reschedule.</p>
+    </div>
   </div></body></html>`;
 }
 
