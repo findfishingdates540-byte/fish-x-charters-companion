@@ -53,13 +53,17 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
   const queryClient = useQueryClient();
   const send = useServerFn(sendTripMessage);
   const cancel = useServerFn(cancelTrip);
+  const doReschedule = useServerFn(rescheduleTrip);
 
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState(0);
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [pickedSlot, setPickedSlot] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const [reply, setReply] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
   const showToast = (m: string) => {
     setToast(m);
