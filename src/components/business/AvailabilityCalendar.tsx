@@ -18,6 +18,7 @@ import {
 } from "@/lib/availability.functions";
 
 import { money } from "@/components/operator/OperatorShell";
+import { timeBlock } from "@/components/booking/PublicAvailabilityCalendar";
 import { input, btn } from "@/components/business/BusinessSettings";
 
 const DAY_NAMES = ["S", "M", "T", "W", "T", "F", "S"];
