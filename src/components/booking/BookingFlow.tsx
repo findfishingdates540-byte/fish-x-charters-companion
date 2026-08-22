@@ -645,7 +645,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
         {/* ==== CHECKOUT ==== */}
         {step === "checkout" && (
           <div>
-            <button onClick={() => setStep("detail")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
+            <button onClick={() => setStep("extras")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to add-ons</button>
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                 {[
@@ -665,6 +665,16 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                           <div style={{ fontSize: 15, fontWeight: 600 }}>{svc.title}</div>
                           <div style={{ fontSize: 13, color: V.tmut, marginTop: 3 }}>{businessLine}</div>
                           <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{dateLabel} · {time} · {party} anglers</div>
+                          {addonLines.length > 0 && (
+                            <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 6 }}>
+                              Add-ons: {addonLines.map((l) => l.title).join(", ")}
+                            </div>
+                          )}
+                          {notes.trim() && (
+                            <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 6, fontStyle: "italic" }}>
+                              “{notes.trim()}”
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -705,6 +715,9 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Order summary</div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip total</span><span style={{ color: V.ink }}>{money(price)}</span></div>
+                {addonLines.map((l) => (
+                  <div key={l.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>{l.title}{l.quantity > 1 ? ` ×${l.quantity}` : ""}</span><span style={{ color: V.ink }}>{money(l.lineCents)}</span></div>
+                ))}
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
