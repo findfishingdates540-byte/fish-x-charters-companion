@@ -57,7 +57,7 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
         .limit(12),
       (supabase as any)
         .from("service_addons")
-        .select("id,title,description,price_cents,unit,sort_order")
+        .select("id,title,description,price_cents,unit,sort_order,max_per_booking,capacity_per_slot,lead_time_hours")
         .eq("service_id", data.serviceId)
         .eq("is_active", true)
         .order("sort_order", { ascending: true }),
@@ -74,9 +74,59 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
         price_cents: number;
         unit: "per_trip" | "per_person";
         sort_order: number;
+        max_per_booking: number | null;
+        capacity_per_slot: number | null;
+        lead_time_hours: number;
       }>,
     };
   });
+
+/**
+ * Per-departure add-on availability: how many units are left on this slot and,
+ * when an extra can't be sold, the plain-English reason why.
+ */
+export const getAddonAvailability = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) =>
+    z
+      .object({
+        serviceId: z.string().uuid(),
+        slotId: z.string().uuid(),
+        partySize: z.number().int().min(1).max(50).default(1),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: rows } = await (supabase as any)
+      .from("service_addons")
+      .select("id,unit,max_per_booking,capacity_per_slot,lead_time_hours")
+      .eq("service_id", data.serviceId)
+      .eq("is_active", true);
+
+    const list = (rows ?? []) as Array<{ id: string; unit: "per_trip" | "per_person" }>;
+    const results = await Promise.all(
+      list.map(async (a) => {
+        const qty = a.unit === "per_person" ? data.partySize : 1;
+        const [{ data: remaining }, { data: reason }] = await Promise.all([
+          supabase.rpc("addon_remaining_for_slot", { _addon_id: a.id, _slot_id: data.slotId } as never),
+          supabase.rpc("addon_block_reason", {
+            _addon_id: a.id,
+            _slot_id: data.slotId,
+            _quantity: qty,
+          } as never),
+        ]);
+        return {
+          id: a.id,
+          remaining: (remaining as number | null) ?? null,
+          reason: (reason as string | null) ?? null,
+          available: !reason,
+        };
+      }),
+    );
+    return results;
+  });
+
 
 
 const CreateBookingInput = z.object({
