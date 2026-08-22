@@ -435,6 +435,15 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                     {b.status === "reviewed" ? "View your review" : "Leave a review"}
                   </Link>
                 )}
+                {canReschedule && (
+                  <button
+                    onClick={() => setRescheduleOpen(true)}
+                    style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", border: 0, borderBottom: `1px solid ${V.line}`, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.ink, textAlign: "left" }}
+                  >
+                    <span style={{ width: 32, height: 32, borderRadius: 9, background: V.cyansoft, display: "grid", placeItems: "center", flex: "none", color: V.cyan }}>⇄</span>
+                    Reschedule trip
+                  </button>
+                )}
                 <button
                   onClick={() => setCancelOpen(true)}
                   style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", border: 0, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.red, textAlign: "left" }}
@@ -447,11 +456,22 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
 
             {/* POLICY */}
             <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: "20px 22px" }}>
-              <div style={{ fontFamily: V.serif, fontSize: 16.5, color: V.ink, marginBottom: 8 }}>Cancellation policy</div>
-              <div style={{ fontSize: 12.5, lineHeight: 1.6, color: V.tmut }}>
-                Weather calls by your captain always refund in full from escrow. See policy on booking.
+              <div style={{ fontFamily: V.serif, fontSize: 16.5, color: V.ink, marginBottom: 10 }}>Cancellation policy</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  ["7+ days out", "Full deposit refund, or move to any open date free."],
+                  ["Captain-declared weather call", "Full refund or a free reschedule, your choice."],
+                  ["Inside 48 hours or no-show", "Deposit forfeited — message your captain for options."],
+                ].map(([t, d]) => (
+                  <div key={t} style={{ fontSize: 12.5, lineHeight: 1.55, color: V.tmut }}>
+                    <b style={{ color: V.ink }}>{t}</b>
+                    <br />
+                    {d}
+                  </div>
+                ))}
               </div>
             </div>
+
           </div>
         </div>
       </main>
