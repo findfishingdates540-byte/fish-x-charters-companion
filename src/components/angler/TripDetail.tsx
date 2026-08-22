@@ -6,7 +6,7 @@ import { useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { cancelTrip, getTripDetail, sendTripMessage } from "@/lib/trip-detail.functions";
+import { cancelTrip, getRescheduleOptions, getTripDetail, rescheduleTrip, sendTripMessage } from "@/lib/trip-detail.functions";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 type Reason = "Weather concerns" | "Plans changed" | "Booked by mistake" | "Something else";
@@ -53,13 +53,17 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
   const queryClient = useQueryClient();
   const send = useServerFn(sendTripMessage);
   const cancel = useServerFn(cancelTrip);
+  const doReschedule = useServerFn(rescheduleTrip);
 
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState(0);
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [pickedSlot, setPickedSlot] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const [reply, setReply] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
   const showToast = (m: string) => {
     setToast(m);
@@ -98,6 +102,32 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
     },
     onError: (e) => showToast(e instanceof Error ? e.message : "Cancel failed"),
   });
+
+  const canReschedule = isActive && (b.status === "confirmed" || b.status === "pending_confirmation");
+
+  const rescheduleQuery = useQuery({
+    queryKey: ["reschedule-options", bookingId],
+    queryFn: () => getRescheduleOptions({ data: { bookingId } }),
+    enabled: rescheduleOpen,
+    staleTime: 15_000,
+  });
+  const opts = rescheduleQuery.data;
+
+  const rescheduleMutation = useMutation({
+    mutationFn: async (slotId: string) => doReschedule({ data: { bookingId, slotId } }),
+    onSuccess: () => {
+      setRescheduleOpen(false);
+      setPickedSlot(null);
+      showToast("Trip moved — your captain has been notified");
+      queryClient.invalidateQueries({ queryKey: ["trip-detail", bookingId] });
+      queryClient.invalidateQueries({ queryKey: ["reschedule-options", bookingId] });
+    },
+    onError: (e) => {
+      showToast(e instanceof Error ? e.message : "Reschedule failed");
+      rescheduleQuery.refetch();
+    },
+  });
+
 
   const steps = useMemo(() => {
     return [
@@ -435,6 +465,15 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                     {b.status === "reviewed" ? "View your review" : "Leave a review"}
                   </Link>
                 )}
+                {canReschedule && (
+                  <button
+                    onClick={() => setRescheduleOpen(true)}
+                    style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", border: 0, borderBottom: `1px solid ${V.line}`, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.ink, textAlign: "left" }}
+                  >
+                    <span style={{ width: 32, height: 32, borderRadius: 9, background: V.cyansoft, display: "grid", placeItems: "center", flex: "none", color: V.cyan }}>⇄</span>
+                    Reschedule trip
+                  </button>
+                )}
                 <button
                   onClick={() => setCancelOpen(true)}
                   style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", border: 0, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.red, textAlign: "left" }}
@@ -447,11 +486,22 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
 
             {/* POLICY */}
             <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: "20px 22px" }}>
-              <div style={{ fontFamily: V.serif, fontSize: 16.5, color: V.ink, marginBottom: 8 }}>Cancellation policy</div>
-              <div style={{ fontSize: 12.5, lineHeight: 1.6, color: V.tmut }}>
-                Weather calls by your captain always refund in full from escrow. See policy on booking.
+              <div style={{ fontFamily: V.serif, fontSize: 16.5, color: V.ink, marginBottom: 10 }}>Cancellation policy</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  ["7+ days out", "Full deposit refund, or move to any open date free."],
+                  ["Captain-declared weather call", "Full refund or a free reschedule, your choice."],
+                  ["Inside 48 hours or no-show", "Deposit forfeited — message your captain for options."],
+                ].map(([t, d]) => (
+                  <div key={t} style={{ fontSize: 12.5, lineHeight: 1.55, color: V.tmut }}>
+                    <b style={{ color: V.ink }}>{t}</b>
+                    <br />
+                    {d}
+                  </div>
+                ))}
               </div>
             </div>
+
           </div>
         </div>
       </main>
@@ -512,7 +562,118 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
         </div>
       )}
 
+      {/* RESCHEDULE MODAL */}
+      {rescheduleOpen && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 70, background: "rgba(6,21,31,.55)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ width: "100%", maxWidth: 560, maxHeight: "88vh", overflow: "auto", background: V.card, borderRadius: 22, padding: 28, boxShadow: "0 40px 90px -30px rgba(0,0,0,.6)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+              <h2 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 25, margin: 0, color: V.ink }}>Move this trip</h2>
+              <button
+                onClick={() => setRescheduleOpen(false)}
+                style={{ width: 32, height: 32, borderRadius: "50%", border: `1px solid ${V.line}`, background: "transparent", cursor: "pointer", color: V.tmut, fontSize: 14 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {rescheduleQuery.isLoading && (
+              <p style={{ fontSize: 13.5, color: V.tmut }}>Checking the captain's open departures…</p>
+            )}
+
+            {opts && (
+              <>
+                <div style={{ background: opts.reschedulable ? V.greensoft : V.redsoft, border: `1px solid ${opts.reschedulable ? "rgba(31,138,91,.25)" : "rgba(216,81,74,.25)"}`, borderRadius: 14, padding: "13px 16px", margin: "10px 0 18px" }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: opts.reschedulable ? V.green : V.red, marginBottom: 4 }}>
+                    {opts.reschedulable
+                      ? opts.freeWindow
+                        ? "7+ days out — free move, deposit travels with you"
+                        : "Inside 7 days — one courtesy move, deposit stays in escrow"
+                      : opts.hoursUntil < 48
+                        ? "Inside 48 hours — self-serve moves are closed"
+                        : "No moves left on this booking"}
+                  </div>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.55, color: V.tmut }}>
+                    {opts.reschedulable
+                      ? `Your ${money(opts.depositCents)} deposit carries over — nothing new is charged. ${opts.reschedulesAllowed - opts.reschedulesUsed} of ${opts.reschedulesAllowed} moves remaining.`
+                      : "Message your captain right here on this trip and they can move you manually or declare a weather call."}
+                  </div>
+                </div>
+
+                {opts.reschedulable && (
+                  <>
+                    <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: V.tmut, marginBottom: 10 }}>
+                      Open departures
+                    </div>
+                    {opts.slots.length === 0 ? (
+                      <p style={{ fontSize: 13.5, color: V.tmut }}>
+                        This captain has no other open departures right now. Message them and they'll release a date for you.
+                      </p>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 18 }}>
+                        {opts.slots.map((s) => {
+                          const start = new Date(s.starts_at);
+                          const end = new Date(s.ends_at);
+                          const on = pickedSlot === s.id;
+                          const seatsLeft = s.seats_available - s.seats_booked;
+                          return (
+                            <button
+                              key={s.id}
+                              onClick={() => setPickedSlot(s.id)}
+                              style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", textAlign: "left", background: on ? "rgba(227,192,137,.12)" : "transparent", border: `1px solid ${on ? V.sand : "rgba(13,34,54,.12)"}`, borderRadius: 14, padding: "12px 14px", cursor: "pointer", fontFamily: V.sans }}
+                            >
+                              <span style={{ width: 52, flex: "none", textAlign: "center", background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "6px 0" }}>
+                                <span style={{ display: "block", fontSize: 10.5, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: V.tmut }}>
+                                  {start.toLocaleDateString("en-US", { month: "short" })}
+                                </span>
+                                <span style={{ display: "block", fontFamily: V.serif, fontSize: 19, fontWeight: 600, color: V.ink }}>
+                                  {start.getDate()}
+                                </span>
+                              </span>
+                              <span style={{ flex: 1 }}>
+                                <span style={{ display: "block", fontSize: 13.5, fontWeight: 700, color: V.ink }}>
+                                  {start.toLocaleDateString("en-US", { weekday: "long" })} ·{" "}
+                                  {start.getHours() < 12 ? "Morning" : "Afternoon"}
+                                </span>
+                                <span style={{ display: "block", fontSize: 12.5, color: V.tmut, marginTop: 2 }}>
+                                  {start.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} –{" "}
+                                  {end.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} ·{" "}
+                                  {seatsLeft} {seatsLeft === 1 ? "seat" : "seats"} open
+                                </span>
+                              </span>
+                              <span style={{ width: 18, height: 18, borderRadius: "50%", border: `2px solid ${on ? V.goldtext : "rgba(13,34,54,.25)"}`, display: "grid", placeItems: "center", flex: "none" }}>
+                                <span style={{ width: 8, height: 8, borderRadius: "50%", background: on ? V.goldtext : "transparent" }} />
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
+                )}
+
+                <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+                  <button
+                    onClick={() => setRescheduleOpen(false)}
+                    style={{ flex: 1, background: "transparent", border: `1px solid ${V.line}`, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 13, fontWeight: 600, color: V.ink, cursor: "pointer" }}
+                  >
+                    Keep my date
+                  </button>
+                  <button
+                    onClick={() => pickedSlot && rescheduleMutation.mutate(pickedSlot)}
+                    disabled={!opts.reschedulable || !pickedSlot || rescheduleMutation.isPending}
+                    style={{ flex: 1, background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: !opts.reschedulable || !pickedSlot ? "not-allowed" : "pointer", opacity: !opts.reschedulable || !pickedSlot || rescheduleMutation.isPending ? 0.5 : 1 }}
+                  >
+                    {rescheduleMutation.isPending ? "Moving…" : "Confirm new date"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* TOAST */}
+
       {toast && (
         <div style={{ position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)", zIndex: 80, display: "flex", alignItems: "center", gap: 11, background: V.navy, color: "#fff", border: "1px solid rgba(255,255,255,.12)", borderRadius: 30, padding: "13px 22px", boxShadow: "0 20px 44px -20px rgba(0,0,0,.6)" }}>
           <span style={{ width: 22, height: 22, borderRadius: "50%", background: V.green, display: "grid", placeItems: "center", fontSize: 12 }}>✓</span>
