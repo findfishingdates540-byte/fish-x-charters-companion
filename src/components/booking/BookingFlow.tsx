@@ -109,6 +109,17 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const slot = openSlots.find((s) => s.id === slotId) ?? openSlots[0] ?? null;
   const [party, setParty] = useState(2);
 
+  const addons = (svc as any).addons as Array<{
+    id: string; title: string; description: string | null; price_cents: number; unit: "per_trip" | "per_person";
+  }> ?? [];
+  const packages = ((svc as any).packages ?? []) as Array<{
+    id: string; title: string; duration_minutes: number | null; base_price_cents: number; capacity: number | null;
+  }>;
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [notes, setNotes] = useState("");
+  const toggleAddon = (id: string) =>
+    setSelectedAddons((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
+
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [released, setReleased] = useState(false);
@@ -120,11 +131,19 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const seatsLeft = slot?.seatsLeft ?? 0;
   const cap = Math.max(1, Math.min(svc.capacity ?? 8, seatsLeft || svc.capacity || 8));
   const price = (slot?.priceCents ?? svc.base_price_cents ?? 0) * party;
+  const addonLines = addons
+    .filter((a) => selectedAddons.includes(a.id))
+    .map((a) => {
+      const quantity = a.unit === "per_person" ? party : 1;
+      return { ...a, quantity, lineCents: a.price_cents * quantity };
+    });
+  const addonCents = addonLines.reduce((s, l) => s + l.lineCents, 0);
   const fee = 0;
-  const total = price + fee;
+  const total = price + addonCents + fee;
   /** 25% booked online; the captain collects the rest on the day. */
   const deposit = Math.round(total * 0.25);
   const balanceDue = total - deposit;
+
 
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
   const date = slot ? slot.startsAt.slice(0, 10) : "";
