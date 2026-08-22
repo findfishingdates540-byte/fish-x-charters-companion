@@ -103,6 +103,32 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
     onError: (e) => showToast(e instanceof Error ? e.message : "Cancel failed"),
   });
 
+  const canReschedule = isActive && (b.status === "confirmed" || b.status === "pending_confirmation");
+
+  const rescheduleQuery = useQuery({
+    queryKey: ["reschedule-options", bookingId],
+    queryFn: () => getRescheduleOptions({ data: { bookingId } }),
+    enabled: rescheduleOpen,
+    staleTime: 15_000,
+  });
+  const opts = rescheduleQuery.data;
+
+  const rescheduleMutation = useMutation({
+    mutationFn: async (slotId: string) => doReschedule({ data: { bookingId, slotId } }),
+    onSuccess: () => {
+      setRescheduleOpen(false);
+      setPickedSlot(null);
+      showToast("Trip moved — your captain has been notified");
+      queryClient.invalidateQueries({ queryKey: ["trip-detail", bookingId] });
+      queryClient.invalidateQueries({ queryKey: ["reschedule-options", bookingId] });
+    },
+    onError: (e) => {
+      showToast(e instanceof Error ? e.message : "Reschedule failed");
+      rescheduleQuery.refetch();
+    },
+  });
+
+
   const steps = useMemo(() => {
     return [
       { title: "Reserved", desc: "Booking confirmed by the captain", state: "done" as const },
