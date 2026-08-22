@@ -57,7 +57,7 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
         .limit(12),
       (supabase as any)
         .from("service_addons")
-        .select("id,title,description,price_cents,unit,sort_order")
+        .select("id,title,description,price_cents,unit,sort_order,max_per_booking,capacity_per_slot,lead_time_hours")
         .eq("service_id", data.serviceId)
         .eq("is_active", true)
         .order("sort_order", { ascending: true }),
@@ -74,9 +74,59 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
         price_cents: number;
         unit: "per_trip" | "per_person";
         sort_order: number;
+        max_per_booking: number | null;
+        capacity_per_slot: number | null;
+        lead_time_hours: number;
       }>,
     };
   });
+
+/**
+ * Per-departure add-on availability: how many units are left on this slot and,
+ * when an extra can't be sold, the plain-English reason why.
+ */
+export const getAddonAvailability = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) =>
+    z
+      .object({
+        serviceId: z.string().uuid(),
+        slotId: z.string().uuid(),
+        partySize: z.number().int().min(1).max(50).default(1),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: rows } = await (supabase as any)
+      .from("service_addons")
+      .select("id,unit,max_per_booking,capacity_per_slot,lead_time_hours")
+      .eq("service_id", data.serviceId)
+      .eq("is_active", true);
+
+    const list = (rows ?? []) as Array<{ id: string; unit: "per_trip" | "per_person" }>;
+    const results = await Promise.all(
+      list.map(async (a) => {
+        const qty = a.unit === "per_person" ? data.partySize : 1;
+        const [{ data: remaining }, { data: reason }] = await Promise.all([
+          supabase.rpc("addon_remaining_for_slot", { _addon_id: a.id, _slot_id: data.slotId } as never),
+          supabase.rpc("addon_block_reason", {
+            _addon_id: a.id,
+            _slot_id: data.slotId,
+            _quantity: qty,
+          } as never),
+        ]);
+        return {
+          id: a.id,
+          remaining: (remaining as number | null) ?? null,
+          reason: (reason as string | null) ?? null,
+          available: !reason,
+        };
+      }),
+    );
+    return results;
+  });
+
 
 
 const CreateBookingInput = z.object({
@@ -116,6 +166,17 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     });
     const addonCents = addonLines.reduce((sum, l) => sum + l.total_cents, 0);
 
+    // 0b) Availability gate — capacity per departure, per-booking caps and
+    // lead-time cutoffs are checked before any seat is held.
+    for (const l of addonLines) {
+      const { data: reason } = await supabase.rpc("addon_block_reason", {
+        _addon_id: l.id,
+        _slot_id: data.slotId,
+        _quantity: l.quantity,
+      } as never);
+      if (reason) throw new Response(`ADDON_UNAVAILABLE: ${reason}`, { status: 409 });
+    }
+
     // 1) Reserve the seats atomically. Throws if the slot is full/blacked out.
     const { data: booking, error: rpcErr } = await supabase.rpc("reserve_slot", {
       _slot_id: data.slotId,
@@ -145,27 +206,24 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       hold_expires_at: string | null;
     };
 
-    // 1b) Persist the add-on lines (idempotent: skip if already recorded).
+    // 1b) Claim the add-on lines atomically (re-validates every rule under a
+    // row lock, so two anglers can't take the last unit). Idempotent.
     if (addonLines.length) {
-      const { data: existing } = await (supabase as any)
-        .from("booking_addons")
-        .select("id")
-        .eq("booking_id", row.id)
-        .limit(1);
-      if (!existing?.length) {
-        await (supabase as any).from("booking_addons").insert(
-          addonLines.map((l) => ({
-            booking_id: row.id,
-            addon_id: l.id,
-            title: l.title,
-            unit: l.unit,
-            unit_price_cents: l.price_cents,
-            quantity: l.quantity,
-            total_cents: l.total_cents,
-          })),
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { error: addonErr } = await (supabaseAdmin as any).rpc("reserve_booking_addons", {
+        _booking_id: row.id,
+        _lines: addonLines.map((l) => ({ addon_id: l.id, quantity: l.quantity })),
+      });
+      if (addonErr) {
+        throw new Response(
+          addonErr.message?.includes("ADDON_UNAVAILABLE")
+            ? addonErr.message
+            : `ADDON_UNAVAILABLE: ${addonErr.message}`,
+          { status: 409 },
         );
       }
     }
+
 
 
 
