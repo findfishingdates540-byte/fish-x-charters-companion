@@ -145,6 +145,30 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       hold_expires_at: string | null;
     };
 
+    // 1b) Persist the add-on lines (idempotent: skip if already recorded).
+    if (addonLines.length) {
+      const { data: existing } = await (supabase as any)
+        .from("booking_addons")
+        .select("id")
+        .eq("booking_id", row.id)
+        .limit(1);
+      if (!existing?.length) {
+        await (supabase as any).from("booking_addons").insert(
+          addonLines.map((l) => ({
+            booking_id: row.id,
+            addon_id: l.id,
+            title: l.title,
+            unit: l.unit,
+            unit_price_cents: l.price_cents,
+            quantity: l.quantity,
+            total_cents: l.total_cents,
+          })),
+        );
+      }
+    }
+
+
+
     // Only the deposit is charged online; the captain collects the balance
     // on the day of the trip (cash, card, split cards, tips).
     const chargeCents = row.deposit_cents > 0 ? row.deposit_cents : row.total_cents;
