@@ -196,7 +196,7 @@ export const rescheduleTrip = createServerFn({ method: "POST" })
     const { data: row, error } = await supabase.rpc("reschedule_booking", {
       _booking_id: data.bookingId,
       _slot_id: data.slotId,
-      _reason: data.reason ?? null,
+      _reason: data.reason,
     });
     if (error) {
       const m = error.message;
