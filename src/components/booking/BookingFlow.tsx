@@ -285,7 +285,14 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     };
   };
 
-  const heroUrl = svc.hero_url || business?.hero_url || DEFAULT_HERO;
+  // The angler stays on the listing they opened; switching trip packages only
+  // swaps price/duration/departures, never the listing identity or photos.
+  const listingId = baseId ?? serviceId;
+  const entry = (packages.find((p) => p.id === listingId) ?? null) as
+    | { id: string; title: string; hero_url?: string | null }
+    | null;
+  const listingTitle = entry?.title ?? svc.title;
+  const heroUrl = entry?.hero_url || svc.hero_url || business?.hero_url || DEFAULT_HERO;
   const businessLine = `${business?.name ?? "Captain"} · ${[business?.city, business?.region].filter(Boolean).join(", ") || "Coastal"}`;
 
   const isDetail = step === "detail";
