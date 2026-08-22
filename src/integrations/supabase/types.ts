@@ -2421,6 +2421,17 @@ export type Database = {
         Args: { _order_id: string }
         Returns: undefined
       }
+      public_service_slots: {
+        Args: { _service_id: string }
+        Returns: {
+          ends_at: string
+          id: string
+          price_cents: number
+          seats_available: number
+          seats_booked: number
+          starts_at: string
+        }[]
+      }
       rank_listings: {
         Args: { _city?: string; _kinds?: string[]; _limit?: number }
         Returns: {
@@ -2548,6 +2559,15 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      trip_block_conflict: {
+        Args: {
+          _ends: string
+          _exclude_slot?: string
+          _service_id: string
+          _starts: string
+        }
+        Returns: string
       }
       withdraw_dispute: { Args: { _dispute_id: string }; Returns: undefined }
     }
