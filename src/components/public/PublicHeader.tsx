@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
-  { to: "/discover", label: "Charters" },
+  { to: "/charters", label: "Charters" },
+  { to: "/discover", label: "Operators" },
   { to: "/marketplace", label: "Marketplace" },
   { to: "/how-it-works", label: "How it works" },
   { to: "/trust", label: "Trust" },

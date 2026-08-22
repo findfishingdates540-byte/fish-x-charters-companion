@@ -2628,118 +2628,62 @@ export type Database = {
         Args: { _booking_id: string; _lines: Json }
         Returns: undefined
       }
-      reserve_slot:
-        | {
-            Args: {
-              _hold_minutes?: number
-              _idempotency_key?: string
-              _notes?: string
-              _party_size: number
-              _slot_id: string
-            }
-            Returns: {
-              accept_deadline_at: string | null
-              angler_id: string | null
-              application_fee_cents: number | null
-              assigned_guide_id: string | null
-              balance_collected_at: string | null
-              balance_due_cents: number
-              boat_id: string | null
-              business_id: string | null
-              cancellation_policy: Json
-              captain_id: string
-              commission_rate: number | null
-              completed_at: string | null
-              created_at: string
-              customer_id: string | null
-              deposit_cents: number
-              dispute_window_ends_at: string | null
-              escrow_state: string
-              hold_expires_at: string | null
-              id: string
-              idempotency_key: string | null
-              instant_book: boolean
-              notes: string | null
-              party_size: number
-              payout_cents: number
-              payout_released_at: string | null
-              refunded_cents: number
-              service_id: string | null
-              slot_id: string | null
-              start_time: string | null
-              status: Database["public"]["Enums"]["booking_status"]
-              stripe_charge_id: string | null
-              stripe_fee_cents: number | null
-              stripe_payment_intent_id: string | null
-              stripe_transfer_id: string | null
-              template_id: string | null
-              total_cents: number
-              trip_date: string
-              updated_at: string
-            }
-            SetofOptions: {
-              from: "*"
-              to: "bookings"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: {
-              _addon_cents?: number
-              _hold_minutes?: number
-              _idempotency_key?: string
-              _notes?: string
-              _party_size: number
-              _slot_id: string
-            }
-            Returns: {
-              accept_deadline_at: string | null
-              angler_id: string | null
-              application_fee_cents: number | null
-              assigned_guide_id: string | null
-              balance_collected_at: string | null
-              balance_due_cents: number
-              boat_id: string | null
-              business_id: string | null
-              cancellation_policy: Json
-              captain_id: string
-              commission_rate: number | null
-              completed_at: string | null
-              created_at: string
-              customer_id: string | null
-              deposit_cents: number
-              dispute_window_ends_at: string | null
-              escrow_state: string
-              hold_expires_at: string | null
-              id: string
-              idempotency_key: string | null
-              instant_book: boolean
-              notes: string | null
-              party_size: number
-              payout_cents: number
-              payout_released_at: string | null
-              refunded_cents: number
-              service_id: string | null
-              slot_id: string | null
-              start_time: string | null
-              status: Database["public"]["Enums"]["booking_status"]
-              stripe_charge_id: string | null
-              stripe_fee_cents: number | null
-              stripe_payment_intent_id: string | null
-              stripe_transfer_id: string | null
-              template_id: string | null
-              total_cents: number
-              trip_date: string
-              updated_at: string
-            }
-            SetofOptions: {
-              from: "*"
-              to: "bookings"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
+      reserve_slot: {
+        Args: {
+          _addon_cents?: number
+          _hold_minutes?: number
+          _idempotency_key?: string
+          _notes?: string
+          _party_size: number
+          _slot_id: string
+        }
+        Returns: {
+          accept_deadline_at: string | null
+          angler_id: string | null
+          application_fee_cents: number | null
+          assigned_guide_id: string | null
+          balance_collected_at: string | null
+          balance_due_cents: number
+          boat_id: string | null
+          business_id: string | null
+          cancellation_policy: Json
+          captain_id: string
+          commission_rate: number | null
+          completed_at: string | null
+          created_at: string
+          customer_id: string | null
+          deposit_cents: number
+          dispute_window_ends_at: string | null
+          escrow_state: string
+          hold_expires_at: string | null
+          id: string
+          idempotency_key: string | null
+          instant_book: boolean
+          notes: string | null
+          party_size: number
+          payout_cents: number
+          payout_released_at: string | null
+          refunded_cents: number
+          service_id: string | null
+          slot_id: string | null
+          start_time: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          stripe_charge_id: string | null
+          stripe_fee_cents: number | null
+          stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
+          template_id: string | null
+          total_cents: number
+          trip_date: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       set_cron_secret: { Args: { _value: string }; Returns: undefined }
       transition_booking: {
         Args: {
