@@ -371,7 +371,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               <span>◉</span> {locationLine}
             </div>
             <h1 style={{ fontFamily: V.serif, fontWeight: 700, fontSize: "clamp(34px,5vw,58px)", lineHeight: 1.02, margin: "0 0 14px", color: "#fff" }}>
-              {svc.title}
+              {listingTitle}
             </h1>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, marginBottom: 26 }}>
               <span style={{ color: V.sand }}>★ 4.98 <span style={{ opacity: 0.8 }}>(42 reviews)</span></span>
