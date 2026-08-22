@@ -2108,10 +2108,13 @@ export type Database = {
       service_addons: {
         Row: {
           business_id: string
+          capacity_per_slot: number | null
           created_at: string
           description: string | null
           id: string
           is_active: boolean
+          lead_time_hours: number
+          max_per_booking: number | null
           price_cents: number
           service_id: string
           sort_order: number
@@ -2121,10 +2124,13 @@ export type Database = {
         }
         Insert: {
           business_id: string
+          capacity_per_slot?: number | null
           created_at?: string
           description?: string | null
           id?: string
           is_active?: boolean
+          lead_time_hours?: number
+          max_per_booking?: number | null
           price_cents?: number
           service_id: string
           sort_order?: number
@@ -2134,10 +2140,13 @@ export type Database = {
         }
         Update: {
           business_id?: string
+          capacity_per_slot?: number | null
           created_at?: string
           description?: string | null
           id?: string
           is_active?: boolean
+          lead_time_hours?: number
+          max_per_booking?: number | null
           price_cents?: number
           service_id?: string
           sort_order?: number
@@ -2416,6 +2425,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      addon_block_reason: {
+        Args: { _addon_id: string; _quantity: number; _slot_id: string }
+        Returns: string
+      }
+      addon_remaining_for_slot: {
+        Args: { _addon_id: string; _slot_id: string }
+        Returns: number
+      }
       advance_trip_lifecycle: {
         Args: { _grace_hours?: number; _limit?: number }
         Returns: Json
@@ -2606,6 +2623,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      reserve_booking_addons: {
+        Args: { _booking_id: string; _lines: Json }
+        Returns: undefined
       }
       reserve_slot:
         | {
