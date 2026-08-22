@@ -70,14 +70,33 @@ export const checkoutQuery = (serviceId: string) =>
     queryFn: () => getCheckoutContext({ data: { serviceId } }),
   });
 
-type Step = "detail" | "checkout" | "confirmed";
+type Step = "detail" | "extras" | "checkout" | "confirmed";
 
 const CRUMBS: Array<{ k: Step | "results"; label: string }> = [
   { k: "results", label: "Browse" },
   { k: "detail", label: "Trip" },
+  { k: "extras", label: "Add-ons" },
   { k: "checkout", label: "Checkout" },
   { k: "confirmed", label: "Confirmed" },
 ];
+
+const STEP_ORDER: Array<Step | "results"> = ["results", "detail", "extras", "checkout", "confirmed"];
+
+const CANCELLATION_RULES: Array<[string, string]> = [
+  [
+    "7+ days out — full deposit refund",
+    "Cancel a week or more before departure and your deposit is returned in full, no questions asked.",
+  ],
+  [
+    "Captain-declared weather call — full refund or free reschedule",
+    "If the captain cancels for weather or unsafe conditions, choose a full refund or move to any open date at no cost.",
+  ],
+  [
+    "Inside 48 hours or no-show — deposit forfeited",
+    "Late cancellations keep the boat off the water, so the deposit stays with the captain.",
+  ],
+];
+
 
 export function BookingFlow({ serviceId }: { serviceId: string }) {
   const navigate = useNavigate();
