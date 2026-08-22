@@ -511,12 +511,13 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
 
                 <button
-                  onClick={() => setStep("checkout")}
+                  onClick={() => { setStep("extras"); window.scrollTo(0, 0); }}
                   disabled={!slot}
                   style={{ width: "100%", background: slot ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: slot ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
-                  {slot ? "Continue to secure checkout →" : "No dates available"}
+                  {slot ? "Continue — add-ons & notes →" : "No dates available"}
                 </button>
+
                 <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
                   {instantBook
                     ? "Seats held for 15 minutes. Funds released after your trip."
