@@ -6,7 +6,7 @@ import { useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { cancelTrip, getTripDetail, sendTripMessage } from "@/lib/trip-detail.functions";
+import { cancelTrip, getRescheduleOptions, getTripDetail, rescheduleTrip, sendTripMessage } from "@/lib/trip-detail.functions";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 
 type Reason = "Weather concerns" | "Plans changed" | "Booked by mistake" | "Something else";
