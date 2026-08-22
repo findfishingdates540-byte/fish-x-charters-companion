@@ -110,7 +110,7 @@ const CANCELLATION_RULES: Array<[string, string]> = [
 ];
 
 
-export function BookingFlow({ serviceId }: { serviceId: string }) {
+export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?: string }) {
   const navigate = useNavigate();
   const { data: svc } = useSuspenseQuery(checkoutQuery(serviceId));
   const business = svc.business as { id: string; slug: string; name: string; city: string | null; region: string | null; logo_url: string | null; hero_url: string | null } | null;
@@ -285,14 +285,24 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
     };
   };
 
-  const heroUrl = svc.hero_url || business?.hero_url || DEFAULT_HERO;
+  // The angler stays on the listing they opened; switching trip packages only
+  // swaps price/duration/departures, never the listing identity or photos.
+  const listingId = baseId ?? serviceId;
+  const entry = (packages.find((p) => p.id === listingId) ?? null) as
+    | { id: string; title: string; hero_url?: string | null }
+    | null;
+  const listingTitle = entry?.title ?? svc.title;
+  const heroUrl = entry?.hero_url || svc.hero_url || business?.hero_url || DEFAULT_HERO;
   const businessLine = `${business?.name ?? "Captain"} · ${[business?.city, business?.region].filter(Boolean).join(", ") || "Coastal"}`;
 
   const isDetail = step === "detail";
   const galleryUrls = [
     heroUrl,
-    ...galleryFor(svc.id, 5).filter((u) => u !== heroUrl),
-  ].slice(0, 5);
+    ...galleryFor(listingId, 7).filter((u) => u !== heroUrl),
+  ].slice(0, 8);
+  // Only three tiles are shown; the third carries a "+N photos" overlay.
+  const visibleTiles = galleryUrls.slice(0, 3);
+  const hiddenCount = Math.max(galleryUrls.length - visibleTiles.length, 0);
 
   const alternativeSlots = openSlots
     .filter((s) => s.id !== slotId && s.seatsLeft > 0)
@@ -361,7 +371,7 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
               <span>◉</span> {locationLine}
             </div>
             <h1 style={{ fontFamily: V.serif, fontWeight: 700, fontSize: "clamp(34px,5vw,58px)", lineHeight: 1.02, margin: "0 0 14px", color: "#fff" }}>
-              {svc.title}
+              {listingTitle}
             </h1>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, marginBottom: 26 }}>
               <span style={{ color: V.sand }}>★ 4.98 <span style={{ opacity: 0.8 }}>(42 reviews)</span></span>
@@ -374,14 +384,33 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
             {/* GALLERY */}
             <div className="fx-booking-gallery" style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 18, marginBottom: 34 }}>
               <img
-                src={galleryUrls[0]}
-                alt={svc.title ?? "Charter"}
+                src={visibleTiles[0]}
+                alt={listingTitle ?? "Charter"}
                 style={{ width: "100%", height: 520, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.lined}` }}
               />
               <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 18 }}>
-                {galleryUrls.slice(1).map((u, i) => (
-                  <img key={i} src={u} alt="" style={{ width: "100%", height: 251, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.lined}` }} />
-                ))}
+                {visibleTiles.slice(1).map((u, i) => {
+                  const isLast = i === visibleTiles.length - 2;
+                  return (
+                    <div key={i} style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: `1px solid ${V.lined}` }}>
+                      <img src={u} alt="" style={{ width: "100%", height: 251, objectFit: "cover", display: "block" }} />
+                      {isLast && hiddenCount > 0 && (
+                        <div
+                          style={{
+                            position: "absolute", inset: 0, background: "rgba(8,20,32,.62)",
+                            display: "grid", placeItems: "center", gap: 4, color: "#fff",
+                            backdropFilter: "blur(1.5px)",
+                          }}
+                        >
+                          <span style={{ fontFamily: V.serif, fontSize: 30, fontWeight: 700, lineHeight: 1 }}>+{hiddenCount}</span>
+                          <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: V.sand }}>
+                            More photos
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -399,7 +428,13 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                           <button
                             key={p.id}
                             onClick={() => {
-                              if (!active) navigate({ to: "/booking", search: { service_id: p.id } });
+                              if (!active)
+                                navigate({
+                                  to: "/booking",
+                                  search: { service_id: p.id, base: listingId },
+                                  replace: true,
+                                  resetScroll: false,
+                                });
                             }}
                             style={{
                               textAlign: "left",
