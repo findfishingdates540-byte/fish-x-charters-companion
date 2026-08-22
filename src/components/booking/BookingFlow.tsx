@@ -110,7 +110,7 @@ const CANCELLATION_RULES: Array<[string, string]> = [
 ];
 
 
-export function BookingFlow({ serviceId }: { serviceId: string }) {
+export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?: string }) {
   const navigate = useNavigate();
   const { data: svc } = useSuspenseQuery(checkoutQuery(serviceId));
   const business = svc.business as { id: string; slug: string; name: string; city: string | null; region: string | null; logo_url: string | null; hero_url: string | null } | null;
