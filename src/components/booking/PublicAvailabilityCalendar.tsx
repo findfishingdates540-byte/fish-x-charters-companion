@@ -260,12 +260,7 @@ export function PublicAvailabilityCalendar({
                   color: T.text,
                 }}
               >
-                <span style={{ fontSize: 13, fontWeight: 700 }}>
-                  {new Date(s.startsAt).toLocaleTimeString(undefined, {
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                </span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>{timeBlock(s)}</span>
                 <span style={{ fontSize: 12, color: T.muted }}>
                   {s.seatsLeft} of {s.seatsTotal} seats left
                 </span>
