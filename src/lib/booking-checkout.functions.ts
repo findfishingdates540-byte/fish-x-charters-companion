@@ -45,8 +45,39 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
       }))
       .filter((s) => s.seatsLeft > 0);
 
-    return { ...svc, openSlots };
+    // Sibling trip packages from the same operator — the angler can swap
+    // between them on the detail page without losing their place.
+    const [packagesRes, addonsRes] = await Promise.all([
+      supabase
+        .from("bookable_services")
+        .select("id,title,duration_minutes,base_price_cents,capacity,hero_url,target_species,description")
+        .eq("business_id", svc.business_id)
+        .eq("is_published", true)
+        .order("base_price_cents", { ascending: true })
+        .limit(12),
+      (supabase as any)
+        .from("service_addons")
+        .select("id,title,description,price_cents,unit,sort_order")
+        .eq("service_id", data.serviceId)
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true }),
+    ]);
+
+    return {
+      ...svc,
+      openSlots,
+      packages: packagesRes.data ?? [],
+      addons: (addonsRes.data ?? []) as Array<{
+        id: string;
+        title: string;
+        description: string | null;
+        price_cents: number;
+        unit: "per_trip" | "per_person";
+        sort_order: number;
+      }>,
+    };
   });
+
 
 const CreateBookingInput = z.object({
   slotId: z.string().uuid(),
