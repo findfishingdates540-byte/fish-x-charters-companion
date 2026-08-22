@@ -298,8 +298,11 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const isDetail = step === "detail";
   const galleryUrls = [
     heroUrl,
-    ...galleryFor(svc.id, 5).filter((u) => u !== heroUrl),
-  ].slice(0, 5);
+    ...galleryFor(listingId, 7).filter((u) => u !== heroUrl),
+  ].slice(0, 8);
+  // Only three tiles are shown; the third carries a "+N photos" overlay.
+  const visibleTiles = galleryUrls.slice(0, 3);
+  const hiddenCount = Math.max(galleryUrls.length - visibleTiles.length, 0);
 
   const alternativeSlots = openSlots
     .filter((s) => s.id !== slotId && s.seatsLeft > 0)
