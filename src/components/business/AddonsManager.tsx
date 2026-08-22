@@ -19,9 +19,22 @@ type Draft = {
   description: string;
   priceDollars: number;
   unit: "per_trip" | "per_person";
+  maxPerBooking: string;
+  capacityPerSlot: string;
+  leadTimeHours: string;
 };
 
-const empty: Draft = { title: "", description: "", priceDollars: 0, unit: "per_trip" };
+const empty: Draft = {
+  title: "",
+  description: "",
+  priceDollars: 0,
+  unit: "per_trip",
+  maxPerBooking: "",
+  capacityPerSlot: "",
+  leadTimeHours: "0",
+};
+
+const numOrNull = (v: string) => (v.trim() === "" ? null : Math.max(0, Math.round(Number(v) || 0)));
 
 export function AddonsManager({
   businessId,
@@ -58,6 +71,9 @@ export function AddonsManager({
           unit: d.unit,
           sort_order: rows?.length ?? 0,
           is_active: true,
+          max_per_booking: numOrNull(d.maxPerBooking),
+          capacity_per_slot: numOrNull(d.capacityPerSlot),
+          lead_time_hours: numOrNull(d.leadTimeHours) ?? 0,
         },
       }),
     onSuccess: () => {
@@ -121,6 +137,11 @@ export function AddonsManager({
               {a.description && (
                 <div style={{ fontSize: 12.5, color: "#7b8b99" }}>{a.description}</div>
               )}
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 5 }}>
+                {a.capacity_per_slot != null && <span style={chip}>{a.capacity_per_slot} per departure</span>}
+                {a.max_per_booking != null && <span style={chip}>max {a.max_per_booking} / booking</span>}
+                {(a.lead_time_hours ?? 0) > 0 && <span style={chip}>{a.lead_time_hours}h notice</span>}
+              </div>
             </div>
             <div style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236" }}>
               {money(a.price_cents)}{" "}
@@ -137,6 +158,9 @@ export function AddonsManager({
                   description: a.description ?? "",
                   priceDollars: a.price_cents / 100,
                   unit: a.unit,
+                  maxPerBooking: a.max_per_booking == null ? "" : String(a.max_per_booking),
+                  capacityPerSlot: a.capacity_per_slot == null ? "" : String(a.capacity_per_slot),
+                  leadTimeHours: String(a.lead_time_hours ?? 0),
                 })
               }
             >
@@ -203,6 +227,42 @@ export function AddonsManager({
               <option value="per_person">Per angler</option>
             </select>
           </label>
+          <label style={{ display: "block" }}>
+            <span style={labelStyle}>Capacity per departure</span>
+            <input
+              style={input}
+              type="number"
+              min={0}
+              placeholder="Unlimited"
+              value={draft.capacityPerSlot}
+              onChange={(e) => setDraft({ ...draft, capacityPerSlot: e.target.value })}
+            />
+          </label>
+          <label style={{ display: "block" }}>
+            <span style={labelStyle}>Max per booking</span>
+            <input
+              style={input}
+              type="number"
+              min={1}
+              placeholder="Unlimited"
+              value={draft.maxPerBooking}
+              onChange={(e) => setDraft({ ...draft, maxPerBooking: e.target.value })}
+            />
+          </label>
+          <label style={{ display: "block" }}>
+            <span style={labelStyle}>Notice needed (hours)</span>
+            <input
+              style={input}
+              type="number"
+              min={0}
+              value={draft.leadTimeHours}
+              onChange={(e) => setDraft({ ...draft, leadTimeHours: e.target.value })}
+            />
+          </label>
+          <div style={{ gridColumn: "1 / -1", fontSize: 12, color: "#7b8b99", marginTop: -2 }}>
+            Leave capacity and max blank for unlimited. Notice hours block the extra once a
+            departure is closer than that.
+          </div>
           <div style={{ display: "flex", gap: 8 }}>
             <button
               style={btn("primary")}
@@ -229,6 +289,16 @@ export function AddonsManager({
     </div>
   );
 }
+
+const chip: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".02em",
+  color: "#0d2236",
+  background: "rgba(13,34,54,.06)",
+  borderRadius: 999,
+  padding: "3px 8px",
+};
 
 const labelStyle: React.CSSProperties = {
   display: "block",
