@@ -45,13 +45,45 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
       }))
       .filter((s) => s.seatsLeft > 0);
 
-    return { ...svc, openSlots };
+    // Sibling trip packages from the same operator — the angler can swap
+    // between them on the detail page without losing their place.
+    const [packagesRes, addonsRes] = await Promise.all([
+      supabase
+        .from("bookable_services")
+        .select("id,title,duration_minutes,base_price_cents,capacity,hero_url,target_species,description")
+        .eq("business_id", svc.business_id)
+        .eq("is_published", true)
+        .order("base_price_cents", { ascending: true })
+        .limit(12),
+      (supabase as any)
+        .from("service_addons")
+        .select("id,title,description,price_cents,unit,sort_order")
+        .eq("service_id", data.serviceId)
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true }),
+    ]);
+
+    return {
+      ...svc,
+      openSlots,
+      packages: packagesRes.data ?? [],
+      addons: (addonsRes.data ?? []) as Array<{
+        id: string;
+        title: string;
+        description: string | null;
+        price_cents: number;
+        unit: "per_trip" | "per_person";
+        sort_order: number;
+      }>,
+    };
   });
+
 
 const CreateBookingInput = z.object({
   slotId: z.string().uuid(),
   partySize: z.number().int().min(1).max(50),
   notes: z.string().max(2000).optional(),
+  addonIds: z.array(z.string().uuid()).max(20).default([]),
   origin: z.string().url().optional(),
   /** Client-generated; a retry returns the original booking. */
   idempotencyKey: z.string().min(8).max(120),
@@ -63,6 +95,27 @@ export const createBookingFromService = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase } = context;
 
+    // 0) Price the add-ons server-side — never trust client money.
+    let addons: Array<{
+      id: string;
+      title: string;
+      unit: "per_trip" | "per_person";
+      price_cents: number;
+    }> = [];
+    if (data.addonIds.length) {
+      const { data: rows } = await (supabase as any)
+        .from("service_addons")
+        .select("id,title,unit,price_cents,is_active")
+        .in("id", data.addonIds)
+        .eq("is_active", true);
+      addons = (rows ?? []) as typeof addons;
+    }
+    const addonLines = addons.map((a) => {
+      const qty = a.unit === "per_person" ? data.partySize : 1;
+      return { ...a, quantity: qty, total_cents: a.price_cents * qty };
+    });
+    const addonCents = addonLines.reduce((sum, l) => sum + l.total_cents, 0);
+
     // 1) Reserve the seats atomically. Throws if the slot is full/blacked out.
     const { data: booking, error: rpcErr } = await supabase.rpc("reserve_slot", {
       _slot_id: data.slotId,
@@ -70,9 +123,11 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       _idempotency_key: data.idempotencyKey,
       _notes: data.notes ?? undefined,
       _hold_minutes: 15,
-    });
+      _addon_cents: addonCents,
+    } as never);
     if (rpcErr) throw new Response(rpcErr.message, { status: 400 });
     if (!booking) throw new Response("Could not reserve this slot", { status: 400 });
+
 
     const row = booking as unknown as {
       id: string;
@@ -89,6 +144,30 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       stripe_payment_intent_id: string | null;
       hold_expires_at: string | null;
     };
+
+    // 1b) Persist the add-on lines (idempotent: skip if already recorded).
+    if (addonLines.length) {
+      const { data: existing } = await (supabase as any)
+        .from("booking_addons")
+        .select("id")
+        .eq("booking_id", row.id)
+        .limit(1);
+      if (!existing?.length) {
+        await (supabase as any).from("booking_addons").insert(
+          addonLines.map((l) => ({
+            booking_id: row.id,
+            addon_id: l.id,
+            title: l.title,
+            unit: l.unit,
+            unit_price_cents: l.price_cents,
+            quantity: l.quantity,
+            total_cents: l.total_cents,
+          })),
+        );
+      }
+    }
+
+
 
     // Only the deposit is charged online; the captain collects the balance
     // on the day of the trip (cash, card, split cards, tips).

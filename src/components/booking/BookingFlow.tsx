@@ -70,14 +70,33 @@ export const checkoutQuery = (serviceId: string) =>
     queryFn: () => getCheckoutContext({ data: { serviceId } }),
   });
 
-type Step = "detail" | "checkout" | "confirmed";
+type Step = "detail" | "extras" | "checkout" | "confirmed";
 
 const CRUMBS: Array<{ k: Step | "results"; label: string }> = [
   { k: "results", label: "Browse" },
   { k: "detail", label: "Trip" },
+  { k: "extras", label: "Add-ons" },
   { k: "checkout", label: "Checkout" },
   { k: "confirmed", label: "Confirmed" },
 ];
+
+const STEP_ORDER: Array<Step | "results"> = ["results", "detail", "extras", "checkout", "confirmed"];
+
+const CANCELLATION_RULES: Array<[string, string]> = [
+  [
+    "7+ days out — full deposit refund",
+    "Cancel a week or more before departure and your deposit is returned in full, no questions asked.",
+  ],
+  [
+    "Captain-declared weather call — full refund or free reschedule",
+    "If the captain cancels for weather or unsafe conditions, choose a full refund or move to any open date at no cost.",
+  ],
+  [
+    "Inside 48 hours or no-show — deposit forfeited",
+    "Late cancellations keep the boat off the water, so the deposit stays with the captain.",
+  ],
+];
+
 
 export function BookingFlow({ serviceId }: { serviceId: string }) {
   const navigate = useNavigate();
@@ -90,6 +109,17 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const slot = openSlots.find((s) => s.id === slotId) ?? openSlots[0] ?? null;
   const [party, setParty] = useState(2);
 
+  const addons = (svc as any).addons as Array<{
+    id: string; title: string; description: string | null; price_cents: number; unit: "per_trip" | "per_person";
+  }> ?? [];
+  const packages = ((svc as any).packages ?? []) as Array<{
+    id: string; title: string; duration_minutes: number | null; base_price_cents: number; capacity: number | null;
+  }>;
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [notes, setNotes] = useState("");
+  const toggleAddon = (id: string) =>
+    setSelectedAddons((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
+
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [released, setReleased] = useState(false);
@@ -101,11 +131,19 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const seatsLeft = slot?.seatsLeft ?? 0;
   const cap = Math.max(1, Math.min(svc.capacity ?? 8, seatsLeft || svc.capacity || 8));
   const price = (slot?.priceCents ?? svc.base_price_cents ?? 0) * party;
+  const addonLines = addons
+    .filter((a) => selectedAddons.includes(a.id))
+    .map((a) => {
+      const quantity = a.unit === "per_person" ? party : 1;
+      return { ...a, quantity, lineCents: a.price_cents * quantity };
+    });
+  const addonCents = addonLines.reduce((s, l) => s + l.lineCents, 0);
   const fee = 0;
-  const total = price + fee;
+  const total = price + addonCents + fee;
   /** 25% booked online; the captain collects the rest on the day. */
   const deposit = Math.round(total * 0.25);
   const balanceDue = total - deposit;
+
 
   const durLabel = svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} hrs` : "half day";
   const date = slot ? slot.startsAt.slice(0, 10) : "";
@@ -130,6 +168,8 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
           slotId: slot.id,
           partySize: party,
           idempotencyKey: attemptKey,
+          addonIds: selectedAddons,
+          notes: notes.trim() || undefined,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
         },
       });
@@ -169,18 +209,18 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
   useEffect(() => { if (party > cap) setParty(cap); }, [party, cap]);
   // Changing what you're buying starts a fresh reservation attempt.
-  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party]);
+  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party, selectedAddons, notes]);
 
 
   const crumbStyle = (k: Step | "results"): CSSProperties => {
-    const order: Array<Step | "results"> = ["results", "detail", "checkout", "confirmed"];
+    const order = STEP_ORDER;
     const i = order.indexOf(k);
     const cur = order.indexOf(step);
     const done = i < cur, active = i === cur;
     return { display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, color: done ? V.sand : active ? "#fff" : V.ondmut };
   };
   const crumbNumStyle = (k: Step | "results", n: number): { style: CSSProperties; label: string } => {
-    const order: Array<Step | "results"> = ["results", "detail", "checkout", "confirmed"];
+    const order = STEP_ORDER;
     const i = order.indexOf(k);
     const cur = order.indexOf(step);
     const done = i < cur, active = i === cur;
@@ -294,7 +334,57 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
             {/* BODY + RAIL */}
             <div className="fx-booking-grid" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 30, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+                {/* Trip packages offered by this operator */}
+                {packages.length > 1 && (
+                  <section style={cardDark}>
+                    <h2 style={h2Dark}>Choose your trip package</h2>
+                    <div style={{ display: "grid", gap: 12 }}>
+                      {packages.map((p) => {
+                        const active = p.id === svc.id;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              if (!active) navigate({ to: "/booking", search: { service_id: p.id } });
+                            }}
+                            style={{
+                              textAlign: "left",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 16,
+                              background: active ? "rgba(227,192,137,.12)" : "rgba(255,255,255,.03)",
+                              border: `1px solid ${active ? "rgba(227,192,137,.55)" : V.lined}`,
+                              borderRadius: 14,
+                              padding: "16px 18px",
+                              cursor: active ? "default" : "pointer",
+                              color: V.ond,
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 18, height: 18, borderRadius: "50%", flex: "none",
+                                border: `2px solid ${active ? V.sand : "rgba(255,255,255,.3)"}`,
+                                background: active ? V.sand : "transparent",
+                              }}
+                            />
+                            <span style={{ flex: 1 }}>
+                              <span style={{ display: "block", fontFamily: V.serif, fontSize: 20, fontWeight: 700, color: "#fff" }}>{p.title}</span>
+                              <span style={{ display: "block", fontFamily: MONO, fontSize: 12.5, color: V.cyan, marginTop: 4 }}>
+                                {p.duration_minutes ? `${Math.round(p.duration_minutes / 60)} hrs` : "Full day"} · up to {p.capacity ?? svc.capacity ?? 6} anglers
+                              </span>
+                            </span>
+                            <span style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
+                              {money(p.base_price_cents)}<span style={{ fontSize: 11.5, color: V.ondmut }}> /angler</span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
                 {/* Charter overview */}
+
                 <section style={cardDark}>
                   <h2 style={h2Dark}>Charter Overview</h2>
                   <p style={{ fontSize: 15.5, lineHeight: 1.7, color: V.ond, opacity: 0.85, margin: "0 0 22px", maxWidth: 760 }}>
@@ -421,12 +511,13 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
 
 
                 <button
-                  onClick={() => setStep("checkout")}
+                  onClick={() => { setStep("extras"); window.scrollTo(0, 0); }}
                   disabled={!slot}
                   style={{ width: "100%", background: slot ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: slot ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
-                  {slot ? "Continue to secure checkout →" : "No dates available"}
+                  {slot ? "Continue — add-ons & notes →" : "No dates available"}
                 </button>
+
                 <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
                   {instantBook
                     ? "Seats held for 15 minutes. Funds released after your trip."
@@ -438,11 +529,123 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
           </div>
         )}
 
+        {/* ==== ADD-ONS & NOTES ==== */}
+        {step === "extras" && (
+          <div>
+            <button onClick={() => setStep("detail")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
+            <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 34, margin: "0 0 6px" }}>Add-ons &amp; notes</h1>
+            <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 24px" }}>
+              {dateLabel}{time ? ` · ${time}` : ""} · {party} angler{party === 1 ? "" : "s"} · {svc.title}
+            </p>
+
+            <div className="fx-booking-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                {addons.length > 0 && (
+                  <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                    <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600, marginBottom: 4 }}>Optional extras</div>
+                    <div style={{ fontSize: 13, color: V.tmut, marginBottom: 16 }}>Added to your trip total — the deposit is recalculated automatically.</div>
+                    <div style={{ display: "grid", gap: 10 }}>
+                      {addons.map((a) => {
+                        const on = selectedAddons.includes(a.id);
+                        const qty = a.unit === "per_person" ? party : 1;
+                        return (
+                          <label
+                            key={a.id}
+                            style={{
+                              display: "flex", alignItems: "flex-start", gap: 13, cursor: "pointer",
+                              background: on ? "#f3f8fa" : V.paper,
+                              border: `1px solid ${on ? "rgba(31,159,190,.5)" : V.line}`,
+                              borderRadius: 13, padding: "14px 16px",
+                            }}
+                          >
+                            <input type="checkbox" checked={on} onChange={() => toggleAddon(a.id)} style={{ marginTop: 3, accentColor: V.cyan, width: 17, height: 17 }} />
+                            <span style={{ flex: 1 }}>
+                              <span style={{ display: "block", fontSize: 14.5, fontWeight: 700 }}>{a.title}</span>
+                              {a.description && <span style={{ display: "block", fontSize: 12.5, color: V.tmut, marginTop: 3, lineHeight: 1.5 }}>{a.description}</span>}
+                              <span style={{ display: "block", fontSize: 11.5, color: V.tmut, marginTop: 4 }}>
+                                {a.unit === "per_person" ? `Per angler · ×${qty}` : "Per trip"}
+                              </span>
+                            </span>
+                            <span style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, whiteSpace: "nowrap" }}>{money(a.price_cents * qty)}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                {/* Note to captain */}
+                <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                  <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600, marginBottom: 6 }}>
+                    Note to {business?.name ?? "your captain"}
+                  </div>
+                  <p style={{ fontSize: 13.5, color: V.tmut, lineHeight: 1.6, margin: "0 0 14px" }}>
+                    What are you hoping to target? How much experience is in your group? Anyone prone to seasickness, kids aboard, or a milestone you're celebrating?
+                  </p>
+                  <textarea
+                    value={notes}
+                    maxLength={500}
+                    onChange={(e) => setNotes(e.target.value)}
+                    rows={5}
+                    placeholder="Tell your captain anything that will make the day better…"
+                    style={{ width: "100%", background: V.paper, border: `1px solid ${V.line}`, borderRadius: 12, padding: "13px 15px", fontFamily: V.sans, fontSize: 14, lineHeight: 1.6, color: V.ink, outline: "none", resize: "vertical" }}
+                  />
+                  <div style={{ textAlign: "right", fontFamily: MONO, fontSize: 11.5, color: V.tmut, marginTop: 6 }}>{notes.length} / 500</div>
+                </section>
+
+                {/* Cancellation policy */}
+                <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                  <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600, marginBottom: 4 }}>Cancellation policy</div>
+                  <div style={{ fontSize: 13, color: V.tmut, marginBottom: 16 }}>The same three rules apply to every FishX booking.</div>
+                  <div style={{ display: "grid", gap: 12 }}>
+                    {CANCELLATION_RULES.map(([t, d], i) => (
+                      <div key={t} style={{ display: "flex", gap: 13, alignItems: "flex-start", background: V.paper, borderRadius: 13, padding: "14px 16px" }}>
+                        <span style={{ width: 24, height: 24, flex: "none", borderRadius: "50%", background: V.navy, color: "#fff", display: "grid", placeItems: "center", fontSize: 11.5, fontWeight: 700 }}>{i + 1}</span>
+                        <span>
+                          <span style={{ display: "block", fontSize: 14, fontWeight: 700 }}>{t}</span>
+                          <span style={{ display: "block", fontSize: 12.5, color: V.tmut, lineHeight: 1.55, marginTop: 3 }}>{d}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+
+              {/* Running total */}
+              <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
+                <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Your trip</div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
+                  <span>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)} × {party}</span><span style={{ color: V.ink }}>{money(price)}</span>
+                </div>
+                {addonLines.map((l) => (
+                  <div key={l.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
+                    <span>{l.title}{l.quantity > 1 ? ` ×${l.quantity}` : ""}</span><span style={{ color: V.ink }}>{money(l.lineCents)}</span>
+                  </div>
+                ))}
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>
+                  <span>Trip total</span><span>{money(total)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: V.tmut, padding: "2px 0 14px" }}>
+                  <span>Deposit due today (25%)</span><span style={{ fontWeight: 700, color: V.ink }}>{money(deposit)}</span>
+                </div>
+                <button
+                  onClick={() => { setStep("checkout"); window.scrollTo(0, 0); }}
+                  style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                >
+                  Continue to secure checkout →
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
+
 
         {/* ==== CHECKOUT ==== */}
         {step === "checkout" && (
           <div>
-            <button onClick={() => setStep("detail")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
+            <button onClick={() => setStep("extras")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to add-ons</button>
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                 {[
@@ -462,6 +665,16 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                           <div style={{ fontSize: 15, fontWeight: 600 }}>{svc.title}</div>
                           <div style={{ fontSize: 13, color: V.tmut, marginTop: 3 }}>{businessLine}</div>
                           <div style={{ fontSize: 13, color: V.tmut, marginTop: 6 }}>{dateLabel} · {time} · {party} anglers</div>
+                          {addonLines.length > 0 && (
+                            <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 6 }}>
+                              Add-ons: {addonLines.map((l) => l.title).join(", ")}
+                            </div>
+                          )}
+                          {notes.trim() && (
+                            <div style={{ fontSize: 12.5, color: V.tmut, marginTop: 6, fontStyle: "italic" }}>
+                              “{notes.trim()}”
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -502,6 +715,9 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
                 <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Order summary</div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Trip total</span><span style={{ color: V.ink }}>{money(price)}</span></div>
+                {addonLines.map((l) => (
+                  <div key={l.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>{l.title}{l.quantity > 1 ? ` ×${l.quantity}` : ""}</span><span style={{ color: V.ink }}>{money(l.lineCents)}</span></div>
+                ))}
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}><span>Fish-X service fee</span><span style={{ color: V.ink }}>Included</span></div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 5 }}>

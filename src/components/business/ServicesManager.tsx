@@ -15,6 +15,7 @@ import {
 import { Card, money } from "@/components/operator/OperatorShell";
 import { input, btn } from "@/components/business/BusinessSettings";
 import { AvailabilityCalendar } from "@/components/business/AvailabilityCalendar";
+import { AddonsManager } from "@/components/business/AddonsManager";
 import { ImageUpload } from "@/components/business/ImageUpload";
 
 export type ServiceKindKey =
@@ -95,6 +96,7 @@ export function ServicesManager({
   });
   const [editing, setEditing] = useState<Draft | null>(null);
   const [calendarFor, setCalendarFor] = useState<any | null>(null);
+  const [addonsFor, setAddonsFor] = useState<any | null>(null);
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: key });
     qc.invalidateQueries({ queryKey: ["guide-overview", businessId] });
@@ -164,6 +166,14 @@ export function ServicesManager({
         <AvailabilityCalendar service={calendarFor} onClose={() => setCalendarFor(null)} />
       )}
 
+      {addonsFor && (
+        <AddonsManager
+          businessId={businessId}
+          service={addonsFor}
+          onClose={() => setAddonsFor(null)}
+        />
+      )}
+
       {isLoading && <div style={{ fontSize: 13, color: "#7b8b99" }}>Loading listings…</div>}
       {!isLoading && (rows ?? []).length === 0 && !editing && (
         <div style={{ fontSize: 13.5, color: "#7b8b99" }}>{emptyText}</div>
@@ -224,6 +234,12 @@ export function ServicesManager({
               onClick={() => setCalendarFor(calendarFor?.id === s.id ? null : s)}
             >
               Availability
+            </button>
+            <button
+              style={btn("ghost")}
+              onClick={() => setAddonsFor(addonsFor?.id === s.id ? null : s)}
+            >
+              Add-ons
             </button>
             <button style={btn("ghost")} onClick={() => setEditing(toDraft(s))}>
               Edit
