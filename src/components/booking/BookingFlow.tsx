@@ -428,7 +428,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                           <button
                             key={p.id}
                             onClick={() => {
-                              if (!active) navigate({ to: "/booking", search: { service_id: p.id } });
+                              if (!active)
+                                navigate({
+                                  to: "/booking",
+                                  search: { service_id: p.id, base: listingId },
+                                  replace: true,
+                                  resetScroll: false,
+                                });
                             }}
                             style={{
                               textAlign: "left",
