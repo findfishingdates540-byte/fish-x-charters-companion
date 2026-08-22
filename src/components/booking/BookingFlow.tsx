@@ -384,14 +384,33 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
             {/* GALLERY */}
             <div className="fx-booking-gallery" style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 18, marginBottom: 34 }}>
               <img
-                src={galleryUrls[0]}
-                alt={svc.title ?? "Charter"}
+                src={visibleTiles[0]}
+                alt={listingTitle ?? "Charter"}
                 style={{ width: "100%", height: 520, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.lined}` }}
               />
               <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 18 }}>
-                {galleryUrls.slice(1).map((u, i) => (
-                  <img key={i} src={u} alt="" style={{ width: "100%", height: 251, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.lined}` }} />
-                ))}
+                {visibleTiles.slice(1).map((u, i) => {
+                  const isLast = i === visibleTiles.length - 2;
+                  return (
+                    <div key={i} style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: `1px solid ${V.lined}` }}>
+                      <img src={u} alt="" style={{ width: "100%", height: 251, objectFit: "cover", display: "block" }} />
+                      {isLast && hiddenCount > 0 && (
+                        <div
+                          style={{
+                            position: "absolute", inset: 0, background: "rgba(8,20,32,.62)",
+                            display: "grid", placeItems: "center", gap: 4, color: "#fff",
+                            backdropFilter: "blur(1.5px)",
+                          }}
+                        >
+                          <span style={{ fontFamily: V.serif, fontSize: 30, fontWeight: 700, lineHeight: 1 }}>+{hiddenCount}</span>
+                          <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: V.sand }}>
+                            More photos
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
