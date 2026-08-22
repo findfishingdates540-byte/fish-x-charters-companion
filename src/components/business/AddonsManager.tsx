@@ -205,7 +205,7 @@ export function AddonsManager({
           </label>
           <div style={{ display: "flex", gap: 8 }}>
             <button
-              style={btn()}
+              style={btn("primary")}
               disabled={mSave.isPending || draft.title.trim().length < 2}
               onClick={() => mSave.mutate(draft)}
             >
