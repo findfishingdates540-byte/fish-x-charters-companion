@@ -12,6 +12,7 @@ import { getPublicServiceAvailability } from "@/lib/businesses.functions";
 export type PublicSlot = {
   id: string;
   startsAt: string;
+  endsAt?: string | null;
   seatsLeft: number;
   seatsTotal: number;
   priceCents: number;
@@ -47,6 +48,16 @@ const THEMES = {
 type Palette = { text: string; muted: string; line: string; cell: string; open: string; selBg: string; selText: string; accent: string };
 
 const money = (c: number) => `$${Math.round((c ?? 0) / 100).toLocaleString()}`;
+const hhmm = (d: Date) => d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+
+/** A departure is an exclusive time block — show the whole window, not just the start. */
+export const timeBlock = (s: { startsAt: string; endsAt?: string | null }) => {
+  const start = new Date(s.startsAt);
+  if (!s.endsAt) return hhmm(start);
+  const end = new Date(s.endsAt);
+  const hrs = Math.round(((end.getTime() - start.getTime()) / 3_600_000) * 10) / 10;
+  return `${hhmm(start)} – ${hhmm(end)} · ${hrs}h`;
+};
 
 export function PublicAvailabilityCalendar({
   serviceId,
@@ -211,7 +222,8 @@ export function PublicAvailabilityCalendar({
         </div>
 
         <div style={{ fontSize: 11, color: T.muted }}>
-          Numbers show seats still open. {instantBook
+          Each departure is an exclusive time block — once it's booked the operator can't be
+          booked again until they're back at the dock. Numbers show seats still open. {instantBook
             ? "Instant book confirms immediately, up to the seats published for that day."
             : "This operator reviews each request before confirming."}
         </div>
