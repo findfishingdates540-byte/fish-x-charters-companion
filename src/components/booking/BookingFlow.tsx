@@ -334,7 +334,57 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
             {/* BODY + RAIL */}
             <div className="fx-booking-grid" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 30, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+                {/* Trip packages offered by this operator */}
+                {packages.length > 1 && (
+                  <section style={cardDark}>
+                    <h2 style={h2Dark}>Choose your trip package</h2>
+                    <div style={{ display: "grid", gap: 12 }}>
+                      {packages.map((p) => {
+                        const active = p.id === svc.id;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              if (!active) navigate({ to: "/booking", search: { service_id: p.id } });
+                            }}
+                            style={{
+                              textAlign: "left",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 16,
+                              background: active ? "rgba(227,192,137,.12)" : "rgba(255,255,255,.03)",
+                              border: `1px solid ${active ? "rgba(227,192,137,.55)" : V.lined}`,
+                              borderRadius: 14,
+                              padding: "16px 18px",
+                              cursor: active ? "default" : "pointer",
+                              color: V.ond,
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 18, height: 18, borderRadius: "50%", flex: "none",
+                                border: `2px solid ${active ? V.sand : "rgba(255,255,255,.3)"}`,
+                                background: active ? V.sand : "transparent",
+                              }}
+                            />
+                            <span style={{ flex: 1 }}>
+                              <span style={{ display: "block", fontFamily: V.serif, fontSize: 20, fontWeight: 700, color: "#fff" }}>{p.title}</span>
+                              <span style={{ display: "block", fontFamily: MONO, fontSize: 12.5, color: V.cyan, marginTop: 4 }}>
+                                {p.duration_minutes ? `${Math.round(p.duration_minutes / 60)} hrs` : "Full day"} · up to {p.capacity ?? svc.capacity ?? 6} anglers
+                              </span>
+                            </span>
+                            <span style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
+                              {money(p.base_price_cents)}<span style={{ fontSize: 11.5, color: V.ondmut }}> /angler</span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
                 {/* Charter overview */}
+
                 <section style={cardDark}>
                   <h2 style={h2Dark}>Charter Overview</h2>
                   <p style={{ fontSize: 15.5, lineHeight: 1.7, color: V.ond, opacity: 0.85, margin: "0 0 22px", maxWidth: 760 }}>
