@@ -15,6 +15,12 @@ export type ServiceAddon = {
   unit: "per_trip" | "per_person";
   sort_order: number;
   is_active: boolean;
+  /** Hard cap on units a single booking may take (null = unlimited). */
+  max_per_booking: number | null;
+  /** Units sellable across all bookings on one departure (null = unlimited). */
+  capacity_per_slot: number | null;
+  /** Must be booked at least this many hours before departure. */
+  lead_time_hours: number;
 };
 
 export const listServiceAddons = createServerFn({ method: "GET" })
@@ -23,7 +29,7 @@ export const listServiceAddons = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { data: rows, error } = await (context.supabase as any)
       .from("service_addons")
-      .select("id,service_id,title,description,price_cents,unit,sort_order,is_active")
+      .select("id,service_id,title,description,price_cents,unit,sort_order,is_active,max_per_booking,capacity_per_slot,lead_time_hours")
       .eq("service_id", data.serviceId)
       .order("sort_order", { ascending: true });
     if (error) throw new Response(error.message, { status: 500 });
@@ -40,6 +46,9 @@ const addonInput = z.object({
   unit: z.enum(["per_trip", "per_person"]),
   sort_order: z.number().int().min(0).default(0),
   is_active: z.boolean().default(true),
+  max_per_booking: z.number().int().min(1).max(999).nullable().default(null),
+  capacity_per_slot: z.number().int().min(0).max(9999).nullable().default(null),
+  lead_time_hours: z.number().int().min(0).max(720).default(0),
 });
 
 export const upsertServiceAddon = createServerFn({ method: "POST" })
