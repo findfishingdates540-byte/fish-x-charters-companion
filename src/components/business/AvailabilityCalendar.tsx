@@ -449,14 +449,14 @@ export function AvailabilityCalendar({
                 background: "#fbfcfd",
               }}
             >
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236", minWidth: 190 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236", minWidth: 230 }}>
                 {new Date(s.starts_at).toLocaleString(undefined, {
                   weekday: "short",
                   month: "short",
                   day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
                 })}
+                {" · "}
+                {timeBlock({ startsAt: s.starts_at, endsAt: s.ends_at })}
               </div>
               <div style={{ fontSize: 12.5, color: "#7b8b99", flex: 1, minWidth: 150 }}>
                 {s.seats_booked ?? 0}/{s.seats_available} booked · {left} left
