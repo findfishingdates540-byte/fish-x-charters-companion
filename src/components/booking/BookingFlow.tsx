@@ -6,7 +6,7 @@
  */
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createBookingFromService, getCheckoutContext } from "@/lib/booking-checkout.functions";
@@ -26,6 +26,15 @@ const V = {
 const money = (n: number) => `$${Math.round(n / 100).toLocaleString()}`;
 
 const MONO = "ui-monospace,SFMono-Regular,Menlo,monospace";
+
+const dayPart = (d: Date) => {
+  const h = d.getHours();
+  if (h < 11) return "Morning";
+  if (h < 16) return "Afternoon";
+  return "Evening";
+};
+const timeLabel = (d: Date) =>
+  d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZoneName: "short" });
 
 const cardDark: CSSProperties = {
   background: "rgba(255,255,255,.035)",
@@ -70,7 +79,10 @@ export const checkoutQuery = (serviceId: string) =>
     queryFn: () => getCheckoutContext({ data: { serviceId } }),
   });
 
-type Step = "detail" | "extras" | "checkout" | "confirmed";
+type Step = "detail" | "extras" | "checkout" | "confirmed" | "slot_taken";
+
+/** Postgres/RPC errors that mean "someone else got this departure". */
+const SLOT_CONFLICT = /seat|slot|full|hold|reserved|no longer|overlap|conflict|blackout|taken|capacity/i;
 
 const CRUMBS: Array<{ k: Step | "results"; label: string }> = [
   { k: "results", label: "Browse" },
@@ -103,7 +115,9 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
   const { data: svc } = useSuspenseQuery(checkoutQuery(serviceId));
   const business = svc.business as { id: string; slug: string; name: string; city: string | null; region: string | null; logo_url: string | null; hero_url: string | null } | null;
 
+  const qc = useQueryClient();
   const [step, setStep] = useState<Step>("detail");
+  const [takenSlot, setTakenSlot] = useState<{ label: string } | null>(null);
   const openSlots = svc.openSlots ?? [];
   const [slotId, setSlotId] = useState(() => openSlots[0]?.id ?? "");
   const slot = openSlots.find((s) => s.id === slotId) ?? openSlots[0] ?? null;
@@ -189,7 +203,18 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
     },
     onError: (e: unknown) => {
       setProcessing(false);
-      showToast(e instanceof Error ? e.message : "Booking failed");
+      const msg = e instanceof Error ? e.message : String(e ?? "Booking failed");
+      if (SLOT_CONFLICT.test(msg)) {
+        // Someone locked this exact departure first — refresh availability and
+        // show the recovery screen instead of a raw error toast.
+        setTakenSlot({ label: `${dateLabel}${time ? ` · ${time}` : ""}` });
+        setAttemptKey(crypto.randomUUID());
+        void qc.invalidateQueries({ queryKey: ["checkout", serviceId] });
+        setStep("slot_taken");
+        window.scrollTo(0, 0);
+        return;
+      }
+      showToast(msg);
     },
   });
 
@@ -243,6 +268,10 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
     heroUrl,
     ...galleryFor(svc.id, 5).filter((u) => u !== heroUrl),
   ].slice(0, 5);
+
+  const alternativeSlots = openSlots
+    .filter((s) => s.id !== slotId && s.seatsLeft > 0)
+    .slice(0, 4);
 
   const locationLine =
     svc.departure_location || [business?.city, business?.region].filter(Boolean).join(" · ") || "Coastal marina";
@@ -739,6 +768,141 @@ export function BookingFlow({ serviceId }: { serviceId: string }) {
                 >
                   Place booking · pay 25% deposit
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==== SLOT TAKEN — recovery ==== */}
+        {step === "slot_taken" && (
+          <div style={{ maxWidth: 700, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <div
+                style={{
+                  width: 76, height: 76, borderRadius: "50%", margin: "6px auto 20px",
+                  background: "linear-gradient(150deg,#fdf1e2,#f6e2c6)",
+                  border: "1px solid rgba(169,126,60,.28)",
+                  display: "grid", placeItems: "center", fontSize: 30, color: V.goldtext,
+                }}
+              >
+                ⚓
+              </div>
+              <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 38, lineHeight: 1.05, margin: "0 0 10px" }}>
+                That slot just went
+              </h1>
+              <p style={{ fontSize: 15.5, color: V.tmut, lineHeight: 1.65, margin: "0 auto", maxWidth: 520 }}>
+                Another angler locked this exact boat and departure time moments before you did.
+                <b style={{ color: V.ink }}> Nothing was charged.</b>
+              </p>
+              {takenSlot && (
+                <div
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 9, marginTop: 16,
+                    background: "#fff", border: `1px solid ${V.line}`, borderRadius: 999,
+                    padding: "8px 16px", fontFamily: MONO, fontSize: 12.5, color: V.tmut,
+                  }}
+                >
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#c2603f" }} />
+                  <s>{takenSlot.label}</s>
+                  <span style={{ color: "#c2603f", fontWeight: 700 }}>FULL</span>
+                </div>
+              )}
+            </div>
+
+            <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 26, boxShadow: "0 26px 54px -38px rgba(13,34,54,.45)" }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginBottom: 4 }}>
+                <div style={{ fontFamily: V.serif, fontSize: 23, fontWeight: 600 }}>
+                  Next open departures with this captain
+                </div>
+                <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: V.cyan }}>
+                  Live
+                </span>
+              </div>
+              <p style={{ fontSize: 13, color: V.tmut, margin: "0 0 18px" }}>
+                {business?.name ?? "This operator"} · {locationLine}
+              </p>
+
+              {alternativeSlots.length === 0 ? (
+                <div style={{ background: V.paper, borderRadius: 14, padding: "22px 18px", textAlign: "center", fontSize: 13.5, color: V.tmut }}>
+                  No other departures are released right now — message the captain and they'll open a date for you.
+                </div>
+              ) : (
+                <div style={{ display: "grid", gap: 10 }}>
+                  {alternativeSlots.map((s) => {
+                    const d = new Date(s.startsAt);
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          setSlotId(s.id);
+                          setTakenSlot(null);
+                          setStep("checkout");
+                          window.scrollTo(0, 0);
+                        }}
+                        style={{
+                          display: "flex", alignItems: "center", gap: 14, width: "100%", textAlign: "left",
+                          background: V.paper, border: `1px solid ${V.line}`, borderRadius: 14,
+                          padding: "14px 16px", cursor: "pointer", fontFamily: V.sans, color: V.ink,
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 52, flex: "none", textAlign: "center", background: "#fff",
+                            border: `1px solid ${V.line}`, borderRadius: 11, padding: "7px 0",
+                          }}
+                        >
+                          <span style={{ display: "block", fontFamily: MONO, fontSize: 10.5, letterSpacing: ".1em", textTransform: "uppercase", color: V.tmut }}>
+                            {d.toLocaleDateString("en-US", { month: "short" })}
+                          </span>
+                          <span style={{ display: "block", fontSize: 18, fontWeight: 700, lineHeight: 1.1 }}>
+                            {d.toLocaleDateString("en-US", { day: "numeric" })}
+                          </span>
+                        </span>
+                        <span style={{ flex: 1, minWidth: 0 }}>
+                          <span style={{ display: "block", fontSize: 14.5, fontWeight: 700 }}>
+                            {d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                          </span>
+                          <span style={{ display: "block", fontSize: 13, color: V.tmut, marginTop: 2 }}>
+                            {dayPart(d)} · {timeLabel(d)}
+                          </span>
+                        </span>
+                        <span style={{ textAlign: "right", flex: "none" }}>
+                          <span style={{ display: "block", fontFamily: MONO, fontSize: 12.5, color: s.seatsLeft <= 2 ? "#c2603f" : V.green, fontWeight: 700 }}>
+                            {s.seatsLeft} seat{s.seatsLeft === 1 ? "" : "s"} open
+                          </span>
+                          <span style={{ display: "block", fontSize: 13, fontWeight: 700, marginTop: 3 }}>
+                            {money(s.priceCents)}<span style={{ color: V.tmut, fontWeight: 500 }}> /angler</span>
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 20 }}>
+                <button
+                  onClick={() => { setTakenSlot(null); setStep("detail"); window.scrollTo(0, 0); }}
+                  style={{ flex: "1 1 200px", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                >
+                  Pick another date
+                </button>
+                {business?.slug ? (
+                  <Link
+                    to="/b/$slug"
+                    params={{ slug: business.slug }}
+                    style={{ flex: "1 1 200px", textAlign: "center", background: "transparent", color: V.ink, border: `1px solid ${V.line}`, borderRadius: 12, padding: 14, fontSize: 14, fontWeight: 700, textDecoration: "none" }}
+                  >
+                    Back to the captain
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => navigate({ to: "/discover" })}
+                    style={{ flex: "1 1 200px", background: "transparent", color: V.ink, border: `1px solid ${V.line}`, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                  >
+                    Back to browsing
+                  </button>
+                )}
               </div>
             </div>
           </div>
