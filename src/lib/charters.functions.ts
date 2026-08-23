@@ -49,7 +49,7 @@ async function loadCharters(sb: ReturnType<typeof publicClient>) {
     .select(LISTING_COLS)
     .eq("is_published", true)
     .eq("businesses.is_published", true)
-    .in("kind", CHARTER_KINDS as unknown as string[])
+    .in("kind", [...CHARTER_KINDS])
     .order("created_at", { ascending: false })
     .limit(500);
   if (error) throw new Response(error.message, { status: 500 });
