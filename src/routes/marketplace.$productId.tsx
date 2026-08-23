@@ -1,3 +1,4 @@
+import { PublicHeader } from "@/components/public/PublicHeader";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -119,18 +120,14 @@ function ProductDetail() {
 
   return (
     <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
-      <header style={{ position: "sticky", top: 0, zIndex: 40, background: V.navy, color: "#eaf1f6" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 28px", height: 64, display: "flex", alignItems: "center", gap: 22 }}>
+      <PublicHeader />
+      <div style={{ background: V.navy, color: "#eaf1f6", borderTop: "1px solid rgba(255,255,255,.07)" }}>
+        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 28px", height: 54, display: "flex", alignItems: "center", gap: 14 }}>
           <Link to="/marketplace" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, textDecoration: "none", fontSize: 13, fontWeight: 600 }}>
-            <span>←</span> Marketplace
+            <span>←</span> Back to marketplace
           </Link>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <span style={{ width: 10, height: 10, background: V.sand, transform: "rotate(45deg)", display: "inline-block", borderRadius: 1, flexShrink: 0 }} />
-            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, marginLeft: 4, whiteSpace: "nowrap" }}>Product</span>
-          </div>
         </div>
-      </header>
+      </div>
 
       <main style={{ maxWidth: 1180, margin: "0 auto", padding: "28px 28px 60px" }}>
         <div className="mkt-detail-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0,1.05fr) minmax(0,1fr)", gap: 36 }}>

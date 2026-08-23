@@ -22,6 +22,7 @@ import {
 } from "./catalog";
 import { listStoreProducts, createProductCheckout } from "@/lib/product-checkout.functions";
 import { listCategories } from "@/lib/businesses.functions";
+import { PublicHeader } from "@/components/public/PublicHeader";
 
 
 const V = {
