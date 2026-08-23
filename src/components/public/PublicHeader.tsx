@@ -2,13 +2,12 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+/** Canonical site navigation — identical on every public page. */
 const NAV = [
   { to: "/charters", label: "Charters" },
-  { to: "/discover", label: "Operators" },
   { to: "/marketplace", label: "Marketplace" },
   { to: "/how-it-works", label: "How it works" },
   { to: "/trust", label: "Trust" },
-  { to: "/brand-story", label: "Our story" },
   { to: "/become-a-captain", label: "For captains" },
 ] as const;
 
@@ -151,7 +150,7 @@ export function PublicHeader() {
                 Sign in
               </Link>
               <Link
-                to="/discover"
+                to="/charters"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -263,7 +262,7 @@ export function PublicHeader() {
                 Sign in
               </Link>
               <Link
-                to="/discover"
+                to="/charters"
                 style={{
                   flex: 1,
                   textAlign: "center",

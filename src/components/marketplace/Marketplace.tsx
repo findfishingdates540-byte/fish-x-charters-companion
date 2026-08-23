@@ -22,6 +22,7 @@ import {
 } from "./catalog";
 import { listStoreProducts, createProductCheckout } from "@/lib/product-checkout.functions";
 import { listCategories } from "@/lib/businesses.functions";
+import { PublicHeader } from "@/components/public/PublicHeader";
 
 
 const V = {
@@ -272,16 +273,10 @@ export function Marketplace() {
   return (
     <div id="mkt" style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
       {/* NAV */}
-      <header style={{ position: "sticky", top: 0, zIndex: 40, background: V.navy, color: V.ond }}>
-        <div className="mkt-nav" style={{ width: "100%", padding: "0 36px", height: 64, display: "flex", alignItems: "center", gap: 22 }}>
-          <Link to="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, textDecoration: "none", fontSize: 13, fontWeight: 600 }}>
-            <span>←</span> Dashboard
-          </Link>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <span style={{ width: 10, height: 10, background: V.sand, transform: "rotate(45deg)", display: "inline-block", borderRadius: 1, flexShrink: 0 }} />
-            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, marginLeft: 4, whiteSpace: "nowrap" }}>Marketplace</span>
-          </div>
+      <PublicHeader />
+      <div style={{ background: V.navy, color: V.ond, borderTop: "1px solid rgba(255,255,255,.07)" }}>
+        <div className="mkt-nav" style={{ width: "100%", padding: "0 36px", height: 60, display: "flex", alignItems: "center", gap: 22 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, whiteSpace: "nowrap" }}>Marketplace</span>
           <label className="mkt-search" style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", flex: "1 1 auto", maxWidth: 420, minWidth: 180 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" strokeWidth={1.8}>
               <circle cx="11" cy="11" r="7" />
@@ -303,7 +298,7 @@ export function Marketplace() {
             )}
           </button>
         </div>
-      </header>
+      </div>
 
       <main className="mkt-main" style={{ width: "100%", padding: "26px 36px 60px" }}>
         {/* ESCROW RIBBON */}
