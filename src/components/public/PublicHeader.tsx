@@ -150,7 +150,7 @@ export function PublicHeader() {
                 Sign in
               </Link>
               <Link
-                to="/discover"
+                to="/charters"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -262,7 +262,7 @@ export function PublicHeader() {
                 Sign in
               </Link>
               <Link
-                to="/discover"
+                to="/charters"
                 style={{
                   flex: 1,
                   textAlign: "center",
