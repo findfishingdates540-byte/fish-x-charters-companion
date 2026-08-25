@@ -217,6 +217,9 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
   const grossBalance = Math.max(0, total - depositPaid);
   const balanceDue = balanceCollected ? grossBalance : (b.balance_due_cents ?? grossBalance);
   const refundable = Math.max(0, depositPaid - refundedCents);
+  // Only the deposit is captured by Stripe, so the bank transfer is the stored
+  // payout (deposit − platform fee) minus refunds — not the whole trip total.
+  const transferCents = Math.max(0, (b.payout_cents ?? 0) - refundedCents);
 
 
   const doCollectBalance = async () => {
