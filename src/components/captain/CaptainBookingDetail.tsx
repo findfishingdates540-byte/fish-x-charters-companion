@@ -108,13 +108,28 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
   const business = data.business;
 
   const total = b.total_cents ?? service?.base_price_cents ?? 0;
-  const fee = Math.round(total * 0.15);
+  const commissionRate = typeof b.commission_rate === "number" && b.commission_rate > 0 ? b.commission_rate : 0.15;
+  const feePct = Math.round(commissionRate * 100);
+  const fee = Math.round(total * commissionRate);
   const payoutCents = Math.max(0, total - fee);
+
+  // Marina slips, lodging and shop services share this page with charters, so
+  // the wording (and the weather flow) follows the kind of thing being sold.
+  const kind = (service as { kind?: string } | null)?.kind ?? "charter_trip";
+  const isCharter = kind === "charter_trip" || kind === "guided_trip";
+  const copy =
+    kind === "marina_slip"
+      ? { noun: "reservation", nounCap: "Slip reservation", totalLabel: "Reservation total", dayTitle: "Arrival day", dayDesc: "Mark complete once the slip is vacated", completeLabel: "Mark reservation complete · release escrow" }
+      : kind === "lodging"
+      ? { noun: "stay", nounCap: "Stay", totalLabel: "Stay total", dayTitle: "Check-out", dayDesc: "Mark complete after check-out", completeLabel: "Mark stay complete · release escrow" }
+      : isCharter
+      ? { noun: "trip", nounCap: "Charter", totalLabel: "Charter total", dayTitle: "Trip day", dayDesc: "Mark complete when you're back at the dock", completeLabel: "Mark trip complete · release escrow" }
+      : { noun: "booking", nounCap: "Booking", totalLabel: "Booking total", dayTitle: "Service day", dayDesc: "Mark complete once the service is delivered", completeLabel: "Mark booking complete · release escrow" };
 
   const statusLabel = isActive
     ? "Confirmed · escrow funded"
     : isCanceled
-    ? "Canceled · weather"
+    ? (isCharter ? "Canceled · weather" : "Canceled")
     : status.replaceAll("_", " ");
   const statusColor = isActive ? V.green : isCanceled ? V.tmut : V.cyan;
   const statusBg = isActive ? V.greensoft : isCanceled ? "rgba(13,34,54,.06)" : V.cyansoft;
