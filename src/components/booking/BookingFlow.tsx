@@ -540,7 +540,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                     {[
                       ["1", "You pay", "Funds are captured and held by Fish-X — never sent straight to the captain."],
                       ["2", "You fish", "The captain runs the trip. Anything goes wrong, open a resolution case."],
-                      ["3", "Captain paid", "Escrow releases 24 hours after the trip is marked complete."],
+                      ["3", "Captain paid", "Escrow releases 72 hours after the trip is marked complete."],
                     ].map(([n, t, d]) => (
                       <div key={n} style={{ border: `1px solid ${V.lined}`, borderRadius: 12, padding: 18 }}>
                         <span style={{ width: 26, height: 26, borderRadius: "50%", background: V.sand, color: "#1c1303", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{n}</span>
@@ -805,7 +805,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                           <span style={{ color: V.cyan, flex: "none", marginTop: 1 }}>🔒</span>
                           <div>
                             <div style={{ fontSize: 13, fontWeight: 700 }}>Charged to escrow — not the captain</div>
-                            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: V.tmut, marginTop: 2 }}>Held by Fish-X and released to your captain 24 hours after the trip is completed.</div>
+                            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: V.tmut, marginTop: 2 }}>Held by Fish-X and released to your captain 72 hours after the trip is completed.</div>
                           </div>
                         </div>
                       </>
