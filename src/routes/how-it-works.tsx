@@ -440,7 +440,7 @@ function HowItWorksPage() {
               },
               {
                 q: "When does the captain get paid?",
-                a: "Funds release from escrow to the captain automatically 24 hours after the trip is marked completed — assuming no dispute is opened. This protects both sides.",
+                a: "Funds release from escrow to the captain automatically 72 hours after the trip is marked completed — assuming no dispute is opened. This protects both sides.",
               },
               {
                 q: "Can I bring my own gear?",

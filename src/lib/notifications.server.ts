@@ -238,7 +238,7 @@ export async function draftsForEvent(
         push(operatorIds, {
           category: "payout",
           title: "Trip completed — payout pending",
-          body: `${money(booking.payout_cents)} releases 24 hours after completion unless a dispute is opened.`,
+          body: `${money(booking.payout_cents)} releases 72 hours after completion unless a dispute is opened.`,
           link: opLink,
         });
         break;
@@ -436,7 +436,7 @@ function receiptHtml(draft: NotificationDraft) {
 
       <p style="font-size:13px;line-height:1.6;color:#5c6b78;margin:20px 0 22px">${
         r.instant
-          ? "Your deposit is held in Fish-X escrow and only released to the captain 24 hours after the trip is completed."
+          ? "Your deposit is held in Fish-X escrow and only released to the captain 72 hours after the trip is completed."
           : "Nothing is captured until the captain accepts. If they can't take the date, the authorisation is released in full."
       }</p>
       <a href="${link}" style="display:inline-block;background:#e3c089;color:#1c1303;text-decoration:none;border-radius:11px;padding:14px 24px;font-size:14px;font-weight:700">View your trip</a>
