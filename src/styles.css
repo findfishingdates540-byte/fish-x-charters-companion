@@ -705,7 +705,7 @@ body.dc-body { margin:0; background:#0a2236; }
 @media (max-width: 900px) {
   .fx-shell { flex-direction: column !important; min-height: 100dvh !important; }
   .fx-side {
-    position: sticky !important; top: 0 !important; z-index: 30;
+    position: static !important; z-index: 10;
     width: 100% !important; height: auto !important;
     padding: 10px 12px !important;
     border-right: 0 !important; border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
