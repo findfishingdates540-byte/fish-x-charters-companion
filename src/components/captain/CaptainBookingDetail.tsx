@@ -323,7 +323,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
           <div style={{ display: "flex", alignItems: "center", gap: 14, background: V.cyansoft, border: "1px solid rgba(31,159,190,.35)", borderRadius: 14, padding: "16px 18px", marginBottom: 22 }}>
             <span style={{ width: 36, height: 36, borderRadius: "50%", background: V.cyan, color: "#fff", display: "grid", placeItems: "center", fontSize: 15, flex: "none" }}>✓</span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: V.ink }}>Weather call made — guest refunded</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: V.ink }}>{isCharter ? "Weather call made — guest refunded" : "Cancelled — guest refunded"}</div>
               <div style={{ fontSize: 13, color: V.tmut, marginTop: 2 }}>{money(total)} returned to {anglerName} from escrow. No penalty to your rating.</div>
             </div>
           </div>
@@ -333,7 +333,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
         <div style={{ display: "flex", alignItems: "flex-end", gap: 20, flexWrap: "wrap", marginBottom: 24 }}>
           <div style={{ flex: 1, minWidth: 280 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: V.goldtext }}>
-              Booking {b.id.slice(0, 8).toUpperCase()} · {service?.title ?? "Charter"}
+              Booking {b.id.slice(0, 8).toUpperCase()} · {service?.title ?? copy.nounCap}
             </div>
             <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 38, letterSpacing: "-.01em", lineHeight: 1.05, margin: "8px 0 8px", color: V.ink }}>
               {anglerName} · party of {b.party_size ?? 1}
@@ -484,11 +484,11 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                 Payout on completion
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "5px 0" }}>
-                <span style={{ color: V.ondmut }}>Charter total</span>
+                <span style={{ color: V.ondmut }}>{copy.totalLabel}</span>
                 <span style={{ color: "#fff", fontWeight: 600 }}>{money(total)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "5px 0" }}>
-                <span style={{ color: V.ondmut }}>Fish-X fee (15%)</span>
+                <span style={{ color: V.ondmut }}>Fish-X fee ({feePct}%)</span>
                 <span style={{ color: "#fff", fontWeight: 600 }}>−{money(fee)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, padding: "12px 0 0", borderTop: "1px solid rgba(255,255,255,.12)", marginTop: 8 }}>
@@ -613,8 +613,9 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                   style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", border: 0, borderBottom: `1px solid ${V.line}`, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.green, textAlign: "left" }}
                 >
                   <span style={{ width: 32, height: 32, borderRadius: 9, background: V.greensoft, display: "grid", placeItems: "center", flex: "none" }}>✓</span>
-                  Mark trip complete · release escrow
+                  {copy.completeLabel}
                 </button>
+                {isCharter && (
                 <button
                   onClick={() => setWeatherOpen(true)}
                   style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", background: "transparent", border: 0, padding: "15px 0", cursor: "pointer", fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, color: V.goldtext, textAlign: "left" }}
@@ -622,17 +623,19 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                   <span style={{ width: 32, height: 32, borderRadius: 9, background: V.sandsoft, display: "grid", placeItems: "center", flex: "none" }}>⚠️</span>
                   Make a weather call
                 </button>
+                )}
               </div>
             )}
 
             {/* TRUST NOTE */}
             <div style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: "20px 22px" }}>
               <div style={{ fontFamily: V.serif, fontSize: 16.5, color: V.ink, marginBottom: 8 }}>
-                Weather calls & your rating
+                {isCharter ? "Weather calls & your rating" : "Cancellations & your rating"}
               </div>
               <div style={{ fontSize: 12.5, lineHeight: 1.6, color: V.tmut }}>
-                Safety calls never hurt your standing. The guest is refunded in full from escrow, you keep your response
-                streak, and the slot reopens on your calendar automatically.
+                {isCharter
+                  ? "Safety calls never hurt your standing. The guest is refunded in full from escrow, you keep your response streak, and the slot reopens on your calendar automatically."
+                  : "The guest is refunded in full from escrow and the slot reopens on your calendar automatically. Frequent operator cancellations do affect your standing, so cancel only when you have to."}
               </div>
             </div>
           </div>
