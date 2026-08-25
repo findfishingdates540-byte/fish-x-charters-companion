@@ -536,7 +536,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
 
                 {b.payout_released_at ? (
                   <div style={{ marginTop: 14, background: V.greensoft, color: V.green, borderRadius: 11, padding: "11px 13px", fontSize: 12.5, fontWeight: 600 }}>
-                    Payout released ✓ {money(payoutCents)} on its way to your bank
+                    Payout released ✓ {money(transferCents)} transferred to your bank (deposit less the Fish-X fee){balanceDue > 0 ? ` · ${money(balanceDue)} balance collected directly` : ""}
                   </div>
                 ) : (
                   (status === "confirmed" || status === "in_progress" || status === "completed") && (
@@ -545,7 +545,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                       disabled={busyMoney}
                       style={{ marginTop: 10, width: "100%", background: V.goldtext, color: "#fff", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
                     >
-                      {busyMoney ? "Releasing…" : `Release ${money(payoutCents)} payout${balanceCollected ? "" : " & mark balance collected"}`}
+                      {busyMoney ? "Releasing…" : `Release ${money(transferCents)} to your bank${balanceCollected ? "" : " & mark balance collected"}`}
                     </button>
                   )
                 )}
