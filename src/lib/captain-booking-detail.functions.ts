@@ -41,7 +41,7 @@ export const getCaptainBooking = createServerFn({ method: "GET" })
       booking.service_id
         ? supabase
             .from("bookable_services")
-            .select("id,title,hero_url,departure_location,duration_minutes,base_price_cents")
+            .select("id,title,kind,hero_url,departure_location,duration_minutes,base_price_cents")
             .eq("id", booking.service_id)
             .maybeSingle()
         : Promise.resolve({ data: null, error: null }),
