@@ -145,26 +145,26 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
     ? "Escrow returned to guest"
     : `${money(payoutCents)} secured`;
   const payoutNote = isActive
-    ? "Releases automatically when you mark the trip complete"
+    ? `Releases automatically when you mark the ${copy.noun} complete`
     : isCanceled
-    ? "No payout — escrow refunded on your weather call"
-    : "Released after the trip";
+    ? `No payout — escrow refunded on this cancellation`
+    : `Released after the ${copy.noun}`;
 
   const escrowSteps = useMemo(() => {
     const steps = [
       { title: "Booked & funded", desc: `${anglerName} paid ${money(total)} — held by Fish-X, not you`, state: "done" as const },
       {
         title: "In escrow",
-        desc: `${money(payoutCents)} payout secured against trip completion`,
+        desc: `${money(payoutCents)} payout secured against completion`,
         state: isActive ? ("current" as const) : ("done" as const),
       },
       {
-        title: isCanceled ? "Weather call" : "Trip day",
+        title: isCanceled ? "Cancellation" : copy.dayTitle,
         desc: isCanceled
           ? "You canceled — guest refunded in full"
           : b.trip_date
-          ? `${b.trip_date} · mark complete when you're back at the dock`
-          : "Mark complete when you're back at the dock",
+          ? `${b.trip_date} · ${copy.dayDesc.toLowerCase()}`
+          : copy.dayDesc,
         state: isActive ? ("todo" as const) : ("done" as const),
       },
       {
@@ -176,7 +176,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
       },
     ];
     return steps;
-  }, [anglerName, total, payoutCents, isActive, isCanceled, b.trip_date]);
+  }, [anglerName, total, payoutCents, isActive, isCanceled, b.trip_date, copy.dayTitle, copy.dayDesc]);
 
   const doSend = async () => {
     const txt = reply.trim();
