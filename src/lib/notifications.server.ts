@@ -159,8 +159,8 @@ export async function draftsForEvent(
     if (!ctx) return [];
 
     const { booking, anglerId, operatorIds, tripLabel, businessName, dateLabel } = ctx;
-    const anglerLink = `/trips/detail?booking=${booking.id}`;
-    const opLink = `/bookings/detail?booking=${booking.id}`;
+    const anglerLink = `/trips/detail?id=${booking.id}`;
+    const opLink = `/bookings/detail?id=${booking.id}`;
     const out: NotificationDraft[] = [];
     const push = (
       users: Array<string | null>,
