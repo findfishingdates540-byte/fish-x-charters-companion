@@ -268,7 +268,12 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     setSelectedAddons((cur) => (cur.some((id) => blocked.has(id)) ? cur.filter((id) => !blocked.has(id)) : cur));
   }, [addonAvail]);
   // Changing what you're buying starts a fresh reservation attempt.
-  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party, selectedAddons, notes]);
+  useEffect(() => {
+    setAttemptKey(crypto.randomUUID());
+    // Any change to what's being bought invalidates the existing hold.
+    setReservation(null);
+    setHoldLeft(null);
+  }, [slotId, party, selectedAddons, notes]);
 
   // Opening the deposit page locks the departure for 15 minutes.
   useEffect(() => {
