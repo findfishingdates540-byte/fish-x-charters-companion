@@ -131,11 +131,11 @@ export function PublicHeader({
         )}
 
         <div className="fx-ph-actions" style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {signedIn && actions ? (
+          {actions ? (
             <>
               {actions}
               <Link
-                to="/dashboard"
+                to={signedIn ? "/dashboard" : "/auth"}
                 style={{
                   color: "#eaf1f6",
                   textDecoration: "none",
@@ -145,10 +145,11 @@ export function PublicHeader({
                   whiteSpace: "nowrap",
                 }}
               >
-                Dashboard
+                {signedIn ? "Dashboard" : "Sign in"}
               </Link>
             </>
           ) : signedIn ? (
+
             <Link
               to="/dashboard"
               style={{
