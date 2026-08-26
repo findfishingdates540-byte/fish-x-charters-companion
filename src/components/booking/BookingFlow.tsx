@@ -893,7 +893,62 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
         {step === "checkout" && (
           <div>
             <button onClick={() => setStep("extras")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to add-ons</button>
+            <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 34, margin: "0 0 6px" }}>Pay your deposit</h1>
+            <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 18px" }}>
+              You pay 25% now to lock the boat. The rest goes to your captain at the dock.
+            </p>
+
+            {/* Hold countdown — the departure is off the market while it runs. */}
+            {!holdExpired && (
+              <div
+                style={{
+                  display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap",
+                  background: "#fdf5e6", border: "1px solid rgba(169,126,60,.35)",
+                  borderRadius: 14, padding: "14px 18px", marginBottom: 20,
+                }}
+              >
+                <span style={{ color: V.goldtext, fontSize: 16 }}>⏱</span>
+                <span style={{ fontSize: 13.5, color: V.goldtext, fontWeight: 600, flex: 1, minWidth: 240 }}>
+                  {placeMut.isPending || !reservation
+                    ? "Holding this departure for you…"
+                    : "This departure is held for you. No one else can book this boat for this window."}
+                </span>
+                <span style={{ fontFamily: MONO, fontSize: 20, fontWeight: 700, color: holdLeft != null && holdLeft < 120 ? "#c2603f" : V.goldtext, letterSpacing: ".04em" }}>
+                  {holdClock || "15:00"}
+                </span>
+              </div>
+            )}
+
+            {holdExpired && (
+              <div
+                style={{
+                  background: "#fff", border: "1px solid rgba(194,96,63,.4)", borderRadius: 16,
+                  padding: "18px 20px", marginBottom: 20, display: "grid", gap: 6,
+                }}
+              >
+                <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600 }}>Your 15-minute hold expired</div>
+                <div style={{ fontSize: 13.5, color: V.tmut, lineHeight: 1.6 }}>
+                  Nothing was charged and this departure is back on sale for other anglers. Pick your
+                  date and time again to start a fresh hold.
+                </div>
+                <button
+                  onClick={() => {
+                    setReservation(null);
+                    setHoldLeft(null);
+                    setAttemptKey(crypto.randomUUID());
+                    void qc.invalidateQueries({ queryKey: ["checkout", serviceId] });
+                    setStep("dates");
+                    window.scrollTo(0, 0);
+                  }}
+                  style={{ justifySelf: "start", marginTop: 8, background: V.navy, color: "#fff", border: 0, borderRadius: 11, padding: "12px 18px", fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, cursor: "pointer" }}
+                >
+                  Pick another departure
+                </button>
+              </div>
+            )}
+
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
+
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                 {[
                   { n: 1, title: "Trip summary" },
