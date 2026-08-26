@@ -270,6 +270,30 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   // Changing what you're buying starts a fresh reservation attempt.
   useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party, selectedAddons, notes]);
 
+  // Opening the deposit page locks the departure for 15 minutes.
+  useEffect(() => {
+    if (step !== "checkout") return;
+    if (reservation || placeMut.isPending) return;
+    if (!slot) return;
+    placeMut.mutate();
+  }, [step, reservation, slot?.id]);
+
+  // Live countdown on the hold. When it lapses the seats go back on sale.
+  useEffect(() => {
+    if (!reservation?.holdExpiresAt) { setHoldLeft(null); return; }
+    const end = new Date(reservation.holdExpiresAt).getTime();
+    const tick = () => setHoldLeft(Math.max(0, Math.round((end - Date.now()) / 1000)));
+    tick();
+    const t = setInterval(tick, 1000);
+    return () => clearInterval(t);
+  }, [reservation?.holdExpiresAt]);
+
+  const holdExpired = holdLeft === 0;
+  const holdClock =
+    holdLeft == null ? "" : `${Math.floor(holdLeft / 60)}:${String(holdLeft % 60).padStart(2, "0")}`;
+
+
+
 
   const crumbStyle = (k: Step | "results"): CSSProperties => {
     const order = STEP_ORDER;
