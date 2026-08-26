@@ -1,326 +1,390 @@
 /**
- * Angler → Explore tab. Cinematic charter discovery surface, ported from the
- * Stitch "premium charter marketplace" layout and re-skinned to the Fish-X
- * Charters palette (Deep Hull navy + Sandy Gold). Wired to live Supabase data.
+ * Angler → Explore tab. Mirrors the public charter discovery page (search hero,
+ * ports, regions, featured charters) but lives entirely inside the signed-in
+ * dashboard: results render in-tab and every card books through /booking.
  */
 import { Link } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { getAnglerExplore } from "@/lib/angler-explore.functions";
+import { useState } from "react";
+import { useSuspenseQuery, useQuery, queryOptions } from "@tanstack/react-query";
+import { getCharterDirectory, searchCharters } from "@/lib/charters.functions";
 import { logListingEvent } from "@/lib/ranking.functions";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 
-/** Fire-and-forget click logging so ranking weights can be tuned later. */
+export const anglerExploreQO = queryOptions({
+  queryKey: ["charter-directory"],
+  queryFn: () => getCharterDirectory(),
+});
+
+type Filters = {
+  city?: string;
+  region?: string;
+  species?: string;
+  date?: string;
+  guests?: number;
+  duration?: "half" | "threequarter" | "full" | "any";
+  sort: "recommended" | "price_asc" | "price_desc" | "duration_asc" | "newest";
+};
+
+type Listing = Awaited<ReturnType<typeof getCharterDirectory>>["featured"][number];
+
+const money = (c: number | null) => (c == null ? "—" : `$${Math.round(c / 100).toLocaleString()}`);
+const serif = "'Cormorant Garamond', Georgia, serif";
+
 const trackClick = (serviceId: string) => {
   void logListingEvent({ data: { serviceId, kind: "click" } }).catch(() => {});
 };
 
-export const anglerExploreQO = queryOptions({
-  queryKey: ["angler-explore"],
-  queryFn: () => getAnglerExplore(),
-});
+export function ExploreTab() {
+  const { data } = useSuspenseQuery(anglerExploreQO);
+  const [filters, setFilters] = useState<Filters | null>(null);
+  const [where, setWhere] = useState("");
+  const [date, setDate] = useState("");
+  const [species, setSpecies] = useState("");
+  const [guests, setGuests] = useState("2");
 
-type ExploreData = Awaited<ReturnType<typeof getAnglerExplore>>;
-type Service = ExploreData["featured"][number];
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFilters({
+      ...(where ? { city: where } : {}),
+      ...(date ? { date } : {}),
+      ...(species ? { species } : {}),
+      guests: Number(guests) || 1,
+      sort: "recommended",
+    });
+  };
 
-const money = (cents: number) =>
-  `$${(Math.max(0, cents) / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-
-const FALLBACK = DEFAULT_HERO;
-
-const dark: React.CSSProperties = {
-  background: "#ffffff",
-  color: "#0d2236",
-  width: "100%",
-  minHeight: "calc(100vh - 66px)",
-  padding: "clamp(24px,4vw,56px) clamp(16px,5vw,80px) clamp(56px,8vw,96px)",
-};
-
-const eyebrow: React.CSSProperties = {
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: ".2em",
-  textTransform: "uppercase",
-  color: "#a97e3c",
-};
-
-const serifHead: React.CSSProperties = {
-  fontFamily: "var(--serif)",
-  fontWeight: 600,
-  fontSize: "clamp(22px,3vw,30px)",
-  lineHeight: 1.1,
-  color: "#0d2236",
-  margin: 0,
-};
-
-function Rule({ label }: { label: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "40px 0 20px" }}>
-      <span style={{ height: 1, flex: 1, background: "rgba(13,34,54,.10)" }} />
-      <span style={eyebrow}>{label}</span>
-      <span style={{ height: 1, flex: 1, background: "rgba(13,34,54,.10)" }} />
+    <div style={{ background: "#f4f6f8", minHeight: "calc(100vh - 66px)", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#0d2236" }}>
+      <style>{`
+        .fx-ch-search { display: grid; grid-template-columns: 1.3fr 1fr 1.1fr .8fr auto; gap: 0; }
+        .fx-ch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .fx-ch-feat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 900px) {
+          .fx-ch-search { grid-template-columns: 1fr; }
+          .fx-ch-grid, .fx-ch-feat { grid-template-columns: 1fr; }
+        }
+      `}</style>
+
+      {/* Hero + search */}
+      <section
+        style={{
+          position: "relative",
+          padding: "clamp(48px,6vw,92px) 24px clamp(40px,5vw,72px)",
+          background: `linear-gradient(180deg, rgba(7,26,42,.86), rgba(7,26,42,.94)), #071a2a url(${DEFAULT_HERO}) center/cover`,
+          color: "#eaf1f6",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ maxWidth: 980, margin: "0 auto" }}>
+          <span style={{ fontSize: 11, letterSpacing: ".24em", textTransform: "uppercase", color: "var(--sand,#e3c089)", fontWeight: 700 }}>
+            Explore
+          </span>
+          <h1 style={{ fontFamily: serif, fontSize: "clamp(34px,5vw,60px)", fontWeight: 600, letterSpacing: "-.02em", margin: "10px 0 12px", lineHeight: 1.05 }}>
+            Book your next fishing charter.
+          </h1>
+          <p style={{ color: "#b8c9d6", fontSize: 16, maxWidth: 620, margin: "0 auto 30px" }}>
+            Search verified captains by port, date and target species. Every departure is an exclusive
+            time block — never double-booked.
+          </p>
+
+          <form onSubmit={submit} className="fx-ch-search" style={{ background: "#fff", borderRadius: 16, overflow: "hidden", boxShadow: "0 30px 70px -34px rgba(0,0,0,.85)", textAlign: "left" }}>
+            <Field label="Where">
+              <input list="fx-ports" value={where} onChange={(e) => setWhere(e.target.value)} placeholder="All ports" style={inputStyle} />
+              <datalist id="fx-ports">
+                {data.ports.map((p) => (
+                  <option key={`${p.city}-${p.region}`} value={p.city} />
+                ))}
+              </datalist>
+            </Field>
+            <Field label="When">
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} />
+            </Field>
+            <Field label="Target species">
+              <input list="fx-species" value={species} onChange={(e) => setSpecies(e.target.value)} placeholder="Any species" style={inputStyle} />
+              <datalist id="fx-species">
+                {data.species.map((s) => (
+                  <option key={s.name} value={s.name} />
+                ))}
+              </datalist>
+            </Field>
+            <Field label="Guests">
+              <select value={guests} onChange={(e) => setGuests(e.target.value)} style={inputStyle}>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {n} {n === 1 ? "angler" : "anglers"}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <div style={{ padding: 10, display: "flex", alignItems: "center" }}>
+              <button type="submit" style={{ width: "100%", height: 52, padding: "0 28px", borderRadius: 12, border: "none", background: "#0d2236", color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
+                Search charters
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      {filters ? (
+        <SearchResults filters={filters} onChange={setFilters} onClear={() => setFilters(null)} />
+      ) : (
+        <>
+          {/* Popular ports */}
+          <section style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(36px,5vw,64px) 24px 0" }}>
+            <SectionHead title="Popular right now" note={data.total ? `${data.total} charter listings live` : undefined} />
+            {data.ports.length === 0 ? (
+              <Empty>No charter ports listed yet.</Empty>
+            ) : (
+              <div className="fx-ch-grid">
+                {data.ports.map((p) => (
+                  <button
+                    key={`${p.city}-${p.region}`}
+                    type="button"
+                    onClick={() => setFilters({ city: p.city, sort: "recommended" })}
+                    style={{
+                      position: "relative",
+                      display: "block",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                      borderRadius: 18,
+                      overflow: "hidden",
+                      minHeight: 220,
+                      textAlign: "left",
+                      color: "#fff",
+                      background: `linear-gradient(180deg, rgba(7,26,42,.15) 30%, rgba(7,26,42,.9)), #0a2236 url(${DEFAULT_HERO}) center/cover`,
+                    }}
+                  >
+                    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20 }}>
+                      <div style={{ fontFamily: serif, fontSize: 27, fontWeight: 600 }}>{p.city}</div>
+                      <div style={{ fontSize: 13, color: "#cbd9e4" }}>
+                        {p.region ? `${p.region} · ` : ""}
+                        {p.captains} {p.captains === 1 ? "captain" : "captains"} · from{" "}
+                        <b style={{ color: "var(--sand,#e3c089)" }}>{money(p.fromCents)}</b>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Regions */}
+          {data.regions.length > 0 && (
+            <section style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(32px,4vw,56px) 24px 0" }}>
+              <SectionHead title="Browse by state or region" />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                {data.regions.map((r) => (
+                  <button
+                    key={r.region}
+                    type="button"
+                    onClick={() => setFilters({ region: r.region, sort: "recommended" })}
+                    style={{ padding: "10px 18px", borderRadius: 999, background: "#fff", border: "1px solid rgba(13,34,54,.10)", color: "#0d2236", fontSize: 14, fontWeight: 600, cursor: "pointer" }}
+                  >
+                    {r.region} <span style={{ color: "#5c6b78", fontWeight: 500 }}>· {r.count}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Featured */}
+          {data.featured.length > 0 && (
+            <section style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(32px,4vw,56px) 24px clamp(56px,8vw,96px)" }}>
+              <SectionHead
+                title="Charters to book now"
+                action={
+                  <button
+                    type="button"
+                    onClick={() => setFilters({ sort: "recommended" })}
+                    style={{ background: "none", border: "none", color: "#a97e3c", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}
+                  >
+                    See all charters →
+                  </button>
+                }
+              />
+              <div className="fx-ch-feat">
+                {data.featured.map((l) => (
+                  <CharterCard key={l.id} l={l} />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
     </div>
+  );
+}
+
+function SearchResults({
+  filters,
+  onChange,
+  onClear,
+}: {
+  filters: Filters;
+  onChange: (f: Filters) => void;
+  onClear: () => void;
+}) {
+  const { data, isPending } = useQuery({
+    queryKey: ["angler-charter-search", filters],
+    queryFn: () => searchCharters({ data: filters }),
+  });
+
+  const label =
+    filters.city || filters.region || (filters.species ? `${filters.species} charters` : "All charters");
+
+  return (
+    <section style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(28px,4vw,52px) 24px clamp(56px,8vw,96px)" }}>
+      <SectionHead
+        title={label}
+        note={data ? `${data.count} ${data.count === 1 ? "charter" : "charters"}` : undefined}
+        action={
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <select
+              value={filters.sort}
+              onChange={(e) => onChange({ ...filters, sort: e.target.value as Filters["sort"] })}
+              style={{ padding: "9px 12px", borderRadius: 10, border: "1px solid rgba(13,34,54,.14)", background: "#fff", fontSize: 13.5, color: "#0d2236" }}
+            >
+              <option value="recommended">Recommended</option>
+              <option value="price_asc">Price: low to high</option>
+              <option value="price_desc">Price: high to low</option>
+              <option value="duration_asc">Shortest trip</option>
+              <option value="newest">Newest</option>
+            </select>
+            <button type="button" onClick={onClear} style={{ background: "none", border: "none", color: "#a97e3c", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}>
+              ← Back to explore
+            </button>
+          </div>
+        }
+      />
+
+      {data && data.speciesFacets.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 22 }}>
+          {data.speciesFacets.slice(0, 10).map((s) => {
+            const active = filters.species === s.name;
+            return (
+              <button
+                key={s.name}
+                type="button"
+                onClick={() => onChange({ ...filters, species: active ? undefined : s.name })}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: 999,
+                  border: `1px solid ${active ? "#0d2236" : "rgba(13,34,54,.12)"}`,
+                  background: active ? "#0d2236" : "#fff",
+                  color: active ? "#fff" : "#5c6b78",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                {s.name} · {s.count}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {isPending ? (
+        <Empty>Finding charters…</Empty>
+      ) : !data || data.listings.length === 0 ? (
+        <Empty>No charters match these filters yet. Try another port or date.</Empty>
+      ) : (
+        <div className="fx-ch-feat">
+          {data.listings.map((l) => (
+            <CharterCard key={l.id} l={l} rating={data.ratings[l.business?.id ?? ""] ?? null} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  border: "none",
+  outline: "none",
+  fontSize: 15,
+  fontFamily: "inherit",
+  color: "#0d2236",
+  background: "transparent",
+  padding: 0,
+};
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label style={{ display: "block", padding: "14px 18px", borderRight: "1px solid rgba(13,34,54,.08)" }}>
+      <span style={{ display: "block", fontSize: 10.5, letterSpacing: ".18em", textTransform: "uppercase", color: "#8496a5", fontWeight: 700, marginBottom: 6 }}>
+        {label}
+      </span>
+      {children}
+    </label>
   );
 }
 
 function SectionHead({ title, note, action }: { title: string; note?: string; action?: React.ReactNode }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "flex-end",
-        justifyContent: "space-between",
-        gap: 16,
-        flexWrap: "wrap",
-        borderBottom: "1px solid rgba(13,34,54,.10)",
-        paddingBottom: 14,
-        marginBottom: 20,
-      }}
-    >
-      <h3 style={serifHead}>{title}</h3>
+    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, flexWrap: "wrap", borderBottom: "1px solid rgba(13,34,54,.10)", paddingBottom: 14, marginBottom: 22 }}>
+      <h2 style={{ fontFamily: serif, fontSize: "clamp(24px,3vw,34px)", fontWeight: 600, margin: 0 }}>{title}</h2>
       {note && <span style={{ fontSize: 13, color: "#5c6b78" }}>{note}</span>}
       {action}
     </div>
   );
 }
 
-function rating(data: ExploreData, businessId?: string | null) {
-  if (!businessId) return null;
-  return data.ratings[businessId] ?? null;
-}
-
-function HeroCard({ s, r }: { s: Service; r: { avg: number; count: number } | null }) {
+function Empty({ children }: { children: React.ReactNode }) {
   return (
-    <Link
-      to="/booking"
-      search={{ service_id: s.id }}
-      onClick={() => trackClick(s.id)}
-      style={{
-        position: "relative",
-        display: "block",
-        borderRadius: 20,
-        overflow: "hidden",
-        minHeight: 420,
-        textDecoration: "none",
-        color: "#fff",
-        border: "1px solid rgba(227,192,137,.28)",
-        boxShadow: "0 24px 60px -30px rgba(0,0,0,.8)",
-      }}
-    >
-      <img
-        src={s.hero_url || FALLBACK}
-        alt={s.title}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(180deg,rgba(7,26,42,.15) 20%,rgba(7,26,42,.92) 92%)",
-        }}
-      />
-      <div style={{ position: "relative", padding: "clamp(18px,3vw,28px)", display: "flex", flexDirection: "column", height: "100%", minHeight: 420, justifyContent: "flex-end" }}>
-        <span style={{ ...eyebrow, color: "var(--sand)", marginBottom: 8 }}>Featured charter</span>
-        <h4 style={{ ...serifHead, color: "#fff", fontSize: "clamp(26px,3.4vw,36px)", marginBottom: 8 }}>{s.title}</h4>
-        <p style={{ margin: "0 0 16px", fontSize: 13.5, color: "#cbd9e4" }}>
-          {s.business?.name} · {[s.business?.city, s.business?.region].filter(Boolean).join(", ") || s.departure_location || "—"}
-          {r ? ` · ★ ${r.avg} (${r.count})` : ""}
-        </p>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--serif)", fontSize: 24, color: "var(--sand)" }}>{money(s.base_price_cents)}</span>
-          <span
-            style={{
-              background: "var(--sand)",
-              color: "#0a2236",
-              fontSize: 12.5,
-              fontWeight: 700,
-              borderRadius: 999,
-              padding: "10px 18px",
-            }}
-          >
-            Book this trip
-          </span>
-        </div>
-      </div>
-    </Link>
+    <div style={{ padding: 48, textAlign: "center", color: "#5c6b78", border: "1px solid rgba(13,34,54,.10)", borderRadius: 16, background: "#fff" }}>
+      {children}
+    </div>
   );
 }
 
-function TallCard({ s, r }: { s: Service; r: { avg: number; count: number } | null }) {
+function CharterCard({ l, rating }: { l: Listing; rating?: { avg: number; count: number } | null }) {
+  const hours = l.duration_minutes ? Math.round((l.duration_minutes / 60) * 10) / 10 : null;
   return (
     <Link
       to="/booking"
-      search={{ service_id: s.id }}
-      onClick={() => trackClick(s.id)}
+      search={{ service_id: l.id }}
+      onClick={() => trackClick(l.id)}
       style={{
         display: "flex",
         flexDirection: "column",
-        borderRadius: 18,
+        background: "#fff",
+        border: "1px solid rgba(13,34,54,.08)",
+        borderRadius: 16,
         overflow: "hidden",
         textDecoration: "none",
-        background: "#ffffff",
-        border: "1px solid rgba(13,34,54,.10)",
         color: "#0d2236",
       }}
     >
-      <div style={{ height: 160, overflow: "hidden" }}>
-        <img src={s.hero_url || FALLBACK} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      </div>
-      <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
+      <div style={{ aspectRatio: "16/10", background: `#e9edf1 url(${l.hero_url || DEFAULT_HERO}) center/cover` }} />
+      <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
         <div style={{ fontSize: 12, color: "#5c6b78" }}>
-          {[s.business?.city, s.business?.region].filter(Boolean).join(", ") || s.departure_location || "—"}
-          {r ? ` · ★ ${r.avg}` : ""}
+          {[l.business?.city, l.business?.region].filter(Boolean).join(", ") || l.departure_location || "—"}
+          {l.business?.verified_at ? " · Verified" : ""}
+          {rating ? ` · ★ ${rating.avg} (${rating.count})` : ""}
         </div>
-        <div style={{ fontFamily: "var(--serif)", fontSize: 19, color: "#0d2236", lineHeight: 1.15 }}>{s.title}</div>
-        <div style={{ marginTop: "auto", fontSize: 12.5, color: "#5c6b78" }}>
-          from <b style={{ fontFamily: "var(--serif)", fontSize: 17, color: "#a97e3c" }}>{money(s.base_price_cents)}</b>
+        <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 600, lineHeight: 1.15 }}>{l.title}</div>
+        <div style={{ fontSize: 13, color: "#5c6b78" }}>
+          {l.business?.name}
+          {hours ? ` · ${hours}h` : ""}
+          {l.capacity ? ` · up to ${l.capacity} anglers` : ""}
+        </div>
+        {(l.target_species ?? []).length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 2 }}>
+            {(l.target_species ?? []).slice(0, 3).map((s) => (
+              <span key={s} style={{ fontSize: 11.5, padding: "4px 9px", borderRadius: 999, background: "#f2f5f7", color: "#5c6b78" }}>
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
+        <div style={{ marginTop: "auto", paddingTop: 12, fontSize: 13, color: "#5c6b78" }}>
+          from <b style={{ fontFamily: serif, fontSize: 21, color: "#a97e3c" }}>{money(l.base_price_cents)}</b>{" "}
+          <span style={{ fontSize: 12 }}>/ trip</span>
         </div>
       </div>
     </Link>
-  );
-}
-
-function MiniCard({ s, r }: { s: Service; r: { avg: number; count: number } | null }) {
-  return (
-    <Link to="/booking" search={{ service_id: s.id }} onClick={() => trackClick(s.id)} style={{ textDecoration: "none", color: "#0d2236", display: "grid", gap: 10 }}>
-      <div style={{ height: 150, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(13,34,54,.10)" }}>
-        <img src={s.hero_url || FALLBACK} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      </div>
-      <div>
-        <div style={{ fontWeight: 700, fontSize: 14 }}>{s.title}</div>
-        <div style={{ fontSize: 12, color: "#5c6b78" }}>
-          {s.business?.name}
-          {r ? ` · ${r.avg} ★` : ""}
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-export function ExploreTab() {
-  const { data } = useSuspenseQuery(anglerExploreQO);
-  const [hero, ...rest] = data.featured;
-  const where = [data.city, data.region].filter(Boolean).join(", ");
-
-  return (
-    <div style={dark}>
-      <div style={{ marginBottom: 24 }}>
-        <span style={eyebrow}>Explore</span>
-        <h2 style={{ ...serifHead, fontSize: "clamp(28px,4.4vw,44px)", margin: "6px 0 8px" }}>
-          Find your next day on the water
-        </h2>
-        <p style={{ margin: 0, fontSize: 14, color: "#5c6b78", maxWidth: 620 }}>
-          Verified captains, escrow-protected payments, and trips curated from the Fish-X fleet.{" "}
-          <Link to="/marketplace" style={{ color: "#a97e3c", fontWeight: 600 }}>
-            Open full marketplace →
-          </Link>
-        </p>
-      </div>
-
-      {data.featured.length === 0 ? (
-        <div style={{ padding: 40, textAlign: "center", color: "#5c6b78", border: "1px solid rgba(13,34,54,.10)", borderRadius: 18 }}>
-          No published charters yet.
-        </div>
-      ) : (
-        <div className="explore-hero-grid" style={{ display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 18 }}>
-          {hero && <HeroCard s={hero} r={rating(data, hero.business?.id)} />}
-          <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 18 }}>
-            {rest.slice(0, 2).map((s) => (
-              <TallCard key={s.id} s={s} r={rating(data, s.business?.id)} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {rest.length > 2 && (
-        <>
-          <div style={{ height: 44 }} />
-          <SectionHead title="Fresh on the dock" note={`${rest.length - 2} new listings`} />
-          <div className="explore-quad" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18 }}>
-            {rest.slice(2).map((s) => (
-              <MiniCard key={s.id} s={s} r={rating(data, s.business?.id)} />
-            ))}
-          </div>
-        </>
-      )}
-
-      {data.nearby.length > 0 && (
-        <>
-          <div style={{ height: 44 }} />
-          <SectionHead
-            title="Charters near you"
-            note={where ? `Showing results for ${where}` : "Based on the latest listings"}
-          />
-          <div className="explore-quad" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18 }}>
-            {data.nearby.slice(0, 4).map((s) => (
-              <MiniCard key={s.id} s={s} r={rating(data, s.business?.id)} />
-            ))}
-          </div>
-        </>
-      )}
-
-      {data.topCaptains.length > 0 && (
-        <>
-          <div style={{ height: 44 }} />
-          <SectionHead title="Top rated captains" />
-          <div className="explore-triple" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
-            {data.topCaptains.map((b) => (
-              <Link
-                key={b.id}
-                to="/b/$slug"
-                params={{ slug: b.slug }}
-                style={{
-                  display: "flex",
-                  gap: 14,
-                  alignItems: "center",
-                  padding: 16,
-                  borderRadius: 16,
-                  textDecoration: "none",
-                  color: "#0d2236",
-                  background: "#ffffff",
-                  border: "1px solid rgba(13,34,54,.10)",
-                }}
-              >
-                <img
-                  src={b.logo_url || b.hero_url || FALLBACK}
-                  alt={b.name}
-                  style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(227,192,137,.35)" }}
-                />
-                <div>
-                  <div style={{ fontFamily: "var(--serif)", fontSize: 18, color: "#0d2236" }}>{b.name}</div>
-                  <div style={{ fontSize: 12.5, color: "#5c6b78" }}>
-                    {[b.city, b.region].filter(Boolean).join(", ") || b.tagline || "—"}
-                    {b.avg_rating ? ` · ★ ${b.avg_rating} (${b.review_count})` : ""}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </>
-      )}
-
-      {data.highlights.length > 0 && (
-        <>
-          <Rule label="Catch highlights" />
-          <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8 }}>
-            {data.highlights.map((h) => (
-              <div
-                key={h.id}
-                title={h.caption}
-                style={{
-                  flex: "none",
-                  width: 132,
-                  height: 132,
-                  borderRadius: "50%",
-                  padding: 4,
-                  border: "2px solid rgba(227,192,137,.4)",
-                }}
-              >
-                <img src={h.url} alt={h.caption || "Catch"} style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} />
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
   );
 }
