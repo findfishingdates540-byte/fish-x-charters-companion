@@ -24,6 +24,7 @@ import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
 import { Route as ChartersSearchRouteImport } from './routes/charters.search'
 import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
 import { Route as BSlugRouteImport } from './routes/b.$slug'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
 import { Route as AuthenticatedResolutionCenterRouteImport } from './routes/_authenticated/resolution-center'
 import { Route as AuthenticatedPayoutsStatusRouteImport } from './routes/_authenticated/payouts-status'
@@ -116,6 +117,11 @@ const BSlugRoute = BSlugRouteImport.update({
   id: '/b/$slug',
   path: '/b/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
   id: '/review',
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/payouts-status': typeof AuthenticatedPayoutsStatusRoute
   '/resolution-center': typeof AuthenticatedResolutionCenterRoute
   '/review': typeof AuthenticatedReviewRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/charters/search': typeof ChartersSearchRoute
@@ -266,6 +273,7 @@ export interface FileRoutesByTo {
   '/payouts-status': typeof AuthenticatedPayoutsStatusRoute
   '/resolution-center': typeof AuthenticatedResolutionCenterRoute
   '/review': typeof AuthenticatedReviewRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/charters/search': typeof ChartersSearchRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/_authenticated/payouts-status': typeof AuthenticatedPayoutsStatusRoute
   '/_authenticated/resolution-center': typeof AuthenticatedResolutionCenterRoute
   '/_authenticated/review': typeof AuthenticatedReviewRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
   '/charters/search': typeof ChartersSearchRoute
@@ -338,6 +347,7 @@ export interface FileRouteTypes {
     | '/payouts-status'
     | '/resolution-center'
     | '/review'
+    | '/settings'
     | '/b/$slug'
     | '/captains/profile'
     | '/charters/search'
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | '/payouts-status'
     | '/resolution-center'
     | '/review'
+    | '/settings'
     | '/b/$slug'
     | '/captains/profile'
     | '/charters/search'
@@ -407,6 +418,7 @@ export interface FileRouteTypes {
     | '/_authenticated/payouts-status'
     | '/_authenticated/resolution-center'
     | '/_authenticated/review'
+    | '/_authenticated/settings'
     | '/b/$slug'
     | '/captains/profile'
     | '/charters/search'
@@ -559,6 +571,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/review': {
       id: '/_authenticated/review'
       path: '/review'
@@ -697,6 +716,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPayoutsStatusRoute: typeof AuthenticatedPayoutsStatusRoute
   AuthenticatedResolutionCenterRoute: typeof AuthenticatedResolutionCenterRoute
   AuthenticatedReviewRoute: typeof AuthenticatedReviewRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedBookingsDetailRoute: typeof AuthenticatedBookingsDetailRoute
   AuthenticatedTripsDetailRoute: typeof AuthenticatedTripsDetailRoute
 }
@@ -710,6 +730,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPayoutsStatusRoute: AuthenticatedPayoutsStatusRoute,
   AuthenticatedResolutionCenterRoute: AuthenticatedResolutionCenterRoute,
   AuthenticatedReviewRoute: AuthenticatedReviewRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedBookingsDetailRoute: AuthenticatedBookingsDetailRoute,
   AuthenticatedTripsDetailRoute: AuthenticatedTripsDetailRoute,
 }
