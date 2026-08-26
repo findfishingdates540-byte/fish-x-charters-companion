@@ -90,7 +90,14 @@ export function Marketplace() {
   const [seller, setSeller] = useState("all");
   const [bizType, setBizType] = useState("all");
   const [sort, setSort] = useState<"featured" | "price-asc" | "price-desc">("featured");
-  const [cart, setCart] = useState<Record<string, number>>({});
+  const [cart, setCart] = useState<Record<string, number>>(() => {
+    try {
+      const raw = window.localStorage.getItem("fx-cart");
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  });
   const [cartOpen, setCartOpen] = useState(false);
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [orderId, setOrderId] = useState("");
