@@ -40,20 +40,20 @@ const money = (cents: number) =>
 const shell: React.CSSProperties = {
   ["--serif" as never]: "'Cormorant Garamond',Georgia,serif",
   ["--sans" as never]: "'Hanken Grotesk',system-ui,sans-serif",
-  ["--ink" as never]: "#0d2236",
-  ["--navy" as never]: "#0a2236",
-  ["--paper" as never]: "#eef2f5",
-  ["--card" as never]: "#ffffff",
-  ["--sand" as never]: "#e3c089",
-  ["--sandsoft" as never]: "#f4e6cd",
-  ["--goldtext" as never]: "#a97e3c",
-  ["--cyan" as never]: "#1f9fbe",
-  ["--green" as never]: "#1f8a5b",
-  ["--greensoft" as never]: "#e2f2ea",
-  ["--ond" as never]: "#eaf1f6",
-  ["--ondmut" as never]: "#93a7b7",
-  ["--tmut" as never]: "#5c6b78",
-  ["--line" as never]: "rgba(13,34,54,.10)",
+  ["--ink" as never]: "#F0F2F5",
+  ["--navy" as never]: "#0D161F",
+  ["--paper" as never]: "#0D161F",
+  ["--card" as never]: "#14202B",
+  ["--sand" as never]: "#2DE2F2",
+  ["--sandsoft" as never]: "rgba(242,185,61,.18)",
+  ["--goldtext" as never]: "#F2B93D",
+  ["--cyan" as never]: "#2DE2F2",
+  ["--green" as never]: "#22C55E",
+  ["--greensoft" as never]: "rgba(34,197,94,.14)",
+  ["--ond" as never]: "#F0F2F5",
+  ["--ondmut" as never]: "#92A0AB",
+  ["--tmut" as never]: "#92A0AB",
+  ["--line" as never]: "rgba(255,255,255,.08)",
   ["--lined" as never]: "rgba(255,255,255,.10)",
   display: "flex",
   minHeight: "100vh",
@@ -104,13 +104,13 @@ export function CaptainDashboard() {
           <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
           <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,.05)", border: "1px solid var(--lined)", borderRadius: 13, padding: "11px 12px", marginBottom: 18 }}>
-          <span style={{ width: 34, height: 34, borderRadius: 9, background: "rgba(227,192,137,.16)", display: "grid", placeItems: "center", color: "var(--sand)", flex: "none", fontFamily: "var(--serif)", fontWeight: 600 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,.04)", border: "1px solid var(--lined)", borderRadius: 13, padding: "11px 12px", marginBottom: 18 }}>
+          <span style={{ width: 34, height: 34, borderRadius: 9, background: "rgba(45,226,242,.14)", display: "grid", placeItems: "center", color: "var(--sand)", flex: "none", fontFamily: "var(--serif)", fontWeight: 600 }}>
             {biz?.name.charAt(0).toUpperCase() ?? "C"}
           </span>
           <div style={{ lineHeight: 1.2, minWidth: 0 }}>
             <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ondmut)" }}>Workspace</div>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: "#F0F2F5", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {biz?.name ?? "No business"}
             </div>
           </div>
@@ -124,10 +124,10 @@ export function CaptainDashboard() {
           <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ondmut)", padding: "0 12px 8px" }}>Account</div>
           <NavBtn label="Settings" active={tab === "settings"} onClick={() => setTab("settings")} />
         </div>
-        <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,.05)", border: "1px solid var(--lined)", borderRadius: 13, padding: "10px 12px" }}>
-          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(227,192,137,.16)", display: "grid", placeItems: "center", color: "var(--sand)", fontFamily: "var(--serif)", fontWeight: 600 }}>{initial}</div>
+        <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,.04)", border: "1px solid var(--lined)", borderRadius: 13, padding: "10px 12px" }}>
+          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(45,226,242,.14)", display: "grid", placeItems: "center", color: "var(--sand)", fontFamily: "var(--serif)", fontWeight: 600 }}>{initial}</div>
           <div style={{ lineHeight: 1.25, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{data.profile?.display_name ?? data.profile?.full_name ?? "Captain"}</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#F0F2F5" }}>{data.profile?.display_name ?? data.profile?.full_name ?? "Captain"}</div>
             <div style={{ fontSize: 11, color: "var(--sand)" }}>{biz?.verified_at ? "★ Verified" : "Pending verification"}</div>
           </div>
           <button onClick={signOut} title="Sign out" style={{ marginLeft: "auto", background: "transparent", color: "var(--ondmut)", border: 0, cursor: "pointer", flex: "none" }}>
@@ -138,7 +138,7 @@ export function CaptainDashboard() {
 
       {/* MAIN */}
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-        <header className="fx-topbar" style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(238,242,245,.86)", backdropFilter: "saturate(140%) blur(12px)", borderBottom: "1px solid var(--line)", padding: "18px 34px", display: "flex", alignItems: "center", gap: 24 }}>
+        <header className="fx-topbar" style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(13,22,31,.86)", backdropFilter: "saturate(140%) blur(12px)", borderBottom: "1px solid var(--line)", padding: "18px 34px", display: "flex", alignItems: "center", gap: 24 }}>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 26, lineHeight: 1.1, color: "var(--ink)" }}>{pageTitle[tab]}</div>
             <div style={{ fontSize: 13, color: "var(--tmut)", marginTop: 1 }}>{pageSub[tab]}</div>
@@ -146,14 +146,14 @@ export function CaptainDashboard() {
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 30, padding: "5px 6px 5px 14px" }}>
               <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: accepting ? "var(--green)" : "#d8514a" }} />
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: accepting ? "var(--green)" : "#F87171" }} />
                 <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink)" }}>{accepting ? "Accepting" : "Paused"}</span>
               </span>
               <button
                 onClick={() => setAccepting((v) => !v)}
-                style={{ position: "relative", width: 40, height: 23, borderRadius: 20, border: 0, cursor: "pointer", background: accepting ? "var(--green)" : "#d8514a", padding: 0 }}
+                style={{ position: "relative", width: 40, height: 23, borderRadius: 20, border: 0, cursor: "pointer", background: accepting ? "var(--green)" : "#F87171", padding: 0 }}
               >
-                <span style={{ position: "absolute", top: 2, left: accepting ? 19 : 2, width: 19, height: 19, borderRadius: "50%", background: "#fff", transition: "left .3s", boxShadow: "0 1px 3px rgba(0,0,0,.3)" }} />
+                <span style={{ position: "absolute", top: 2, left: accepting ? 19 : 2, width: 19, height: 19, borderRadius: "50%", background: "#14202B", transition: "left .3s", boxShadow: "0 1px 3px rgba(0,0,0,.3)" }} />
               </button>
             </div>
           </div>
@@ -185,7 +185,7 @@ function NavBtn({ label, active, onClick, badge }: { label: string; active: bool
         alignItems: "center",
         gap: 12,
         width: "100%",
-        background: active ? "rgba(227,192,137,.14)" : "transparent",
+        background: active ? "rgba(45,226,242,.12)" : "transparent",
         border: 0,
         borderRadius: 11,
         padding: "11px 12px",
@@ -193,13 +193,13 @@ function NavBtn({ label, active, onClick, badge }: { label: string; active: bool
         fontFamily: "var(--sans)",
         fontSize: 14,
         fontWeight: 600,
-        color: active ? "#fff" : "var(--ondmut)",
+        color: active ? "#F0F2F5" : "var(--ondmut)",
         textAlign: "left",
       }}
     >
       {label}
       {badge ? (
-        <span style={{ marginLeft: "auto", background: "var(--sand)", color: "#1c1303", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{badge}</span>
+        <span style={{ marginLeft: "auto", background: "var(--sand)", color: "#04121B", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{badge}</span>
       ) : null}
     </button>
   );
@@ -311,7 +311,7 @@ function BookingsPanel() {
               cursor: "pointer",
               border: "1px solid var(--line)",
               background: filter === f.key ? "var(--ink)" : "transparent",
-              color: filter === f.key ? "#fff" : "var(--tmut)",
+              color: filter === f.key ? "#F0F2F5" : "var(--tmut)",
             }}
           >
             {f.label}
@@ -498,7 +498,7 @@ function ServicesPanel({ data }: { data: CaptainData }) {
           </button>
           <button
             onClick={() => { if (confirm(`Delete "${s.title}"?`)) mDelete.mutate(s.id); }}
-            style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "#d8514a" }}
+            style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "#F87171" }}
           >
             Delete
           </button>
@@ -558,7 +558,7 @@ function ServiceForm({ businessId, draft, onChange, onCancel, onSave, saving, er
         <input type="checkbox" checked={draft.is_published} onChange={(e) => upd({ is_published: e.target.checked })} />
         Publish immediately (visible on marketplace)
       </label>
-      {error && <div style={{ color: "#d8514a", fontSize: 12.5 }}>{error}</div>}
+      {error && <div style={{ color: "#F87171", fontSize: 12.5 }}>{error}</div>}
       <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
         <button type="button" onClick={onCancel} style={btnGhost}>Cancel</button>
         <button type="submit" disabled={saving} style={btnPrimary}>{saving ? "Saving…" : draft.id ? "Save changes" : "Create service"}</button>
@@ -567,8 +567,8 @@ function ServiceForm({ businessId, draft, onChange, onCancel, onSave, saving, er
   );
 }
 
-const input: React.CSSProperties = { width: "100%", border: "1px solid var(--line)", borderRadius: 10, padding: "9px 12px", fontSize: 13.5, fontFamily: "var(--sans)", background: "#fff", color: "var(--ink)" };
-const btnPrimary: React.CSSProperties = { background: "var(--ink)", color: "#fff", border: 0, borderRadius: 20, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
+const input: React.CSSProperties = { width: "100%", border: "1px solid var(--line)", borderRadius: 10, padding: "9px 12px", fontSize: 13.5, fontFamily: "var(--sans)", background: "#14202B", color: "var(--ink)" };
+const btnPrimary: React.CSSProperties = { background: "var(--ink)", color: "#F0F2F5", border: 0, borderRadius: 20, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
 const btnGhost: React.CSSProperties = { background: "transparent", color: "var(--tmut)", border: "1px solid var(--line)", borderRadius: 20, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -630,7 +630,7 @@ function EarningsPanel({ businessId }: { businessId: string | null }) {
       </Panel>
 
       {businessId && (
-        <div style={{ background: "#eef2f5", margin: -4, padding: 4, borderRadius: 18 }}>
+        <div style={{ background: "#1C2936", margin: -4, padding: 4, borderRadius: 18 }}>
           <PaymentsDashboard businessId={businessId} />
         </div>
       )}
@@ -664,7 +664,7 @@ function MessagesPanel() {
               <span style={{ fontSize: 14, fontWeight: 600 }}>{c.customer_name}</span>
               <span style={{ fontSize: 12, color: "var(--tmut)" }}>· {c.trip_title}</span>
               {c.unread_count > 0 && (
-                <span style={{ marginLeft: 6, background: "var(--sand)", color: "#1c1303", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{c.unread_count}</span>
+                <span style={{ marginLeft: 6, background: "var(--sand)", color: "#04121B", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{c.unread_count}</span>
               )}
             </div>
             <div style={{ fontSize: 13, color: "var(--tmut)", marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -686,7 +686,7 @@ function SettingsPanel({ data }: { data: CaptainData }) {
   const biz = data.business;
   if (!biz) return <Empty text="Complete onboarding to set up your business." />;
   return (
-    <div style={{ background: "#eef2f5", margin: -4, padding: 4, borderRadius: 18 }}>
+    <div style={{ background: "#1C2936", margin: -4, padding: 4, borderRadius: 18 }}>
       <BusinessSettings businessId={biz.id} />
     </div>
   );
@@ -735,16 +735,16 @@ function Empty({ text }: { text: string }) {
 
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, { bg: string; fg: string; label: string }> = {
-    pending_payment: { bg: "#fdf3d9", fg: "#a97e3c", label: "Awaiting payment" },
-    pending_confirmation: { bg: "#fdf3d9", fg: "#a97e3c", label: "Pending" },
-    confirmed: { bg: "#e2eef2", fg: "#1f9fbe", label: "In escrow" },
-    in_progress: { bg: "#e2f2ea", fg: "#1f8a5b", label: "In progress" },
-    completed: { bg: "#e2f2ea", fg: "#1f8a5b", label: "Completed" },
-    reviewed: { bg: "#e2f2ea", fg: "#1f8a5b", label: "Reviewed" },
-    cancelled: { bg: "rgba(216,81,74,.12)", fg: "#d8514a", label: "Cancelled" },
-    refunded: { bg: "rgba(216,81,74,.12)", fg: "#d8514a", label: "Refunded" },
+    pending_payment: { bg: "rgba(242,185,61,.15)", fg: "#F2B93D", label: "Awaiting payment" },
+    pending_confirmation: { bg: "rgba(242,185,61,.15)", fg: "#F2B93D", label: "Pending" },
+    confirmed: { bg: "rgba(45,226,242,.12)", fg: "#2DE2F2", label: "In escrow" },
+    in_progress: { bg: "rgba(34,197,94,.14)", fg: "#22C55E", label: "In progress" },
+    completed: { bg: "rgba(34,197,94,.14)", fg: "#22C55E", label: "Completed" },
+    reviewed: { bg: "rgba(34,197,94,.14)", fg: "#22C55E", label: "Reviewed" },
+    cancelled: { bg: "rgba(216,81,74,.12)", fg: "#F87171", label: "Cancelled" },
+    refunded: { bg: "rgba(216,81,74,.12)", fg: "#F87171", label: "Refunded" },
   };
-  const cfg = map[status] ?? { bg: "rgba(13,34,54,.08)", fg: "#5c6b78", label: status.replace(/_/g, " ") };
+  const cfg = map[status] ?? { bg: "rgba(13,34,54,.08)", fg: "#92A0AB", label: status.replace(/_/g, " ") };
   return (
     <span style={{ fontSize: 11, fontWeight: 700, background: cfg.bg, color: cfg.fg, borderRadius: 20, padding: "3px 9px", flex: "none", textTransform: "capitalize" }}>
       {cfg.label}

@@ -19,17 +19,17 @@ import { supabase } from "@/integrations/supabase/client";
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
-  navy: "#0a2236",
-  paper: "#eef2f5",
-  card: "#ffffff",
-  sand: "#e3c089",
-  sandsoft: "#f4e6cd",
-  goldtext: "#a97e3c",
-  ond: "#eaf1f6",
-  ondmut: "#93a7b7",
-  tmut: "#5c6b78",
-  line: "rgba(13,34,54,.10)",
+  ink: "#F0F2F5",
+  navy: "#0D161F",
+  paper: "#0D161F",
+  card: "#14202B",
+  sand: "#2DE2F2",
+  sandsoft: "rgba(45,226,242,.14)",
+  goldtext: "#2DE2F2",
+  ond: "#F0F2F5",
+  ondmut: "#92A0AB",
+  tmut: "#92A0AB",
+  line: "rgba(255,255,255,.08)",
 };
 
 export function SettingsPage() {
@@ -54,7 +54,7 @@ export function SettingsPage() {
   const activeBiz = active.startsWith("biz:") ? active.slice(4) : null;
 
   return (
-    <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
+    <div className="fx-shell" style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
       <header style={{ position: "sticky", top: 0, zIndex: 30, background: V.navy, color: V.ond }}>
         <div
           style={{
@@ -258,7 +258,7 @@ function SecurityCard() {
             style={{
               justifySelf: "start",
               background: V.sand,
-              color: "#1c1303",
+              color: "#04121B",
               border: 0,
               borderRadius: 12,
               padding: "12px 24px",

@@ -11,8 +11,8 @@ const money2 = (c: number) =>
   (c / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 const card: React.CSSProperties = {
-  background: "#fff",
-  border: "1px solid rgba(13,34,54,.08)",
+  background: "#14202B",
+  border: "1px solid rgba(255,255,255,.06)",
   borderRadius: 16,
   padding: 20,
   boxShadow: "0 12px 30px -26px rgba(10,34,54,.5)",
@@ -24,10 +24,10 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
     queryFn: () => getBusinessPayments({ data: { businessId } }),
   });
 
-  if (isLoading) return <div style={{ ...card, color: "#7b8b99" }}>Loading payments…</div>;
+  if (isLoading) return <div style={{ ...card, color: "#92A0AB" }}>Loading payments…</div>;
   if (error)
     return (
-      <div style={{ ...card, color: "#d8514a" }}>
+      <div style={{ ...card, color: "#F87171" }}>
         {error instanceof Error ? error.message : "Couldn't load payments."}
       </div>
     );
@@ -64,16 +64,16 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
           <div style={{ display: "flex", alignItems: "flex-end", gap: 12, height: 150, marginTop: 16 }}>
             {data.monthly.map((m) => (
               <div key={m.ym} style={{ flex: 1, display: "grid", gap: 8, justifyItems: "center" }}>
-                <span style={{ fontSize: 11, color: "#7b8b99" }}>{money(m.cents)}</span>
+                <span style={{ fontSize: 11, color: "#92A0AB" }}>{money(m.cents)}</span>
                 <div
                   style={{
                     width: "100%",
                     height: `${Math.max(4, Math.round((m.cents / peak) * 110))}px`,
                     borderRadius: "8px 8px 0 0",
-                    background: "linear-gradient(180deg,#12456b,#0d2236)",
+                    background: "linear-gradient(180deg,#12456b,#1C2936)",
                   }}
                 />
-                <span style={{ fontSize: 11.5, color: "#44586a", fontWeight: 600 }}>{m.ym}</span>
+                <span style={{ fontSize: 11.5, color: "#A9B6C1", fontWeight: 600 }}>{m.ym}</span>
               </div>
             ))}
           </div>
@@ -113,7 +113,7 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
                 {data.transactions.map((x) => (
                   <tr key={`${x.kind}-${x.id}`}>
                     <td style={td}>
-                      <strong style={{ color: "#0d2236" }}>{x.label}</strong>
+                      <strong style={{ color: "#F0F2F5" }}>{x.label}</strong>
                       {x.balanceDueCents > 0 && (
                         <div style={{ fontSize: 12, color: "#b07a1e" }}>
                           {money2(x.balanceDueCents)} balance due on the day
@@ -124,7 +124,7 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
                     <td style={td}>{x.status.replace(/_/g, " ")}</td>
                     <td style={td}>{money2(x.grossCents)}</td>
                     <td style={td}>−{money2(x.feeCents)}</td>
-                    <td style={{ ...td, fontWeight: 700, color: "#0d2236" }}>{money2(x.netCents)}</td>
+                    <td style={{ ...td, fontWeight: 700, color: "#F0F2F5" }}>{money2(x.netCents)}</td>
                     <td style={td}>{x.releasedAt ? "released" : x.escrowState}</td>
                   </tr>
                 ))}
@@ -149,12 +149,12 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
                   gap: 12,
                   padding: "12px 14px",
                   borderRadius: 12,
-                  background: "#f5f8fa",
+                  background: "#1C2936",
                 }}
               >
                 <div>
-                  <strong style={{ color: "#0d2236" }}>{money2(p.amount_cents ?? 0)}</strong>
-                  <div style={{ fontSize: 12.5, color: "#7b8b99" }}>
+                  <strong style={{ color: "#F0F2F5" }}>{money2(p.amount_cents ?? 0)}</strong>
+                  <div style={{ fontSize: 12.5, color: "#92A0AB" }}>
                     {p.paid_at
                       ? `Paid ${String(p.paid_at).slice(0, 10)}`
                       : p.arrival_date
@@ -163,7 +163,7 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
                     {p.failure_message ? ` · ${p.failure_message}` : ""}
                   </div>
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#44586a", alignSelf: "center" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#A9B6C1", alignSelf: "center" }}>
                   {String(p.status).toUpperCase()}
                 </span>
               </div>
@@ -180,26 +180,26 @@ const th: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: ".08em",
   textTransform: "uppercase",
-  color: "#7b8b99",
+  color: "#92A0AB",
   padding: "8px 10px",
-  borderBottom: "1px solid rgba(13,34,54,.08)",
+  borderBottom: "1px solid rgba(255,255,255,.06)",
   whiteSpace: "nowrap",
 };
 const td: React.CSSProperties = {
   padding: "12px 10px",
   borderBottom: "1px solid rgba(13,34,54,.05)",
-  color: "#44586a",
+  color: "#A9B6C1",
   whiteSpace: "nowrap",
 };
 
 function Kpi({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div style={card}>
-      <div style={{ fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "#7b8b99", fontWeight: 700 }}>
+      <div style={{ fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "#92A0AB", fontWeight: 700 }}>
         {label}
       </div>
-      <div style={{ fontSize: 26, fontWeight: 700, color: "#0d2236", marginTop: 6 }}>{value}</div>
-      {sub && <div style={{ fontSize: 12, color: "#8a97a3", marginTop: 4 }}>{sub}</div>}
+      <div style={{ fontSize: 26, fontWeight: 700, color: "#F0F2F5", marginTop: 6 }}>{value}</div>
+      {sub && <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4 }}>{sub}</div>}
     </div>
   );
 }
@@ -207,10 +207,10 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub?: string
 function Head({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
     <div>
-      <div style={{ fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "#7b8b99", fontWeight: 700 }}>
+      <div style={{ fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "#92A0AB", fontWeight: 700 }}>
         {eyebrow}
       </div>
-      <h3 style={{ margin: "4px 0 0", fontSize: 19, color: "#0d2236" }}>{title}</h3>
+      <h3 style={{ margin: "4px 0 0", fontSize: 19, color: "#F0F2F5" }}>{title}</h3>
     </div>
   );
 }
@@ -225,15 +225,15 @@ function Row({ k, v }: { k: string; v: string }) {
         padding: "10px 0",
         borderBottom: "1px solid rgba(13,34,54,.05)",
         fontSize: 13.5,
-        color: "#44586a",
+        color: "#A9B6C1",
       }}
     >
       <span>{k}</span>
-      <strong style={{ color: "#0d2236" }}>{v}</strong>
+      <strong style={{ color: "#F0F2F5" }}>{v}</strong>
     </div>
   );
 }
 
 function Empty({ label }: { label: string }) {
-  return <div style={{ padding: "18px 0", color: "#8a97a3", fontSize: 13.5 }}>{label}</div>;
+  return <div style={{ padding: "18px 0", color: "#92A0AB", fontSize: 13.5 }}>{label}</div>;
 }

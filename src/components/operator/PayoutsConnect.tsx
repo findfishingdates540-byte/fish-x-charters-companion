@@ -94,14 +94,14 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
 
   return (
     <div style={{ display: "grid", gap: 14 }}>
-      <div style={{ fontSize: 13.5, color: "var(--tmut, #5c6b78)", lineHeight: 1.6 }}>
+      <div style={{ fontSize: 13.5, color: "var(--tmut, #92A0AB)", lineHeight: 1.6 }}>
         {intro}
       </div>
 
       {q.isLoading ? (
-        <div style={{ fontSize: 13, color: "var(--tmut, #5c6b78)" }}>Checking payout status…</div>
+        <div style={{ fontSize: 13, color: "var(--tmut, #92A0AB)" }}>Checking payout status…</div>
       ) : q.isError ? (
-        <div style={{ fontSize: 13, color: "#d8514a" }}>
+        <div style={{ fontSize: 13, color: "#F87171" }}>
           Couldn't load payout status. Reload the page to try again.
         </div>
       ) : (
@@ -112,16 +112,16 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
             justifyContent: "space-between",
             gap: 14,
             flexWrap: "wrap",
-            border: "1px solid var(--line, rgba(13,34,54,.10))",
+            border: "1px solid var(--line, rgba(255,255,255,.07))",
             borderRadius: 14,
             padding: "14px 16px",
           }}
         >
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: "var(--ink, #0d2236)" }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "var(--ink, #F0F2F5)" }}>
               Bank account
             </div>
-            <div style={{ fontSize: 12.5, color: "var(--tmut, #5c6b78)", marginTop: 2 }}>
+            <div style={{ fontSize: 12.5, color: "var(--tmut, #92A0AB)", marginTop: 2 }}>
               {connected
                 ? "Connected — you're set up to receive payouts."
                 : started
@@ -129,7 +129,7 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
                   : "Connect your bank to receive escrow payouts."}
             </div>
             {!connected && s && s.requirementsDue.length > 0 && (
-              <div style={{ fontSize: 12, color: "#a97e3c", marginTop: 4 }}>
+              <div style={{ fontSize: 12, color: "#F2B93D", marginTop: 4 }}>
                 Stripe still needs a few details to finish setup.
               </div>
             )}
@@ -142,8 +142,8 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 7,
-                  background: "var(--greensoft, #e2f2ea)",
-                  color: "var(--green, #1f8a5b)",
+                  background: "var(--greensoft, rgba(34,197,94,.14))",
+                  color: "var(--green, #22C55E)",
                   borderRadius: 20,
                   padding: "7px 13px",
                   fontSize: 12.5,
@@ -155,8 +155,8 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
                     width: 15,
                     height: 15,
                     borderRadius: "50%",
-                    background: "var(--green, #1f8a5b)",
-                    color: "#fff",
+                    background: "var(--green, #22C55E)",
+                    color: "#F0F2F5",
                     display: "grid",
                     placeItems: "center",
                     fontSize: 10,
@@ -172,7 +172,7 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
                 style={{
                   background: "transparent",
                   border: 0,
-                  color: "var(--goldtext, #a97e3c)",
+                  color: "var(--goldtext, #F2B93D)",
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: busy ? "default" : "pointer",
@@ -187,8 +187,8 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
               disabled={busy}
               style={{
                 flex: "none",
-                background: "var(--ink, #0d2236)",
-                color: "#fff",
+                background: "var(--ink, #1C2936)",
+                color: "#F0F2F5",
                 border: 0,
                 borderRadius: 10,
                 padding: "11px 20px",
@@ -204,9 +204,9 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
         </div>
       )}
 
-      {err && <div style={{ fontSize: 12.5, color: "#d8514a" }}>{err}</div>}
+      {err && <div style={{ fontSize: 12.5, color: "#F87171" }}>{err}</div>}
 
-      <div style={{ fontSize: 11.5, color: "var(--tmut, #8a97a3)" }}>
+      <div style={{ fontSize: 11.5, color: "var(--tmut, #92A0AB)" }}>
         Charters: you keep 85% of the deposit (15% platform fee) plus the balance you collect on the day. Merchandise: 92% to you, 8% platform fee. Bank details are handled
         securely by Stripe — Fish-X never sees your account numbers.
       </div>

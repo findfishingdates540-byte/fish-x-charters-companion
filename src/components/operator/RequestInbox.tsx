@@ -11,8 +11,8 @@ import {
   respondToBookingRequest,
 } from "@/lib/booking-requests.functions";
 
-const INK = "#0d2236";
-const MUT = "#5c6b78";
+const INK = "#F0F2F5";
+const MUT = "#92A0AB";
 const LINE = "rgba(13,34,54,.10)";
 
 function money(cents?: number | null) {
@@ -101,7 +101,7 @@ export function RequestInbox({
 
   return (
     <div style={{ display: "grid", gap: 12 }}>
-      {err && <div style={{ fontSize: 12.5, color: "#d8514a" }}>{err}</div>}
+      {err && <div style={{ fontSize: 12.5, color: "#F87171" }}>{err}</div>}
       {rows.map((b) => {
         const t = remaining(b.accept_deadline_at);
         const busy = respond.isPending && activeId === b.id;
@@ -151,7 +151,7 @@ export function RequestInbox({
                     fontFamily: "'Cormorant Garamond', Georgia, serif",
                     fontSize: 20,
                     fontWeight: 600,
-                    color: "#a97e3c",
+                    color: "#F2B93D",
                   }}
                 >
                   {money(b.deposit_cents || b.total_cents)}
@@ -177,8 +177,8 @@ export function RequestInbox({
                   fontWeight: 700,
                   borderRadius: 20,
                   padding: "5px 12px",
-                  background: t?.urgent ? "#fbe9e8" : "#f4e6cd",
-                  color: t?.urgent ? "#d8514a" : "#a97e3c",
+                  background: t?.urgent ? "rgba(216,81,74,.16)" : "rgba(242,185,61,.15)",
+                  color: t?.urgent ? "#F87171" : "#F2B93D",
                 }}
               >
                 {t?.label ?? "Awaiting your response"}
@@ -207,7 +207,7 @@ export function RequestInbox({
                   style={{
                     border: 0,
                     background: INK,
-                    color: "#fff",
+                    color: "#F0F2F5",
                     borderRadius: 10,
                     padding: "9px 18px",
                     fontSize: 12.5,

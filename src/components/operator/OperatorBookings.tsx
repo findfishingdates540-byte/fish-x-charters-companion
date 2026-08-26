@@ -11,7 +11,7 @@ import { listOperatorBookings } from "@/lib/booking-requests.functions";
 import { Card, StatusPill, money } from "@/components/operator/OperatorShell";
 import { RequestInbox } from "@/components/operator/RequestInbox";
 
-const MUT = "#5c6b78";
+const MUT = "#92A0AB";
 const LINE = "rgba(13,34,54,.10)";
 
 const SCOPES = [
@@ -66,8 +66,8 @@ export function OperatorBookings({
                   fontWeight: 600,
                   cursor: "pointer",
                   border: `1px solid ${LINE}`,
-                  background: scope === s.key ? "#0d2236" : "transparent",
-                  color: scope === s.key ? "#fff" : MUT,
+                  background: scope === s.key ? "#1C2936" : "transparent",
+                  color: scope === s.key ? "#F0F2F5" : MUT,
                 }}
               >
                 {s.label}
@@ -125,7 +125,7 @@ export function OperatorBookings({
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: 17,
                 fontWeight: 600,
-                color: "#a97e3c",
+                color: "#F2B93D",
                 minWidth: 90,
                 textAlign: "right",
               }}

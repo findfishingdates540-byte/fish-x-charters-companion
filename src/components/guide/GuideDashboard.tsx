@@ -186,14 +186,14 @@ function Overview({ data }: { data: any }) {
                       marginBottom: 7,
                     }}
                   >
-                    <span style={{ fontWeight: 600, color: "#0d2236" }}>{g.name}</span>
-                    <span style={{ color: "#5c6b78" }}>{g.tripsCount} trips</span>
+                    <span style={{ fontWeight: 600, color: "#F0F2F5" }}>{g.name}</span>
+                    <span style={{ color: "#92A0AB" }}>{g.tripsCount} trips</span>
                   </div>
                   <div
                     style={{
                       height: 8,
                       borderRadius: 8,
-                      background: "#eef2f5",
+                      background: "#1C2936",
                       overflow: "hidden",
                     }}
                   >
@@ -201,7 +201,7 @@ function Overview({ data }: { data: any }) {
                       style={{
                         width: `${pct}%`,
                         height: "100%",
-                        background: "linear-gradient(90deg,#e3c089,#d2a566)",
+                        background: "linear-gradient(90deg,#2DE2F2,#2DE2F2)",
                       }}
                     />
                   </div>
@@ -269,21 +269,21 @@ function TripList({
                 : "1.4fr 1fr .7fr .8fr 1.2fr",
               gap: 14,
               padding: "14px 4px",
-              borderBottom: "1px solid rgba(13,34,54,.06)",
+              borderBottom: "1px solid rgba(255,255,255,.05)",
               alignItems: "center",
               background: !assigned && !minimal ? "rgba(227,192,137,.06)" : "transparent",
             }}
           >
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>
                 {anglerName}
               </div>
-              <div style={{ fontSize: 12.5, color: "#5c6b78" }}>
+              <div style={{ fontSize: 12.5, color: "#92A0AB" }}>
                 {t.party_size} anglers
                 {t.notes ? ` · ${t.notes.slice(0, 40)}` : ""}
               </div>
             </div>
-            <span style={{ fontSize: 13, color: "#0d2236" }}>
+            <span style={{ fontSize: 13, color: "#F0F2F5" }}>
               {t.trip_date} · {t.start_time?.slice(0, 5) ?? ""}
             </span>
             {!minimal && (
@@ -292,7 +292,7 @@ function TripList({
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
                   fontSize: 17,
                   fontWeight: 600,
-                  color: "#0d2236",
+                  color: "#F0F2F5",
                 }}
               >
                 {money(t.total_cents ?? 0)}
@@ -313,14 +313,14 @@ function TripList({
                 }
                 style={{
                   appearance: "none",
-                  background: assigned ? "#fff" : "#f4e6cd",
-                  border: `1px solid ${assigned ? "rgba(13,34,54,.14)" : "#d2a566"}`,
+                  background: assigned ? "#14202B" : "rgba(242,185,61,.15)",
+                  border: `1px solid ${assigned ? "rgba(255,255,255,.09)" : "#273744"}`,
                   borderRadius: 10,
                   padding: "9px 12px",
                   fontFamily: "inherit",
                   fontSize: 12.5,
                   fontWeight: 700,
-                  color: assigned ? "#0d2236" : "#a97e3c",
+                  color: assigned ? "#F0F2F5" : "#F2B93D",
                   cursor: "pointer",
                 }}
               >
@@ -350,7 +350,7 @@ function Roster({ data }: { data: any }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16 }}>
       {data.roster.length === 0 && (
         <Card title="No guides yet">
-          <p style={{ color: "#5c6b78", fontSize: 14, margin: 0 }}>
+          <p style={{ color: "#92A0AB", fontSize: 14, margin: 0 }}>
             Invite guides from your business settings — they'll appear here with live trip counts.
           </p>
         </Card>
@@ -359,8 +359,8 @@ function Roster({ data }: { data: any }) {
         <div
           key={g.userId}
           style={{
-            background: "#fff",
-            border: "1px solid rgba(13,34,54,.10)",
+            background: "#14202B",
+            border: "1px solid rgba(255,255,255,.07)",
             borderRadius: 18,
             padding: 22,
           }}
@@ -371,22 +371,22 @@ function Roster({ data }: { data: any }) {
                 width: 52,
                 height: 52,
                 borderRadius: "50%",
-                background: g.avatarUrl ? `url(${g.avatarUrl}) center/cover` : "#eef2f5",
-                border: "1px solid rgba(13,34,54,.10)",
+                background: g.avatarUrl ? `url(${g.avatarUrl}) center/cover` : "#F0F2F5",
+                border: "1px solid rgba(255,255,255,.07)",
                 display: "grid",
                 placeItems: "center",
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: 20,
                 fontWeight: 600,
-                color: "#a97e3c",
+                color: "#F2B93D",
                 flex: "none",
               }}
             >
               {!g.avatarUrl && g.name.charAt(0)}
             </span>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "#0d2236" }}>{g.name}</div>
-              <div style={{ fontSize: 12.5, color: "#5c6b78", textTransform: "capitalize" }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#F0F2F5" }}>{g.name}</div>
+              <div style={{ fontSize: 12.5, color: "#92A0AB", textTransform: "capitalize" }}>
                 {g.role}
               </div>
             </div>
@@ -396,7 +396,7 @@ function Roster({ data }: { data: any }) {
               display: "flex",
               gap: 18,
               padding: "14px 0 0",
-              borderTop: "1px solid rgba(13,34,54,.06)",
+              borderTop: "1px solid rgba(255,255,255,.05)",
             }}
           >
             <div>
@@ -405,25 +405,25 @@ function Roster({ data }: { data: any }) {
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
                   fontSize: 19,
                   fontWeight: 600,
-                  color: "#0d2236",
+                  color: "#F0F2F5",
                 }}
               >
                 {g.tripsCount}
               </div>
-              <div style={{ fontSize: 11, color: "#5c6b78" }}>trips assigned</div>
+              <div style={{ fontSize: 11, color: "#92A0AB" }}>trips assigned</div>
             </div>
-            <div style={{ borderLeft: "1px solid rgba(13,34,54,.06)", paddingLeft: 18 }}>
+            <div style={{ borderLeft: "1px solid rgba(255,255,255,.05)", paddingLeft: 18 }}>
               <div
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
                   fontSize: 19,
                   fontWeight: 600,
-                  color: "#0d2236",
+                  color: "#F0F2F5",
                 }}
               >
                 {money(g.monthEarningsCents)}
               </div>
-              <div style={{ fontSize: 11, color: "#5c6b78" }}>booked MTD</div>
+              <div style={{ fontSize: 11, color: "#92A0AB" }}>booked MTD</div>
             </div>
           </div>
         </div>
@@ -483,8 +483,8 @@ function Slots({ businessId, data }: { businessId: string; data: any }) {
                 fontWeight: 700,
                 letterSpacing: ".1em",
                 textTransform: "uppercase",
-                color: "#5c6b78",
-                borderBottom: "1px solid rgba(13,34,54,.10)",
+                color: "#92A0AB",
+                borderBottom: "1px solid rgba(255,255,255,.07)",
               }}
             >
               <span>Date</span>
@@ -502,17 +502,17 @@ function Slots({ businessId, data }: { businessId: string; data: any }) {
                   gridTemplateColumns: "1fr .8fr .6fr .6fr .8fr .4fr",
                   gap: 14,
                   padding: "14px 4px",
-                  borderBottom: "1px solid rgba(13,34,54,.06)",
+                  borderBottom: "1px solid rgba(255,255,255,.05)",
                   alignItems: "center",
                 }}
               >
-                <span style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>
                   {s.slot_date}
                 </span>
-                <span style={{ fontSize: 13, color: "#0d2236" }}>
+                <span style={{ fontSize: 13, color: "#F0F2F5" }}>
                   {s.start_time?.slice(0, 5)} – {s.end_time?.slice(0, 5)}
                 </span>
-                <span style={{ fontSize: 13, color: "#0d2236" }}>
+                <span style={{ fontSize: 13, color: "#F0F2F5" }}>
                   {s.booked_count}/{s.capacity}
                 </span>
                 <span
@@ -520,7 +520,7 @@ function Slots({ businessId, data }: { businessId: string; data: any }) {
                     fontFamily: "'Cormorant Garamond', Georgia, serif",
                     fontSize: 16,
                     fontWeight: 600,
-                    color: "#0d2236",
+                    color: "#F0F2F5",
                   }}
                 >
                   {money(s.price_cents)}
@@ -549,8 +549,8 @@ function Slots({ businessId, data }: { businessId: string; data: any }) {
                       ...btnGhost,
                       padding: "6px 10px",
                       fontSize: 12,
-                      color: "#d8514a",
-                      borderColor: "#fbe9e8",
+                      color: "#F87171",
+                      borderColor: "rgba(216,81,74,.28)",
                     }}
                   >
                     Delete
@@ -710,10 +710,10 @@ function Requests({ businessId, data }: { businessId: string; data: any }) {
               width: 52,
               height: 52,
               borderRadius: "50%",
-              background: "#e2f2ea",
+              background: "rgba(34,197,94,.14)",
               display: "grid",
               placeItems: "center",
-              color: "#1f8a5b",
+              color: "#22C55E",
               margin: "0 auto 12px",
               fontSize: 22,
             }}
@@ -724,12 +724,12 @@ function Requests({ businessId, data }: { businessId: string; data: any }) {
             style={{
               fontFamily: "'Cormorant Garamond', Georgia, serif",
               fontSize: 20,
-              color: "#0d2236",
+              color: "#F0F2F5",
             }}
           >
             Inbox clear
           </div>
-          <div style={{ fontSize: 13, color: "#5c6b78", marginTop: 2 }}>
+          <div style={{ fontSize: 13, color: "#92A0AB", marginTop: 2 }}>
             No booking requests waiting.
           </div>
         </div>
@@ -754,7 +754,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
           fontWeight: 700,
           letterSpacing: ".08em",
           textTransform: "uppercase",
-          color: "#5c6b78",
+          color: "#92A0AB",
         }}
       >
         {label}
@@ -766,26 +766,26 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function Empty({ label }: { label: string }) {
   return (
-    <div style={{ padding: "32px 10px", textAlign: "center", color: "#5c6b78", fontSize: 14 }}>
+    <div style={{ padding: "32px 10px", textAlign: "center", color: "#92A0AB", fontSize: 14 }}>
       {label}
     </div>
   );
 }
 
 const inputStyle: React.CSSProperties = {
-  border: "1px solid rgba(13,34,54,.14)",
+  border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 10,
   padding: "10px 12px",
   fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
   fontSize: 14,
-  background: "#fff",
-  color: "#0d2236",
+  background: "#14202B",
+  color: "#F0F2F5",
   outline: "none",
 };
 
 const btnPrimary: React.CSSProperties = {
-  background: "#0a2236",
-  color: "#fff",
+  background: "#0D161F",
+  color: "#F0F2F5",
   border: 0,
   borderRadius: 11,
   padding: "10px 16px",
@@ -797,8 +797,8 @@ const btnPrimary: React.CSSProperties = {
 
 const btnGhost: React.CSSProperties = {
   background: "transparent",
-  color: "#0d2236",
-  border: "1px solid rgba(13,34,54,.14)",
+  color: "#F0F2F5",
+  border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 11,
   padding: "10px 16px",
   fontFamily: "'Hanken Grotesk', system-ui, sans-serif",

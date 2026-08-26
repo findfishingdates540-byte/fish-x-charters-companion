@@ -154,22 +154,22 @@ export function AvailabilityCalendar({
   return (
     <div
       style={{
-        border: "1px solid rgba(13,34,54,.14)",
+        border: "1px solid rgba(255,255,255,.09)",
         borderRadius: 18,
         padding: 18,
         marginBottom: 18,
-        background: "#fff",
+        background: "#14202B",
         display: "grid",
         gap: 16,
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         <div>
-          <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#7b8b99", fontWeight: 700 }}>
+          <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#92A0AB", fontWeight: 700 }}>
             Availability
           </div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: "#0d2236" }}>{service.title}</div>
-          <div style={{ fontSize: 12.5, color: "#7b8b99" }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#F0F2F5" }}>{service.title}</div>
+          <div style={{ fontSize: 12.5, color: "#92A0AB" }}>
             {upcoming.length} upcoming day{upcoming.length === 1 ? "" : "s"} published · {openSeats} seat
             {openSeats === 1 ? "" : "s"} bookable
           </div>
@@ -189,7 +189,7 @@ export function AvailabilityCalendar({
             >
               ‹
             </button>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#0d2236" }}>{monthLabel}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#F0F2F5" }}>{monthLabel}</div>
             <button
               style={btn("ghost")}
               onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
@@ -199,7 +199,7 @@ export function AvailabilityCalendar({
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4 }}>
             {DAY_NAMES.map((d, i) => (
-              <div key={i} style={{ textAlign: "center", fontSize: 10.5, color: "#7b8b99", fontWeight: 700 }}>
+              <div key={i} style={{ textAlign: "center", fontSize: 10.5, color: "#92A0AB", fontWeight: 700 }}>
                 {d}
               </div>
             ))}
@@ -219,9 +219,9 @@ export function AvailabilityCalendar({
                     padding: "8px 0 6px",
                     borderRadius: 10,
                     cursor: isPast ? "default" : "pointer",
-                    border: sel ? "1px solid #0a2236" : "1px solid rgba(13,34,54,.10)",
-                    background: sel ? "#0a2236" : daySlots.length ? "rgba(31,122,77,.08)" : "#fbfcfd",
-                    color: sel ? "#fff" : isPast ? "#c3ccd4" : "#0d2236",
+                    border: sel ? "1px solid #273744" : "1px solid rgba(255,255,255,.07)",
+                    background: sel ? "#0D161F" : daySlots.length ? "rgba(34,197,94,.14)" : "#1C2936",
+                    color: sel ? "#F0F2F5" : isPast ? "#3A4A57" : "#F0F2F5",
                     fontSize: 12.5,
                     fontWeight: 600,
                     display: "grid",
@@ -237,10 +237,10 @@ export function AvailabilityCalendar({
                       borderRadius: 999,
                       background: daySlots.length
                         ? blocked
-                          ? "#b3261e"
+                          ? "#F87171"
                           : booked
                             ? "#c98a12"
-                            : "#1f7a4d"
+                            : "#22C55E"
                         : "transparent",
                     }}
                   />
@@ -248,7 +248,7 @@ export function AvailabilityCalendar({
               );
             })}
           </div>
-          <div style={{ fontSize: 11.5, color: "#7b8b99", marginTop: 8 }}>
+          <div style={{ fontSize: 11.5, color: "#92A0AB", marginTop: 8 }}>
             Green = open · Amber = has bookings · Red = blocked
           </div>
         </div>
@@ -280,7 +280,7 @@ export function AvailabilityCalendar({
               <input style={input} type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
             </Field>
           </div>
-          <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13.5, color: "#44586a" }}>
+          <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13.5, color: "#A9B6C1" }}>
             <input
               type="checkbox"
               checked={instantBook}
@@ -288,7 +288,7 @@ export function AvailabilityCalendar({
                 setInstantBook(e.target.checked);
                 mRules.mutate(e.target.checked);
               }}
-              style={{ accentColor: "#0a2236" }}
+              style={{ accentColor: "#F0F2F5" }}
             />
             Instant book — limited to published seats
           </label>
@@ -319,8 +319,8 @@ export function AvailabilityCalendar({
                     borderRadius: 12,
                     cursor: "pointer",
                     border:
-                      mode === o.v ? "1px solid #0a2236" : "1px solid rgba(13,34,54,.12)",
-                    background: mode === o.v ? "rgba(10,34,54,.04)" : "#fbfcfd",
+                      mode === o.v ? "1px solid #273744" : "1px solid rgba(255,255,255,.08)",
+                    background: mode === o.v ? "rgba(10,34,54,.04)" : "#1C2936",
                   }}
                 >
                   <input
@@ -328,11 +328,11 @@ export function AvailabilityCalendar({
                     name="availability-mode"
                     checked={mode === o.v}
                     onChange={() => setMode(o.v)}
-                    style={{ accentColor: "#0a2236", marginTop: 3 }}
+                    style={{ accentColor: "#F0F2F5", marginTop: 3 }}
                   />
                   <span>
-                    <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236" }}>{o.t}</span>
-                    <span style={{ display: "block", fontSize: 12, color: "#7b8b99" }}>{o.d}</span>
+                    <span style={{ fontSize: 13.5, fontWeight: 700, color: "#F0F2F5" }}>{o.t}</span>
+                    <span style={{ display: "block", fontSize: 12, color: "#92A0AB" }}>{o.d}</span>
                   </span>
                 </label>
               ))}
@@ -343,7 +343,7 @@ export function AvailabilityCalendar({
             <div
               style={{
                 fontSize: 12.5,
-                color: "#0d2236",
+                color: "#F0F2F5",
                 background: "rgba(31,122,77,.07)",
                 border: "1px solid rgba(31,122,77,.28)",
                 borderRadius: 12,
@@ -352,11 +352,11 @@ export function AvailabilityCalendar({
                 gap: 5,
               }}
             >
-              <strong style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: "#1f7a4d" }}>
+              <strong style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: "#22C55E" }}>
                 What happens when you save
               </strong>
               {previewing && !preview ? (
-                <span style={{ color: "#7b8b99" }}>Checking impact…</span>
+                <span style={{ color: "#92A0AB" }}>Checking impact…</span>
               ) : (
                 <>
                   <span>{preview?.summary.headline}</span>
@@ -364,7 +364,7 @@ export function AvailabilityCalendar({
                     .filter((p) => p.action !== "create")
                     .slice(0, 4)
                     .map((p) => (
-                      <span key={p.date} style={{ color: "#44586a" }}>
+                      <span key={p.date} style={{ color: "#A9B6C1" }}>
                         {p.date} — {p.detail}
                       </span>
                     ))}
@@ -378,7 +378,7 @@ export function AvailabilityCalendar({
               style={{
                 fontSize: 12.5,
                 color: "#8a5a00",
-                background: "#fff7e6",
+                background: "rgba(242,185,61,.14)",
                 border: "1px solid rgba(201,138,18,.35)",
                 borderRadius: 12,
                 padding: "10px 12px",
@@ -398,7 +398,7 @@ export function AvailabilityCalendar({
             </div>
           )}
           {(mCreate.error || mUpdate.error) && (
-            <div style={{ fontSize: 12.5, color: "#b3261e" }}>
+            <div style={{ fontSize: 12.5, color: "#F87171" }}>
               {String(((mCreate.error || mUpdate.error) as Error).message)}
             </div>
           )}
@@ -418,7 +418,7 @@ export function AvailabilityCalendar({
                 : "Publish availability"}
           </button>
           {preview && preview.summary.created + preview.summary.replaced === 0 && (
-            <div style={{ fontSize: 12, color: "#7b8b99" }}>
+            <div style={{ fontSize: 12, color: "#92A0AB" }}>
               Nothing to change with this policy — every selected day is already published.
             </div>
           )}
@@ -428,9 +428,9 @@ export function AvailabilityCalendar({
 
       {/* Published slots */}
       <div style={{ display: "grid", gap: 8 }}>
-        {isLoading && <div style={{ fontSize: 13, color: "#7b8b99" }}>Loading calendar…</div>}
+        {isLoading && <div style={{ fontSize: 13, color: "#92A0AB" }}>Loading calendar…</div>}
         {!isLoading && upcoming.length === 0 && (
-          <div style={{ fontSize: 13, color: "#7b8b99" }}>
+          <div style={{ fontSize: 13, color: "#92A0AB" }}>
             No published days yet — pick dates above so anglers can book.
           </div>
         )}
@@ -445,12 +445,12 @@ export function AvailabilityCalendar({
                 alignItems: "center",
                 flexWrap: "wrap",
                 padding: "10px 12px",
-                border: "1px solid rgba(13,34,54,.10)",
+                border: "1px solid rgba(255,255,255,.07)",
                 borderRadius: 14,
-                background: "#fbfcfd",
+                background: "#1C2936",
               }}
             >
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236", minWidth: 230 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: "#F0F2F5", minWidth: 230 }}>
                 {new Date(s.starts_at).toLocaleString(undefined, {
                   weekday: "short",
                   month: "short",
@@ -459,7 +459,7 @@ export function AvailabilityCalendar({
                 {" · "}
                 {timeBlock({ startsAt: s.starts_at, endsAt: s.ends_at })}
               </div>
-              <div style={{ fontSize: 12.5, color: "#7b8b99", flex: 1, minWidth: 150 }}>
+              <div style={{ fontSize: 12.5, color: "#92A0AB", flex: 1, minWidth: 150 }}>
                 {s.seats_booked ?? 0}/{s.seats_available} booked · {left} left
                 {s.price_cents ? ` · ${money(s.price_cents)}` : ""}
               </div>
@@ -493,7 +493,7 @@ export function AvailabilityCalendar({
                 {s.is_blackout ? "Unblock" : "Block"}
               </button>
               <button
-                style={{ ...btn("ghost"), color: "#b3261e" }}
+                style={{ ...btn("ghost"), color: "#F87171" }}
                 disabled={(s.seats_booked ?? 0) > 0}
                 onClick={() => mDelete.mutate(s.id)}
               >
@@ -510,7 +510,7 @@ export function AvailabilityCalendar({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label style={{ display: "grid", gap: 6 }}>
-      <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#7b8b99", fontWeight: 700 }}>
+      <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#92A0AB", fontWeight: 700 }}>
         {label}
       </span>
       {children}

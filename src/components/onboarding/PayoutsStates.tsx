@@ -22,18 +22,18 @@ export type PayoutState = "verifying" | "verified" | "action";
 const V = {
   serif: "'Source Serif 4',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  bg: "#f7f9fc", // surface-bright
-  white: "#ffffff",
-  primary: "#715b3b",
-  primaryContainer: "#e4c7a0",
-  onPrimaryContainer: "#675233",
-  onSurface: "#191c1e",
-  onSurfaceVariant: "#4d463c",
-  outlineVariant: "#d0c5b8",
-  containerLow: "#f2f4f7", // surface-container-low
-  containerHigh: "#e6e8eb", // surface-container-high
-  tertiary: "#006877",
-  tertiaryContainer: "#39def9",
+  bg: "#0D161F", // surface-bright
+  white: "#F0F2F5",
+  primary: "#2DE2F2",
+  primaryContainer: "rgba(45,226,242,.14)",
+  onPrimaryContainer: "#2DE2F2",
+  onSurface: "#F0F2F5",
+  onSurfaceVariant: "#92A0AB",
+  outlineVariant: "#273744",
+  containerLow: "#14202B", // surface-container-low
+  containerHigh: "#1C2936", // surface-container-high
+  tertiary: "#2DE2F2",
+  tertiaryContainer: "rgba(45,226,242,.16)",
 };
 
 type NavItem = { icon: string; label: string };
@@ -101,6 +101,7 @@ function StyleTag() {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div
+      className="fx-shell"
       style={{
         minHeight: "100vh",
         background: V.bg,
@@ -211,7 +212,7 @@ function Shell({ children }: { children: React.ReactNode }) {
             position: "relative",
             overflow: "hidden",
             background:
-              "radial-gradient(circle at 50% -20%, #e0f2fe 0%, #f7f9fc 60%)",
+              "radial-gradient(circle at 50% -20%, rgba(45,226,242,.10) 0%, #0D161F 60%)",
           }}
         >
           {/* Atmospheric blobs */}
@@ -450,7 +451,7 @@ function VerifiedCard() {
         maxWidth: 576,
         padding: "clamp(28px,4vw,48px)",
         textAlign: "center",
-        background: "rgba(255,255,255,.8)",
+        background: "rgba(20,32,43,.86)",
         backdropFilter: "blur(12px)",
         border: "1px solid rgba(226,232,240,.5)",
         boxShadow: "0 25px 50px -12px rgba(0,0,0,.25)",
@@ -481,7 +482,7 @@ function VerifiedCard() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 0 15px rgba(57,222,249,.5), 0 0 0 4px #fff",
+              boxShadow: "0 0 15px rgba(57,222,249,.5), 0 0 0 4px #14202B",
             }}
           >
             <Icon name="check_circle" fill style={{ fontSize: 48 }} />
@@ -751,7 +752,7 @@ function PreviewSwitcher({
         gap: 4,
         padding: 4,
         borderRadius: 9999,
-        background: "rgba(255,255,255,.9)",
+        background: "rgba(20,32,43,.9)",
         backdropFilter: "blur(12px)",
         border: `1px solid ${V.outlineVariant}66`,
         boxShadow: "0 8px 24px rgba(10,26,47,.12)",

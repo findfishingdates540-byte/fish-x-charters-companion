@@ -51,8 +51,8 @@ export function OperatorShell({
       style={{
         display: "flex",
         minHeight: "100vh",
-        background: "#eef2f5",
-        color: "#0d2236",
+        background: "#0D161F",
+        color: "#F0F2F5",
         fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
       }}
     >
@@ -62,8 +62,8 @@ export function OperatorShell({
         style={{
           width: 256,
           flex: "none",
-          background: "#0a2236",
-          color: "#eaf1f6",
+          background: "#0D161F",
+          color: "#F0F2F5",
           display: "flex",
           flexDirection: "column",
           padding: "22px 16px",
@@ -88,7 +88,7 @@ export function OperatorShell({
             style={{
               width: 11,
               height: 11,
-              background: "#e3c089",
+              background: "#2DE2F2",
               transform: "rotate(45deg)",
               display: "inline-block",
               borderRadius: 1,
@@ -111,7 +111,7 @@ export function OperatorShell({
             display: "flex",
             alignItems: "center",
             gap: 11,
-            background: "rgba(255,255,255,.05)",
+            background: "rgba(255,255,255,.04)",
             border: "1px solid rgba(255,255,255,.10)",
             borderRadius: 13,
             padding: "11px 12px",
@@ -123,10 +123,10 @@ export function OperatorShell({
               width: 34,
               height: 34,
               borderRadius: 9,
-              background: "rgba(227,192,137,.16)",
+              background: "rgba(45,226,242,.14)",
               display: "grid",
               placeItems: "center",
-              color: "#e3c089",
+              color: "#2DE2F2",
               flex: "none",
               fontWeight: 700,
             }}
@@ -140,7 +140,7 @@ export function OperatorShell({
                 fontWeight: 700,
                 letterSpacing: ".14em",
                 textTransform: "uppercase",
-                color: "#93a7b7",
+                color: "#92A0AB",
               }}
             >
               {workspaceKind}
@@ -149,7 +149,7 @@ export function OperatorShell({
               style={{
                 fontSize: 13.5,
                 fontWeight: 600,
-                color: "#fff",
+                color: "#F0F2F5",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -172,7 +172,7 @@ export function OperatorShell({
                   alignItems: "center",
                   gap: 12,
                   width: "100%",
-                  background: isActive ? "rgba(227,192,137,.14)" : "transparent",
+                  background: isActive ? "rgba(45,226,242,.12)" : "transparent",
                   border: 0,
                   borderRadius: 11,
                   padding: "11px 12px",
@@ -180,11 +180,11 @@ export function OperatorShell({
                   fontFamily: "inherit",
                   fontSize: 14,
                   fontWeight: 600,
-                  color: isActive ? "#fff" : "#93a7b7",
+                  color: isActive ? "#F0F2F5" : "#92A0AB",
                   textAlign: "left",
                 }}
               >
-                <span style={{ display: "inline-flex", color: isActive ? "#e3c089" : "inherit" }}>
+                <span style={{ display: "inline-flex", color: isActive ? "#2DE2F2" : "inherit" }}>
                   {n.icon}
                 </span>
                 {n.label}
@@ -192,8 +192,8 @@ export function OperatorShell({
                   <span
                     style={{
                       marginLeft: "auto",
-                      background: "#e3c089",
-                      color: "#1c1303",
+                      background: "#2DE2F2",
+                      color: "#04121B",
                       fontSize: 11,
                       fontWeight: 700,
                       borderRadius: 20,
@@ -219,7 +219,7 @@ export function OperatorShell({
             padding: "10px 12px",
             marginBottom: 8,
             borderRadius: 12,
-            color: "#93a7b7",
+            color: "#92A0AB",
             textDecoration: "none",
             fontSize: 13,
             fontWeight: 600,
@@ -237,7 +237,7 @@ export function OperatorShell({
             display: "flex",
             alignItems: "center",
             gap: 11,
-            background: "rgba(255,255,255,.05)",
+            background: "rgba(255,255,255,.04)",
             border: "1px solid rgba(255,255,255,.10)",
             borderRadius: 13,
             padding: "10px 12px",
@@ -248,13 +248,13 @@ export function OperatorShell({
               width: 38,
               height: 38,
               borderRadius: "50%",
-              background: "rgba(227,192,137,.18)",
+              background: "rgba(45,226,242,.16)",
               display: "grid",
               placeItems: "center",
               fontFamily: "'Cormorant Garamond', Georgia, serif",
               fontSize: 16,
               fontWeight: 600,
-              color: "#e3c089",
+              color: "#2DE2F2",
               flex: "none",
             }}
           >
@@ -265,7 +265,7 @@ export function OperatorShell({
               style={{
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#fff",
+                color: "#F0F2F5",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -273,7 +273,7 @@ export function OperatorShell({
             >
               {operatorName}
             </div>
-            <div style={{ fontSize: 11, color: "#e3c089" }}>{operatorRole}</div>
+            <div style={{ fontSize: 11, color: "#2DE2F2" }}>{operatorRole}</div>
           </div>
           <button
             title="Sign out"
@@ -282,7 +282,7 @@ export function OperatorShell({
               marginLeft: "auto",
               background: "transparent",
               border: 0,
-              color: "#93a7b7",
+              color: "#92A0AB",
               cursor: "pointer",
               flex: "none",
               padding: 4,
@@ -303,10 +303,10 @@ export function OperatorShell({
             position: "sticky",
             top: 0,
             zIndex: 20,
-            background: "rgba(238,242,245,.86)",
+            background: "rgba(13,22,31,.86)",
             backdropFilter: "saturate(140%) blur(12px)",
             WebkitBackdropFilter: "saturate(140%) blur(12px)",
-            borderBottom: "1px solid rgba(13,34,54,.10)",
+            borderBottom: "1px solid rgba(255,255,255,.07)",
             padding: "18px 34px",
             display: "flex",
             alignItems: "center",
@@ -320,13 +320,13 @@ export function OperatorShell({
                 fontWeight: 600,
                 fontSize: 26,
                 lineHeight: 1.1,
-                color: "#0d2236",
+                color: "#F0F2F5",
               }}
             >
               {pageTitle}
             </div>
             {pageSub && (
-              <div style={{ fontSize: 13, color: "#5c6b78", marginTop: 1 }}>{pageSub}</div>
+              <div style={{ fontSize: 13, color: "#92A0AB", marginTop: 1 }}>{pageSub}</div>
             )}
           </div>
           <div
@@ -375,8 +375,8 @@ export function KPICard({
   return (
     <div
       style={{
-        background: "#fff",
-        border: "1px solid rgba(13,34,54,.10)",
+        background: "#14202B",
+        border: "1px solid rgba(255,255,255,.07)",
         borderRadius: 18,
         padding: 20,
       }}
@@ -395,7 +395,7 @@ export function KPICard({
             fontWeight: 700,
             letterSpacing: ".1em",
             textTransform: "uppercase",
-            color: "#5c6b78",
+            color: "#92A0AB",
           }}
         >
           {label}
@@ -405,8 +405,8 @@ export function KPICard({
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: trendPositive ? "#1f8a5b" : "#d8514a",
-              background: trendPositive ? "#e2f2ea" : "#fbe9e8",
+              color: trendPositive ? "#22C55E" : "#F87171",
+              background: trendPositive ? "rgba(34,197,94,.14)" : "rgba(216,81,74,.16)",
               borderRadius: 20,
               padding: "2px 8px",
             }}
@@ -421,7 +421,7 @@ export function KPICard({
           fontWeight: 600,
           fontSize: 34,
           lineHeight: 1,
-          color: "#0d2236",
+          color: "#F0F2F5",
         }}
       >
         {value}
@@ -444,8 +444,8 @@ export function Card({
   return (
     <div
       style={{
-        background: "#fff",
-        border: "1px solid rgba(13,34,54,.10)",
+        background: "#14202B",
+        border: "1px solid rgba(255,255,255,.07)",
         borderRadius: 20,
         padding: 24,
       }}
@@ -468,7 +468,7 @@ export function Card({
                   fontWeight: 700,
                   letterSpacing: ".14em",
                   textTransform: "uppercase",
-                  color: "#a97e3c",
+                  color: "#F2B93D",
                 }}
               >
                 {eyebrow}
@@ -480,7 +480,7 @@ export function Card({
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
                   fontWeight: 600,
                   fontSize: 22,
-                  color: "#0d2236",
+                  color: "#F0F2F5",
                   marginTop: eyebrow ? 3 : 0,
                 }}
               >
@@ -504,12 +504,12 @@ export function StatusPill({
   tone?: "muted" | "green" | "gold" | "cyan" | "red" | "navy";
 }) {
   const tones: Record<string, { bg: string; fg: string }> = {
-    muted: { bg: "#eef2f5", fg: "#5c6b78" },
-    green: { bg: "#e2f2ea", fg: "#1f8a5b" },
-    gold: { bg: "#f4e6cd", fg: "#a97e3c" },
-    cyan: { bg: "#e2eef2", fg: "#1f9fbe" },
-    red: { bg: "#fbe9e8", fg: "#d8514a" },
-    navy: { bg: "#0a2236", fg: "#fff" },
+    muted: { bg: "#1C2936", fg: "#92A0AB" },
+    green: { bg: "rgba(34,197,94,.14)", fg: "#22C55E" },
+    gold: { bg: "rgba(242,185,61,.15)", fg: "#F2B93D" },
+    cyan: { bg: "rgba(45,226,242,.12)", fg: "#2DE2F2" },
+    red: { bg: "rgba(216,81,74,.16)", fg: "#F87171" },
+    navy: { bg: "#0D161F", fg: "#F0F2F5" },
   };
   const t = tones[tone];
   return (
