@@ -16,7 +16,7 @@ export const getMyRoles = createServerFn({ method: "GET" })
 
     if (error) throw new Response(error.message, { status: 500 });
 
-    return (data ?? []).map((r: { role: string }) => r.role);
+    return (Array.isArray(data) ? data : []).map((r: { role: string }) => r.role);
   });
 
 export const hasPrimaryRole = (roles: unknown): "angler" | "business_owner" | "captain" | null => {
