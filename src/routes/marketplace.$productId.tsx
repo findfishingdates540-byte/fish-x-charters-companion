@@ -124,7 +124,7 @@ function ProductDetail() {
   const buyNow = async () => {
     if (!product.live) {
       addToCart();
-      window.location.href = "/marketplace";
+      window.location.href = "/marketplace?cart=1";
       return;
     }
     setBusy(true);

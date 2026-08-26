@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Marketplace } from "@/components/marketplace/Marketplace";
 
 export const Route = createFileRoute("/marketplace/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    cart: search.cart === "1" || search.cart === true || search.cart === "true" ? "1" : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Marketplace — FISH-X.COM Bookings & Marketplace" },
