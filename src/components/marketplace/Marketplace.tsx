@@ -342,6 +342,7 @@ export function Marketplace() {
           >
             ↺ Reset filters
           </button>
+          </div>
         </div>
 
         <div className="mkt-layout" style={{ display: "grid", gridTemplateColumns: "300px minmax(0,1fr)", gap: 28, alignItems: "start" }}>
