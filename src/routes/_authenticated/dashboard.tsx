@@ -107,7 +107,13 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   errorComponent: ({ error }) => (
     <div style={{ padding: 40, fontFamily: "system-ui" }}>
       <h1>Dashboard error</h1>
-      <p>{(error as Error).message}</p>
+      <p>
+        {error instanceof Error
+          ? error.message
+          : error instanceof Response
+            ? `Request failed (${error.status})`
+            : "Something went wrong loading your dashboard. Please try again."}
+      </p>
     </div>
   ),
 });
@@ -115,8 +121,10 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 // (categoryTemplate removed — verticals now use React components below.)
 
 function Dashboard() {
-  const { data: roles } = useSuspenseQuery(myRolesQO);
-  const { data: businesses } = useSuspenseQuery(myBusinessesQO);
+  const { data: rolesRaw } = useSuspenseQuery(myRolesQO);
+  const { data: businessesRaw } = useSuspenseQuery(myBusinessesQO);
+  const roles = Array.isArray(rolesRaw) ? rolesRaw : [];
+  const businesses = Array.isArray(businessesRaw) ? businessesRaw : [];
   const { data: profile } = useSuspenseQuery(myProfileQO);
   const navigate = useNavigate();
   const primaryRole = hasPrimaryRole(roles);
