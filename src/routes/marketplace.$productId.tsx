@@ -87,10 +87,29 @@ function ProductDetail() {
   const startCheckout = useServerFn(createProductCheckout);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
+
+  const maxQty = product.live && product.stockQty != null ? Math.max(1, product.stockQty) : 99;
+
+  /** Shared cart (localStorage) — the marketplace page hydrates from the same key. */
+  const addToCart = () => {
+    try {
+      const raw = window.localStorage.getItem("fx-cart");
+      const cart: Record<string, number> = raw ? JSON.parse(raw) : {};
+      cart[product.id] = Math.min(maxQty, (cart[product.id] ?? 0) + qty);
+      window.localStorage.setItem("fx-cart", JSON.stringify(cart));
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch {
+      /* storage unavailable */
+    }
+  };
 
   /** Live products go straight to Stripe Checkout; demo items bounce to the cart. */
   const buyNow = async () => {
     if (!product.live) {
+      addToCart();
       window.location.href = "/marketplace";
       return;
     }
@@ -99,7 +118,7 @@ function ProductDetail() {
     try {
       const res = await startCheckout({
         data: {
-          items: [{ productId: product.id, quantity: 1 }],
+          items: [{ productId: product.id, quantity: qty }],
           origin: window.location.origin,
         },
       });
@@ -181,13 +200,32 @@ function ProductDetail() {
               </span>
             </div>
 
-            <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-              <Link
-                to="/marketplace"
-                style={{ flex: 1, textAlign: "center", textDecoration: "none", background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: "14px 18px", fontFamily: V.sans, fontSize: 14, fontWeight: 700 }}
+            <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", border: `1px solid ${V.line}`, borderRadius: 12, background: V.card, overflow: "hidden" }}>
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  style={{ width: 42, height: 48, border: 0, background: "transparent", fontSize: 18, fontWeight: 700, color: V.ink, cursor: "pointer" }}
+                >
+                  −
+                </button>
+                <span style={{ minWidth: 36, textAlign: "center", fontSize: 15, fontWeight: 700, color: V.ink }}>{qty}</span>
+                <button
+                  type="button"
+                  aria-label="Increase quantity"
+                  onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+                  style={{ width: 42, height: 48, border: 0, background: "transparent", fontSize: 18, fontWeight: 700, color: V.ink, cursor: "pointer" }}
+                >
+                  +
+                </button>
+              </div>
+              <button
+                onClick={addToCart}
+                style={{ flex: 1, background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: "14px 18px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}
               >
-                Back to marketplace
-              </Link>
+                {added ? "✓ Added to cart" : "Add to cart"}
+              </button>
               <button
                 onClick={() => void buyNow()}
                 disabled={busy}
@@ -196,6 +234,11 @@ function ProductDetail() {
                 {busy ? "Redirecting…" : "Buy now"}
               </button>
             </div>
+            {product.live && product.stockQty != null && product.stockQty <= 10 && (
+              <div style={{ fontSize: 12, color: V.goldtext, fontWeight: 600, marginBottom: 12 }}>
+                Only {product.stockQty} left in stock
+              </div>
+            )}
             {err && <div style={{ color: "#b3261e", fontSize: 13, marginBottom: 18 }}>{err}</div>}
             <div style={{ marginBottom: 16 }} />
 
