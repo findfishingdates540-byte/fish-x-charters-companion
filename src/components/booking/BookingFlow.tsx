@@ -1129,6 +1129,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                         onClick={() => {
                           setSlotId(s.id);
                           setTakenSlot(null);
+                          setReservation(null);
+                          setHoldLeft(null);
                           setStep("checkout");
                           window.scrollTo(0, 0);
                         }}
