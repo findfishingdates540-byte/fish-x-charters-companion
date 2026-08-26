@@ -754,7 +754,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
         {step === "extras" && (
           <div>
-            <button onClick={() => setStep("detail")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
+            <button onClick={() => { setStep("dates"); window.scrollTo(0, 0); }} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to date &amp; time</button>
             <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 34, margin: "0 0 6px" }}>Add-ons &amp; notes</h1>
             <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 24px" }}>
               {dateLabel}{time ? ` · ${time}` : ""} · {party} angler{party === 1 ? "" : "s"} · {svc.title}
