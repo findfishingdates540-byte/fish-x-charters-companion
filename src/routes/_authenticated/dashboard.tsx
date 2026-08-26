@@ -39,11 +39,14 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     typeof search.tab === "string" ? { tab: search.tab } : {},
   head: () => ({ meta: [{ title: "Dashboard — FISH-X.COM Bookings & Marketplace" }] }),
   loader: async ({ context }) => {
-    const [roles, businesses] = await Promise.all([
+    try {
+    const [rolesRaw, businessesRaw] = await Promise.all([
       context.queryClient.ensureQueryData(myRolesQO),
       context.queryClient.ensureQueryData(myBusinessesQO),
       context.queryClient.ensureQueryData(myProfileQO),
     ]);
+    const roles = Array.isArray(rolesRaw) ? rolesRaw : [];
+    const businesses = Array.isArray(businessesRaw) ? businessesRaw : [];
     const primary = hasPrimaryRole(roles);
     if (primary === "angler") {
       await Promise.all([
@@ -88,21 +91,43 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
         });
       }
     }
+    } catch (e) {
+      // Surface real failure reasons instead of crashing on raw Response
+      // objects thrown by server functions (they have no .message).
+      if (e instanceof Response) {
+        const body = await e.text().catch(() => "");
+        throw new Error(
+          `Dashboard data failed to load (${e.status})${body ? `: ${body.slice(0, 200)}` : ""}`,
+        );
+      }
+      throw e;
+    }
   },
   component: Dashboard,
-  errorComponent: ({ error }) => (
-    <div style={{ padding: 40, fontFamily: "system-ui" }}>
-      <h1>Dashboard error</h1>
-      <p>{(error as Error).message}</p>
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    const e = error as unknown;
+    const message =
+      e instanceof Error
+        ? e.message
+        : e instanceof Response
+          ? `Request failed (${e.status})`
+          : "Something went wrong loading your dashboard. Please try again.";
+    return (
+      <div style={{ padding: 40, fontFamily: "system-ui" }}>
+        <h1>Dashboard error</h1>
+        <p>{message}</p>
+      </div>
+    );
+  },
 });
 
 // (categoryTemplate removed — verticals now use React components below.)
 
 function Dashboard() {
-  const { data: roles } = useSuspenseQuery(myRolesQO);
-  const { data: businesses } = useSuspenseQuery(myBusinessesQO);
+  const { data: rolesRaw } = useSuspenseQuery(myRolesQO);
+  const { data: businessesRaw } = useSuspenseQuery(myBusinessesQO);
+  const roles = Array.isArray(rolesRaw) ? rolesRaw : [];
+  const businesses = Array.isArray(businessesRaw) ? businessesRaw : [];
   const { data: profile } = useSuspenseQuery(myProfileQO);
   const navigate = useNavigate();
   const primaryRole = hasPrimaryRole(roles);
