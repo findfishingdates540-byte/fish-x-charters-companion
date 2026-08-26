@@ -98,7 +98,11 @@ export function Marketplace() {
       return {};
     }
   });
-  const [cartOpen, setCartOpen] = useState(false);
+  const openCartParam = useSearch({ strict: false }) as { cart?: unknown };
+  const [cartOpen, setCartOpen] = useState(
+    openCartParam?.cart === true || openCartParam?.cart === "1" || openCartParam?.cart === "true",
+  );
+
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [orderId, setOrderId] = useState("");
   const [paidTotal, setPaidTotal] = useState<number | null>(null);
