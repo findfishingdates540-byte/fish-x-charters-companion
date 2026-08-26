@@ -91,6 +91,17 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
         });
       }
     }
+    } catch (e) {
+      // Surface real failure reasons instead of crashing on raw Response
+      // objects thrown by server functions (they have no .message).
+      if (e instanceof Response) {
+        const body = await e.text().catch(() => "");
+        throw new Error(
+          `Dashboard data failed to load (${e.status})${body ? `: ${body.slice(0, 200)}` : ""}`,
+        );
+      }
+      throw e;
+    }
   },
   component: Dashboard,
   errorComponent: ({ error }) => (
