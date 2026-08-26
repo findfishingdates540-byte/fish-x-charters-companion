@@ -79,7 +79,7 @@ export function PublicHeader() {
         }}
       >
         <Link
-          to="/"
+          to={signedIn ? "/dashboard" : "/"}
           style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "#eaf1f6" }}
         >
           <span
