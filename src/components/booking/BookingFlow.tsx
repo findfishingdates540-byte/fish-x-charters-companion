@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tansta
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createBookingFromService, getAddonAvailability, getCheckoutContext } from "@/lib/booking-checkout.functions";
-import { PublicAvailabilityCalendar, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
+import { PublicAvailabilityCalendar, timeBlock, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
 import { DEFAULT_HERO, galleryFor } from "@/lib/platform-photos";
 
 const V = {
