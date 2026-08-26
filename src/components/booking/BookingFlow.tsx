@@ -664,7 +664,94 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
           </div>
         )}
 
+        {/* ==== DATE & TIME BLOCK ==== */}
+        {step === "dates" && (
+          <div>
+            <button onClick={() => { setStep("detail"); window.scrollTo(0, 0); }} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
+            <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 34, margin: "0 0 6px" }}>Select date &amp; time</h1>
+            <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 24px", maxWidth: 620 }}>
+              Only dates with an open departure are selectable. Each departure is an exclusive time
+              block — once you take it, the boat is yours for that window.
+            </p>
+
+            <div className="fx-booking-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+                    <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600 }}>Party size</div>
+                    <select
+                      value={party}
+                      onChange={(e) => setParty(Number(e.target.value))}
+                      style={{ background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "11px 13px", fontFamily: MONO, fontSize: 14, fontWeight: 600, color: V.ink, outline: "none" }}
+                    >
+                      {Array.from({ length: cap }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>{n} {n === 1 ? "Angler" : "Anglers"}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ fontSize: 13, color: V.tmut }}>
+                    Up to {capacity} aboard, including non-fishing guests. The trip fee is flat — it
+                    doesn&rsquo;t change with party size.
+                  </div>
+                </section>
+
+                <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                  <PublicAvailabilityCalendar
+                    serviceId={serviceId}
+                    selectedSlotId={slot?.id ?? null}
+                    partySize={party}
+                    theme="light"
+                    onSelectSlot={(s: PublicSlot) => setSlotId(s.id)}
+                  />
+                </section>
+              </div>
+
+              {/* Persistent trip card */}
+              <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
+                <div style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 8 }}>Your trip</div>
+                <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 23, lineHeight: 1.15 }}>{listingTitle}</div>
+                <div style={{ fontSize: 13, color: V.tmut, margin: "4px 0 16px" }}>{businessLine}</div>
+
+                {[
+                  ["Duration", durLabel],
+                  ["Date", slot ? dateLabel : "Not selected"],
+                  ["Departure", slot ? timeBlock(slot) : "Not selected"],
+                  ["Party size", `${party}`],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
+                    <span>{k}</span><span style={{ color: V.ink, fontWeight: 600, textAlign: "right" }}>{v}</span>
+                  </div>
+                ))}
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 8 }}>
+                  <span>Trip total</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(price)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: V.tmut, padding: "2px 0" }}>
+                  <span>Deposit today (25%)</span><span style={{ fontWeight: 700, color: V.ink }}>{money(deposit)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: V.tmut, padding: "2px 0 16px" }}>
+                  <span>Balance at the dock</span><span style={{ color: V.ink }}>{money(balanceDue)}</span>
+                </div>
+
+                <button
+                  onClick={() => { setStep("extras"); window.scrollTo(0, 0); }}
+                  disabled={!slot}
+                  style={{ width: "100%", background: slot ? V.sand : "#dfe6ec", color: slot ? "#1c1303" : V.tmut, border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed" }}
+                >
+                  Continue to add-ons →
+                </button>
+                {!slot && (
+                  <div style={{ fontSize: 12, color: V.tmut, textAlign: "center", marginTop: 9 }}>
+                    Select a departure time to continue.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ==== ADD-ONS & NOTES ==== */}
+
         {step === "extras" && (
           <div>
             <button onClick={() => setStep("detail")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
