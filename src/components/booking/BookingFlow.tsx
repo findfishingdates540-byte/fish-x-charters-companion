@@ -73,9 +73,8 @@ const railField: CSSProperties = {
   colorScheme: "dark",
 };
 
-/** Server fns reject with a bare `Response` (no `.message`), which React
- *  rethrows during render as "Uncaught undefined" and blanks the page.
- *  Normalise every failure into a real Error. */
+/** Normalise transport failures so route and query error boundaries always
+ * receive a useful Error with a user-facing message. */
 async function toError<T>(p: Promise<T>): Promise<T> {
   try {
     return await p;
