@@ -847,8 +847,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
               {/* Running total */}
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
-                <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Your trip</div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
+                <div style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 8 }}>Your trip</div>
+                <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 23, lineHeight: 1.15 }}>{listingTitle}</div>
+                <div style={{ fontSize: 13, color: V.tmut, margin: "4px 0 14px" }}>{businessLine}</div>
+                <div style={{ fontSize: 13, color: V.tmut, paddingBottom: 12, borderBottom: `1px solid ${V.line}` }}>
+                  {slot ? `${dateLabel} · ${timeBlock(slot)}` : "No departure selected"} · {party} aboard
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "10px 0 7px", color: V.tmut }}>
                   <span>Trip fee</span><span style={{ color: V.ink }}>{money(price)}</span>
                 </div>
                 {addonLines.map((l) => (
@@ -866,8 +871,16 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   onClick={() => { setStep("checkout"); window.scrollTo(0, 0); }}
                   style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
                 >
-                  Continue to secure checkout →
+                  Continue to deposit →
                 </button>
+                <button
+                  onClick={() => { setStep("dates"); window.scrollTo(0, 0); }}
+                  style={{ width: "100%", background: "transparent", color: V.tmut, border: `1px solid ${V.line}`, borderRadius: 12, padding: 13, fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginTop: 10 }}
+                >
+                  ← Back to date &amp; time
+                </button>
+              </div>
+
               </div>
             </div>
           </div>
