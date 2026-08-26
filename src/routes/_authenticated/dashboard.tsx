@@ -104,18 +104,21 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     }
   },
   component: Dashboard,
-  errorComponent: ({ error }) => (
-    <div style={{ padding: 40, fontFamily: "system-ui" }}>
-      <h1>Dashboard error</h1>
-      <p>
-        {error instanceof Error
-          ? error.message
-          : error instanceof Response
-            ? `Request failed (${error.status})`
-            : "Something went wrong loading your dashboard. Please try again."}
-      </p>
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    const e = error as unknown;
+    const message =
+      e instanceof Error
+        ? e.message
+        : e instanceof Response
+          ? `Request failed (${e.status})`
+          : "Something went wrong loading your dashboard. Please try again.";
+    return (
+      <div style={{ padding: 40, fontFamily: "system-ui" }}>
+        <h1>Dashboard error</h1>
+        <p>{message}</p>
+      </div>
+    );
+  },
 });
 
 // (categoryTemplate removed — verticals now use React components below.)
