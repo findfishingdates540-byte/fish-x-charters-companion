@@ -123,9 +123,18 @@ function RootComponent() {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      // SIGNED_IN can fire while an authenticated route's async beforeLoad is
+      // still resolving. Invalidating at that point starts a second load and
+      // can leave TanStack Router rendering a cleared match promise. Login
+      // already navigates explicitly, so only session loss/profile changes
+      // need global invalidation here.
+      if (event === "SIGNED_OUT") {
+        queryClient.clear();
+        router.invalidate();
+      } else if (event === "USER_UPDATED") {
+        queryClient.invalidateQueries();
+        router.invalidate();
+      }
     });
     return () => subscription.unsubscribe();
   }, [router, queryClient]);
