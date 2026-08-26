@@ -120,16 +120,35 @@ export function PublicHeader({
           </span>
         </Link>
 
-        <nav className="fx-ph-nav" style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          {NAV.map((n) => (
-            <Link key={n.to} to={n.to} style={navLink(pathname.startsWith(n.to))}>
-              {n.label}
-            </Link>
-          ))}
-        </nav>
+        {!hideNav && (
+          <nav className="fx-ph-nav" style={{ display: "flex", alignItems: "center", gap: 28 }}>
+            {NAV.map((n) => (
+              <Link key={n.to} to={n.to} style={navLink(pathname.startsWith(n.to))}>
+                {n.label}
+              </Link>
+            ))}
+          </nav>
+        )}
 
         <div className="fx-ph-actions" style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {signedIn ? (
+          {signedIn && actions ? (
+            <>
+              {actions}
+              <Link
+                to="/dashboard"
+                style={{
+                  color: "#eaf1f6",
+                  textDecoration: "none",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  opacity: 0.92,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Dashboard
+              </Link>
+            </>
+          ) : signedIn ? (
             <Link
               to="/dashboard"
               style={{
