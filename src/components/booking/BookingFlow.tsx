@@ -594,15 +594,27 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   </span>
                 </div>
 
-                <div style={{ marginBottom: 14 }}>
-                  <PublicAvailabilityCalendar
-                    serviceId={serviceId}
-                    selectedSlotId={slot?.id ?? null}
-                    partySize={party}
-                    theme="dark"
-                    onSelectSlot={(s: PublicSlot) => setSlotId(s.id)}
-                  />
+                <div
+                  style={{
+                    marginBottom: 18,
+                    border: `1px solid ${V.lined}`,
+                    borderRadius: 12,
+                    padding: "13px 15px",
+                    display: "grid",
+                    gap: 4,
+                  }}
+                >
+                  <span style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.cyan }}>
+                    Departure
+                  </span>
+                  <span style={{ fontSize: 14.5, fontWeight: 700, color: "#fff" }}>
+                    {slot ? `${dateLabel}` : "Not selected yet"}
+                  </span>
+                  <span style={{ fontFamily: MONO, fontSize: 12.5, color: V.ondmut }}>
+                    {slot ? timeBlock(slot) : `${openSlots.length} open departure${openSlots.length === 1 ? "" : "s"}`}
+                  </span>
                 </div>
+
 
 
 
