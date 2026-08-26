@@ -73,11 +73,27 @@ const railField: CSSProperties = {
   colorScheme: "dark",
 };
 
+/** Server fns reject with a bare `Response` (no `.message`), which React
+ *  rethrows during render as "Uncaught undefined" and blanks the page.
+ *  Normalise every failure into a real Error. */
+async function toError<T>(p: Promise<T>): Promise<T> {
+  try {
+    return await p;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw e;
+    if (typeof Response !== "undefined" && e instanceof Response) {
+      throw new Error((await e.text().catch(() => "")) || `Request failed (${e.status})`);
+    }
+    throw new Error(typeof e === "string" ? e : "Something went wrong loading this trip.");
+  }
+}
+
 export const checkoutQuery = (serviceId: string) =>
   queryOptions({
     queryKey: ["checkout", serviceId],
-    queryFn: () => getCheckoutContext({ data: { serviceId } }),
+    queryFn: () => toError(getCheckoutContext({ data: { serviceId } })),
   });
+
 
 type Step = "detail" | "dates" | "extras" | "checkout" | "confirmed" | "slot_taken";
 
@@ -142,7 +158,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     queryKey: ["addon-availability", serviceId, slotId, party],
     enabled: Boolean(slotId) && addons.length > 0,
     queryFn: () =>
-      fetchAddonAvail({ data: { serviceId, slotId, partySize: party } }),
+      toError(fetchAddonAvail({ data: { serviceId, slotId, partySize: party } })),
     staleTime: 15_000,
   });
   const addonRule = (id: string) =>
@@ -200,7 +216,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const placeMut = useMutation({
     mutationFn: () => {
       if (!slot) throw new Error("Pick an available departure first.");
-      return createBookingRPC({
+      return toError(createBookingRPC({
         data: {
           slotId: slot.id,
           partySize: party,
@@ -209,7 +225,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
           notes: notes.trim() || undefined,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
         },
-      });
+      }));
     },
 
     onMutate: () => setProcessing(true),
