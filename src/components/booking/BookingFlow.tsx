@@ -120,8 +120,9 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const [step, setStep] = useState<Step>("detail");
   const [takenSlot, setTakenSlot] = useState<{ label: string } | null>(null);
   const openSlots = svc.openSlots ?? [];
-  const [slotId, setSlotId] = useState(() => openSlots[0]?.id ?? "");
-  const slot = openSlots.find((s) => s.id === slotId) ?? openSlots[0] ?? null;
+  // Nothing is pre-picked: the angler chooses a departure on the dates page.
+  const [slotId, setSlotId] = useState("");
+  const slot = openSlots.find((s) => s.id === slotId) ?? null;
   const [party, setParty] = useState(2);
 
   const addons = (svc as any).addons as Array<{
