@@ -120,7 +120,7 @@ export function PublicHeader({
           </span>
         </Link>
 
-        {!hideNav && (
+        {!(hideNav && signedIn) && (
           <nav className="fx-ph-nav" style={{ display: "flex", alignItems: "center", gap: 28 }}>
             {NAV.map((n) => (
               <Link key={n.to} to={n.to} style={navLink(pathname.startsWith(n.to))}>
@@ -233,7 +233,7 @@ export function PublicHeader({
           borderTop: "1px solid rgba(255,255,255,.08)",
         }}
       >
-        {!hideNav && NAV.map((n) => (
+        {!(hideNav && signedIn) && NAV.map((n) => (
           <Link
             key={n.to}
             to={n.to}
