@@ -1177,7 +1177,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 20 }}>
                 <button
-                  onClick={() => { setTakenSlot(null); setStep("detail"); window.scrollTo(0, 0); }}
+                  onClick={() => { setTakenSlot(null); setReservation(null); setHoldLeft(null); setStep("dates"); window.scrollTo(0, 0); }}
                   style={{ flex: "1 1 200px", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
                 >
                   Pick another date
