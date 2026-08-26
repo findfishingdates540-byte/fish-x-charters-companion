@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 /** Canonical site navigation — identical on every public page. */
@@ -15,7 +15,15 @@ const NAV = [
  * Unified header used across all signed-out public pages.
  * Matches the landing (index) design so nav is consistent site-wide.
  */
-export function PublicHeader() {
+export function PublicHeader({
+  hideNav = false,
+  actions,
+}: {
+  /** Hide the public marketing links (used for signed-in contextual pages). */
+  hideNav?: boolean;
+  /** Custom right-side actions for signed-in users (replaces the Dashboard button). */
+  actions?: ReactNode;
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [open, setOpen] = useState(false);
@@ -112,16 +120,35 @@ export function PublicHeader() {
           </span>
         </Link>
 
-        <nav className="fx-ph-nav" style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          {NAV.map((n) => (
-            <Link key={n.to} to={n.to} style={navLink(pathname.startsWith(n.to))}>
-              {n.label}
-            </Link>
-          ))}
-        </nav>
+        {!(hideNav && signedIn) && (
+          <nav className="fx-ph-nav" style={{ display: "flex", alignItems: "center", gap: 28 }}>
+            {NAV.map((n) => (
+              <Link key={n.to} to={n.to} style={navLink(pathname.startsWith(n.to))}>
+                {n.label}
+              </Link>
+            ))}
+          </nav>
+        )}
 
         <div className="fx-ph-actions" style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {signedIn ? (
+          {signedIn && actions ? (
+            <>
+              {actions}
+              <Link
+                to="/dashboard"
+                style={{
+                  color: "#eaf1f6",
+                  textDecoration: "none",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  opacity: 0.92,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Dashboard
+              </Link>
+            </>
+          ) : signedIn ? (
             <Link
               to="/dashboard"
               style={{
@@ -206,7 +233,7 @@ export function PublicHeader() {
           borderTop: "1px solid rgba(255,255,255,.08)",
         }}
       >
-        {NAV.map((n) => (
+        {!(hideNav && signedIn) && NAV.map((n) => (
           <Link
             key={n.to}
             to={n.to}
