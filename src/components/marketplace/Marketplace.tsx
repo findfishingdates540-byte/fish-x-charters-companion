@@ -110,6 +110,15 @@ export function Marketplace() {
     setTimeout(() => setToast(""), 2200);
   };
 
+  // Persist the cart so product pages and the marketplace share one basket.
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("fx-cart", JSON.stringify(cart));
+    } catch {
+      /* storage unavailable */
+    }
+  }, [cart]);
+
   const { data: bizCategories } = useQuery({
     queryKey: ["business-categories"],
     queryFn: () => fetchCategories(),
