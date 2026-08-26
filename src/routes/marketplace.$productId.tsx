@@ -87,10 +87,29 @@ function ProductDetail() {
   const startCheckout = useServerFn(createProductCheckout);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
+
+  const maxQty = product.live && product.stockQty != null ? Math.max(1, product.stockQty) : 99;
+
+  /** Shared cart (localStorage) — the marketplace page hydrates from the same key. */
+  const addToCart = () => {
+    try {
+      const raw = window.localStorage.getItem("fx-cart");
+      const cart: Record<string, number> = raw ? JSON.parse(raw) : {};
+      cart[product.id] = Math.min(maxQty, (cart[product.id] ?? 0) + qty);
+      window.localStorage.setItem("fx-cart", JSON.stringify(cart));
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch {
+      /* storage unavailable */
+    }
+  };
 
   /** Live products go straight to Stripe Checkout; demo items bounce to the cart. */
   const buyNow = async () => {
     if (!product.live) {
+      addToCart();
       window.location.href = "/marketplace";
       return;
     }
@@ -99,7 +118,7 @@ function ProductDetail() {
     try {
       const res = await startCheckout({
         data: {
-          items: [{ productId: product.id, quantity: 1 }],
+          items: [{ productId: product.id, quantity: qty }],
           origin: window.location.origin,
         },
       });
