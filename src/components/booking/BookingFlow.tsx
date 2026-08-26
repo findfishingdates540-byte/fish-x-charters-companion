@@ -645,12 +645,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
 
                 <button
-                  onClick={() => { setStep("extras"); window.scrollTo(0, 0); }}
-                  disabled={!slot}
-                  style={{ width: "100%", background: slot ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: slot ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
+                  onClick={() => { setStep("dates"); window.scrollTo(0, 0); }}
+                  disabled={openSlots.length === 0}
+                  style={{ width: "100%", background: openSlots.length ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: openSlots.length ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: openSlots.length ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
-                  {slot ? "Continue — add-ons & notes →" : "No dates available"}
+                  {openSlots.length ? (slot ? "Change date & time →" : "Check availability →") : "No dates available"}
                 </button>
+
 
                 <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
                   {instantBook
