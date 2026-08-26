@@ -885,8 +885,6 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   ← Back to date &amp; time
                 </button>
               </div>
-
-              </div>
             </div>
           </div>
         )}
