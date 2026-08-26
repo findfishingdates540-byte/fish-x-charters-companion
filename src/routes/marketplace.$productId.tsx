@@ -139,7 +139,35 @@ function ProductDetail() {
 
   return (
     <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
-      <PublicHeader />
+      <PublicHeader
+        hideNav
+        actions={
+          <>
+            <Link
+              to="/marketplace"
+              style={{ color: "#eaf1f6", textDecoration: "none", fontSize: 13.5, fontWeight: 600, opacity: 0.9, whiteSpace: "nowrap" }}
+            >
+              Browse marketplace
+            </Link>
+            <Link
+              to="/marketplace"
+              search={{ cart: "1" }}
+              style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 9, background: "var(--sand, #e3c089)", color: "#1c1303", textDecoration: "none", borderRadius: 30, padding: "11px 18px", fontSize: 12.5, fontWeight: 700, whiteSpace: "nowrap" }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9}>
+                <path d="M6 8h12l-1.2 10H7.2z" />
+                <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+              </svg>
+              Cart
+              {cartCount > 0 && (
+                <span style={{ background: "#1c1303", color: "var(--sand, #e3c089)", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 7px" }}>
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          </>
+        }
+      />
       <div style={{ background: V.navy, color: "#eaf1f6", borderTop: "1px solid rgba(255,255,255,.07)" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 28px", height: 54, display: "flex", alignItems: "center", gap: 14 }}>
           <Link to="/marketplace" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, textDecoration: "none", fontSize: 13, fontWeight: 600 }}>
