@@ -1,6 +1,6 @@
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   CATALOG,
@@ -89,6 +89,19 @@ function ProductDetail() {
   const [err, setErr] = useState("");
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  const readCartCount = () => {
+    try {
+      const raw = window.localStorage.getItem("fx-cart");
+      const cart: Record<string, number> = raw ? JSON.parse(raw) : {};
+      return Object.values(cart).reduce((a, b) => a + (Number(b) || 0), 0);
+    } catch {
+      return 0;
+    }
+  };
+
+  useEffect(() => setCartCount(readCartCount()), []);
 
   const maxQty = product.live && product.stockQty != null ? Math.max(1, product.stockQty) : 99;
 
@@ -99,6 +112,7 @@ function ProductDetail() {
       const cart: Record<string, number> = raw ? JSON.parse(raw) : {};
       cart[product.id] = Math.min(maxQty, (cart[product.id] ?? 0) + qty);
       window.localStorage.setItem("fx-cart", JSON.stringify(cart));
+      setCartCount(readCartCount());
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
     } catch {
