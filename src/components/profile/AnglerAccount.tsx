@@ -436,6 +436,6 @@ export function AnglerAccount({ embedded = false }: { embedded?: boolean } = {})
         </div>
       </div>
       <Toast toast={toast} />
-    </Shell>
+    </Wrap>
   );
 }
