@@ -149,6 +149,14 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     (addonAvail ?? []).find((r) => r.id === id) ?? { available: true, reason: null as string | null, remaining: null as number | null };
 
   const [processing, setProcessing] = useState(false);
+  /** Seats are held the moment the deposit page opens; the hold is what the
+   *  countdown ticks down. When it lapses the departure reopens to everyone. */
+  const [reservation, setReservation] = useState<{
+    bookingId: string;
+    checkoutUrl: string | null;
+    holdExpiresAt: string | null;
+  } | null>(null);
+  const [holdLeft, setHoldLeft] = useState<number | null>(null);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [released, setReleased] = useState(false);
   const [stars, setStars] = useState(0);
