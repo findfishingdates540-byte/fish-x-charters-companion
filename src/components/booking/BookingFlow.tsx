@@ -158,7 +158,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     queryKey: ["addon-availability", serviceId, slotId, party],
     enabled: Boolean(slotId) && addons.length > 0,
     queryFn: () =>
-      fetchAddonAvail({ data: { serviceId, slotId, partySize: party } }),
+      toError(fetchAddonAvail({ data: { serviceId, slotId, partySize: party } })),
     staleTime: 15_000,
   });
   const addonRule = (id: string) =>
@@ -216,7 +216,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const placeMut = useMutation({
     mutationFn: () => {
       if (!slot) throw new Error("Pick an available departure first.");
-      return createBookingRPC({
+      return toError(createBookingRPC({
         data: {
           slotId: slot.id,
           partySize: party,
@@ -225,7 +225,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
           notes: notes.trim() || undefined,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
         },
-      });
+      }));
     },
 
     onMutate: () => setProcessing(true),
