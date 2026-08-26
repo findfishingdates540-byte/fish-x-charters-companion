@@ -9,64 +9,48 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TrustRouteImport } from './routes/trust'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as DiscoverRouteImport } from './routes/discover'
-import { Route as BrandStoryRouteImport } from './routes/brand-story'
-import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
-import { Route as ChartersIndexRouteImport } from './routes/charters.index'
-import { Route as MarketplaceProductIdRouteImport } from './routes/marketplace.$productId'
-import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
-import { Route as ChartersSearchRouteImport } from './routes/charters.search'
-import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
-import { Route as BSlugRouteImport } from './routes/b.$slug'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
-import { Route as AuthenticatedResolutionCenterRouteImport } from './routes/_authenticated/resolution-center'
-import { Route as AuthenticatedPayoutsStatusRouteImport } from './routes/_authenticated/payouts-status'
-import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
-import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedBookingRouteImport } from './routes/_authenticated/booking'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BecomeACaptainRouteImport } from './routes/become-a-captain'
+import { Route as BrandStoryRouteImport } from './routes/brand-story'
+import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as TrustRouteImport } from './routes/trust'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
-import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
-import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
-import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
+import { Route as AuthenticatedBookingRouteImport } from './routes/_authenticated/booking'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedPayoutsStatusRouteImport } from './routes/_authenticated/payouts-status'
+import { Route as AuthenticatedResolutionCenterRouteImport } from './routes/_authenticated/resolution-center'
+import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as BSlugRouteImport } from './routes/b.$slug'
+import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
+import { Route as ChartersIndexRouteImport } from './routes/charters.index'
+import { Route as ChartersSearchRouteImport } from './routes/charters.search'
+import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
+import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
+import { Route as MarketplaceProductIdRouteImport } from './routes/marketplace.$productId'
 import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
-import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
-import { Route as ApiPublicHooksSyncCronSecretRouteImport } from './routes/api/public/hooks/sync-cron-secret'
-import { Route as ApiPublicHooksReleaseEscrowRouteImport } from './routes/api/public/hooks/release-escrow'
-import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
-import { Route as ApiPublicHooksBookingTimersRouteImport } from './routes/api/public/hooks/booking-timers'
+import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
+import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicAvatarsSplatRouteImport } from './routes/api/public/avatars/$'
+import { Route as ApiPublicHooksBookingTimersRouteImport } from './routes/api/public/hooks/booking-timers'
+import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
+import { Route as ApiPublicHooksReleaseEscrowRouteImport } from './routes/api/public/hooks/release-escrow'
+import { Route as ApiPublicHooksSyncCronSecretRouteImport } from './routes/api/public/hooks/sync-cron-secret'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
-const TrustRoute = TrustRouteImport.update({
-  id: '/trust',
-  path: '/trust',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiscoverRoute = DiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BrandStoryRoute = BrandStoryRouteImport.update({
-  id: '/brand-story',
-  path: '/brand-story',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BecomeACaptainRoute = BecomeACaptainRouteImport.update({
-  id: '/become-a-captain',
-  path: '/become-a-captain',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -74,85 +58,34 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const BecomeACaptainRoute = BecomeACaptainRouteImport.update({
+  id: '/become-a-captain',
+  path: '/become-a-captain',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const BrandStoryRoute = BrandStoryRouteImport.update({
+  id: '/brand-story',
+  path: '/brand-story',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
-  id: '/marketplace/',
-  path: '/marketplace/',
+const DiscoverRoute = DiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChartersIndexRoute = ChartersIndexRouteImport.update({
-  id: '/charters/',
-  path: '/charters/',
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MarketplaceProductIdRoute = MarketplaceProductIdRouteImport.update({
-  id: '/marketplace/$productId',
-  path: '/marketplace/$productId',
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GuidesProfileRoute = GuidesProfileRouteImport.update({
-  id: '/guides/profile',
-  path: '/guides/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChartersSearchRoute = ChartersSearchRouteImport.update({
-  id: '/charters/search',
-  path: '/charters/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CaptainsProfileRoute = CaptainsProfileRouteImport.update({
-  id: '/captains/profile',
-  path: '/captains/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BSlugRoute = BSlugRouteImport.update({
-  id: '/b/$slug',
-  path: '/b/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
-  id: '/review',
-  path: '/review',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedResolutionCenterRoute =
-  AuthenticatedResolutionCenterRouteImport.update({
-    id: '/resolution-center',
-    path: '/resolution-center',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedPayoutsStatusRoute =
-  AuthenticatedPayoutsStatusRouteImport.update({
-    id: '/payouts-status',
-    path: '/payouts-status',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedBookingRoute = AuthenticatedBookingRouteImport.update({
@@ -160,48 +93,109 @@ const AuthenticatedBookingRoute = AuthenticatedBookingRouteImport.update({
   path: '/booking',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
-  id: '/api/public/stripe-webhook',
-  path: '/api/public/stripe-webhook',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
-  id: '/api/public/fishx-webhook',
-  path: '/api/public/fishx-webhook',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedTripsDetailRoute =
-  AuthenticatedTripsDetailRouteImport.update({
-    id: '/trips/detail',
-    path: '/trips/detail',
+const AuthenticatedPayoutsStatusRoute =
+  AuthenticatedPayoutsStatusRouteImport.update({
+    id: '/payouts-status',
+    path: '/payouts-status',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedResolutionCenterRoute =
+  AuthenticatedResolutionCenterRouteImport.update({
+    id: '/resolution-center',
+    path: '/resolution-center',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const BSlugRoute = BSlugRouteImport.update({
+  id: '/b/$slug',
+  path: '/b/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaptainsProfileRoute = CaptainsProfileRouteImport.update({
+  id: '/captains/profile',
+  path: '/captains/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChartersIndexRoute = ChartersIndexRouteImport.update({
+  id: '/charters/',
+  path: '/charters/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChartersSearchRoute = ChartersSearchRouteImport.update({
+  id: '/charters/search',
+  path: '/charters/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesProfileRoute = GuidesProfileRouteImport.update({
+  id: '/guides/profile',
+  path: '/guides/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
+  id: '/marketplace/',
+  path: '/marketplace/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceProductIdRoute = MarketplaceProductIdRouteImport.update({
+  id: '/marketplace/$productId',
+  path: '/marketplace/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedBookingsDetailRoute =
   AuthenticatedBookingsDetailRouteImport.update({
     id: '/bookings/detail',
     path: '/bookings/detail',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
-  id: '/api/public/media/$',
-  path: '/api/public/media/$',
+const AuthenticatedTripsDetailRoute =
+  AuthenticatedTripsDetailRouteImport.update({
+    id: '/trips/detail',
+    path: '/trips/detail',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiPublicFishxWebhookRoute = ApiPublicFishxWebhookRouteImport.update({
+  id: '/api/public/fishx-webhook',
+  path: '/api/public/fishx-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksSyncCronSecretRoute =
-  ApiPublicHooksSyncCronSecretRouteImport.update({
-    id: '/api/public/hooks/sync-cron-secret',
-    path: '/api/public/hooks/sync-cron-secret',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksReleaseEscrowRoute =
-  ApiPublicHooksReleaseEscrowRouteImport.update({
-    id: '/api/public/hooks/release-escrow',
-    path: '/api/public/hooks/release-escrow',
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe-webhook',
+  path: '/api/public/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAvatarsSplatRoute = ApiPublicAvatarsSplatRouteImport.update({
+  id: '/api/public/avatars/$',
+  path: '/api/public/avatars/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksBookingTimersRoute =
+  ApiPublicHooksBookingTimersRouteImport.update({
+    id: '/api/public/hooks/booking-timers',
+    path: '/api/public/hooks/booking-timers',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksDispatchEventsRoute =
@@ -210,15 +204,21 @@ const ApiPublicHooksDispatchEventsRoute =
     path: '/api/public/hooks/dispatch-events',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksBookingTimersRoute =
-  ApiPublicHooksBookingTimersRouteImport.update({
-    id: '/api/public/hooks/booking-timers',
-    path: '/api/public/hooks/booking-timers',
+const ApiPublicHooksReleaseEscrowRoute =
+  ApiPublicHooksReleaseEscrowRouteImport.update({
+    id: '/api/public/hooks/release-escrow',
+    path: '/api/public/hooks/release-escrow',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicAvatarsSplatRoute = ApiPublicAvatarsSplatRouteImport.update({
-  id: '/api/public/avatars/$',
-  path: '/api/public/avatars/$',
+const ApiPublicHooksSyncCronSecretRoute =
+  ApiPublicHooksSyncCronSecretRouteImport.update({
+    id: '/api/public/hooks/sync-cron-secret',
+    path: '/api/public/hooks/sync-cron-secret',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -466,46 +466,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/trust': {
-      id: '/trust'
-      path: '/trust'
-      fullPath: '/trust'
-      preLoaderRoute: typeof TrustRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/discover': {
-      id: '/discover'
-      path: '/discover'
-      fullPath: '/discover'
-      preLoaderRoute: typeof DiscoverRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/brand-story': {
-      id: '/brand-story'
-      path: '/brand-story'
-      fullPath: '/brand-story'
-      preLoaderRoute: typeof BrandStoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/become-a-captain': {
-      id: '/become-a-captain'
-      path: '/become-a-captain'
-      fullPath: '/become-a-captain'
-      preLoaderRoute: typeof BecomeACaptainRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -515,109 +480,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/marketplace/': {
-      id: '/marketplace/'
-      path: '/marketplace'
-      fullPath: '/marketplace/'
-      preLoaderRoute: typeof MarketplaceIndexRouteImport
+    '/become-a-captain': {
+      id: '/become-a-captain'
+      path: '/become-a-captain'
+      fullPath: '/become-a-captain'
+      preLoaderRoute: typeof BecomeACaptainRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/charters/': {
-      id: '/charters/'
-      path: '/charters'
-      fullPath: '/charters/'
-      preLoaderRoute: typeof ChartersIndexRouteImport
+    '/brand-story': {
+      id: '/brand-story'
+      path: '/brand-story'
+      fullPath: '/brand-story'
+      preLoaderRoute: typeof BrandStoryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/marketplace/$productId': {
-      id: '/marketplace/$productId'
-      path: '/marketplace/$productId'
-      fullPath: '/marketplace/$productId'
-      preLoaderRoute: typeof MarketplaceProductIdRouteImport
+    '/discover': {
+      id: '/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof DiscoverRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/guides/profile': {
-      id: '/guides/profile'
-      path: '/guides/profile'
-      fullPath: '/guides/profile'
-      preLoaderRoute: typeof GuidesProfileRouteImport
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/charters/search': {
-      id: '/charters/search'
-      path: '/charters/search'
-      fullPath: '/charters/search'
-      preLoaderRoute: typeof ChartersSearchRouteImport
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/captains/profile': {
-      id: '/captains/profile'
-      path: '/captains/profile'
-      fullPath: '/captains/profile'
-      preLoaderRoute: typeof CaptainsProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/b/$slug': {
-      id: '/b/$slug'
-      path: '/b/$slug'
-      fullPath: '/b/$slug'
-      preLoaderRoute: typeof BSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/review': {
-      id: '/_authenticated/review'
-      path: '/review'
-      fullPath: '/review'
-      preLoaderRoute: typeof AuthenticatedReviewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/resolution-center': {
-      id: '/_authenticated/resolution-center'
-      path: '/resolution-center'
-      fullPath: '/resolution-center'
-      preLoaderRoute: typeof AuthenticatedResolutionCenterRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/payouts-status': {
-      id: '/_authenticated/payouts-status'
-      path: '/payouts-status'
-      fullPath: '/payouts-status'
-      preLoaderRoute: typeof AuthenticatedPayoutsStatusRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/onboarding': {
-      id: '/_authenticated/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/messages': {
-      id: '/_authenticated/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/booking': {
@@ -627,33 +536,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBookingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/account': {
-      id: '/_authenticated/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/stripe-webhook': {
-      id: '/api/public/stripe-webhook'
-      path: '/api/public/stripe-webhook'
-      fullPath: '/api/public/stripe-webhook'
-      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/fishx-webhook': {
-      id: '/api/public/fishx-webhook'
-      path: '/api/public/fishx-webhook'
-      fullPath: '/api/public/fishx-webhook'
-      preLoaderRoute: typeof ApiPublicFishxWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/trips/detail': {
-      id: '/_authenticated/trips/detail'
-      path: '/trips/detail'
-      fullPath: '/trips/detail'
-      preLoaderRoute: typeof AuthenticatedTripsDetailRouteImport
+    '/_authenticated/messages': {
+      id: '/_authenticated/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/payouts-status': {
+      id: '/_authenticated/payouts-status'
+      path: '/payouts-status'
+      fullPath: '/payouts-status'
+      preLoaderRoute: typeof AuthenticatedPayoutsStatusRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/resolution-center': {
+      id: '/_authenticated/resolution-center'
+      path: '/resolution-center'
+      fullPath: '/resolution-center'
+      preLoaderRoute: typeof AuthenticatedResolutionCenterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/review': {
+      id: '/_authenticated/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AuthenticatedReviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/b/$slug': {
+      id: '/b/$slug'
+      path: '/b/$slug'
+      fullPath: '/b/$slug'
+      preLoaderRoute: typeof BSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/captains/profile': {
+      id: '/captains/profile'
+      path: '/captains/profile'
+      fullPath: '/captains/profile'
+      preLoaderRoute: typeof CaptainsProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/charters/': {
+      id: '/charters/'
+      path: '/charters'
+      fullPath: '/charters/'
+      preLoaderRoute: typeof ChartersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/charters/search': {
+      id: '/charters/search'
+      path: '/charters/search'
+      fullPath: '/charters/search'
+      preLoaderRoute: typeof ChartersSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/profile': {
+      id: '/guides/profile'
+      path: '/guides/profile'
+      fullPath: '/guides/profile'
+      preLoaderRoute: typeof GuidesProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/marketplace'
+      fullPath: '/marketplace/'
+      preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/$productId': {
+      id: '/marketplace/$productId'
+      path: '/marketplace/$productId'
+      fullPath: '/marketplace/$productId'
+      preLoaderRoute: typeof MarketplaceProductIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/bookings/detail': {
       id: '/_authenticated/bookings/detail'
@@ -662,32 +641,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBookingsDetailRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/media/$': {
-      id: '/api/public/media/$'
-      path: '/api/public/media/$'
-      fullPath: '/api/public/media/$'
-      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+    '/_authenticated/trips/detail': {
+      id: '/_authenticated/trips/detail'
+      path: '/trips/detail'
+      fullPath: '/trips/detail'
+      preLoaderRoute: typeof AuthenticatedTripsDetailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/fishx-webhook': {
+      id: '/api/public/fishx-webhook'
+      path: '/api/public/fishx-webhook'
+      fullPath: '/api/public/fishx-webhook'
+      preLoaderRoute: typeof ApiPublicFishxWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/sync-cron-secret': {
-      id: '/api/public/hooks/sync-cron-secret'
-      path: '/api/public/hooks/sync-cron-secret'
-      fullPath: '/api/public/hooks/sync-cron-secret'
-      preLoaderRoute: typeof ApiPublicHooksSyncCronSecretRouteImport
+    '/api/public/stripe-webhook': {
+      id: '/api/public/stripe-webhook'
+      path: '/api/public/stripe-webhook'
+      fullPath: '/api/public/stripe-webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/release-escrow': {
-      id: '/api/public/hooks/release-escrow'
-      path: '/api/public/hooks/release-escrow'
-      fullPath: '/api/public/hooks/release-escrow'
-      preLoaderRoute: typeof ApiPublicHooksReleaseEscrowRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/dispatch-events': {
-      id: '/api/public/hooks/dispatch-events'
-      path: '/api/public/hooks/dispatch-events'
-      fullPath: '/api/public/hooks/dispatch-events'
-      preLoaderRoute: typeof ApiPublicHooksDispatchEventsRouteImport
+    '/api/public/avatars/$': {
+      id: '/api/public/avatars/$'
+      path: '/api/public/avatars/$'
+      fullPath: '/api/public/avatars/$'
+      preLoaderRoute: typeof ApiPublicAvatarsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/booking-timers': {
@@ -697,11 +676,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBookingTimersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/avatars/$': {
-      id: '/api/public/avatars/$'
-      path: '/api/public/avatars/$'
-      fullPath: '/api/public/avatars/$'
-      preLoaderRoute: typeof ApiPublicAvatarsSplatRouteImport
+    '/api/public/hooks/dispatch-events': {
+      id: '/api/public/hooks/dispatch-events'
+      path: '/api/public/hooks/dispatch-events'
+      fullPath: '/api/public/hooks/dispatch-events'
+      preLoaderRoute: typeof ApiPublicHooksDispatchEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/release-escrow': {
+      id: '/api/public/hooks/release-escrow'
+      path: '/api/public/hooks/release-escrow'
+      fullPath: '/api/public/hooks/release-escrow'
+      preLoaderRoute: typeof ApiPublicHooksReleaseEscrowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/sync-cron-secret': {
+      id: '/api/public/hooks/sync-cron-secret'
+      path: '/api/public/hooks/sync-cron-secret'
+      fullPath: '/api/public/hooks/sync-cron-secret'
+      preLoaderRoute: typeof ApiPublicHooksSyncCronSecretRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
