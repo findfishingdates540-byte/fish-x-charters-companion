@@ -27,10 +27,33 @@ export const Route = createFileRoute("/_authenticated/booking")({
   validateSearch: search,
   loaderDeps: ({ search }) => ({ serviceId: search.service_id }),
   loader: ({ context, deps }) => context.queryClient.ensureQueryData(checkoutQuery(deps.serviceId)),
+  errorComponent: BookingError,
   component: RouteComponent,
 });
+
+function BookingError({ error }: { error: Error }) {
+  return (
+    <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", padding: 24, textAlign: "center" }}>
+      <div style={{ maxWidth: 460 }}>
+        <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 32, margin: "0 0 10px" }}>
+          We couldn’t load this trip
+        </h1>
+        <p style={{ color: "#5c6b78", fontSize: 14, margin: "0 0 18px" }}>
+          {error?.message || "Something went wrong. Nothing was charged."}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{ background: "#e3c089", border: 0, borderRadius: 10, padding: "12px 20px", fontWeight: 700, cursor: "pointer" }}
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function RouteComponent() {
   const { service_id, base } = Route.useSearch();
   return <BookingFlow serviceId={service_id} baseId={base ?? service_id} />;
 }
+
