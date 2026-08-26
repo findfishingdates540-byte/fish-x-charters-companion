@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 /** Canonical site navigation — identical on every public page. */
@@ -15,7 +15,15 @@ const NAV = [
  * Unified header used across all signed-out public pages.
  * Matches the landing (index) design so nav is consistent site-wide.
  */
-export function PublicHeader() {
+export function PublicHeader({
+  hideNav = false,
+  actions,
+}: {
+  /** Hide the public marketing links (used for signed-in contextual pages). */
+  hideNav?: boolean;
+  /** Custom right-side actions for signed-in users (replaces the Dashboard button). */
+  actions?: ReactNode;
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [open, setOpen] = useState(false);
