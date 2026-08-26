@@ -1035,12 +1035,32 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 </div>
 
                 <button
-                  onClick={() => placeMut.mutate()}
-                  disabled={placeMut.isPending}
-                  style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
+                  onClick={() => {
+                    if (!reservation) return;
+                    if (reservation.checkoutUrl) {
+                      window.location.href = reservation.checkoutUrl;
+                      return;
+                    }
+                    // No Stripe configured (preview): the booking already settled.
+                    setConfirmedId(reservation.bookingId);
+                    setStep("confirmed");
+                    window.scrollTo(0, 0);
+                  }}
+                  disabled={!reservation || placeMut.isPending || holdExpired}
+                  style={{ width: "100%", background: !reservation || holdExpired ? "#dfe6ec" : V.sand, color: !reservation || holdExpired ? V.tmut : "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: !reservation || holdExpired ? "not-allowed" : "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
                 >
-                  Place booking · pay 25% deposit
+                  {holdExpired
+                    ? "Hold expired"
+                    : placeMut.isPending || !reservation
+                      ? "Holding your seats…"
+                      : `Pay ${money(deposit)} deposit`}
                 </button>
+                <div style={{ fontFamily: MONO, fontSize: 11.5, color: V.tmut, textAlign: "center", marginTop: 10, lineHeight: 1.5 }}>
+                  {holdExpired
+                    ? "The departure reopened to other anglers."
+                    : "Seats stay yours until the countdown ends."}
+                </div>
+
               </div>
             </div>
           </div>
