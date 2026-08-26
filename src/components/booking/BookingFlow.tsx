@@ -79,20 +79,21 @@ export const checkoutQuery = (serviceId: string) =>
     queryFn: () => getCheckoutContext({ data: { serviceId } }),
   });
 
-type Step = "detail" | "extras" | "checkout" | "confirmed" | "slot_taken";
+type Step = "detail" | "dates" | "extras" | "checkout" | "confirmed" | "slot_taken";
 
 /** Postgres/RPC errors that mean "someone else got this departure". */
 const SLOT_CONFLICT = /seat|slot|full|hold|reserved|no longer|overlap|conflict|blackout|taken|capacity/i;
 
 const CRUMBS: Array<{ k: Step | "results"; label: string }> = [
-  { k: "results", label: "Browse" },
   { k: "detail", label: "Trip" },
+  { k: "dates", label: "Date & time" },
   { k: "extras", label: "Add-ons" },
-  { k: "checkout", label: "Checkout" },
+  { k: "checkout", label: "Deposit" },
   { k: "confirmed", label: "Confirmed" },
 ];
 
-const STEP_ORDER: Array<Step | "results"> = ["results", "detail", "extras", "checkout", "confirmed"];
+const STEP_ORDER: Array<Step | "results"> = ["results", "detail", "dates", "extras", "checkout", "confirmed"];
+
 
 const CANCELLATION_RULES: Array<[string, string]> = [
   [
