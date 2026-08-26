@@ -724,6 +724,9 @@ body.dc-body { margin:0; background:#0a2236; }
     padding: 9px 13px !important; font-size: 13px !important;
   }
   .fx-side > div[style*="margin-top: auto"] { margin-top: 10px !important; }
+  .fx-side-settings { margin-top: 10px !important; margin-bottom: 0 !important; }
+  .fx-settings { grid-template-columns: minmax(0, 1fr) !important; }
+  .fx-settings > nav { position: static !important; }
   .fx-topbar { padding: 13px 16px !important; flex-wrap: wrap !important; gap: 10px !important; }
   .fx-topbar > div:first-child > div:first-child { font-size: 21px !important; }
   .fx-main { padding: 18px 16px 44px !important; max-width: 100% !important; }

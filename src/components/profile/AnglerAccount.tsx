@@ -191,7 +191,7 @@ const initialsOf = (name: string) =>
     .map((p) => p[0]!.toUpperCase())
     .join("") || "?";
 
-export function AnglerAccount() {
+export function AnglerAccount({ embedded = false }: { embedded?: boolean } = {}) {
   const { data } = useSuspenseQuery({
     queryKey: ["my-profile"],
     queryFn: () => getMyProfile(),
@@ -235,23 +235,32 @@ export function AnglerAccount() {
   const initials = initialsOf(displayName || fullName || email || "");
   const disabled = saveMut.isPending || !dirty;
 
+  const Wrap = embedded
+    ? ({ children }: { children: React.ReactNode }) => <>{children}</>
+    : Shell;
+
   return (
-    <Shell>
-      <h1
-        style={{
-          fontFamily: V.serif,
-          fontWeight: 600,
-          fontSize: 30,
-          letterSpacing: "-.01em",
-          margin: "0 0 6px",
-          color: V.ink,
-        }}
-      >
-        Manage account
-      </h1>
-      <p style={{ fontSize: 14, color: V.tmut, margin: "0 0 22px" }}>
-        Update how you appear to captains and how they can reach you.
-      </p>
+    <Wrap>
+      {!embedded && (
+        <>
+          <h1
+            style={{
+              fontFamily: V.serif,
+              fontWeight: 600,
+              fontSize: 30,
+              letterSpacing: "-.01em",
+              margin: "0 0 6px",
+              color: V.ink,
+            }}
+          >
+            Manage account
+          </h1>
+          <p style={{ fontSize: 14, color: V.tmut, margin: "0 0 22px" }}>
+            Update how you appear to captains and how they can reach you.
+          </p>
+        </>
+      )}
+
 
       {/* Identity header card */}
       <div
@@ -427,6 +436,6 @@ export function AnglerAccount() {
         </div>
       </div>
       <Toast toast={toast} />
-    </Shell>
+    </Wrap>
   );
 }

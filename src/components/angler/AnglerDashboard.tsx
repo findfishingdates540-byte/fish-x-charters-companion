@@ -192,7 +192,17 @@ export function AnglerDashboard() {
               <span style={{ position: "absolute", top: 8, right: 9, width: 8, height: 8, borderRadius: "50%", background: "var(--sand)", border: "2px solid var(--navy)" }} />
             </button>
             <Link
-              to="/account"
+              to="/settings"
+              title="Settings"
+              style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", display: "grid", placeItems: "center", color: "var(--ond)", textDecoration: "none" }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                <circle cx="12" cy="12" r="3.2" />
+                <path d="M4.8 14.6 3.4 15.6l1.6 2.8 1.7-.6a7.6 7.6 0 0 0 1.7 1l.3 1.8h3.2l.3-1.8a7.6 7.6 0 0 0 1.7-1l1.7.6 1.6-2.8-1.4-1a7.7 7.7 0 0 0 0-2l1.4-1-1.6-2.8-1.7.6a7.6 7.6 0 0 0-1.7-1L12 4.4H8.8l-.3 1.8a7.6 7.6 0 0 0-1.7 1l-1.7-.6-1.6 2.8 1.4 1a7.7 7.7 0 0 0 0 2Z" />
+              </svg>
+            </Link>
+            <Link
+              to="/settings"
               title="Your account"
               style={{ display: "flex", alignItems: "center", gap: 9, background: "transparent", border: 0, cursor: "pointer", textDecoration: "none" }}
             >
