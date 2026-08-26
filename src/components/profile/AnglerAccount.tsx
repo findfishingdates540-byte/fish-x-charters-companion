@@ -191,7 +191,7 @@ const initialsOf = (name: string) =>
     .map((p) => p[0]!.toUpperCase())
     .join("") || "?";
 
-export function AnglerAccount() {
+export function AnglerAccount({ embedded = false }: { embedded?: boolean } = {}) {
   const { data } = useSuspenseQuery({
     queryKey: ["my-profile"],
     queryFn: () => getMyProfile(),
