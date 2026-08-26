@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tansta
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createBookingFromService, getAddonAvailability, getCheckoutContext } from "@/lib/booking-checkout.functions";
-import { PublicAvailabilityCalendar, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
+import { PublicAvailabilityCalendar, timeBlock, type PublicSlot } from "@/components/booking/PublicAvailabilityCalendar";
 import { DEFAULT_HERO, galleryFor } from "@/lib/platform-photos";
 
 const V = {
@@ -79,20 +79,21 @@ export const checkoutQuery = (serviceId: string) =>
     queryFn: () => getCheckoutContext({ data: { serviceId } }),
   });
 
-type Step = "detail" | "extras" | "checkout" | "confirmed" | "slot_taken";
+type Step = "detail" | "dates" | "extras" | "checkout" | "confirmed" | "slot_taken";
 
 /** Postgres/RPC errors that mean "someone else got this departure". */
 const SLOT_CONFLICT = /seat|slot|full|hold|reserved|no longer|overlap|conflict|blackout|taken|capacity/i;
 
 const CRUMBS: Array<{ k: Step | "results"; label: string }> = [
-  { k: "results", label: "Browse" },
   { k: "detail", label: "Trip" },
+  { k: "dates", label: "Date & time" },
   { k: "extras", label: "Add-ons" },
-  { k: "checkout", label: "Checkout" },
+  { k: "checkout", label: "Deposit" },
   { k: "confirmed", label: "Confirmed" },
 ];
 
-const STEP_ORDER: Array<Step | "results"> = ["results", "detail", "extras", "checkout", "confirmed"];
+const STEP_ORDER: Array<Step | "results"> = ["results", "detail", "dates", "extras", "checkout", "confirmed"];
+
 
 const CANCELLATION_RULES: Array<[string, string]> = [
   [
@@ -119,8 +120,9 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const [step, setStep] = useState<Step>("detail");
   const [takenSlot, setTakenSlot] = useState<{ label: string } | null>(null);
   const openSlots = svc.openSlots ?? [];
-  const [slotId, setSlotId] = useState(() => openSlots[0]?.id ?? "");
-  const slot = openSlots.find((s) => s.id === slotId) ?? openSlots[0] ?? null;
+  // Nothing is pre-picked: the angler chooses a departure on the dates page.
+  const [slotId, setSlotId] = useState("");
+  const slot = openSlots.find((s) => s.id === slotId) ?? null;
   const [party, setParty] = useState(2);
 
   const addons = (svc as any).addons as Array<{
@@ -147,6 +149,14 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     (addonAvail ?? []).find((r) => r.id === id) ?? { available: true, reason: null as string | null, remaining: null as number | null };
 
   const [processing, setProcessing] = useState(false);
+  /** Seats are held the moment the deposit page opens; the hold is what the
+   *  countdown ticks down. When it lapses the departure reopens to everyone. */
+  const [reservation, setReservation] = useState<{
+    bookingId: string;
+    checkoutUrl: string | null;
+    holdExpiresAt: string | null;
+  } | null>(null);
+  const [holdLeft, setHoldLeft] = useState<number | null>(null);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [released, setReleased] = useState(false);
   const [stars, setStars] = useState(0);
@@ -204,15 +214,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
     onMutate: () => setProcessing(true),
     onSuccess: (res) => {
-      if (res.checkoutUrl) {
-        // Hand off to Stripe Checkout; we come back with ?paid=1&booking_id=...
-        window.location.href = res.checkoutUrl;
-        return;
-      }
-      setConfirmedId(res.bookingId);
-      setStep("confirmed");
+      // Seats are now locked to this angler until the hold lapses.
+      setReservation({
+        bookingId: res.bookingId,
+        checkoutUrl: res.checkoutUrl ?? null,
+        holdExpiresAt: res.holdExpiresAt ?? null,
+      });
       setProcessing(false);
-      window.scrollTo(0, 0);
     },
     onError: (e: unknown) => {
       setProcessing(false);
@@ -260,7 +268,36 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     setSelectedAddons((cur) => (cur.some((id) => blocked.has(id)) ? cur.filter((id) => !blocked.has(id)) : cur));
   }, [addonAvail]);
   // Changing what you're buying starts a fresh reservation attempt.
-  useEffect(() => { setAttemptKey(crypto.randomUUID()); }, [slotId, party, selectedAddons, notes]);
+  useEffect(() => {
+    setAttemptKey(crypto.randomUUID());
+    // Any change to what's being bought invalidates the existing hold.
+    setReservation(null);
+    setHoldLeft(null);
+  }, [slotId, party, selectedAddons, notes]);
+
+  // Opening the deposit page locks the departure for 15 minutes.
+  useEffect(() => {
+    if (step !== "checkout") return;
+    if (reservation || placeMut.isPending) return;
+    if (!slot) return;
+    placeMut.mutate();
+  }, [step, reservation, slot?.id]);
+
+  // Live countdown on the hold. When it lapses the seats go back on sale.
+  useEffect(() => {
+    if (!reservation?.holdExpiresAt) { setHoldLeft(null); return; }
+    const end = new Date(reservation.holdExpiresAt).getTime();
+    const tick = () => setHoldLeft(Math.max(0, Math.round((end - Date.now()) / 1000)));
+    tick();
+    const t = setInterval(tick, 1000);
+    return () => clearInterval(t);
+  }, [reservation?.holdExpiresAt]);
+
+  const holdExpired = holdLeft === 0;
+  const holdClock =
+    holdLeft == null ? "" : `${Math.floor(holdLeft / 60)}:${String(holdLeft % 60).padStart(2, "0")}`;
+
+
 
 
   const crumbStyle = (k: Step | "results"): CSSProperties => {
@@ -562,15 +599,27 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   </span>
                 </div>
 
-                <div style={{ marginBottom: 14 }}>
-                  <PublicAvailabilityCalendar
-                    serviceId={serviceId}
-                    selectedSlotId={slot?.id ?? null}
-                    partySize={party}
-                    theme="dark"
-                    onSelectSlot={(s: PublicSlot) => setSlotId(s.id)}
-                  />
+                <div
+                  style={{
+                    marginBottom: 18,
+                    border: `1px solid ${V.lined}`,
+                    borderRadius: 12,
+                    padding: "13px 15px",
+                    display: "grid",
+                    gap: 4,
+                  }}
+                >
+                  <span style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.cyan }}>
+                    Departure
+                  </span>
+                  <span style={{ fontSize: 14.5, fontWeight: 700, color: "#fff" }}>
+                    {slot ? `${dateLabel}` : "Not selected yet"}
+                  </span>
+                  <span style={{ fontFamily: MONO, fontSize: 12.5, color: V.ondmut }}>
+                    {slot ? timeBlock(slot) : `${openSlots.length} open departure${openSlots.length === 1 ? "" : "s"}`}
+                  </span>
                 </div>
+
 
 
 
@@ -601,12 +650,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
 
                 <button
-                  onClick={() => { setStep("extras"); window.scrollTo(0, 0); }}
-                  disabled={!slot}
-                  style={{ width: "100%", background: slot ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: slot ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
+                  onClick={() => { setStep("dates"); window.scrollTo(0, 0); }}
+                  disabled={openSlots.length === 0}
+                  style={{ width: "100%", background: openSlots.length ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: openSlots.length ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: openSlots.length ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
-                  {slot ? "Continue — add-ons & notes →" : "No dates available"}
+                  {openSlots.length ? (slot ? "Change date & time →" : "Check availability →") : "No dates available"}
                 </button>
+
 
                 <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
                   {instantBook
@@ -619,10 +669,97 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
           </div>
         )}
 
+        {/* ==== DATE & TIME BLOCK ==== */}
+        {step === "dates" && (
+          <div>
+            <button onClick={() => { setStep("detail"); window.scrollTo(0, 0); }} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
+            <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 34, margin: "0 0 6px" }}>Select date &amp; time</h1>
+            <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 24px", maxWidth: 620 }}>
+              Only dates with an open departure are selectable. Each departure is an exclusive time
+              block — once you take it, the boat is yours for that window.
+            </p>
+
+            <div className="fx-booking-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+                    <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600 }}>Party size</div>
+                    <select
+                      value={party}
+                      onChange={(e) => setParty(Number(e.target.value))}
+                      style={{ background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "11px 13px", fontFamily: MONO, fontSize: 14, fontWeight: 600, color: V.ink, outline: "none" }}
+                    >
+                      {Array.from({ length: cap }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>{n} {n === 1 ? "Angler" : "Anglers"}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ fontSize: 13, color: V.tmut }}>
+                    Up to {capacity} aboard, including non-fishing guests. The trip fee is flat — it
+                    doesn&rsquo;t change with party size.
+                  </div>
+                </section>
+
+                <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                  <PublicAvailabilityCalendar
+                    serviceId={serviceId}
+                    selectedSlotId={slot?.id ?? null}
+                    partySize={party}
+                    theme="light"
+                    onSelectSlot={(s: PublicSlot) => setSlotId(s.id)}
+                  />
+                </section>
+              </div>
+
+              {/* Persistent trip card */}
+              <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
+                <div style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 8 }}>Your trip</div>
+                <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 23, lineHeight: 1.15 }}>{listingTitle}</div>
+                <div style={{ fontSize: 13, color: V.tmut, margin: "4px 0 16px" }}>{businessLine}</div>
+
+                {[
+                  ["Duration", durLabel],
+                  ["Date", slot ? dateLabel : "Not selected"],
+                  ["Departure", slot ? timeBlock(slot) : "Not selected"],
+                  ["Party size", `${party}`],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
+                    <span>{k}</span><span style={{ color: V.ink, fontWeight: 600, textAlign: "right" }}>{v}</span>
+                  </div>
+                ))}
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 700, padding: "12px 0", borderTop: `1px solid ${V.line}`, marginTop: 8 }}>
+                  <span>Trip total</span><span style={{ fontFamily: V.serif, fontSize: 22 }}>{money(price)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: V.tmut, padding: "2px 0" }}>
+                  <span>Deposit today (25%)</span><span style={{ fontWeight: 700, color: V.ink }}>{money(deposit)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: V.tmut, padding: "2px 0 16px" }}>
+                  <span>Balance at the dock</span><span style={{ color: V.ink }}>{money(balanceDue)}</span>
+                </div>
+
+                <button
+                  onClick={() => { setStep("extras"); window.scrollTo(0, 0); }}
+                  disabled={!slot}
+                  style={{ width: "100%", background: slot ? V.sand : "#dfe6ec", color: slot ? "#1c1303" : V.tmut, border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed" }}
+                >
+                  Continue to add-ons →
+                </button>
+                {!slot && (
+                  <div style={{ fontSize: 12, color: V.tmut, textAlign: "center", marginTop: 9 }}>
+                    Select a departure time to continue.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ==== ADD-ONS & NOTES ==== */}
+
         {step === "extras" && (
           <div>
-            <button onClick={() => setStep("detail")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to trip</button>
+            <button onClick={() => { setStep("dates"); window.scrollTo(0, 0); }} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to date &amp; time</button>
             <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 34, margin: "0 0 6px" }}>Add-ons &amp; notes</h1>
             <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 24px" }}>
               {dateLabel}{time ? ` · ${time}` : ""} · {party} angler{party === 1 ? "" : "s"} · {svc.title}
@@ -715,8 +852,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
               {/* Running total */}
               <div style={{ position: "sticky", top: 88, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
-                <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 20, marginBottom: 16 }}>Your trip</div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
+                <div style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.tmut, marginBottom: 8 }}>Your trip</div>
+                <div style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 23, lineHeight: 1.15 }}>{listingTitle}</div>
+                <div style={{ fontSize: 13, color: V.tmut, margin: "4px 0 14px" }}>{businessLine}</div>
+                <div style={{ fontSize: 13, color: V.tmut, paddingBottom: 12, borderBottom: `1px solid ${V.line}` }}>
+                  {slot ? `${dateLabel} · ${timeBlock(slot)}` : "No departure selected"} · {party} aboard
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "10px 0 7px", color: V.tmut }}>
                   <span>Trip fee</span><span style={{ color: V.ink }}>{money(price)}</span>
                 </div>
                 {addonLines.map((l) => (
@@ -734,7 +876,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   onClick={() => { setStep("checkout"); window.scrollTo(0, 0); }}
                   style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
                 >
-                  Continue to secure checkout →
+                  Continue to deposit →
+                </button>
+                <button
+                  onClick={() => { setStep("dates"); window.scrollTo(0, 0); }}
+                  style={{ width: "100%", background: "transparent", color: V.tmut, border: `1px solid ${V.line}`, borderRadius: 12, padding: 13, fontFamily: V.sans, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginTop: 10 }}
+                >
+                  ← Back to date &amp; time
                 </button>
               </div>
             </div>
@@ -748,7 +896,62 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
         {step === "checkout" && (
           <div>
             <button onClick={() => setStep("extras")} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: 0, color: V.tmut, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}>← Back to add-ons</button>
+            <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 34, margin: "0 0 6px" }}>Pay your deposit</h1>
+            <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 18px" }}>
+              You pay 25% now to lock the boat. The rest goes to your captain at the dock.
+            </p>
+
+            {/* Hold countdown — the departure is off the market while it runs. */}
+            {!holdExpired && (
+              <div
+                style={{
+                  display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap",
+                  background: "#fdf5e6", border: "1px solid rgba(169,126,60,.35)",
+                  borderRadius: 14, padding: "14px 18px", marginBottom: 20,
+                }}
+              >
+                <span style={{ color: V.goldtext, fontSize: 16 }}>⏱</span>
+                <span style={{ fontSize: 13.5, color: V.goldtext, fontWeight: 600, flex: 1, minWidth: 240 }}>
+                  {placeMut.isPending || !reservation
+                    ? "Holding this departure for you…"
+                    : "This departure is held for you. No one else can book this boat for this window."}
+                </span>
+                <span style={{ fontFamily: MONO, fontSize: 20, fontWeight: 700, color: holdLeft != null && holdLeft < 120 ? "#c2603f" : V.goldtext, letterSpacing: ".04em" }}>
+                  {holdClock || "15:00"}
+                </span>
+              </div>
+            )}
+
+            {holdExpired && (
+              <div
+                style={{
+                  background: "#fff", border: "1px solid rgba(194,96,63,.4)", borderRadius: 16,
+                  padding: "18px 20px", marginBottom: 20, display: "grid", gap: 6,
+                }}
+              >
+                <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600 }}>Your 15-minute hold expired</div>
+                <div style={{ fontSize: 13.5, color: V.tmut, lineHeight: 1.6 }}>
+                  Nothing was charged and this departure is back on sale for other anglers. Pick your
+                  date and time again to start a fresh hold.
+                </div>
+                <button
+                  onClick={() => {
+                    setReservation(null);
+                    setHoldLeft(null);
+                    setAttemptKey(crypto.randomUUID());
+                    void qc.invalidateQueries({ queryKey: ["checkout", serviceId] });
+                    setStep("dates");
+                    window.scrollTo(0, 0);
+                  }}
+                  style={{ justifySelf: "start", marginTop: 8, background: V.navy, color: "#fff", border: 0, borderRadius: 11, padding: "12px 18px", fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, cursor: "pointer" }}
+                >
+                  Pick another departure
+                </button>
+              </div>
+            )}
+
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
+
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                 {[
                   { n: 1, title: "Trip summary" },
@@ -835,12 +1038,32 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 </div>
 
                 <button
-                  onClick={() => placeMut.mutate()}
-                  disabled={placeMut.isPending}
-                  style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
+                  onClick={() => {
+                    if (!reservation) return;
+                    if (reservation.checkoutUrl) {
+                      window.location.href = reservation.checkoutUrl;
+                      return;
+                    }
+                    // No Stripe configured (preview): the booking already settled.
+                    setConfirmedId(reservation.bookingId);
+                    setStep("confirmed");
+                    window.scrollTo(0, 0);
+                  }}
+                  disabled={!reservation || placeMut.isPending || holdExpired}
+                  style={{ width: "100%", background: !reservation || holdExpired ? "#dfe6ec" : V.sand, color: !reservation || holdExpired ? V.tmut : "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: !reservation || holdExpired ? "not-allowed" : "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
                 >
-                  Place booking · pay 25% deposit
+                  {holdExpired
+                    ? "Hold expired"
+                    : placeMut.isPending || !reservation
+                      ? "Holding your seats…"
+                      : `Pay ${money(deposit)} deposit`}
                 </button>
+                <div style={{ fontFamily: MONO, fontSize: 11.5, color: V.tmut, textAlign: "center", marginTop: 10, lineHeight: 1.5 }}>
+                  {holdExpired
+                    ? "The departure reopened to other anglers."
+                    : "Seats stay yours until the countdown ends."}
+                </div>
+
               </div>
             </div>
           </div>
@@ -909,6 +1132,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                         onClick={() => {
                           setSlotId(s.id);
                           setTakenSlot(null);
+                          setReservation(null);
+                          setHoldLeft(null);
                           setStep("checkout");
                           window.scrollTo(0, 0);
                         }}
@@ -955,7 +1180,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 20 }}>
                 <button
-                  onClick={() => { setTakenSlot(null); setStep("detail"); window.scrollTo(0, 0); }}
+                  onClick={() => { setTakenSlot(null); setReservation(null); setHoldLeft(null); setStep("dates"); window.scrollTo(0, 0); }}
                   style={{ flex: "1 1 200px", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
                 >
                   Pick another date
