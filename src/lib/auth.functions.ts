@@ -19,7 +19,13 @@ export const getMyRoles = createServerFn({ method: "GET" })
     return (data ?? []).map((r: { role: string }) => r.role);
   });
 
-export const hasPrimaryRole = (roles: string[]): "angler" | "business_owner" | "captain" | null => {
+export const hasPrimaryRole = (roles: unknown): "angler" | "business_owner" | "captain" | null => {
+  if (!Array.isArray(roles)) {
+    // Defensive: a transient server-fn/serialization hiccup (e.g. right after
+    // sign-in) must not crash the dashboard with "roles.includes is not a function".
+    console.error("hasPrimaryRole received non-array roles:", roles);
+    return null;
+  }
   if (roles.includes("captain")) return "captain";
   if (roles.includes("business_owner")) return "business_owner";
   if (roles.includes("angler")) return "angler";
