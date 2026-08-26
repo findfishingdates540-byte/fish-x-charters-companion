@@ -39,7 +39,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     typeof search.tab === "string" ? { tab: search.tab } : {},
   head: () => ({ meta: [{ title: "Dashboard — FISH-X.COM Bookings & Marketplace" }] }),
   loader: async ({ context }) => {
-    const [roles, businesses] = await Promise.all([
+    try {
+    const [rolesRaw, businessesRaw] = await Promise.all([
       context.queryClient.ensureQueryData(myRolesQO),
       context.queryClient.ensureQueryData(myBusinessesQO),
       context.queryClient.ensureQueryData(myProfileQO),
