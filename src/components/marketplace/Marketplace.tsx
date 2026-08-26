@@ -274,31 +274,6 @@ export function Marketplace() {
     <div id="mkt" style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
       {/* NAV */}
       <PublicHeader />
-      <div style={{ background: V.navy, color: V.ond, borderTop: "1px solid rgba(255,255,255,.07)" }}>
-        <div className="mkt-nav" style={{ width: "100%", padding: "0 36px", height: 60, display: "flex", alignItems: "center", gap: 22 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: V.sand, whiteSpace: "nowrap" }}>Marketplace</span>
-          <label className="mkt-search" style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: `1px solid ${V.lined}`, borderRadius: 30, padding: "9px 15px", flex: "1 1 auto", maxWidth: 420, minWidth: 180 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" strokeWidth={1.8}>
-              <circle cx="11" cy="11" r="7" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-            <input type="text" placeholder="Search rods, lures, apparel…" style={{ border: 0, outline: "none", background: "transparent", fontFamily: V.sans, fontSize: 13.5, color: "#fff", width: "100%" }} />
-          </label>
-          <button
-            onClick={() => setCartOpen(true)}
-            style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 9, background: V.sand, color: "#1c1303", border: 0, borderRadius: 30, padding: "11px 18px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9}>
-              <path d="M6 8h12l-1.2 10H7.2z" />
-              <path d="M9 8V6a3 3 0 0 1 6 0v2" />
-            </svg>
-            Cart
-            {count > 0 && (
-              <span style={{ background: "#1c1303", color: V.sand, fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 7px" }}>{count}</span>
-            )}
-          </button>
-        </div>
-      </div>
 
       <main className="mkt-main" style={{ width: "100%", padding: "26px 36px 60px" }}>
         {/* ESCROW RIBBON */}
