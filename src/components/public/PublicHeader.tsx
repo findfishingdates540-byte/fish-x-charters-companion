@@ -233,7 +233,7 @@ export function PublicHeader({
           borderTop: "1px solid rgba(255,255,255,.08)",
         }}
       >
-        {NAV.map((n) => (
+        {!hideNav && NAV.map((n) => (
           <Link
             key={n.to}
             to={n.to}
