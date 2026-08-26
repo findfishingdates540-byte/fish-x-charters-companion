@@ -214,15 +214,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
     onMutate: () => setProcessing(true),
     onSuccess: (res) => {
-      if (res.checkoutUrl) {
-        // Hand off to Stripe Checkout; we come back with ?paid=1&booking_id=...
-        window.location.href = res.checkoutUrl;
-        return;
-      }
-      setConfirmedId(res.bookingId);
-      setStep("confirmed");
+      // Seats are now locked to this angler until the hold lapses.
+      setReservation({
+        bookingId: res.bookingId,
+        checkoutUrl: res.checkoutUrl ?? null,
+        holdExpiresAt: res.holdExpiresAt ?? null,
+      });
       setProcessing(false);
-      window.scrollTo(0, 0);
     },
     onError: (e: unknown) => {
       setProcessing(false);
