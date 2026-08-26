@@ -174,9 +174,9 @@ export function ServicesManager({
         />
       )}
 
-      {isLoading && <div style={{ fontSize: 13, color: "#7b8b99" }}>Loading listings…</div>}
+      {isLoading && <div style={{ fontSize: 13, color: "#92A0AB" }}>Loading listings…</div>}
       {!isLoading && (rows ?? []).length === 0 && !editing && (
-        <div style={{ fontSize: 13.5, color: "#7b8b99" }}>{emptyText}</div>
+        <div style={{ fontSize: 13.5, color: "#92A0AB" }}>{emptyText}</div>
       )}
 
       <div style={{ display: "grid", gap: 12 }}>
@@ -188,9 +188,9 @@ export function ServicesManager({
               gap: 14,
               alignItems: "center",
               padding: 12,
-              border: "1px solid rgba(13,34,54,.10)",
+              border: "1px solid rgba(255,255,255,.07)",
               borderRadius: 16,
-              background: "#fbfcfd",
+              background: "#1C2936",
               flexWrap: "wrap",
             }}
           >
@@ -204,8 +204,8 @@ export function ServicesManager({
               }}
             />
             <div style={{ flex: 1, minWidth: 180 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "#0d2236" }}>{s.title}</div>
-              <div style={{ fontSize: 12.5, color: "#7b8b99" }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#F0F2F5" }}>{s.title}</div>
+              <div style={{ fontSize: 12.5, color: "#92A0AB" }}>
                 {KIND_LABELS[s.kind as ServiceKindKey] ?? s.kind} · {money(s.base_price_cents)} ·{" "}
                 {s.capacity} guests
                 {s.duration_minutes ? ` · ${Math.round(s.duration_minutes / 60)}h` : ""}
@@ -217,8 +217,8 @@ export function ServicesManager({
                 fontWeight: 700,
                 padding: "5px 10px",
                 borderRadius: 999,
-                background: s.is_published ? "rgba(31,122,77,.10)" : "rgba(13,34,54,.06)",
-                color: s.is_published ? "#1f7a4d" : "#7b8b99",
+                background: s.is_published ? "rgba(34,197,94,.16)" : "rgba(255,255,255,.05)",
+                color: s.is_published ? "#22C55E" : "#92A0AB",
               }}
             >
               {s.is_published ? "Live" : "Draft"}
@@ -245,7 +245,7 @@ export function ServicesManager({
               Edit
             </button>
             <button
-              style={{ ...btn("ghost"), color: "#b3261e" }}
+              style={{ ...btn("ghost"), color: "#F87171" }}
               onClick={() => {
                 if (confirm(`Delete "${s.title}"? This can't be undone.`)) mDelete.mutate(s.id);
               }}
@@ -307,11 +307,11 @@ function Editor({
   return (
     <div
       style={{
-        border: "1px solid rgba(13,34,54,.14)",
+        border: "1px solid rgba(255,255,255,.09)",
         borderRadius: 18,
         padding: 18,
         marginBottom: 18,
-        background: "#fff",
+        background: "#14202B",
         display: "grid",
         gap: 14,
       }}
@@ -407,27 +407,27 @@ function Editor({
       </Row>
 
       <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-        <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13.5, color: "#44586a" }}>
+        <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13.5, color: "#A9B6C1" }}>
           <input
             type="checkbox"
             checked={draft.instant_book}
             onChange={(e) => set({ instant_book: e.target.checked })}
-            style={{ accentColor: "#0a2236" }}
+            style={{ accentColor: "#F0F2F5" }}
           />
           Instant book (skip manual approval)
         </label>
-        <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13.5, color: "#44586a" }}>
+        <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13.5, color: "#A9B6C1" }}>
           <input
             type="checkbox"
             checked={draft.is_published}
             onChange={(e) => set({ is_published: e.target.checked })}
-            style={{ accentColor: "#0a2236" }}
+            style={{ accentColor: "#F0F2F5" }}
           />
           Publish immediately
         </label>
       </div>
 
-      {error && <div style={{ fontSize: 12.5, color: "#b3261e" }}>{error}</div>}
+      {error && <div style={{ fontSize: 12.5, color: "#F87171" }}>{error}</div>}
 
       <div style={{ display: "flex", gap: 10 }}>
         <button style={btn("primary")} onClick={onSave} disabled={saving || draft.title.trim().length < 2}>
@@ -448,7 +448,7 @@ function Row({ children }: { children: React.ReactNode }) {
 function F({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label style={{ display: "grid", gap: 6 }}>
-      <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#7b8b99", fontWeight: 700 }}>
+      <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#92A0AB", fontWeight: 700 }}>
         {label}
       </span>
       {children}

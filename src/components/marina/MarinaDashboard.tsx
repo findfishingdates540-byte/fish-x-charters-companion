@@ -108,8 +108,8 @@ export function MarinaDashboard({
             display: "flex",
             alignItems: "center",
             gap: 9,
-            background: "#fff",
-            border: "1px solid rgba(13,34,54,.10)",
+            background: "#14202B",
+            border: "1px solid rgba(255,255,255,.07)",
             borderRadius: 30,
             padding: "9px 16px",
           }}
@@ -119,10 +119,10 @@ export function MarinaDashboard({
               width: 8,
               height: 8,
               borderRadius: "50%",
-              background: "#1f8a5b",
+              background: "#22C55E",
             }}
           />
-          <span style={{ fontSize: 12.5, fontWeight: 600, color: "#0d2236" }}>
+          <span style={{ fontSize: 12.5, fontWeight: 600, color: "#F0F2F5" }}>
             VHF Ch. 16 monitored
           </span>
         </div>
@@ -222,10 +222,10 @@ function Slips({ businessId, data }: { businessId: string; data: any }) {
   });
 
   const colors: Record<string, { bg: string; fg: string; border: string }> = {
-    available: { bg: "#fff", fg: "#0d2236", border: "rgba(13,34,54,.10)" },
-    occupied: { bg: "#0a2236", fg: "#fff", border: "#0a2236" },
-    reserved: { bg: "#1f9fbe", fg: "#fff", border: "#1f9fbe" },
-    maintenance: { bg: "#d8514a", fg: "#fff", border: "#d8514a" },
+    available: { bg: "#14202B", fg: "#92A0AB", border: "#273744" },
+    occupied: { bg: "rgba(34,197,94,.14)", fg: "#22C55E", border: "rgba(34,197,94,.35)" },
+    reserved: { bg: "rgba(45,226,242,.16)", fg: "#2DE2F2", border: "#2DE2F2" },
+    maintenance: { bg: "rgba(248,113,113,.16)", fg: "#F87171", border: "#F87171" },
   };
 
   return (
@@ -284,11 +284,11 @@ function Slips({ businessId, data }: { businessId: string; data: any }) {
             })}
           </div>
         )}
-        <div style={{ marginTop: 18, display: "flex", gap: 18, fontSize: 12, color: "#5c6b78" }}>
-          <Legend swatch="#0a2236" label={`Occupied ${data.counts.occupied}`} />
-          <Legend swatch="#1f9fbe" label={`Reserved ${data.counts.reserved}`} />
-          <Legend swatch="#fff" bordered label={`Available ${data.counts.available}`} />
-          <Legend swatch="#d8514a" label={`Maintenance ${data.counts.maintenance}`} />
+        <div style={{ marginTop: 18, display: "flex", gap: 18, fontSize: 12, color: "#92A0AB" }}>
+          <Legend swatch="#F0F2F5" label={`Occupied ${data.counts.occupied}`} />
+          <Legend swatch="#2DE2F2" label={`Reserved ${data.counts.reserved}`} />
+          <Legend swatch="#F0F2F5" bordered label={`Available ${data.counts.available}`} />
+          <Legend swatch="#F87171" label={`Maintenance ${data.counts.maintenance}`} />
         </div>
       </Card>
 
@@ -415,8 +415,8 @@ function SlipForm({
             style={{
               ...btnGhost,
               marginLeft: "auto",
-              color: "#d8514a",
-              borderColor: "#fbe9e8",
+              color: "#F87171",
+              borderColor: "rgba(216,81,74,.28)",
             }}
           >
             Delete
@@ -581,8 +581,8 @@ function ReservationTable({ rows }: { rows: Reservation[] }) {
           fontWeight: 700,
           letterSpacing: ".1em",
           textTransform: "uppercase",
-          color: "#5c6b78",
-          borderBottom: "1px solid rgba(13,34,54,.10)",
+          color: "#92A0AB",
+          borderBottom: "1px solid rgba(255,255,255,.07)",
         }}
       >
         <span>Vessel &amp; captain</span>
@@ -599,23 +599,23 @@ function ReservationTable({ rows }: { rows: Reservation[] }) {
             gridTemplateColumns: "1.5fr 1fr .8fr .8fr auto",
             gap: 16,
             padding: "14px 4px",
-            borderBottom: "1px solid rgba(13,34,54,.06)",
+            borderBottom: "1px solid rgba(255,255,255,.05)",
             alignItems: "center",
           }}
         >
           <div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>
               {r.vessel_name}
             </div>
-            <div style={{ fontSize: 12.5, color: "#5c6b78" }}>
+            <div style={{ fontSize: 12.5, color: "#92A0AB" }}>
               {r.captain_name ?? "—"}
             </div>
           </div>
-          <span style={{ fontSize: 13.5, color: "#0d2236" }}>
+          <span style={{ fontSize: 13.5, color: "#F0F2F5" }}>
             {new Date(r.arrive_date).toLocaleDateString()} →{" "}
             {new Date(r.depart_date).toLocaleDateString()}
           </span>
-          <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236" }}>
+          <span style={{ fontSize: 13.5, fontWeight: 700, color: "#F0F2F5" }}>
             {r.slip?.slip_number ?? "—"}
           </span>
           <span
@@ -623,7 +623,7 @@ function ReservationTable({ rows }: { rows: Reservation[] }) {
               fontFamily: "'Cormorant Garamond', Georgia, serif",
               fontSize: 17,
               fontWeight: 600,
-              color: "#0d2236",
+              color: "#F0F2F5",
             }}
           >
             {money(r.total_cents)}
@@ -641,7 +641,7 @@ function Services() {
       eyebrow="Coming soon"
       title="Amenities & service requests"
     >
-      <p style={{ color: "#5c6b78", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+      <p style={{ color: "#92A0AB", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
         Amenity toggles (fuel, ice, pump-out, laundry) and inbound service requests
         will publish here. For now use the Slips tab to manage berth status.
       </p>
@@ -660,7 +660,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
           fontWeight: 700,
           letterSpacing: ".08em",
           textTransform: "uppercase",
-          color: "#5c6b78",
+          color: "#92A0AB",
         }}
       >
         {label}
@@ -671,19 +671,19 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputStyle: React.CSSProperties = {
-  border: "1px solid rgba(13,34,54,.14)",
+  border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 10,
   padding: "10px 12px",
   fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
   fontSize: 14,
-  background: "#fff",
-  color: "#0d2236",
+  background: "#14202B",
+  color: "#F0F2F5",
   outline: "none",
 };
 
 const btnPrimary: React.CSSProperties = {
-  background: "#0a2236",
-  color: "#fff",
+  background: "#0D161F",
+  color: "#F0F2F5",
   border: 0,
   borderRadius: 11,
   padding: "10px 16px",
@@ -695,8 +695,8 @@ const btnPrimary: React.CSSProperties = {
 
 const btnGhost: React.CSSProperties = {
   background: "transparent",
-  color: "#0d2236",
-  border: "1px solid rgba(13,34,54,.14)",
+  color: "#F0F2F5",
+  border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 11,
   padding: "10px 16px",
   fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
@@ -707,7 +707,7 @@ const btnGhost: React.CSSProperties = {
 
 function Empty({ label }: { label: string }) {
   return (
-    <div style={{ padding: "32px 10px", textAlign: "center", color: "#5c6b78", fontSize: 14 }}>
+    <div style={{ padding: "32px 10px", textAlign: "center", color: "#92A0AB", fontSize: 14 }}>
       {label}
     </div>
   );
@@ -730,7 +730,7 @@ function Legend({
           height: 10,
           borderRadius: 3,
           background: swatch,
-          border: bordered ? "1px solid rgba(13,34,54,.14)" : "none",
+          border: bordered ? "1px solid rgba(255,255,255,.09)" : "none",
         }}
       />
       {label}

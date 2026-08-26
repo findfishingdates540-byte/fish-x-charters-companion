@@ -10,8 +10,8 @@ import {
   setStorefrontLive,
 } from "@/lib/operator-readiness.functions";
 
-const INK = "#0d2236";
-const MUT = "#5c6b78";
+const INK = "#F0F2F5";
+const MUT = "#92A0AB";
 const LINE = "rgba(13,34,54,.10)";
 
 export function useReadiness(businessId?: string) {
@@ -47,12 +47,12 @@ export function ReadinessGate({
 
   if (compact && r.ready && r.isPublished) return null;
 
-  const tone = r.ready ? "#1f8a5b" : "#a97e3c";
+  const tone = r.ready ? "#22C55E" : "#F2B93D";
 
   return (
     <div
       style={{
-        background: "#fff",
+        background: "#14202B",
         border: `1px solid ${r.ready ? "rgba(31,138,91,.28)" : "rgba(169,126,60,.32)"}`,
         borderRadius: 18,
         padding: 20,
@@ -108,8 +108,8 @@ export function ReadinessGate({
               fontSize: 13,
               fontWeight: 700,
               cursor: "pointer",
-              background: r.isPublished ? "#eef2f5" : INK,
-              color: r.isPublished ? MUT : "#fff",
+              background: r.isPublished ? "#1C2936" : INK,
+              color: r.isPublished ? MUT : "#F0F2F5",
             }}
           >
             {goLive.isPending
@@ -144,8 +144,8 @@ export function ReadinessGate({
                 placeItems: "center",
                 fontSize: 11,
                 fontWeight: 700,
-                color: "#fff",
-                background: it.done ? "#1f8a5b" : it.blocking ? "#a97e3c" : "#c3ccd4",
+                color: "#F0F2F5",
+                background: it.done ? "#22C55E" : it.blocking ? "#F2B93D" : "#3A4A57",
               }}
             >
               {it.done ? "✓" : "!"}
@@ -165,7 +165,7 @@ export function ReadinessGate({
                 style={{
                   background: "transparent",
                   border: 0,
-                  color: "#a97e3c",
+                  color: "#F2B93D",
                   fontSize: 12.5,
                   fontWeight: 700,
                   cursor: "pointer",

@@ -86,14 +86,14 @@ function VisibilityCard({
           to="/b/$slug"
           params={{ slug: business.slug }}
           target="_blank"
-          style={{ fontSize: 13, fontWeight: 700, color: "#a97e3c", textDecoration: "none" }}
+          style={{ fontSize: 13, fontWeight: 700, color: "#F2B93D", textDecoration: "none" }}
         >
           View public page ↗
         </Link>
       }
     >
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 14, justifyContent: "space-between" }}>
-        <div style={{ fontSize: 13.5, color: "#44586a", maxWidth: 520 }}>
+        <div style={{ fontSize: 13.5, color: "#A9B6C1", maxWidth: 520 }}>
           {business.is_published
             ? "Your business is live in the Fish-X directory and can receive bookings."
             : "Your business is hidden. Publish it to appear in search and accept bookings."}
@@ -255,7 +255,7 @@ function ProfileCard({ business, canEdit }: { business: any; canEdit: boolean })
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 10 }}>
             {DAYS.map((d) => (
               <div key={d} style={{ display: "grid", gap: 4 }}>
-                <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: "#7b8b99", fontWeight: 700 }}>{d}</span>
+                <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: "#92A0AB", fontWeight: 700 }}>{d}</span>
                 <input
                   style={{ ...input, padding: "8px 10px", fontSize: 13 }}
                   placeholder="06:00 – 18:00"
@@ -284,7 +284,7 @@ function ProfileCard({ business, canEdit }: { business: any; canEdit: boolean })
           <button disabled={!canEdit || m.isPending} onClick={() => m.mutate()} style={btn("primary")}>
             {m.isPending ? "Saving…" : "Save profile"}
           </button>
-          {m.isSuccess && !m.isPending && <span style={{ fontSize: 13, color: "#1f7a4d", fontWeight: 600 }}>Saved ✓</span>}
+          {m.isSuccess && !m.isPending && <span style={{ fontSize: 13, color: "#22C55E", fontWeight: 600 }}>Saved ✓</span>}
           {!canEdit && <Muted>Only owners and managers can edit the business profile.</Muted>}
         </div>
       </div>
@@ -348,9 +348,9 @@ function TeamCard({
               alignItems: "center",
               gap: 12,
               padding: "12px 14px",
-              border: "1px solid rgba(13,34,54,.10)",
+              border: "1px solid rgba(255,255,255,.07)",
               borderRadius: 14,
-              background: "#fbfcfd",
+              background: "#1C2936",
             }}
           >
             <div
@@ -358,8 +358,8 @@ function TeamCard({
                 width: 36,
                 height: 36,
                 borderRadius: "50%",
-                background: "#0a2236",
-                color: "#fff",
+                background: "#0D161F",
+                color: "#F0F2F5",
                 display: "grid",
                 placeItems: "center",
                 fontSize: 13,
@@ -375,11 +375,11 @@ function TeamCard({
               )}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>
                 {m.profile?.display_name ?? m.profile?.full_name ?? "Team member"}
-                {m.isMe && <span style={{ color: "#7b8b99", fontWeight: 500 }}> · you</span>}
+                {m.isMe && <span style={{ color: "#92A0AB", fontWeight: 500 }}> · you</span>}
               </div>
-              <div style={{ fontSize: 12, color: "#7b8b99" }}>
+              <div style={{ fontSize: 12, color: "#92A0AB" }}>
                 Joined {new Date(m.created_at).toLocaleDateString()}
               </div>
             </div>
@@ -437,7 +437,7 @@ function NotificationsCard() {
           checked={data.emailEnabled}
           onChange={(v) => m.mutate({ emailEnabled: v })}
         />
-        <div style={{ height: 1, background: "rgba(13,34,54,.08)" }} />
+        <div style={{ height: 1, background: "rgba(255,255,255,.06)" }} />
         {NOTIF_CATEGORIES.map((c) => (
           <Toggle
             key={c.key}
@@ -471,11 +471,11 @@ function Toggle({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        style={{ width: 18, height: 18, accentColor: "#0a2236" }}
+        style={{ width: 18, height: 18, accentColor: "#F0F2F5" }}
       />
       <span style={{ flex: 1 }}>
-        <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#0d2236" }}>{label}</span>
-        {hint && <span style={{ display: "block", fontSize: 12.5, color: "#7b8b99" }}>{hint}</span>}
+        <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>{label}</span>
+        {hint && <span style={{ display: "block", fontSize: 12.5, color: "#92A0AB" }}>{hint}</span>}
       </span>
     </label>
   );
@@ -484,7 +484,7 @@ function Toggle({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label style={{ display: "grid", gap: 6 }}>
-      <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#7b8b99", fontWeight: 700 }}>
+      <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#92A0AB", fontWeight: 700 }}>
         {label}
       </span>
       {children}
@@ -501,9 +501,9 @@ function Grid3({ children }: { children: React.ReactNode }) {
 
 function Pill({ children, tone }: { children: React.ReactNode; tone: "good" | "warn" | "neutral" }) {
   const map = {
-    good: { bg: "rgba(31,122,77,.10)", c: "#1f7a4d" },
-    warn: { bg: "rgba(169,126,60,.12)", c: "#a97e3c" },
-    neutral: { bg: "rgba(13,34,54,.06)", c: "#44586a" },
+    good: { bg: "rgba(34,197,94,.16)", c: "#22C55E" },
+    warn: { bg: "rgba(169,126,60,.12)", c: "#F2B93D" },
+    neutral: { bg: "rgba(13,34,54,.06)", c: "#A9B6C1" },
   }[tone];
   return (
     <span style={{ background: map.bg, color: map.c, fontSize: 12, fontWeight: 700, padding: "5px 10px", borderRadius: 999 }}>
@@ -513,7 +513,7 @@ function Pill({ children, tone }: { children: React.ReactNode; tone: "good" | "w
 }
 
 function Muted({ children, tone }: { children: React.ReactNode; tone?: "bad" }) {
-  return <div style={{ fontSize: 12.5, color: tone === "bad" ? "#b3261e" : "#7b8b99" }}>{children}</div>;
+  return <div style={{ fontSize: 12.5, color: tone === "bad" ? "#F87171" : "#92A0AB" }}>{children}</div>;
 }
 
 export const input: React.CSSProperties = {
@@ -521,9 +521,9 @@ export const input: React.CSSProperties = {
   padding: "11px 13px",
   borderRadius: 12,
   border: "1px solid rgba(13,34,54,.16)",
-  background: "#fff",
+  background: "#14202B",
   fontSize: 14,
-  color: "#0d2236",
+  color: "#F0F2F5",
   fontFamily: "inherit",
   outline: "none",
 };
@@ -531,9 +531,9 @@ export const input: React.CSSProperties = {
 export function btn(kind: "primary" | "ghost"): React.CSSProperties {
   return kind === "primary"
     ? {
-        background: "#0a2236",
-        color: "#fff",
-        border: "1px solid #0a2236",
+        background: "#0D161F",
+        color: "#F0F2F5",
+        border: "1px solid #273744",
         borderRadius: 12,
         padding: "11px 20px",
         fontSize: 13.5,
@@ -543,7 +543,7 @@ export function btn(kind: "primary" | "ghost"): React.CSSProperties {
       }
     : {
         background: "transparent",
-        color: "#44586a",
+        color: "#A9B6C1",
         border: "1px solid rgba(13,34,54,.18)",
         borderRadius: 12,
         padding: "10px 16px",

@@ -89,19 +89,19 @@ export function AddonsManager({
   return (
     <div
       style={{
-        border: "1px solid rgba(13,34,54,.12)",
+        border: "1px solid rgba(255,255,255,.08)",
         borderRadius: 18,
         padding: 18,
-        background: "#fbfcfd",
+        background: "#1C2936",
         marginBottom: 14,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: "#0d2236" }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#F0F2F5" }}>
             Add-ons · {service.title}
           </div>
-          <div style={{ fontSize: 12.5, color: "#7b8b99" }}>
+          <div style={{ fontSize: 12.5, color: "#92A0AB" }}>
             Optional extras anglers can add at checkout.
           </div>
         </div>
@@ -110,9 +110,9 @@ export function AddonsManager({
         </button>
       </div>
 
-      {isLoading && <div style={{ fontSize: 13, color: "#7b8b99" }}>Loading add-ons…</div>}
+      {isLoading && <div style={{ fontSize: 13, color: "#92A0AB" }}>Loading add-ons…</div>}
       {!isLoading && (rows ?? []).length === 0 && !draft && (
-        <div style={{ fontSize: 13, color: "#7b8b99", marginBottom: 12 }}>
+        <div style={{ fontSize: 13, color: "#92A0AB", marginBottom: 12 }}>
           No add-ons yet — fish cleaning, extra hour, gear rental, photo package…
         </div>
       )}
@@ -126,16 +126,16 @@ export function AddonsManager({
               gap: 12,
               alignItems: "center",
               flexWrap: "wrap",
-              background: "#fff",
-              border: "1px solid rgba(13,34,54,.10)",
+              background: "#14202B",
+              border: "1px solid rgba(255,255,255,.07)",
               borderRadius: 13,
               padding: "11px 13px",
             }}
           >
             <div style={{ flex: 1, minWidth: 180 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#0d2236" }}>{a.title}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#F0F2F5" }}>{a.title}</div>
               {a.description && (
-                <div style={{ fontSize: 12.5, color: "#7b8b99" }}>{a.description}</div>
+                <div style={{ fontSize: 12.5, color: "#92A0AB" }}>{a.description}</div>
               )}
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 5 }}>
                 {a.capacity_per_slot != null && <span style={chip}>{a.capacity_per_slot} per departure</span>}
@@ -143,9 +143,9 @@ export function AddonsManager({
                 {(a.lead_time_hours ?? 0) > 0 && <span style={chip}>{a.lead_time_hours}h notice</span>}
               </div>
             </div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, color: "#0d2236" }}>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: "#F0F2F5" }}>
               {money(a.price_cents)}{" "}
-              <span style={{ fontWeight: 500, color: "#7b8b99" }}>
+              <span style={{ fontWeight: 500, color: "#92A0AB" }}>
                 {a.unit === "per_person" ? "/ angler" : "/ trip"}
               </span>
             </div>
@@ -167,7 +167,7 @@ export function AddonsManager({
               Edit
             </button>
             <button
-              style={{ ...btn("ghost"), color: "#b3261e" }}
+              style={{ ...btn("ghost"), color: "#F87171" }}
               onClick={() => {
                 if (confirm(`Remove "${a.title}"?`)) mDelete.mutate(a.id);
               }}
@@ -259,7 +259,7 @@ export function AddonsManager({
               onChange={(e) => setDraft({ ...draft, leadTimeHours: e.target.value })}
             />
           </label>
-          <div style={{ gridColumn: "1 / -1", fontSize: 12, color: "#7b8b99", marginTop: -2 }}>
+          <div style={{ gridColumn: "1 / -1", fontSize: 12, color: "#92A0AB", marginTop: -2 }}>
             Leave capacity and max blank for unlimited. Notice hours block the extra once a
             departure is closer than that.
           </div>
@@ -276,7 +276,7 @@ export function AddonsManager({
             </button>
           </div>
           {mSave.error && (
-            <div style={{ gridColumn: "1 / -1", fontSize: 12.5, color: "#b3261e" }}>
+            <div style={{ gridColumn: "1 / -1", fontSize: 12.5, color: "#F87171" }}>
               {String((mSave.error as Error).message)}
             </div>
           )}
@@ -294,8 +294,8 @@ const chip: React.CSSProperties = {
   fontSize: 11,
   fontWeight: 700,
   letterSpacing: ".02em",
-  color: "#0d2236",
-  background: "rgba(13,34,54,.06)",
+  color: "#F0F2F5",
+  background: "rgba(255,255,255,.05)",
   borderRadius: 999,
   padding: "3px 8px",
 };
@@ -306,6 +306,6 @@ const labelStyle: React.CSSProperties = {
   fontWeight: 700,
   letterSpacing: ".08em",
   textTransform: "uppercase",
-  color: "#7b8b99",
+  color: "#92A0AB",
   marginBottom: 5,
 };

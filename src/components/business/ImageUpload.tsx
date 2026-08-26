@@ -60,7 +60,7 @@ export function ImageUpload({
           fontSize: 11,
           letterSpacing: ".1em",
           textTransform: "uppercase",
-          color: "#7b8b99",
+          color: "#92A0AB",
           fontWeight: 700,
         }}
       >
@@ -74,10 +74,10 @@ export function ImageUpload({
             aspectRatio: aspect,
             borderRadius: 12,
             border: "1px dashed rgba(13,34,54,.22)",
-            background: value ? `center/cover no-repeat url(${value})` : "#eef2f5",
+            background: value ? `center/cover no-repeat url(${value})` : "#F0F2F5",
             display: "grid",
             placeItems: "center",
-            color: "#8a97a3",
+            color: "#92A0AB",
             fontSize: 12,
             flex: "none",
             overflow: "hidden",
@@ -103,8 +103,8 @@ export function ImageUpload({
               disabled={disabled || busy}
               onClick={() => fileRef.current?.click()}
               style={{
-                background: "#0d2236",
-                color: "#fff",
+                background: "#1C2936",
+                color: "#F0F2F5",
                 border: 0,
                 borderRadius: 10,
                 padding: "9px 16px",
@@ -127,7 +127,7 @@ export function ImageUpload({
                   padding: "9px 14px",
                   fontSize: 13,
                   fontWeight: 600,
-                  color: "#44586a",
+                  color: "#A9B6C1",
                   cursor: "pointer",
                 }}
               >
@@ -145,16 +145,16 @@ export function ImageUpload({
               width: "100%",
               padding: "9px 12px",
               borderRadius: 10,
-              border: "1px solid rgba(13,34,54,.14)",
+              border: "1px solid rgba(255,255,255,.09)",
               fontSize: 12.5,
-              color: "#44586a",
-              background: "#fff",
+              color: "#A9B6C1",
+              background: "#14202B",
             }}
           />
-          <span style={{ fontSize: 11.5, color: "#8a97a3" }}>
+          <span style={{ fontSize: 11.5, color: "#92A0AB" }}>
             JPG, PNG or WebP up to 8 MB. Landscape photos look best.
           </span>
-          {err && <span style={{ fontSize: 12, color: "#d8514a" }}>{err}</span>}
+          {err && <span style={{ fontSize: 12, color: "#F87171" }}>{err}</span>}
         </div>
       </div>
     </div>

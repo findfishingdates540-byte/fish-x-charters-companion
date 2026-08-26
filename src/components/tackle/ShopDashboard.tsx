@@ -168,7 +168,7 @@ function Overview({ data }: { data: any }) {
         </Card>
         <Card eyebrow="Restock soon" title="Low stock">
           {data.lowStock.length === 0 ? (
-            <div style={{ color: "#5c6b78", fontSize: 14 }}>All good — no low-stock items.</div>
+            <div style={{ color: "#92A0AB", fontSize: 14 }}>All good — no low-stock items.</div>
           ) : (
             data.lowStock.map((p: Product) => (
               <div
@@ -178,7 +178,7 @@ function Overview({ data }: { data: any }) {
                   alignItems: "center",
                   gap: 12,
                   padding: "12px 0",
-                  borderBottom: "1px solid rgba(13,34,54,.06)",
+                  borderBottom: "1px solid rgba(255,255,255,.05)",
                 }}
               >
                 <span
@@ -186,10 +186,10 @@ function Overview({ data }: { data: any }) {
                     width: 36,
                     height: 36,
                     borderRadius: 10,
-                    background: "#fbe9e8",
+                    background: "rgba(216,81,74,.16)",
                     display: "grid",
                     placeItems: "center",
-                    color: "#d8514a",
+                    color: "#F87171",
                     flex: "none",
                     fontWeight: 700,
                   }}
@@ -197,14 +197,14 @@ function Overview({ data }: { data: any }) {
                   !
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "#0d2236" }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "#F0F2F5" }}>
                     {p.title}
                   </div>
-                  <div style={{ fontSize: 12, color: "#5c6b78" }}>
+                  <div style={{ fontSize: 12, color: "#92A0AB" }}>
                     {p.sku ? `SKU ${p.sku}` : "No SKU"}
                   </div>
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#d8514a" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#F87171" }}>
                   {p.stock_qty} left
                 </span>
               </div>
@@ -260,8 +260,8 @@ function Products({ businessId, data }: { businessId: string; data: any }) {
                 fontWeight: 700,
                 letterSpacing: ".1em",
                 textTransform: "uppercase",
-                color: "#5c6b78",
-                borderBottom: "1px solid rgba(13,34,54,.10)",
+                color: "#92A0AB",
+                borderBottom: "1px solid rgba(255,255,255,.07)",
               }}
             >
               <span>Product</span>
@@ -279,7 +279,7 @@ function Products({ businessId, data }: { businessId: string; data: any }) {
                   gridTemplateColumns: "1.8fr .8fr .8fr .8fr .6fr",
                   gap: 16,
                   padding: "14px 4px",
-                  borderBottom: "1px solid rgba(13,34,54,.06)",
+                  borderBottom: "1px solid rgba(255,255,255,.05)",
                   alignItems: "center",
                   background: "transparent",
                   border: 0,
@@ -291,16 +291,16 @@ function Products({ businessId, data }: { businessId: string; data: any }) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>{p.title}</div>
-                  <div style={{ fontSize: 12, color: "#5c6b78" }}>{p.category ?? "Uncategorised"}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>{p.title}</div>
+                  <div style={{ fontSize: 12, color: "#92A0AB" }}>{p.category ?? "Uncategorised"}</div>
                 </div>
-                <span style={{ fontSize: 13, color: "#0d2236" }}>{p.sku ?? "—"}</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>{money(p.price_cents)}</span>
+                <span style={{ fontSize: 13, color: "#F0F2F5" }}>{p.sku ?? "—"}</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>{money(p.price_cents)}</span>
                 <span
                   style={{
                     fontSize: 13,
                     fontWeight: 700,
-                    color: p.stock_qty <= p.low_stock_threshold ? "#d8514a" : "#0d2236",
+                    color: p.stock_qty <= p.low_stock_threshold ? "#F87171" : "#F0F2F5",
                   }}
                 >
                   {p.stock_qty}
@@ -394,7 +394,7 @@ function ProductForm({
           />
         </Field>
       </div>
-      <label style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 14, fontSize: 13, color: "#0d2236" }}>
+      <label style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 14, fontSize: 13, color: "#F0F2F5" }}>
         <input
           type="checkbox"
           checked={isPublished}
@@ -427,7 +427,7 @@ function ProductForm({
         {onDelete && (
           <button
             onClick={onDelete}
-            style={{ ...btnGhost, marginLeft: "auto", color: "#d8514a", borderColor: "#fbe9e8" }}
+            style={{ ...btnGhost, marginLeft: "auto", color: "#F87171", borderColor: "rgba(216,81,74,.28)" }}
           >
             Delete
           </button>
@@ -451,14 +451,14 @@ function Orders({ businessId, data }: { businessId: string; data: any }) {
     <Card
       title="Orders"
       right={
-        <div style={{ display: "flex", gap: 4, background: "#f4f6f8", borderRadius: 11, padding: 4 }}>
+        <div style={{ display: "flex", gap: 4, background: "#1C2936", borderRadius: 11, padding: 4 }}>
           {(["all", "paid", "shipped", "delivered"] as const).map((k) => (
             <button
               key={k}
               onClick={() => setTab(k)}
               style={{
-                background: tab === k ? "#0a2236" : "transparent",
-                color: tab === k ? "#fff" : "#5c6b78",
+                background: tab === k ? "#0D161F" : "transparent",
+                color: tab === k ? "#F0F2F5" : "#92A0AB",
                 border: 0,
                 borderRadius: 9,
                 padding: "8px 14px",
@@ -518,23 +518,23 @@ function OrderList({
             gridTemplateColumns: minimal ? "1.5fr 1fr auto auto" : "1fr 1.5fr 1fr .8fr auto",
             gap: 14,
             padding: "14px 4px",
-            borderBottom: "1px solid rgba(13,34,54,.06)",
+            borderBottom: "1px solid rgba(255,255,255,.05)",
             alignItems: "center",
           }}
         >
           {!minimal && (
-            <span style={{ fontSize: 12.5, color: "#5c6b78", fontFamily: "monospace" }}>
+            <span style={{ fontSize: 12.5, color: "#92A0AB", fontFamily: "monospace" }}>
               {o.id.slice(0, 8)}
             </span>
           )}
           <div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: "#0d2236" }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>
               {o.buyer_name ?? o.buyer_email ?? "Guest"}
             </div>
             <div
               style={{
                 fontSize: 12,
-                color: "#5c6b78",
+                color: "#92A0AB",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -543,7 +543,7 @@ function OrderList({
               {o.items?.map((it) => `${it.quantity}× ${it.title}`).join(", ") || "—"}
             </div>
           </div>
-          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#0d2236" }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#F0F2F5" }}>
             {money(o.total_cents)}
           </span>
           <StatusPill label={o.status} tone={toneFor(o.status) as any} />
@@ -578,7 +578,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
           fontWeight: 700,
           letterSpacing: ".08em",
           textTransform: "uppercase",
-          color: "#5c6b78",
+          color: "#92A0AB",
         }}
       >
         {label}
@@ -589,19 +589,19 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputStyle: React.CSSProperties = {
-  border: "1px solid rgba(13,34,54,.14)",
+  border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 10,
   padding: "10px 12px",
   fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
   fontSize: 14,
-  background: "#fff",
-  color: "#0d2236",
+  background: "#14202B",
+  color: "#F0F2F5",
   outline: "none",
 };
 
 const btnPrimary: React.CSSProperties = {
-  background: "#0a2236",
-  color: "#fff",
+  background: "#0D161F",
+  color: "#F0F2F5",
   border: 0,
   borderRadius: 11,
   padding: "10px 16px",
@@ -613,8 +613,8 @@ const btnPrimary: React.CSSProperties = {
 
 const btnGhost: React.CSSProperties = {
   background: "transparent",
-  color: "#0d2236",
-  border: "1px solid rgba(13,34,54,.14)",
+  color: "#F0F2F5",
+  border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 11,
   padding: "10px 16px",
   fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
@@ -625,7 +625,7 @@ const btnGhost: React.CSSProperties = {
 
 function Empty({ label }: { label: string }) {
   return (
-    <div style={{ padding: "32px 10px", textAlign: "center", color: "#5c6b78", fontSize: 14 }}>
+    <div style={{ padding: "32px 10px", textAlign: "center", color: "#92A0AB", fontSize: 14 }}>
       {label}
     </div>
   );

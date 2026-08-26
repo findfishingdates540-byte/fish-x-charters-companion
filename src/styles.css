@@ -777,3 +777,17 @@ body.dc-body { margin:0; background:#0a2236; }
 @media (max-width: 560px) {
   .dc-auth section, .dc-auth > div { padding-left: 18px !important; padding-right: 18px !important; }
 }
+
+/* ============ Operator (service provider) dark console form controls ============ */
+.fx-shell input,
+.fx-shell select,
+.fx-shell textarea {
+  background: #1c2936;
+  color: #f0f2f5;
+  border-color: #273744;
+}
+.fx-shell input::placeholder,
+.fx-shell textarea::placeholder { color: #6f7f8c; }
+.fx-shell select option { background: #14202b; color: #f0f2f5; }
+.fx-shell input[type="checkbox"],
+.fx-shell input[type="radio"] { accent-color: #2de2f2; }

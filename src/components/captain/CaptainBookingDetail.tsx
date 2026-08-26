@@ -17,22 +17,22 @@ import { markBalanceCollected, refundBookingDeposit, releaseBookingPayout } from
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
-  navy: "#0a2236",
-  paper: "#eef2f5",
-  card: "#ffffff",
-  sand: "#e3c089",
-  sand2: "#d2a566",
-  sandsoft: "#f4e6cd",
-  goldtext: "#a97e3c",
-  cyan: "#1f9fbe",
-  cyansoft: "#e2eef2",
-  green: "#1f8a5b",
-  greensoft: "#e2f2ea",
-  ond: "#eaf1f6",
-  ondmut: "#93a7b7",
-  tmut: "#5c6b78",
-  line: "rgba(13,34,54,.10)",
+  ink: "#F0F2F5",
+  navy: "#0D161F",
+  paper: "#0D161F",
+  card: "#14202B",
+  sand: "#2DE2F2",
+  sand2: "#F2B93D",
+  sandsoft: "rgba(242,185,61,.18)",
+  goldtext: "#F2B93D",
+  cyan: "#2DE2F2",
+  cyansoft: "rgba(45,226,242,.12)",
+  green: "#22C55E",
+  greensoft: "rgba(34,197,94,.14)",
+  ond: "#F0F2F5",
+  ondmut: "#92A0AB",
+  tmut: "#92A0AB",
+  line: "rgba(255,255,255,.08)",
   lined: "rgba(255,255,255,.12)",
 };
 
@@ -295,6 +295,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
   return (
     <div
       id="cap-booking"
+      className="fx-shell"
       style={{
         minHeight: "100vh",
         background: V.paper,
@@ -321,7 +322,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 28px 60px" }}>
         {isCanceled && (
           <div style={{ display: "flex", alignItems: "center", gap: 14, background: V.cyansoft, border: "1px solid rgba(31,159,190,.35)", borderRadius: 14, padding: "16px 18px", marginBottom: 22 }}>
-            <span style={{ width: 36, height: 36, borderRadius: "50%", background: V.cyan, color: "#fff", display: "grid", placeItems: "center", fontSize: 15, flex: "none" }}>✓</span>
+            <span style={{ width: 36, height: 36, borderRadius: "50%", background: V.cyan, color: "#F0F2F5", display: "grid", placeItems: "center", fontSize: 15, flex: "none" }}>✓</span>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 14.5, fontWeight: 700, color: V.ink }}>{isCharter ? "Weather call made — guest refunded" : "Cancelled — guest refunded"}</div>
               <div style={{ fontSize: 13, color: V.tmut, marginTop: 2 }}>{money(total)} returned to {anglerName} from escrow. No penalty to your rating.</div>
@@ -399,11 +400,11 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                   return (
                     <div key={i} style={{ display: "flex", gap: 14 }}>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: "none", width: 22 }}>
-                        <span style={{ width: 16, height: 16, borderRadius: "50%", background: done ? V.green : cur ? V.cyan : "#fff", border: done || cur ? 0 : `2px solid rgba(13,34,54,.18)`, display: "grid", placeItems: "center", color: "#fff", fontSize: 9, flex: "none" }}>
+                        <span style={{ width: 16, height: 16, borderRadius: "50%", background: done ? V.green : cur ? V.cyan : "#14202B", border: done || cur ? 0 : `2px solid rgba(13,34,54,.18)`, display: "grid", placeItems: "center", color: "#F0F2F5", fontSize: 9, flex: "none" }}>
                           {done ? "✓" : ""}
                         </span>
                         {i < escrowSteps.length - 1 && (
-                          <span style={{ width: 2, flex: 1, minHeight: 26, background: done ? V.green : "rgba(13,34,54,.12)" }} />
+                          <span style={{ width: 2, flex: 1, minHeight: 26, background: done ? V.green : "rgba(255,255,255,.08)" }} />
                         )}
                       </div>
                       <div style={{ paddingBottom: 18, minWidth: 0 }}>
@@ -439,8 +440,8 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                       style={{
                         alignSelf: me ? "flex-end" : "flex-start",
                         maxWidth: "76%",
-                        background: me ? V.navy : "#fff",
-                        color: me ? "#fff" : V.ink,
+                        background: me ? V.navy : "#14202B",
+                        color: me ? "#F0F2F5" : V.ink,
                         border: `1px solid ${me ? V.navy : V.line}`,
                         borderRadius: 13,
                         padding: "10px 14px",
@@ -468,7 +469,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                 />
                 <button
                   onClick={doSend}
-                  style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 11, padding: "0 20px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
+                  style={{ background: V.sand, color: "#04121B", border: 0, borderRadius: 11, padding: "0 20px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
                 >
                   Send
                 </button>
@@ -479,20 +480,20 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
           {/* RAIL */}
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {/* PAYOUT CARD */}
-            <div style={{ background: "linear-gradient(160deg,#0c2a42,#0a2236)", borderRadius: 20, padding: 24, color: V.ond }}>
+            <div style={{ background: "linear-gradient(160deg,#0c2a42,#0D161F)", borderRadius: 20, padding: 24, color: V.ond }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.sand, marginBottom: 14 }}>
                 Payout on completion
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "5px 0" }}>
                 <span style={{ color: V.ondmut }}>{copy.totalLabel}</span>
-                <span style={{ color: "#fff", fontWeight: 600 }}>{money(total)}</span>
+                <span style={{ color: "#F0F2F5", fontWeight: 600 }}>{money(total)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "5px 0" }}>
                 <span style={{ color: V.ondmut }}>Fish-X fee ({feePct}%)</span>
-                <span style={{ color: "#fff", fontWeight: 600 }}>−{money(fee)}</span>
+                <span style={{ color: "#F0F2F5", fontWeight: 600 }}>−{money(fee)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, padding: "12px 0 0", borderTop: "1px solid rgba(255,255,255,.12)", marginTop: 8 }}>
-                <span style={{ fontWeight: 700, color: "#fff" }}>You receive</span>
+                <span style={{ fontWeight: 700, color: "#F0F2F5" }}>You receive</span>
                 <span style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600, color: V.sand }}>{money(payoutCents)}</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 11, padding: "11px 13px" }}>
@@ -519,7 +520,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                 {refundedCents > 0 && (
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "4px 0" }}>
                     <span style={{ color: V.tmut }}>Refunded to guest</span>
-                    <span style={{ fontWeight: 600, color: "#d8514a" }}>−{money(refundedCents)}</span>
+                    <span style={{ fontWeight: 600, color: "#F87171" }}>−{money(refundedCents)}</span>
                   </div>
                 )}
 
@@ -532,7 +533,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                     <select
                       value={balanceMethod}
                       onChange={(e) => setBalanceMethod(e.target.value as typeof balanceMethod)}
-                      style={{ width: "100%", border: `1px solid ${V.line}`, borderRadius: 10, padding: "10px 12px", fontFamily: V.sans, fontSize: 13, color: V.ink, background: "#fff" }}
+                      style={{ width: "100%", border: `1px solid ${V.line}`, borderRadius: 10, padding: "10px 12px", fontFamily: V.sans, fontSize: 13, color: V.ink, background: "#14202B" }}
                     >
                       <option value="cash">Cash</option>
                       <option value="card_in_person">Card in person</option>
@@ -542,7 +543,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                     <button
                       onClick={doCollectBalance}
                       disabled={busyMoney}
-                      style={{ background: V.ink, color: "#fff", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                      style={{ background: V.ink, color: "#F0F2F5", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
                     >
                       {busyMoney ? "Saving…" : `Mark ${money(balanceDue)} balance collected`}
                     </button>
@@ -558,7 +559,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                     <button
                       onClick={doReleasePayout}
                       disabled={busyMoney}
-                      style={{ marginTop: 10, width: "100%", background: V.goldtext, color: "#fff", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                      style={{ marginTop: 10, width: "100%", background: V.goldtext, color: "#F0F2F5", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
                     >
                       {busyMoney ? "Releasing…" : `Release ${money(transferCents)} to your bank${balanceCollected ? "" : " & mark balance collected"}`}
                     </button>
@@ -580,7 +581,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                           <button
                             onClick={doRefund}
                             disabled={busyMoney}
-                            style={{ flex: 1, background: "#d8514a", color: "#fff", border: 0, borderRadius: 10, padding: "11px 14px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                            style={{ flex: 1, background: "#F87171", color: "#F0F2F5", border: 0, borderRadius: 10, padding: "11px 14px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
                           >
                             {busyMoney ? "Refunding…" : `Refund ${money(refundable)}`}
                           </button>
@@ -595,7 +596,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                     ) : (
                       <button
                         onClick={() => setRefundOpen(true)}
-                        style={{ background: "transparent", border: 0, padding: 0, fontFamily: V.sans, fontSize: 13, fontWeight: 600, color: "#d8514a", cursor: "pointer" }}
+                        style={{ background: "transparent", border: 0, padding: 0, fontFamily: V.sans, fontSize: 13, fontWeight: 600, color: "#F87171", cursor: "pointer" }}
                       >
                         Refund deposit to guest →
                       </button>
@@ -667,8 +668,8 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                       gap: 12,
                       width: "100%",
                       textAlign: "left",
-                      background: on ? "rgba(227,192,137,.12)" : "transparent",
-                      border: `1px solid ${on ? V.sand : "rgba(13,34,54,.12)"}`,
+                      background: on ? "rgba(45,226,242,.12)" : "transparent",
+                      border: `1px solid ${on ? V.sand : "rgba(255,255,255,.08)"}`,
                       borderRadius: 12,
                       padding: "14px 15px",
                       cursor: "pointer",
@@ -707,7 +708,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
               <button onClick={() => setWeatherOpen(false)} style={{ flex: 1, background: "transparent", border: `1px solid ${V.line}`, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 13, fontWeight: 600, color: V.ink, cursor: "pointer" }}>
                 Hold off
               </button>
-              <button onClick={confirmWeather} style={{ flex: 1, background: V.navy, color: "#fff", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+              <button onClick={confirmWeather} style={{ flex: 1, background: V.navy, color: "#F0F2F5", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
                 {rebook ? "Send rebooking offer" : `Cancel & refund ${money(total)}`}
               </button>
             </div>
@@ -716,7 +717,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
       )}
 
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)", zIndex: 80, display: "flex", alignItems: "center", gap: 11, background: V.navy, color: "#fff", border: "1px solid rgba(255,255,255,.12)", borderRadius: 30, padding: "13px 22px", boxShadow: "0 20px 44px -20px rgba(0,0,0,.6)", animation: "fx-toastin .35s ease-out" }}>
+        <div style={{ position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)", zIndex: 80, display: "flex", alignItems: "center", gap: 11, background: V.navy, color: "#F0F2F5", border: "1px solid rgba(255,255,255,.12)", borderRadius: 30, padding: "13px 22px", boxShadow: "0 20px 44px -20px rgba(0,0,0,.6)", animation: "fx-toastin .35s ease-out" }}>
           <span style={{ width: 22, height: 22, borderRadius: "50%", background: V.green, display: "grid", placeItems: "center", fontSize: 12 }}>✓</span>
           <span style={{ fontSize: 13.5, fontWeight: 600 }}>{toast}</span>
         </div>

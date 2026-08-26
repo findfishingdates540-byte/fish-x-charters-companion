@@ -97,21 +97,21 @@ type PayoutConfig = {
 };
 
 const DEFAULT_ESCROW_FLOW: PayoutFlowStep[] = [
-  { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "#f4e6cd", ic: "#a97e3c" },
-  { n: 2, t: "Held in escrow", d: "Safe — not your balance yet.", c: "#e2eef2", ic: "#1f9fbe" },
-  { n: 3, t: "You're paid", d: "Released after the trip.", c: "#e2f2ea", ic: "#1f8a5b" },
+  { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "rgba(242,185,61,.18)", ic: "#F2B93D" },
+  { n: 2, t: "Held in escrow", d: "Safe — not your balance yet.", c: "rgba(45,226,242,.12)", ic: "#2DE2F2" },
+  { n: 3, t: "You're paid", d: "Released after the trip.", c: "rgba(34,197,94,.14)", ic: "#22C55E" },
 ];
 
 const RETAIL_FLOW: PayoutFlowStep[] = [
-  { n: 1, t: "Customer checks out", d: "Card charged at purchase.", c: "#f4e6cd", ic: "#a97e3c" },
-  { n: 2, t: "Order settles", d: "Funds clear after fulfillment.", c: "#e2eef2", ic: "#1f9fbe" },
-  { n: 3, t: "Payout to you", d: "Net proceeds sent on schedule.", c: "#e2f2ea", ic: "#1f8a5b" },
+  { n: 1, t: "Customer checks out", d: "Card charged at purchase.", c: "rgba(242,185,61,.18)", ic: "#F2B93D" },
+  { n: 2, t: "Order settles", d: "Funds clear after fulfillment.", c: "rgba(45,226,242,.12)", ic: "#2DE2F2" },
+  { n: 3, t: "Payout to you", d: "Net proceeds sent on schedule.", c: "rgba(34,197,94,.14)", ic: "#22C55E" },
 ];
 
 const STAY_FLOW: PayoutFlowStep[] = [
-  { n: 1, t: "Guest reserves", d: "Deposit taken at booking.", c: "#f4e6cd", ic: "#a97e3c" },
-  { n: 2, t: "Balance on arrival", d: "Remaining balance clears at check-in.", c: "#e2eef2", ic: "#1f9fbe" },
-  { n: 3, t: "Payout to you", d: "Released after checkout.", c: "#e2f2ea", ic: "#1f8a5b" },
+  { n: 1, t: "Guest reserves", d: "Deposit taken at booking.", c: "rgba(242,185,61,.18)", ic: "#F2B93D" },
+  { n: 2, t: "Balance on arrival", d: "Remaining balance clears at check-in.", c: "rgba(45,226,242,.12)", ic: "#2DE2F2" },
+  { n: 3, t: "Payout to you", d: "Released after checkout.", c: "rgba(34,197,94,.14)", ic: "#22C55E" },
 ];
 
 const PAYOUT_BY_CATEGORY: Record<string, PayoutConfig> = {
@@ -648,20 +648,20 @@ export function OperatorOnboarding() {
   const pct = published ? 100 : Math.round((step / 4) * 100);
 
   if (isLoading) {
-    return <div className="min-h-screen grid place-items-center bg-[#eef2f5] text-[#5c6b78]">Loading…</div>;
+    return <div className="min-h-screen grid place-items-center bg-[#0D161F] text-[#92A0AB]">Loading…</div>;
   }
 
   return (
     <div
-      className="dc-body min-h-screen flex bg-[#eef2f5] text-[#0d2236]"
+      className="fx-shell dc-body min-h-screen flex bg-[#0D161F] text-[#F0F2F5]"
       style={{
         fontFamily: "'Hanken Grotesk',system-ui,sans-serif",
       }}
     >
       {/* Sidebar */}
-      <aside className="w-[300px] flex-none bg-[#0a2236] text-[#eaf1f6] flex flex-col p-[26px_24px] sticky top-0 h-screen">
+      <aside className="w-[300px] flex-none bg-[#1C2936] text-[#F0F2F5] flex flex-col p-[26px_24px] sticky top-0 h-screen">
         <div className="flex items-center gap-[10px] mb-[26px]">
-          <span className="inline-block w-[11px] h-[11px] bg-[#e3c089] rotate-45" />
+          <span className="inline-block w-[11px] h-[11px] bg-[#2DE2F2] rotate-45" />
           <span
             className="font-semibold text-[20px] tracking-[0.02em] whitespace-nowrap"
             style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
@@ -677,15 +677,15 @@ export function OperatorOnboarding() {
           <br />
           workspace
         </div>
-        <div className="text-[13px] text-[#93a7b7] mt-2 mb-5">A few steps and you're taking bookings.</div>
+        <div className="text-[13px] text-[#92A0AB] mt-2 mb-5">A few steps and you're taking bookings.</div>
         <div className="flex items-center gap-[10px] mb-6">
-          <div className="flex-1 h-[6px] rounded-md bg-white/10 overflow-hidden">
+          <div className="flex-1 h-[6px] rounded-md bg-[#14202B]/10 overflow-hidden">
             <div
-              className="h-full rounded-md bg-gradient-to-r from-[#e3c089] to-[#d2a566] transition-all duration-500"
+              className="h-full rounded-md bg-gradient-to-r from-[#2DE2F2] to-[#F2B93D] transition-all duration-500"
               style={{ width: `${pct}%` }}
             />
           </div>
-          <span className="text-[11.5px] font-bold text-[#e3c089]">
+          <span className="text-[11.5px] font-bold text-[#2DE2F2]">
             {published ? "Complete" : `Step ${step + 1} / 5`}
           </span>
         </div>
@@ -698,14 +698,14 @@ export function OperatorOnboarding() {
                 key={i}
                 onClick={() => !published && setStep(i)}
                 className="flex items-center gap-[13px] w-full border-0 rounded-xl p-3 cursor-pointer text-left transition-colors"
-                style={{ background: current ? "rgba(227,192,137,.14)" : "transparent" }}
+                style={{ background: current ? "rgba(45,226,242,.12)" : "transparent" }}
               >
                 <span
                   className="w-7 h-7 rounded-full flex-none grid place-items-center text-[12px] font-bold border-2"
                   style={{
-                    background: done || current ? "#e3c089" : "transparent",
-                    borderColor: done || current ? "#e3c089" : "rgba(255,255,255,.2)",
-                    color: done || current ? "#1c1303" : "#93a7b7",
+                    background: done || current ? "#2DE2F2" : "transparent",
+                    borderColor: done || current ? "#2DE2F2" : "rgba(255,255,255,.2)",
+                    color: done || current ? "#04121B" : "#92A0AB",
                   }}
                 >
                   {done ? "✓" : i + 1}
@@ -713,19 +713,19 @@ export function OperatorOnboarding() {
                 <span>
                   <span
                     className="block text-[13.5px] font-semibold"
-                    style={{ color: current ? "#fff" : done ? "#eaf1f6" : "#93a7b7" }}
+                    style={{ color: current ? "#F0F2F5" : done ? "#F0F2F5" : "#92A0AB" }}
                   >
                     {s.label}
                   </span>
-                  <span className="block text-[11.5px] text-[#93a7b7] opacity-70">{s.sub}</span>
+                  <span className="block text-[11.5px] text-[#92A0AB] opacity-70">{s.sub}</span>
                 </span>
               </button>
             );
           })}
         </nav>
-        <div className="mt-auto pt-6 text-[11.5px] text-[#93a7b7]">
+        <div className="mt-auto pt-6 text-[11.5px] text-[#92A0AB]">
           Need a hand?{" "}
-          <a href="mailto:captains@fish-x.com" className="text-[#e3c089] underline">
+          <a href="mailto:captains@fish-x.com" className="text-[#2DE2F2] underline">
             captains@fish-x.com
           </a>
         </div>
@@ -738,34 +738,34 @@ export function OperatorOnboarding() {
             <div className="min-h-[70vh] flex items-center justify-center">
               <div className="max-w-[520px] text-center">
                 <div
-                  className="w-[82px] h-[82px] rounded-full bg-[#e2f2ea] grid place-items-center text-[#1f8a5b] mx-auto mb-[22px] text-[36px]"
+                  className="w-[82px] h-[82px] rounded-full bg-[rgba(34,197,94,0.14)] grid place-items-center text-[#22C55E] mx-auto mb-[22px] text-[36px]"
                 >
                   ✓
                 </div>
-                <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#a97e3c]">
+                <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#F2B93D]">
                   You're live on Fish-X
                 </div>
                 <h1
-                  className="font-semibold text-[38px] leading-[1.05] my-[10px] text-[#0d2236]"
+                  className="font-semibold text-[38px] leading-[1.05] my-[10px] text-[#F0F2F5]"
                   style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
                 >
                   Your listing is published.
                 </h1>
-                <p className="text-[15.5px] leading-[1.55] text-[#5c6b78] mb-[26px]">
-                  Anglers can now find and book <b className="text-[#0d2236]">{listing.title}</b>. Payments arrive
+                <p className="text-[15.5px] leading-[1.55] text-[#92A0AB] mb-[26px]">
+                  Anglers can now find and book <b className="text-[#F0F2F5]">{listing.title}</b>. Payments arrive
                   protected in escrow — released to you after every trip.
                 </p>
                 <div className="flex gap-3 justify-center flex-wrap">
                   <button
                     onClick={() => navigate({ to: "/dashboard" })}
-                    className="bg-[#0a2236] text-white rounded-xl px-6 py-3.5 text-[13px] font-bold tracking-[0.03em]"
+                    className="bg-[#1C2936] text-white rounded-xl px-6 py-3.5 text-[13px] font-bold tracking-[0.03em]"
                   >
                     Go to dashboard
                   </button>
                   {data?.business?.slug && (
                     <a
                       href={`/b/${data.business.slug}`}
-                      className="border border-[#0d2236]/10 text-[#0d2236] rounded-xl px-6 py-3.5 text-[13px] font-semibold"
+                      className="border border-[#2DE2F2]/10 text-[#2DE2F2] rounded-xl px-6 py-3.5 text-[13px] font-semibold"
                     >
                       View live listing
                     </a>
@@ -877,7 +877,7 @@ export function OperatorOnboarding() {
                 <button
                   onClick={() => setStep((s) => Math.max(0, s - 1))}
                   disabled={step === 0}
-                  className="text-[13px] font-semibold text-[#5c6b78] disabled:opacity-0"
+                  className="text-[13px] font-semibold text-[#92A0AB] disabled:opacity-0"
                 >
                   ← Back
                 </button>
@@ -892,7 +892,7 @@ export function OperatorOnboarding() {
                     }
                   }}
                   disabled={profileM.isPending || publishM.isPending}
-                  className="bg-[#e3c089] text-[#1c1303] border-0 rounded-xl px-[26px] py-[13px] text-[13.5px] font-bold tracking-[0.04em] cursor-pointer disabled:opacity-60"
+                  className="bg-[#2DE2F2] text-[#04121B] border-0 rounded-xl px-[26px] py-[13px] text-[13.5px] font-bold tracking-[0.04em] cursor-pointer disabled:opacity-60"
                 >
                   {step === 4
                     ? publishM.isPending
@@ -909,8 +909,8 @@ export function OperatorOnboarding() {
       </main>
 
       {toast && (
-        <div className="fixed bottom-[88px] left-1/2 -translate-x-1/2 z-50 flex items-center gap-[11px] bg-[#0a2236] text-white border border-white/10 rounded-full px-[22px] py-[13px] shadow-2xl">
-          <span className="w-[22px] h-[22px] rounded-full bg-[#1f8a5b] grid place-items-center text-[12px]">✓</span>
+        <div className="fixed bottom-[88px] left-1/2 -translate-x-1/2 z-50 flex items-center gap-[11px] bg-[#1C2936] text-white border border-[#2DE2F2]/10 rounded-full px-[22px] py-[13px] shadow-2xl">
+          <span className="w-[22px] h-[22px] rounded-full bg-[#22C55E] grid place-items-center text-[12px]">✓</span>
           <span className="text-[13.5px] font-semibold">{toast}</span>
         </div>
       )}
@@ -921,22 +921,22 @@ export function OperatorOnboarding() {
 function StepHeader({ step, heading, sub }: { step: number; heading: string; sub: string }) {
   return (
     <div className="mb-8">
-      <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#a97e3c]">Step {step + 1} of 5</div>
+      <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#F2B93D]">Step {step + 1} of 5</div>
       <h1
-        className="font-semibold text-[34px] leading-[1.05] mt-2 mb-1.5 text-[#0d2236]"
+        className="font-semibold text-[34px] leading-[1.05] mt-2 mb-1.5 text-[#F0F2F5]"
         style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
       >
         {heading}
       </h1>
-      <p className="text-[15px] text-[#5c6b78]">{sub}</p>
+      <p className="text-[15px] text-[#92A0AB]">{sub}</p>
     </div>
   );
 }
 
 const inputCls =
-  "w-full bg-[#eef2f5] border border-[#0d2236]/10 rounded-[10px] px-[13px] py-3 text-[14px] text-[#0d2236] outline-none focus:border-[#e3c089]";
+  "w-full bg-[#1C2936] border border-[#2DE2F2]/10 rounded-[10px] px-[13px] py-3 text-[14px] text-[#F0F2F5] outline-none focus:border-[#2DE2F2]";
 const labelCls =
-  "block text-[11px] font-bold tracking-[0.1em] uppercase text-[#5c6b78] mb-1.5";
+  "block text-[11px] font-bold tracking-[0.1em] uppercase text-[#92A0AB] mb-1.5";
 
 function ProfileStep({
   profile,
@@ -948,7 +948,7 @@ function ProfileStep({
   categories: { key: string; label: string }[];
 }) {
   return (
-    <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
+    <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-[18px] p-6 max-w-[720px]">
       <div className="grid grid-cols-2 gap-4">
         <label className="block">
           <span className={labelCls}>Business name</span>
@@ -1020,35 +1020,35 @@ function VerifyStep({
 }) {
   return (
     <div className="flex flex-col gap-[14px] max-w-[720px]">
-      <div className="bg-white border border-[#0d2236]/10 rounded-2xl p-[16px_20px]">
-        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#a97e3c] mb-1">
+      <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[16px_20px]">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#F2B93D] mb-1">
           {categoryLabel}
         </div>
-        <div className="text-[13.5px] text-[#0d2236] leading-[1.5]">{config.headline}</div>
+        <div className="text-[13.5px] text-[#F0F2F5] leading-[1.5]">{config.headline}</div>
       </div>
       {config.docs.map((meta) => {
         const done = !!uploaded[meta.key] || alreadySubmitted;
         return (
           <div
             key={meta.key}
-            className="bg-white border border-[#0d2236]/10 rounded-2xl p-[18px_20px] flex items-center gap-4"
+            className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[18px_20px] flex items-center gap-4"
           >
-            <span className="w-11 h-11 rounded-xl bg-[#f4e6cd] grid place-items-center text-[#a97e3c] flex-none">
+            <span className="w-11 h-11 rounded-xl bg-[rgba(242,185,61,0.16)] grid place-items-center text-[#F2B93D] flex-none">
               📄
             </span>
             <div className="flex-1 min-w-0">
-              <div className="text-[14.5px] font-semibold text-[#0d2236]">{meta.title}</div>
-              <div className="text-[12.5px] text-[#5c6b78]">{meta.desc}</div>
+              <div className="text-[14.5px] font-semibold text-[#F0F2F5]">{meta.title}</div>
+              <div className="text-[12.5px] text-[#92A0AB]">{meta.desc}</div>
             </div>
             {done ? (
-              <span className="inline-flex items-center gap-2 bg-[#e2f2ea] text-[#1f8a5b] rounded-full px-[14px] py-[9px] text-[12.5px] font-bold flex-none">
-                <span className="w-4 h-4 rounded-full bg-[#1f8a5b] text-white grid place-items-center text-[10px]">
+              <span className="inline-flex items-center gap-2 bg-[rgba(34,197,94,0.14)] text-[#22C55E] rounded-full px-[14px] py-[9px] text-[12.5px] font-bold flex-none">
+                <span className="w-4 h-4 rounded-full bg-[#22C55E] text-white grid place-items-center text-[10px]">
                   ✓
                 </span>
                 Uploaded
               </span>
             ) : (
-              <label className="flex-none bg-[#0a2236] text-white border-0 rounded-[10px] px-[18px] py-[10px] text-[12.5px] font-bold cursor-pointer">
+              <label className="flex-none bg-[#1C2936] text-white border-0 rounded-[10px] px-[18px] py-[10px] text-[12.5px] font-bold cursor-pointer">
                 Upload
                 <input
                   type="file"
@@ -1065,9 +1065,9 @@ function VerifyStep({
           </div>
         );
       })}
-      <div className="flex items-start gap-2.5 bg-[#e2eef2] rounded-xl px-4 py-3.5 max-w-[720px] mt-2">
-        <span className="text-[#1f9fbe] flex-none mt-0.5">ℹ</span>
-        <span className="text-[12.5px] leading-[1.5] text-[#0d2236]">
+      <div className="flex items-start gap-2.5 bg-[rgba(45,226,242,0.12)] rounded-xl px-4 py-3.5 max-w-[720px] mt-2">
+        <span className="text-[#2DE2F2] flex-none mt-0.5">ℹ</span>
+        <span className="text-[12.5px] leading-[1.5] text-[#F0F2F5]">
           Documents are reviewed within ~24 hours. You can finish setup now — your listing goes live the moment
           verification clears.
         </span>
@@ -1097,29 +1097,29 @@ function PayoutsStep({
   const gridCols = config.flow.length === 3 ? "grid-cols-3" : "grid-cols-2";
   return (
     <>
-      <div className="bg-white border border-[#0d2236]/10 rounded-2xl p-[16px_20px] max-w-[720px] mb-4">
-        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#a97e3c] mb-1">
+      <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[16px_20px] max-w-[720px] mb-4">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#F2B93D] mb-1">
           {config.eyebrow}
         </div>
-        <div className="text-[13.5px] text-[#0d2236] leading-[1.5]">{config.headline}</div>
+        <div className="text-[13.5px] text-[#F0F2F5] leading-[1.5]">{config.headline}</div>
       </div>
       <div className={`grid ${gridCols} gap-[14px] max-w-[720px] mb-5`}>
         {config.flow.map((x) => (
-          <div key={x.n} className="bg-white border border-[#0d2236]/10 rounded-2xl p-[18px]">
+          <div key={x.n} className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[18px]">
             <div
               className="w-[34px] h-[34px] rounded-[9px] grid place-items-center mb-3 font-semibold"
               style={{ background: x.c, color: x.ic, fontFamily: "'Cormorant Garamond',Georgia,serif" }}
             >
               {x.n}
             </div>
-            <div className="text-[13.5px] font-semibold text-[#0d2236] mb-0.5">{x.t}</div>
-            <div className="text-[12.5px] leading-[1.45] text-[#5c6b78]">{x.d}</div>
+            <div className="text-[13.5px] font-semibold text-[#F0F2F5] mb-0.5">{x.t}</div>
+            <div className="text-[12.5px] leading-[1.45] text-[#92A0AB]">{x.d}</div>
           </div>
         ))}
       </div>
 
       {/* Stripe Connect */}
-      <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px] mb-4">
+      <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-[18px] p-6 max-w-[720px] mb-4">
         <div className="flex items-center gap-4">
           <span
             className="w-11 h-11 rounded-xl grid place-items-center flex-none font-bold text-white"
@@ -1128,12 +1128,12 @@ function PayoutsStep({
             S
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-[14.5px] font-semibold text-[#0d2236]">{config.connectLabel}</div>
-            <div className="text-[12.5px] text-[#5c6b78]">{config.connectDesc}</div>
+            <div className="text-[14.5px] font-semibold text-[#F0F2F5]">{config.connectLabel}</div>
+            <div className="text-[12.5px] text-[#92A0AB]">{config.connectDesc}</div>
           </div>
           {stripeConnected ? (
-            <span className="inline-flex items-center gap-2 bg-[#e2f2ea] text-[#1f8a5b] rounded-full px-[14px] py-[9px] text-[12.5px] font-bold flex-none">
-              <span className="w-4 h-4 rounded-full bg-[#1f8a5b] text-white grid place-items-center text-[10px]">
+            <span className="inline-flex items-center gap-2 bg-[rgba(34,197,94,0.14)] text-[#22C55E] rounded-full px-[14px] py-[9px] text-[12.5px] font-bold flex-none">
+              <span className="w-4 h-4 rounded-full bg-[#22C55E] text-white grid place-items-center text-[10px]">
                 ✓
               </span>
               Connected
@@ -1147,14 +1147,14 @@ function PayoutsStep({
             </button>
           )}
         </div>
-        <div className="text-[11.5px] text-[#8a97a3] mt-3">
+        <div className="text-[11.5px] text-[#92A0AB] mt-3">
           You keep 80% of every sale; the Fish-X platform fee is 20%. {config.fineprint}
         </div>
 
       </div>
 
-      <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
-        <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-[#5c6b78] mb-3">Payout schedule</div>
+      <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-[18px] p-6 max-w-[720px]">
+        <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-[#92A0AB] mb-3">Payout schedule</div>
         <div
           className="grid gap-3"
           style={{ gridTemplateColumns: `repeat(${config.schedules.length}, minmax(0,1fr))` }}
@@ -1167,17 +1167,17 @@ function PayoutsStep({
                 onClick={() => setSchedule(opt.key)}
                 className="border rounded-xl p-4 text-left"
                 style={{
-                  borderColor: on ? "#e3c089" : "rgba(13,34,54,.10)",
-                  background: on ? "#fbf6ec" : "#fff",
+                  borderColor: on ? "#2DE2F2" : "rgba(13,34,54,.10)",
+                  background: on ? "#2DE2F2" : "#14202B",
                 }}
               >
-                <div className="text-[13.5px] font-semibold text-[#0d2236]">{opt.title}</div>
-                <div className="text-[12px] text-[#5c6b78] mt-1">{opt.desc}</div>
+                <div className="text-[13.5px] font-semibold text-[#F0F2F5]">{opt.title}</div>
+                <div className="text-[12px] text-[#92A0AB] mt-1">{opt.desc}</div>
               </button>
             );
           })}
         </div>
-        <div className="text-[12px] text-[#5c6b78] mt-4">{config.fineprint}</div>
+        <div className="text-[12px] text-[#92A0AB] mt-4">{config.fineprint}</div>
       </div>
     </>
   );
@@ -1193,13 +1193,13 @@ function ListingStep({
   config: ListingConfig;
 }) {
   return (
-    <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
+    <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-[18px] p-6 max-w-[720px]">
       <div className="mb-5">
-        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#a97e3c]">
+        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#F2B93D]">
           {config.eyebrow}
         </div>
         <div
-          className="text-[20px] font-semibold text-[#0d2236] mt-1"
+          className="text-[20px] font-semibold text-[#F0F2F5] mt-1"
           style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
         >
           {config.headline}
@@ -1270,9 +1270,9 @@ function ListingStep({
                 }
                 className="border rounded-full px-[14px] py-[8px] text-[12.5px] font-semibold"
                 style={{
-                  background: on ? "#fbf6ec" : "#fff",
-                  borderColor: on ? "#e3c089" : "rgba(13,34,54,.10)",
-                  color: on ? "#a97e3c" : "#0d2236",
+                  background: on ? "#2DE2F2" : "#14202B",
+                  borderColor: on ? "#2DE2F2" : "rgba(13,34,54,.10)",
+                  color: on ? "#F2B93D" : "#F0F2F5",
                 }}
               >
                 {ch.label}
@@ -1323,17 +1323,17 @@ function ReviewStep({
     ],
   ];
   return (
-    <div className="bg-white border border-[#0d2236]/10 rounded-[18px] p-6 max-w-[720px]">
+    <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-[18px] p-6 max-w-[720px]">
       <div className="grid gap-3">
         {rows.map(([k, v]) => (
           <div
             key={k}
-            className="flex justify-between border-b border-[#0d2236]/[0.06] pb-3 last:border-0 last:pb-0"
+            className="flex justify-between border-b border-[#2DE2F2]/[0.06] pb-3 last:border-0 last:pb-0"
           >
-            <span className="text-[12px] font-bold tracking-[0.1em] uppercase text-[#5c6b78]">
+            <span className="text-[12px] font-bold tracking-[0.1em] uppercase text-[#92A0AB]">
               {k}
             </span>
-            <span className="text-[13.5px] text-[#0d2236] text-right">{v}</span>
+            <span className="text-[13.5px] text-[#F0F2F5] text-right">{v}</span>
           </div>
         ))}
       </div>
