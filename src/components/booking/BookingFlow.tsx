@@ -16,7 +16,7 @@ import { DEFAULT_HERO, galleryFor } from "@/lib/platform-photos";
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236", navy: "#0a2236", paper: "#eef2f5", card: "#fff",
+  ink: "#0d2236", navy: "#0a2236", paper: "#ffffff", card: "#fff",
   sand: "#e3c089", sandsoft: "#f4e6cd", goldtext: "#a97e3c",
   cyan: "#1f9fbe", cyansoft: "#e2eef2", green: "#1f8a5b", greensoft: "#e2f2ea",
   ond: "#eaf1f6", ondmut: "#93a7b7", tmut: "#5c6b78",
