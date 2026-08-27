@@ -20,7 +20,7 @@ function FollowButton({ businessId }: { businessId: string }) {
       setSignedIn(true);
       try {
         const rows = await loadFollowed();
-        if (alive) setFollowing((rows ?? []).some((r: { id: string }) => r.id === businessId));
+        if (alive) setFollowing((rows ?? []).some((r) => r.businessId === businessId));
       } catch {
         /* non-fatal */
       }
