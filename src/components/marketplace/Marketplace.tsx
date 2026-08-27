@@ -114,6 +114,35 @@ export function Marketplace() {
     setTimeout(() => setToast(""), 2200);
   };
 
+  // ---- Wishlist (signed-in shoppers only; demo catalog ids are not uuids) ----
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (alive) setSignedIn(!!data.session);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const fetchWishlistIds = useServerFn(listMyWishlistIds);
+  const toggleSave = useServerFn(toggleWishlist);
+  const qc = useQueryClient();
+  const { data: savedIds = [] } = useQuery({
+    queryKey: ["my-wishlist-ids"],
+    queryFn: () => fetchWishlistIds(),
+    enabled: signedIn,
+  });
+  const saveMutation = useMutation({
+    mutationFn: (productId: string) => toggleSave({ data: { productId } }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ["my-wishlist-ids"] });
+      qc.invalidateQueries({ queryKey: ["my-wishlist"] });
+      showToast(res?.saved ? "Saved to your wishlist" : "Removed from wishlist");
+    },
+  });
+  const canSave = (id: string) => signedIn && UUID_RE.test(id);
+
   // Persist the cart so product pages and the marketplace share one basket.
   useEffect(() => {
     try {
