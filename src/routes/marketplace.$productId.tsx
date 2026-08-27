@@ -12,6 +12,8 @@ import {
   type Product,
 } from "@/components/marketplace/catalog";
 import { getStoreProduct, createProductCheckout } from "@/lib/product-checkout.functions";
+import { listMyWishlistIds, toggleWishlist } from "@/lib/shopping.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/marketplace/$productId")({
   loader: async ({ params }) => {
