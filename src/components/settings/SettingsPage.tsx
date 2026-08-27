@@ -49,6 +49,9 @@ export function SettingsPage() {
   const items = [
     { key: "personal", label: "Personal details", hint: "Name, photo, contact" },
     { key: "security", label: "Sign-in & security", hint: "Password, sessions" },
+    { key: "orders", label: "My orders", hint: "Marketplace purchases & delivery" },
+    { key: "wishlist", label: "Saved items", hint: "Your marketplace wishlist" },
+    { key: "sellers", label: "Followed sellers", hint: "Shops, marinas & brands" },
     ...memberships.map((m: any) => ({
       key: `biz:${m.business.id}`,
       label: m.business.name,
