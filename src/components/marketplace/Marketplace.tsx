@@ -7,7 +7,7 @@
  */
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   CATALOG,
@@ -23,6 +23,10 @@ import {
 import { listStoreProducts, createProductCheckout } from "@/lib/product-checkout.functions";
 import { listCategories } from "@/lib/businesses.functions";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { listMyWishlistIds, toggleWishlist } from "@/lib/shopping.functions";
+import { supabase } from "@/integrations/supabase/client";
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 
 const V = {
@@ -113,6 +117,35 @@ export function Marketplace() {
     setToast(m);
     setTimeout(() => setToast(""), 2200);
   };
+
+  // ---- Wishlist (signed-in shoppers only; demo catalog ids are not uuids) ----
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (alive) setSignedIn(!!data.session);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const fetchWishlistIds = useServerFn(listMyWishlistIds);
+  const toggleSave = useServerFn(toggleWishlist);
+  const qc = useQueryClient();
+  const { data: savedIds = [] } = useQuery({
+    queryKey: ["my-wishlist-ids"],
+    queryFn: () => fetchWishlistIds(),
+    enabled: signedIn,
+  });
+  const saveMutation = useMutation({
+    mutationFn: (productId: string) => toggleSave({ data: { productId } }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ["my-wishlist-ids"] });
+      qc.invalidateQueries({ queryKey: ["my-wishlist"] });
+      showToast(res?.saved ? "Saved to your wishlist" : "Removed from wishlist");
+    },
+  });
+  const canSave = (id: string) => signedIn && UUID_RE.test(id);
 
   // Persist the cart so product pages and the marketplace share one basket.
   useEffect(() => {
@@ -536,6 +569,31 @@ export function Marketplace() {
                       <span style={{ position: "absolute", top: 12, right: 12, background: "rgba(6,21,31,.72)", color: V.sand, fontSize: 11, fontWeight: 700, padding: "5px 10px", borderRadius: 20 }}>
                         {money(p.price)}
                       </span>
+                      {canSave(p.id) && (
+                        <button
+                          aria-label={savedIds.includes(p.id) ? "Remove from wishlist" : "Save to wishlist"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            saveMutation.mutate(p.id);
+                          }}
+                          style={{
+                            position: "absolute",
+                            bottom: 12,
+                            right: 12,
+                            width: 34,
+                            height: 34,
+                            borderRadius: "50%",
+                            border: 0,
+                            background: "rgba(6,21,31,.72)",
+                            color: savedIds.includes(p.id) ? "#ff6b81" : "#fff",
+                            fontSize: 15,
+                            lineHeight: 1,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {savedIds.includes(p.id) ? "♥" : "♡"}
+                        </button>
+                      )}
                     </div>
                     <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 7, minWidth: 0 }}>

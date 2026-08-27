@@ -1,5 +1,69 @@
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { supabase } from "@/integrations/supabase/client";
+import { listFollowedSellers, toggleFollowSeller } from "@/lib/shopping.functions";
+
+/** Follow / unfollow a seller — only rendered for signed-in shoppers. */
+function FollowButton({ businessId }: { businessId: string }) {
+  const [signedIn, setSignedIn] = useState(false);
+  const [following, setFollowing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const loadFollowed = useServerFn(listFollowedSellers);
+  const toggle = useServerFn(toggleFollowSeller);
+
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!alive || !data.session) return;
+      setSignedIn(true);
+      try {
+        const rows = await loadFollowed();
+        if (alive) setFollowing((rows ?? []).some((r) => r.businessId === businessId));
+      } catch {
+        /* non-fatal */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [businessId, loadFollowed]);
+
+  if (!signedIn) return null;
+
+  return (
+    <button
+      onClick={async () => {
+        setBusy(true);
+        try {
+          const res = await toggle({ data: { businessId } });
+          setFollowing(!!res?.following);
+        } catch {
+          /* non-fatal */
+        } finally {
+          setBusy(false);
+        }
+      }}
+      disabled={busy}
+      style={{
+        alignSelf: "flex-end",
+        background: following ? "transparent" : "#2DE2F2",
+        color: following ? "#2DE2F2" : "#04121B",
+        border: `1px solid ${following ? "rgba(45,226,242,.5)" : "#2DE2F2"}`,
+        borderRadius: 30,
+        padding: "11px 20px",
+        fontSize: 13,
+        fontWeight: 700,
+        cursor: busy ? "wait" : "pointer",
+        opacity: busy ? 0.6 : 1,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {following ? "✓ Following" : "Follow seller"}
+    </button>
+  );
+}
 
 type Service = {
   id: string;
@@ -120,6 +184,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
               </span>
             </div>
           </div>
+          <FollowButton businessId={b.id} />
           <div style={{ display: "flex", gap: 26, padding: "16px 22px", background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, flex: "none" }}>
             <Stat n={services.length} label="trips" />
             <Stat n={ratingSummary.count} label="reviews" divider />

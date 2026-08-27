@@ -13,6 +13,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { AnglerAccount } from "@/components/profile/AnglerAccount";
+import {
+  MyOrdersSection,
+  WishlistSection,
+  FollowedSellersSection,
+} from "@/components/shopping/ShoppingSections";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -44,6 +49,9 @@ export function SettingsPage() {
   const items = [
     { key: "personal", label: "Personal details", hint: "Name, photo, contact" },
     { key: "security", label: "Sign-in & security", hint: "Password, sessions" },
+    { key: "orders", label: "My orders", hint: "Marketplace purchases & delivery" },
+    { key: "wishlist", label: "Saved items", hint: "Your marketplace wishlist" },
+    { key: "sellers", label: "Followed sellers", hint: "Shops, marinas & brands" },
     ...memberships.map((m: any) => ({
       key: `biz:${m.business.id}`,
       label: m.business.name,
@@ -165,6 +173,27 @@ export function SettingsPage() {
             <>
               <SectionHead title="Sign-in & security" sub="Change your password or sign out of this device." />
               <SecurityCard />
+            </>
+          )}
+
+          {active === "orders" && (
+            <>
+              <SectionHead title="My orders" sub="Every marketplace purchase, its status and tracking." />
+              <MyOrdersSection />
+            </>
+          )}
+
+          {active === "wishlist" && (
+            <>
+              <SectionHead title="Saved items" sub="Gear you hearted in the marketplace." />
+              <WishlistSection />
+            </>
+          )}
+
+          {active === "sellers" && (
+            <>
+              <SectionHead title="Followed sellers" sub="Shops, marinas and brands you keep an eye on." />
+              <FollowedSellersSection />
             </>
           )}
 

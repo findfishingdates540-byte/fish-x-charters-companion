@@ -12,6 +12,8 @@ import {
   type Product,
 } from "@/components/marketplace/catalog";
 import { getStoreProduct, createProductCheckout } from "@/lib/product-checkout.functions";
+import { listMyWishlistIds, toggleWishlist } from "@/lib/shopping.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/marketplace/$productId")({
   loader: async ({ params }) => {
@@ -102,6 +104,31 @@ function ProductDetail() {
   };
 
   useEffect(() => setCartCount(readCartCount()), []);
+
+  // ---- Wishlist (signed-in shoppers, real vendor products only) ----
+  const loadSavedIds = useServerFn(listMyWishlistIds);
+  const toggleSave = useServerFn(toggleWishlist);
+  const [canSave, setCanSave] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [savingBusy, setSavingBusy] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      if (!product.live) return;
+      const { data } = await supabase.auth.getSession();
+      if (!alive || !data.session) return;
+      setCanSave(true);
+      try {
+        const ids = await loadSavedIds();
+        if (alive) setSaved((ids ?? []).includes(product.id));
+      } catch {
+        /* non-fatal */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [product.id, product.live, loadSavedIds]);
 
   const maxQty = product.live && product.stockQty != null ? Math.max(1, product.stockQty) : 99;
 
@@ -275,6 +302,40 @@ function ProductDetail() {
               >
                 {busy ? "Redirecting…" : "Buy now"}
               </button>
+              {canSave && (
+                <button
+                  aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
+                  onClick={async () => {
+                    setSavingBusy(true);
+                    try {
+                      const res = await toggleSave({ data: { productId: product.id } });
+                      setSaved(!!res?.saved);
+                    } catch {
+                      /* non-fatal */
+                    } finally {
+                      setSavingBusy(false);
+                    }
+                  }}
+                  disabled={savingBusy}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background: V.card,
+                    color: saved ? "#d6455d" : V.ink,
+                    border: `1px solid ${V.line}`,
+                    borderRadius: 12,
+                    padding: "14px 18px",
+                    fontFamily: V.sans,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: savingBusy ? "wait" : "pointer",
+                  }}
+                >
+                  <span style={{ fontSize: 16 }}>{saved ? "♥" : "♡"}</span>
+                  {saved ? "Saved" : "Save"}
+                </button>
+              )}
             </div>
             {product.live && product.stockQty != null && product.stockQty <= 10 && (
               <div style={{ fontSize: 12, color: V.goldtext, fontWeight: 600, marginBottom: 12 }}>
