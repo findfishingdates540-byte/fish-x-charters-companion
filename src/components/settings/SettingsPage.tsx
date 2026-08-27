@@ -13,6 +13,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { AnglerAccount } from "@/components/profile/AnglerAccount";
+import {
+  MyOrdersSection,
+  WishlistSection,
+  FollowedSellersSection,
+} from "@/components/shopping/ShoppingSections";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { supabase } from "@/integrations/supabase/client";
 
