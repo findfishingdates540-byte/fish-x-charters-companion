@@ -105,6 +105,31 @@ function ProductDetail() {
 
   useEffect(() => setCartCount(readCartCount()), []);
 
+  // ---- Wishlist (signed-in shoppers, real vendor products only) ----
+  const loadSavedIds = useServerFn(listMyWishlistIds);
+  const toggleSave = useServerFn(toggleWishlist);
+  const [canSave, setCanSave] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [savingBusy, setSavingBusy] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      if (!product.live) return;
+      const { data } = await supabase.auth.getSession();
+      if (!alive || !data.session) return;
+      setCanSave(true);
+      try {
+        const ids = await loadSavedIds();
+        if (alive) setSaved((ids ?? []).includes(product.id));
+      } catch {
+        /* non-fatal */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [product.id, product.live, loadSavedIds]);
+
   const maxQty = product.live && product.stockQty != null ? Math.max(1, product.stockQty) : 99;
 
   /** Shared cart (localStorage) — the marketplace page hydrates from the same key. */
