@@ -302,6 +302,40 @@ function ProductDetail() {
               >
                 {busy ? "Redirecting…" : "Buy now"}
               </button>
+              {canSave && (
+                <button
+                  aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
+                  onClick={async () => {
+                    setSavingBusy(true);
+                    try {
+                      const res = await toggleSave({ data: { productId: product.id } });
+                      setSaved(!!res?.saved);
+                    } catch {
+                      /* non-fatal */
+                    } finally {
+                      setSavingBusy(false);
+                    }
+                  }}
+                  disabled={savingBusy}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background: V.card,
+                    color: saved ? "#d6455d" : V.ink,
+                    border: `1px solid ${V.line}`,
+                    borderRadius: 12,
+                    padding: "14px 18px",
+                    fontFamily: V.sans,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: savingBusy ? "wait" : "pointer",
+                  }}
+                >
+                  <span style={{ fontSize: 16 }}>{saved ? "♥" : "♡"}</span>
+                  {saved ? "Saved" : "Save"}
+                </button>
+              )}
             </div>
             {product.live && product.stockQty != null && product.stockQty <= 10 && (
               <div style={{ fontSize: 12, color: V.goldtext, fontWeight: 600, marginBottom: 12 }}>
