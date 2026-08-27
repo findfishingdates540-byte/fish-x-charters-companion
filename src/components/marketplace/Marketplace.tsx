@@ -569,6 +569,31 @@ export function Marketplace() {
                       <span style={{ position: "absolute", top: 12, right: 12, background: "rgba(6,21,31,.72)", color: V.sand, fontSize: 11, fontWeight: 700, padding: "5px 10px", borderRadius: 20 }}>
                         {money(p.price)}
                       </span>
+                      {canSave(p.id) && (
+                        <button
+                          aria-label={savedIds.includes(p.id) ? "Remove from wishlist" : "Save to wishlist"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            saveMutation.mutate(p.id);
+                          }}
+                          style={{
+                            position: "absolute",
+                            bottom: 12,
+                            right: 12,
+                            width: 34,
+                            height: 34,
+                            borderRadius: "50%",
+                            border: 0,
+                            background: "rgba(6,21,31,.72)",
+                            color: savedIds.includes(p.id) ? "#ff6b81" : "#fff",
+                            fontSize: 15,
+                            lineHeight: 1,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {savedIds.includes(p.id) ? "♥" : "♡"}
+                        </button>
+                      )}
                     </div>
                     <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 7, minWidth: 0 }}>
