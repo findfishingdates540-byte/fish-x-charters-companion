@@ -176,6 +176,27 @@ export function SettingsPage() {
             </>
           )}
 
+          {active === "orders" && (
+            <>
+              <SectionHead title="My orders" sub="Every marketplace purchase, its status and tracking." />
+              <MyOrdersSection />
+            </>
+          )}
+
+          {active === "wishlist" && (
+            <>
+              <SectionHead title="Saved items" sub="Gear you hearted in the marketplace." />
+              <WishlistSection />
+            </>
+          )}
+
+          {active === "sellers" && (
+            <>
+              <SectionHead title="Followed sellers" sub="Shops, marinas and brands you keep an eye on." />
+              <FollowedSellersSection />
+            </>
+          )}
+
           {activeBiz && (
             <>
               <SectionHead
