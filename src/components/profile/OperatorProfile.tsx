@@ -184,6 +184,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
               </span>
             </div>
           </div>
+          <FollowButton businessId={b.id} />
           <div style={{ display: "flex", gap: 26, padding: "16px 22px", background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, flex: "none" }}>
             <Stat n={services.length} label="trips" />
             <Stat n={ratingSummary.count} label="reviews" divider />
