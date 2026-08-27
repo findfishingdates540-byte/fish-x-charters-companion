@@ -16,12 +16,12 @@ import {
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#F0F2F5",
-  card: "#14202B",
-  cyan: "#2DE2F2",
-  cyansoft: "rgba(45,226,242,.12)",
-  tmut: "#92A0AB",
-  line: "rgba(255,255,255,.08)",
+  ink: "#0d2236",
+  card: "#ffffff",
+  cyan: "#1f9fbe",
+  cyansoft: "#e2eef2",
+  tmut: "#5c6b78",
+  line: "rgba(13,34,54,.10)",
 };
 
 const money = (c: number) => `$${(c / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;

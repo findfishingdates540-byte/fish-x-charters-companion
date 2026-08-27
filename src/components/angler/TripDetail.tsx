@@ -17,7 +17,7 @@ const V = {
   sans: "'Hanken Grotesk',system-ui,sans-serif",
   ink: "#0d2236",
   navy: "#0a2236",
-  paper: "#eef2f5",
+  paper: "#ffffff",
   card: "#ffffff",
   sand: "#e3c089",
   sandsoft: "#f4e6cd",

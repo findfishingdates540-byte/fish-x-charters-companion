@@ -36,7 +36,7 @@ const styleVars: React.CSSProperties = {
   ["--ink" as never]: "#0d2236",
   ["--navy" as never]: "#0a2236",
   ["--navy2" as never]: "#0c2a42",
-  ["--paper" as never]: "#eef2f5",
+  ["--paper" as never]: "#ffffff",
   ["--card" as never]: "#ffffff",
   ["--sand" as never]: "#e3c089",
   ["--sandsoft" as never]: "#f4e6cd",
