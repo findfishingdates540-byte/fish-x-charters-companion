@@ -54,7 +54,7 @@ export function ExploreTab() {
   };
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "calc(100vh - 66px)", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#0d2236" }}>
+    <div style={{ background: "#ffffff", minHeight: "calc(100vh - 66px)", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#0d2236" }}>
       <style>{`
         .fx-ch-search { display: grid; grid-template-columns: 1.3fr 1fr 1.1fr .8fr auto; gap: 0; }
         .fx-ch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
