@@ -65,7 +65,6 @@ export const upsertCaptainCharter = createServerFn({ method: "POST" })
     const payload = {
       ...rest,
       business_id: businessId,
-      kind: "charter_trip",
     };
     const q = context.supabase.from("charters");
     const { data: row, error } = id
