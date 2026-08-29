@@ -4,9 +4,9 @@
  * captain-management server functions (bookings list, services CRUD,
  * earnings, messages).
  */
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { getCaptainDashboard } from "@/lib/captain-dashboard.functions";
@@ -14,17 +14,15 @@ import {
   listCaptainBookings,
   listCaptainConversations,
   getCaptainEarnings,
-  upsertCaptainService,
-  deleteCaptainService,
-  toggleServicePublished,
 } from "@/lib/captain-management.functions";
-import { ImageUpload } from "@/components/business/ImageUpload";
 import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
 import { RequestInbox } from "@/components/operator/RequestInbox";
-import { AvailabilityCalendar } from "@/components/business/AvailabilityCalendar";
+import { FleetPanel } from "@/components/captain/FleetPanel";
+import { ChartersPanel } from "@/components/captain/ChartersPanel";
+import { BlockoutDatesPanel } from "@/components/captain/BlockoutDatesPanel";
 
 
 export const captainDashboardQO = queryOptions({
@@ -32,7 +30,7 @@ export const captainDashboardQO = queryOptions({
   queryFn: () => getCaptainDashboard(),
 });
 
-type Tab = "overview" | "bookings" | "services" | "messages" | "earnings" | "settings";
+type Tab = "overview" | "bookings" | "services" | "blockouts" | "fleet" | "messages" | "earnings" | "settings";
 
 const money = (cents: number) =>
   `$${(Math.max(0, cents) / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
@@ -44,8 +42,6 @@ const shell: React.CSSProperties = {
   ["--navy" as never]: "#0D161F",
   ["--paper" as never]: "#0D161F",
   ["--card" as never]: "#14202B",
-  ["--sand" as never]: "#2DE2F2",
-  ["--sandsoft" as never]: "rgba(242,185,61,.18)",
   ["--goldtext" as never]: "#F2B93D",
   ["--cyan" as never]: "#2DE2F2",
   ["--green" as never]: "#22C55E",
@@ -77,7 +73,9 @@ export function CaptainDashboard() {
   const pageTitle: Record<Tab, string> = {
     overview: `Welcome back, Captain`,
     bookings: "Bookings",
-    services: "Services",
+    services: "Charter Trips",
+    blockouts: "Blockout Dates",
+    fleet: "Fleet",
     messages: "Messages",
     earnings: "Earnings",
     settings: "Settings",
@@ -85,7 +83,9 @@ export function CaptainDashboard() {
   const pageSub: Record<Tab, string> = {
     overview: biz ? `${biz.name} · ${[biz.city, biz.region].filter(Boolean).join(", ")}` : "Set up your business to see bookings.",
     bookings: `${data.stats.upcomingCount} upcoming · ${data.stats.completedCount} completed`,
-    services: "Publish trips, manage pricing and availability",
+    services: "Create the charter trips anglers can book",
+    blockouts: "Close date ranges across all your charters",
+    fleet: "Boats, specs, and photo galleries — each charter picks one",
     messages: "Guest conversations",
     earnings: "Payouts and escrow",
     settings: "Business & payout settings",
@@ -101,11 +101,11 @@ export function CaptainDashboard() {
       {/* SIDEBAR */}
       <aside className="fx-side" style={{ width: 256, flex: "none", background: "var(--navy)", color: "var(--ond)", display: "flex", flexDirection: "column", padding: "22px 16px", position: "sticky", top: 0, height: "100vh", borderRight: "1px solid rgba(255,255,255,.06)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 10px 22px" }}>
-          <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
+          <span style={{ width: 11, height: 11, background: "var(--cyan)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
           <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,.04)", border: "1px solid var(--lined)", borderRadius: 13, padding: "11px 12px", marginBottom: 18 }}>
-          <span style={{ width: 34, height: 34, borderRadius: 9, background: "rgba(45,226,242,.14)", display: "grid", placeItems: "center", color: "var(--sand)", flex: "none", fontFamily: "var(--serif)", fontWeight: 600 }}>
+          <span style={{ width: 34, height: 34, borderRadius: 9, background: "rgba(45,226,242,.14)", display: "grid", placeItems: "center", color: "var(--cyan)", flex: "none", fontFamily: "var(--serif)", fontWeight: 600 }}>
             {biz?.name.charAt(0).toUpperCase() ?? "C"}
           </span>
           <div style={{ lineHeight: 1.2, minWidth: 0 }}>
@@ -116,8 +116,8 @@ export function CaptainDashboard() {
           </div>
         </div>
         <nav style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {(["overview", "bookings", "services", "messages", "earnings"] as Tab[]).map((t) => (
-            <NavBtn key={t} label={cap(t)} active={tab === t} onClick={() => setTab(t)} badge={t === "bookings" ? data.stats.upcomingCount : undefined} />
+          {(["overview", "bookings", "services", "blockouts", "fleet", "messages", "earnings"] as Tab[]).map((t) => (
+            <NavBtn key={t} label={t === "services" ? "Charter Trips" : t === "blockouts" ? "Blockout Dates" : t === "fleet" ? "Fleet" : cap(t)} active={tab === t} onClick={() => setTab(t)} badge={t === "bookings" ? data.stats.upcomingCount : undefined} />
           ))}
         </nav>
         <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid var(--lined)" }}>
@@ -125,10 +125,10 @@ export function CaptainDashboard() {
           <NavBtn label="Settings" active={tab === "settings"} onClick={() => setTab("settings")} />
         </div>
         <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,.04)", border: "1px solid var(--lined)", borderRadius: 13, padding: "10px 12px" }}>
-          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(45,226,242,.14)", display: "grid", placeItems: "center", color: "var(--sand)", fontFamily: "var(--serif)", fontWeight: 600 }}>{initial}</div>
+          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(45,226,242,.14)", display: "grid", placeItems: "center", color: "var(--cyan)", fontFamily: "var(--serif)", fontWeight: 600 }}>{initial}</div>
           <div style={{ lineHeight: 1.25, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: "#F0F2F5" }}>{data.profile?.display_name ?? data.profile?.full_name ?? "Captain"}</div>
-            <div style={{ fontSize: 11, color: "var(--sand)" }}>{biz?.verified_at ? "★ Verified" : "Pending verification"}</div>
+            <div style={{ fontSize: 11, color: "var(--cyan)" }}>{biz?.verified_at ? "★ Verified" : "Pending verification"}</div>
           </div>
           <button onClick={signOut} title="Sign out" style={{ marginLeft: "auto", background: "transparent", color: "var(--ondmut)", border: 0, cursor: "pointer", flex: "none" }}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3" /></svg>
@@ -162,7 +162,9 @@ export function CaptainDashboard() {
         <main className="fx-main" style={{ flex: 1, padding: "30px 34px 48px", maxWidth: 1180, width: "100%" }}>
           {tab === "overview" && <OverviewPanel data={data} onGoto={setTab} />}
           {tab === "bookings" && <BookingsPanel />}
-          {tab === "services" && <ServicesPanel data={data} />}
+          {tab === "services" && <ChartersPanel data={data} />}
+          {tab === "blockouts" && <BlockoutDatesPanel data={data} />}
+          {tab === "fleet" && <FleetPanel businessId={data.business?.id ?? null} />}
           {tab === "messages" && <MessagesPanel />}
           {tab === "earnings" && <EarningsPanel businessId={data.business?.id ?? null} />}
           {tab === "settings" && <SettingsPanel data={data} />}
@@ -199,7 +201,7 @@ function NavBtn({ label, active, onClick, badge }: { label: string; active: bool
     >
       {label}
       {badge ? (
-        <span style={{ marginLeft: "auto", background: "var(--sand)", color: "#04121B", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{badge}</span>
+        <span style={{ marginLeft: "auto", background: "var(--cyan)", color: "#04121B", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{badge}</span>
       ) : null}
     </button>
   );
@@ -345,241 +347,6 @@ function BookingsPanel() {
   );
 }
 
-/* ---------------- SERVICES ---------------- */
-
-type ServiceRow = CaptainData["services"][number];
-type ServiceDraft = {
-  id?: string;
-  title: string;
-  kind: string;
-  description: string;
-  hero_url: string;
-  base_price_cents: number;
-  deposit_cents: number;
-  capacity: number;
-  duration_minutes: number;
-  departure_location: string;
-  is_published: boolean;
-};
-
-const emptyDraft: ServiceDraft = {
-  title: "",
-  kind: "charter",
-  description: "",
-  hero_url: "",
-  base_price_cents: 0,
-  deposit_cents: 0,
-  capacity: 4,
-  duration_minutes: 240,
-  departure_location: "",
-  is_published: false,
-};
-
-function ServicesPanel({ data }: { data: CaptainData }) {
-  const qc = useQueryClient();
-  const upsert = useServerFn(upsertCaptainService);
-  const del = useServerFn(deleteCaptainService);
-  const toggle = useServerFn(toggleServicePublished);
-  const [editing, setEditing] = useState<ServiceDraft | null>(null);
-  const [datesFor, setDatesFor] = useState<{
-    id: string; title: string; capacity: number; base_price_cents: number;
-    duration_minutes: number; instant_book: boolean;
-  } | null>(null);
-
-
-  const mUpsert = useMutation({
-    mutationFn: (draft: ServiceDraft) => upsert({ data: {
-      id: draft.id,
-      title: draft.title,
-      kind: draft.kind as any,
-      description: draft.description || null,
-      hero_url: draft.hero_url || null,
-      base_price_cents: Math.round(draft.base_price_cents),
-      deposit_cents: Math.round(draft.deposit_cents),
-      capacity: draft.capacity,
-      duration_minutes: draft.duration_minutes || null,
-      departure_location: draft.departure_location || null,
-      target_species: [],
-      includes: [],
-      is_published: draft.is_published,
-    } }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
-      setEditing(null);
-    },
-  });
-
-  const mDelete = useMutation({
-    mutationFn: (id: string) => del({ data: { id } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["captain-dashboard"] }),
-  });
-
-  const mToggle = useMutation({
-    mutationFn: (v: { id: string; is_published: boolean }) => toggle({ data: v }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["captain-dashboard"] }),
-  });
-
-  return (
-    <Panel
-      title="Services"
-      action={{ label: "+ New service", onClick: () => setEditing({ ...emptyDraft }) }}
-    >
-      {editing && (
-        <ServiceForm
-          businessId={data.business?.id ?? null}
-          draft={editing}
-          onChange={setEditing}
-          onCancel={() => setEditing(null)}
-          onSave={() => mUpsert.mutate(editing)}
-          saving={mUpsert.isPending}
-          error={mUpsert.error ? String(mUpsert.error) : null}
-        />
-      )}
-
-      {datesFor && (
-        <div style={{ marginBottom: 16 }}>
-          <AvailabilityCalendar service={datesFor} onClose={() => setDatesFor(null)} />
-        </div>
-      )}
-
-
-      {data.services.length === 0 && !editing && <Empty text="No services yet. Add your first trip." />}
-
-      {data.services.map((s: ServiceRow, i: number) => (
-        <div
-          key={s.id}
-          style={{
-            display: "flex", alignItems: "center", gap: 14, padding: "14px 0",
-            borderBottom: i < data.services.length - 1 ? "1px solid var(--line)" : "none",
-          }}
-        >
-          <img src={s.hero_url || DEFAULT_HERO} alt="" style={{ width: 56, height: 56, borderRadius: 12, objectFit: "cover", flex: "none" }} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>{s.title}</div>
-            <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>{money(s.base_price_cents ?? 0)} · up to {s.capacity ?? "—"} guests</div>
-          </div>
-          <button
-            onClick={() => mToggle.mutate({ id: s.id, is_published: !s.is_published })}
-            style={{ border: "1px solid var(--line)", background: "transparent", borderRadius: 20, padding: "5px 11px", fontSize: 12, fontWeight: 600, cursor: "pointer", color: s.is_published ? "var(--green)" : "var(--tmut)" }}
-          >
-            {s.is_published ? "Live" : "Draft"}
-          </button>
-          <button
-            onClick={() => setDatesFor({
-              id: s.id,
-              title: s.title,
-              capacity: s.capacity ?? 4,
-              base_price_cents: s.base_price_cents ?? 0,
-              duration_minutes: (s as any).duration_minutes ?? 240,
-              instant_book: (s as any).instant_book ?? true,
-            })}
-            style={{ border: "1px solid var(--line)", background: "transparent", borderRadius: 20, padding: "5px 11px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
-          >
-            Dates
-          </button>
-          <button
-
-            onClick={() => setEditing({
-              id: s.id,
-              title: s.title,
-              kind: (s as any).kind ?? "charter",
-              description: "",
-              hero_url: s.hero_url ?? "",
-              base_price_cents: s.base_price_cents ?? 0,
-              deposit_cents: 0,
-              capacity: s.capacity ?? 4,
-              duration_minutes: 240,
-              departure_location: "",
-              is_published: s.is_published,
-            })}
-            style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "var(--goldtext)", fontWeight: 600 }}
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => { if (confirm(`Delete "${s.title}"?`)) mDelete.mutate(s.id); }}
-            style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "#F87171" }}
-          >
-            Delete
-          </button>
-        </div>
-      ))}
-    </Panel>
-  );
-}
-
-function ServiceForm({ businessId, draft, onChange, onCancel, onSave, saving, error }: {
-  businessId: string | null;
-  draft: ServiceDraft;
-  onChange: (d: ServiceDraft) => void;
-  onCancel: () => void;
-  onSave: () => void;
-  saving: boolean;
-  error: string | null;
-}) {
-  const upd = (patch: Partial<ServiceDraft>) => onChange({ ...draft, ...patch });
-  return (
-    <form
-      onSubmit={(e) => { e.preventDefault(); onSave(); }}
-      style={{ background: "var(--paper)", border: "1px solid var(--line)", borderRadius: 14, padding: 18, marginBottom: 16, display: "grid", gap: 12 }}
-    >
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
-        <Field label="Title"><input required value={draft.title} onChange={(e) => upd({ title: e.target.value })} style={input} /></Field>
-        <Field label="Kind">
-          <select value={draft.kind} onChange={(e) => upd({ kind: e.target.value })} style={input}>
-            <option value="charter">Charter</option>
-            <option value="guided_trip">Guided trip</option>
-            <option value="rental">Rental</option>
-            <option value="lesson">Lesson</option>
-            <option value="workshop">Workshop</option>
-            <option value="slip_rental">Slip rental</option>
-            <option value="custom">Custom</option>
-          </select>
-        </Field>
-      </div>
-      <Field label="Description">
-        <textarea value={draft.description} onChange={(e) => upd({ description: e.target.value })} rows={3} style={{ ...input, resize: "vertical" }} />
-      </Field>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
-        <Field label="Base price ($)"><input type="number" min={0} value={draft.base_price_cents / 100} onChange={(e) => upd({ base_price_cents: Math.round(Number(e.target.value) * 100) })} style={input} /></Field>
-        <Field label="Deposit ($)"><input type="number" min={0} value={draft.deposit_cents / 100} onChange={(e) => upd({ deposit_cents: Math.round(Number(e.target.value) * 100) })} style={input} /></Field>
-        <Field label="Capacity"><input type="number" min={1} max={50} value={draft.capacity} onChange={(e) => upd({ capacity: Number(e.target.value) })} style={input} /></Field>
-        <Field label="Duration (min)"><input type="number" min={30} step={15} value={draft.duration_minutes} onChange={(e) => upd({ duration_minutes: Number(e.target.value) })} style={input} /></Field>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
-        <Field label="Departure location"><input value={draft.departure_location} onChange={(e) => upd({ departure_location: e.target.value })} style={input} /></Field>
-        {businessId ? (
-          <ImageUpload businessId={businessId} label="Hero image" value={draft.hero_url} onChange={(url) => upd({ hero_url: url })} />
-        ) : (
-          <Field label="Hero image URL"><input value={draft.hero_url} onChange={(e) => upd({ hero_url: e.target.value })} style={input} placeholder="https://…" /></Field>
-        )}
-      </div>
-      <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
-        <input type="checkbox" checked={draft.is_published} onChange={(e) => upd({ is_published: e.target.checked })} />
-        Publish immediately (visible on marketplace)
-      </label>
-      {error && <div style={{ color: "#F87171", fontSize: 12.5 }}>{error}</div>}
-      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-        <button type="button" onClick={onCancel} style={btnGhost}>Cancel</button>
-        <button type="submit" disabled={saving} style={btnPrimary}>{saving ? "Saving…" : draft.id ? "Save changes" : "Create service"}</button>
-      </div>
-    </form>
-  );
-}
-
-const input: React.CSSProperties = { width: "100%", border: "1px solid var(--line)", borderRadius: 10, padding: "9px 12px", fontSize: 13.5, fontFamily: "var(--sans)", background: "#14202B", color: "var(--ink)" };
-const btnPrimary: React.CSSProperties = { background: "var(--ink)", color: "#F0F2F5", border: 0, borderRadius: 20, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { background: "transparent", color: "var(--tmut)", border: "1px solid var(--line)", borderRadius: 20, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label style={{ display: "grid", gap: 5 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--tmut)" }}>{label}</span>
-      {children}
-    </label>
-  );
-}
-
 /* ---------------- EARNINGS ---------------- */
 
 function EarningsPanel({ businessId }: { businessId: string | null }) {
@@ -608,7 +375,7 @@ function EarningsPanel({ businessId }: { businessId: string | null }) {
                     width: "100%",
                     height: `${(m.cents / maxMonth) * 140}px`,
                     minHeight: 4,
-                    background: "linear-gradient(180deg,var(--sand),var(--goldtext))",
+                    background: "linear-gradient(180deg,var(--cyan),var(--goldtext))",
                     borderRadius: "6px 6px 0 0",
                   }}
                 />
@@ -664,7 +431,7 @@ function MessagesPanel() {
               <span style={{ fontSize: 14, fontWeight: 600 }}>{c.customer_name}</span>
               <span style={{ fontSize: 12, color: "var(--tmut)" }}>· {c.trip_title}</span>
               {c.unread_count > 0 && (
-                <span style={{ marginLeft: 6, background: "var(--sand)", color: "#04121B", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{c.unread_count}</span>
+                <span style={{ marginLeft: 6, background: "var(--cyan)", color: "#04121B", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{c.unread_count}</span>
               )}
             </div>
             <div style={{ fontSize: 13, color: "var(--tmut)", marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -688,15 +455,6 @@ function SettingsPanel({ data }: { data: CaptainData }) {
   return (
     <div style={{ background: "#1C2936", margin: -4, padding: 4, borderRadius: 18 }}>
       <BusinessSettings businessId={biz.id} />
-    </div>
-  );
-}
-
-function Row({ k, v }: { k: string; v: string }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid var(--line)" }}>
-      <span style={{ color: "var(--tmut)", fontWeight: 600 }}>{k}</span>
-      <span style={{ color: "var(--ink)" }}>{v}</span>
     </div>
   );
 }
@@ -744,7 +502,7 @@ function StatusPill({ status }: { status: string }) {
     cancelled: { bg: "rgba(216,81,74,.12)", fg: "#F87171", label: "Cancelled" },
     refunded: { bg: "rgba(216,81,74,.12)", fg: "#F87171", label: "Refunded" },
   };
-  const cfg = map[status] ?? { bg: "rgba(13,34,54,.08)", fg: "#92A0AB", label: status.replace(/_/g, " ") };
+  const cfg = map[status] ?? { bg: "rgba(255,255,255,.06)", fg: "#92A0AB", label: status.replace(/_/g, " ") };
   return (
     <span style={{ fontSize: 11, fontWeight: 700, background: cfg.bg, color: cfg.fg, borderRadius: 20, padding: "3px 9px", flex: "none", textTransform: "capitalize" }}>
       {cfg.label}

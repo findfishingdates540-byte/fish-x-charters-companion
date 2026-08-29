@@ -18,7 +18,7 @@ function publicClient() {
 const CHARTER_KINDS = ["charter_trip", "guided_trip"] as const;
 
 const LISTING_COLS =
-  "id,slug,title,hero_url,description,duration_minutes,capacity,base_price_cents,target_species,departure_location,created_at,business:businesses!inner(id,slug,name,city,region,country,verified_at,is_published)";
+  "id,slug,title,hero_url,description,duration_minutes,capacity,base_price_cents,target_species,departure_location,created_at,charter_id,business:businesses!inner(id,slug,name,city,region,country,verified_at,is_published)";
 
 type Listing = {
   id: string;
@@ -31,6 +31,7 @@ type Listing = {
   base_price_cents: number;
   target_species: string[] | null;
   departure_location: string | null;
+  charter_id: string | null;
   created_at: string;
   business: {
     id: string;
@@ -114,6 +115,41 @@ export const getCharterDirectory = createServerFn({ method: "GET" }).handler(asy
     featured: listings.slice(0, 6),
   };
 });
+
+/** Charter detail: one charter parent + its published packages. */
+export const getCharterPackages = createServerFn({ method: "GET" })
+  .inputValidator((i: unknown) => z.object({ charterId: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const sb = publicClient();
+    const { data: charter, error } = await sb
+      .from("charters")
+      .select(
+        `id,slug,name,description,hero_url,image_urls,water_type,target_species,
+         departure_location,duration_minutes,capacity,base_price_cents,
+         boat:boats(name,make,model,length_ft,capacity,home_port),
+         business:businesses!inner(id,slug,name,city,region,country,verified_at)`,
+      )
+      .eq("id", data.charterId)
+      .eq("is_published", true)
+      .eq("businesses.is_published", true)
+      .maybeSingle();
+    if (error) throw new Response(error.message, { status: 500 });
+    if (!charter) throw new Response("Charter not found", { status: 404 });
+
+    const { data: packages, error: pkgErr } = await sb
+      .from("bookable_services")
+      .select(
+        "id,slug,title,hero_url,base_price_cents,capacity,duration_minutes,target_species,is_published",
+      )
+      .eq("charter_id", data.charterId)
+      .eq("is_published", true)
+      .in("kind", [...CHARTER_KINDS])
+      .order("base_price_cents", { ascending: true })
+      .limit(20);
+    if (pkgErr) throw new Response(pkgErr.message, { status: 500 });
+
+    return { charter, packages: packages ?? [] };
+  });
 
 const filterSchema = z.object({
   city: z.string().optional(),

@@ -223,7 +223,7 @@ export function AddonsManager({
               value={draft.unit}
               onChange={(e) => setDraft({ ...draft, unit: e.target.value as Draft["unit"] })}
             >
-              <option value="per_trip">Per trip</option>
+              <option value="per_trip">One cost for all</option>
               <option value="per_person">Per angler</option>
             </select>
           </label>

@@ -319,26 +319,25 @@ export function CharterCard({
     capacity: number | null;
     target_species: string[] | null;
     departure_location: string | null;
+    charter_id?: string | null;
     business: { slug: string; name: string; city: string | null; region: string | null; verified_at: string | null } | null;
   };
   rating?: { avg: number; count: number } | null;
 }) {
   const hours = l.duration_minutes ? Math.round((l.duration_minutes / 60) * 10) / 10 : null;
-  return (
-    <Link
-      to="/booking"
-      search={{ service_id: l.id }}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        background: "#fff",
-        border: "1px solid rgba(13,34,54,.08)",
-        borderRadius: 16,
-        overflow: "hidden",
-        textDecoration: "none",
-        color: "#0d2236",
-      }}
-    >
+  const cardStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    background: "#fff",
+    border: "1px solid rgba(13,34,54,.08)",
+    borderRadius: 16,
+    overflow: "hidden",
+    textDecoration: "none",
+    color: "#0d2236",
+  };
+
+  const body = (
+    <>
       <div style={{ aspectRatio: "16/10", background: `#e9edf1 url(${l.hero_url || DEFAULT_HERO}) center/cover` }} />
       <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
         <div style={{ fontSize: 12, color: "#5c6b78" }}>
@@ -367,6 +366,21 @@ export function CharterCard({
           <span style={{ fontSize: 12 }}>/ trip</span>
         </div>
       </div>
+    </>
+  );
+
+  // Route through the charter detail page (which shows all packages) when
+  // the listing has a charter_id; otherwise link straight to booking.
+  if (l.charter_id) {
+    return (
+      <Link to="/charters/$charterId" params={{ charterId: l.charter_id }} style={cardStyle}>
+        {body}
+      </Link>
+    );
+  }
+  return (
+    <Link to="/booking" search={{ service_id: l.id }} style={cardStyle}>
+      {body}
     </Link>
   );
 }

@@ -36,17 +36,17 @@ const dayPart = (d: Date) => {
 const timeLabel = (d: Date) =>
   d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZoneName: "short" });
 
-const cardDark: CSSProperties = {
-  background: "rgba(255,255,255,.035)",
-  border: `1px solid ${V.lined}`,
+const cardLight: CSSProperties = {
+  background: V.card,
+  border: `1px solid ${V.line}`,
   borderRadius: 16,
   padding: 28,
 };
-const h2Dark: CSSProperties = {
+const h2Light: CSSProperties = {
   fontFamily: V.serif,
   fontWeight: 700,
   fontSize: 28,
-  color: "#fff",
+  color: V.ink,
   margin: "0 0 18px",
 };
 const railLabel: CSSProperties = {
@@ -61,16 +61,16 @@ const railLabel: CSSProperties = {
 };
 const railField: CSSProperties = {
   width: "100%",
-  background: "rgba(255,255,255,.05)",
-  border: `1px solid ${V.lined}`,
+  background: V.paper,
+  border: `1px solid ${V.line}`,
   borderRadius: 10,
   padding: "13px 14px",
   fontFamily: MONO,
   fontSize: 15,
   fontWeight: 600,
-  color: "#fff",
+  color: V.ink,
   outline: "none",
-  colorScheme: "dark",
+  colorScheme: "light",
 };
 
 /** Normalise transport failures so route and query error boundaries always
@@ -129,7 +129,12 @@ const CANCELLATION_RULES: Array<[string, string]> = [
 export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?: string }) {
   const navigate = useNavigate();
   const { data: svc } = useSuspenseQuery(checkoutQuery(serviceId));
-  const business = svc.business as { id: string; slug: string; name: string; city: string | null; region: string | null; logo_url: string | null; hero_url: string | null } | null;
+  const business = svc.business as { id: string; slug: string; name: string; city: string | null; region: string | null; logo_url: string | null; hero_url: string | null; deposit_rate?: number | null; commission_rate?: number | null } | null;
+  const boat = (svc.boat ?? null) as {
+    name: string | null; make: string | null; model: string | null; length_ft: number | null;
+    capacity: number | null; home_port: string | null; description: string | null;
+    hero_image_url: string | null; image_urls: string[] | null;
+  } | null;
 
   const qc = useQueryClient();
   const [step, setStep] = useState<Step>("detail");
@@ -192,8 +197,14 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const addonCents = addonLines.reduce((s, l) => s + l.lineCents, 0);
   const fee = 0;
   const total = price + addonCents + fee;
-  /** 25% booked online; the captain collects the rest on the day. */
-  const deposit = Math.round(total * 0.25);
+  /** Deposit rate = min(max(business.deposit_rate, business.commission_rate), 1.0) — matches reserve_slot. */
+  const depositRate = (() => {
+    const b = svc.business as { deposit_rate?: number | null; commission_rate?: number | null } | null;
+    const dr = Number(b?.deposit_rate ?? 0.25);
+    const cr = Number(b?.commission_rate ?? 0);
+    return Math.min(Math.max(dr, cr), 1.0);
+  })();
+  const deposit = Math.round(total * depositRate);
   const balanceDue = total - deposit;
 
 
@@ -349,9 +360,17 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const businessLine = `${business?.name ?? "Captain"} · ${[business?.city, business?.region].filter(Boolean).join(", ") || "Coastal"}`;
 
   const isDetail = step === "detail";
+  // Surface the captain's real boat photos when available, then fall back to the
+  // platform's stock gallery so every listing still shows a rich hero.
+  const boatImgs = [
+    ...(boat?.hero_image_url ? [boat.hero_image_url] : []),
+    ...(boat?.image_urls ?? []),
+  ].filter((u, idx, a) => u && a.indexOf(u) === idx);
   const galleryUrls = [
     heroUrl,
-    ...galleryFor(listingId, 7).filter((u) => u !== heroUrl),
+    ...(boatImgs.length
+      ? boatImgs.filter((u) => u !== heroUrl)
+      : galleryFor(listingId, 7).filter((u) => u !== heroUrl)),
   ].slice(0, 8);
   // Only three tiles are shown; the third carries a "+N photos" overlay.
   const visibleTiles = galleryUrls.slice(0, 3);
@@ -364,10 +383,14 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const locationLine =
     svc.departure_location || [business?.city, business?.region].filter(Boolean).join(" · ") || "Coastal marina";
   const capacity = svc.capacity ?? cap;
+  const targetSpecies = (svc as any).target_species as string[] | null;
+  const waterType = (svc as any).water_type as string | null;
   const specs = [
     { k: "Duration", v: svc.duration_minutes ? `${Math.round(svc.duration_minutes / 60)} Hours` : "Full day" },
     { k: "Max capacity", v: `${capacity} Anglers` },
     { k: "Tackle included", v: (svc.includes && svc.includes[0]) || "Rods & live bait" },
+    ...(waterType ? [{ k: "Water type", v: waterType }] : []),
+    ...(targetSpecies && targetSpecies.length ? [{ k: "Target species", v: targetSpecies.join(", ") }] : []),
   ];
   const amenities =
     svc.includes && svc.includes.length > 1
@@ -375,7 +398,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
       : ["Garmin Radar/Sonar", "Live Bait Well", "Shade Top", "Trophy Tackle Provided", "Ice Box", "Safety Gear"];
 
   return (
-    <div style={{ minHeight: "100vh", background: isDetail ? V.navy : V.paper, color: isDetail ? V.ond : V.ink, fontFamily: V.sans }}>
+    <div style={{ minHeight: "100vh", background: V.paper, color: V.ink, fontFamily: V.sans }}>
 
       {/* TOP BAR */}
       <header style={{ position: "sticky", top: 0, zIndex: 30, background: V.navy, color: V.ond }}>
@@ -414,7 +437,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
             <Link
               to="/dashboard"
               search={{ tab: "explore" }}
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.ondmut, fontSize: 13.5, fontWeight: 600, textDecoration: "none", marginBottom: 18 }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, color: V.tmut, fontSize: 13.5, fontWeight: 600, textDecoration: "none", marginBottom: 18 }}
             >
               ← Back to charters
             </Link>
@@ -423,15 +446,15 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
             <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, color: V.cyan, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", marginBottom: 10 }}>
               <span>◉</span> {locationLine}
             </div>
-            <h1 style={{ fontFamily: V.serif, fontWeight: 700, fontSize: "clamp(34px,5vw,58px)", lineHeight: 1.02, margin: "0 0 14px", color: "#fff" }}>
+            <h1 style={{ fontFamily: V.serif, fontWeight: 700, fontSize: "clamp(34px,5vw,58px)", lineHeight: 1.02, margin: "0 0 14px", color: V.ink }}>
               {listingTitle}
             </h1>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, marginBottom: 26 }}>
               <span style={{ color: V.sand }}>★ 4.98 <span style={{ opacity: 0.8 }}>(42 reviews)</span></span>
-              <span style={{ color: V.ondmut }}>·</span>
+              <span style={{ color: V.tmut }}>·</span>
               <span style={{ color: V.cyan }}>Captain: {business?.name ?? "Fish-X operator"}</span>
-              <span style={{ color: V.ondmut }}>·</span>
-              <span style={{ color: "#4ec98e" }}>⛊ USCG Verified Charter</span>
+              <span style={{ color: V.tmut }}>·</span>
+              <span style={{ color: V.green }}>⛊ USCG Verified Charter</span>
             </div>
 
             {/* GALLERY */}
@@ -439,13 +462,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               <img
                 src={visibleTiles[0]}
                 alt={listingTitle ?? "Charter"}
-                style={{ width: "100%", height: 520, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.lined}` }}
+                style={{ width: "100%", height: 520, objectFit: "cover", borderRadius: 14, border: `1px solid ${V.line}` }}
               />
               <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 18 }}>
                 {visibleTiles.slice(1).map((u, i) => {
                   const isLast = i === visibleTiles.length - 2;
                   return (
-                    <div key={i} style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: `1px solid ${V.lined}` }}>
+                    <div key={i} style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: `1px solid ${V.line}` }}>
                       <img src={u} alt="" style={{ width: "100%", height: 251, objectFit: "cover", display: "block" }} />
                       {isLast && hiddenCount > 0 && (
                         <div
@@ -472,8 +495,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
                 {/* Trip packages offered by this operator */}
                 {packages.length > 1 && (
-                  <section style={cardDark}>
-                    <h2 style={h2Dark}>Choose your trip package</h2>
+                  <section style={cardLight}>
+                    <h2 style={h2Light}>Choose your trip package</h2>
                     <div style={{ display: "grid", gap: 12 }}>
                       {packages.map((p) => {
                         const active = p.id === svc.id;
@@ -494,29 +517,29 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                               display: "flex",
                               alignItems: "center",
                               gap: 16,
-                              background: active ? "rgba(227,192,137,.12)" : "rgba(255,255,255,.03)",
-                              border: `1px solid ${active ? "rgba(227,192,137,.55)" : V.lined}`,
+                              background: active ? "rgba(227,192,137,.16)" : V.paper,
+                              border: `1px solid ${active ? "rgba(227,192,137,.55)" : V.line}`,
                               borderRadius: 14,
                               padding: "16px 18px",
                               cursor: active ? "default" : "pointer",
-                              color: V.ond,
+                              color: V.ink,
                             }}
                           >
                             <span
                               style={{
                                 width: 18, height: 18, borderRadius: "50%", flex: "none",
-                                border: `2px solid ${active ? V.sand : "rgba(255,255,255,.3)"}`,
+                                border: `2px solid ${active ? V.sand : V.line}`,
                                 background: active ? V.sand : "transparent",
                               }}
                             />
                             <span style={{ flex: 1 }}>
-                              <span style={{ display: "block", fontFamily: V.serif, fontSize: 20, fontWeight: 700, color: "#fff" }}>{p.title}</span>
+                              <span style={{ display: "block", fontFamily: V.serif, fontSize: 20, fontWeight: 700, color: V.ink }}>{p.title}</span>
                               <span style={{ display: "block", fontFamily: MONO, fontSize: 12.5, color: V.cyan, marginTop: 4 }}>
                                 {p.duration_minutes ? `${Math.round(p.duration_minutes / 60)} hrs` : "Full day"} · up to {p.capacity ?? svc.capacity ?? 6} anglers
                               </span>
                             </span>
-                            <span style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
-                              {money(p.base_price_cents)}<span style={{ fontSize: 11.5, color: V.ondmut }}> / trip</span>
+                            <span style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: V.ink, whiteSpace: "nowrap" }}>
+                              {money(p.base_price_cents)}<span style={{ fontSize: 11.5, color: V.tmut }}> / trip</span>
                             </span>
                           </button>
                         );
@@ -527,15 +550,17 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
                 {/* Charter overview */}
 
-                <section style={cardDark}>
-                  <h2 style={h2Dark}>Charter Overview</h2>
-                  <p style={{ fontSize: 15.5, lineHeight: 1.7, color: V.ond, opacity: 0.85, margin: "0 0 22px", maxWidth: 760 }}>
-                    {`Experience a world-class day on the water with ${business?.name ?? "this operator"} out of ${locationLine}. Every booking is protected by Fish-X escrow — your payment is only released to the captain after the trip is complete.`}
+                <section style={cardLight}>
+                  <h2 style={h2Light}>Charter Overview</h2>
+                  <p style={{ fontSize: 15.5, lineHeight: 1.7, color: V.tmut, margin: "0 0 22px", maxWidth: 760 }}>
+                    {(svc as any).description
+                      ? (svc as any).description
+                      : `Experience a world-class day on the water with ${business?.name ?? "this operator"} out of ${locationLine}. Every booking is protected by Fish-X escrow — your payment is only released to the captain after the trip is complete.`}
                   </p>
-                  <div className="fx-spec-strip" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18, border: `1px solid ${V.lined}`, borderRadius: 12, padding: "18px 22px" }}>
+                  <div className="fx-spec-strip" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18, border: `1px solid ${V.line}`, borderRadius: 12, padding: "18px 22px" }}>
                     {specs.map((s) => (
                       <div key={s.k}>
-                        <div style={{ fontSize: 10.5, letterSpacing: ".16em", textTransform: "uppercase", color: V.ondmut, marginBottom: 6 }}>{s.k}</div>
+                        <div style={{ fontSize: 10.5, letterSpacing: ".16em", textTransform: "uppercase", color: V.tmut, marginBottom: 6 }}>{s.k}</div>
                         <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 15, fontWeight: 600, color: V.cyan }}>{s.v}</div>
                       </div>
                     ))}
@@ -543,42 +568,56 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 </section>
 
                 {/* Vessel specifications */}
-                <section style={cardDark}>
-                  <h2 style={h2Dark}>Vessel Specifications</h2>
+                <section style={cardLight}>
+                  <h2 style={h2Light}>Vessel Specifications</h2>
                   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 22 }}>
                     <span style={{ width: 54, height: 54, borderRadius: 12, background: "rgba(227,192,137,.14)", color: V.sand, display: "grid", placeItems: "center", fontSize: 24, flex: "none" }}>⚓</span>
                     <div>
-                      <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 700, color: "#fff" }}>Center Console · Twin Outboard</div>
-                      <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, color: V.cyan, marginTop: 3 }}>Capacity: {capacity} anglers</div>
+                      {boat?.name && (
+                        <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 700, color: V.ink }}>{boat.name}</div>
+                      )}
+                      {boat?.make && boat?.model && (
+                        <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, color: V.cyan, marginTop: 3 }}>{boat.make} {boat.model}</div>
+                      )}
+                      {boat?.capacity !== undefined && (
+                        <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5, color: V.cyan, marginTop: 3 }}>Capacity: {boat.capacity ?? capacity} anglers</div>
+                      )}
                     </div>
                   </div>
                   <div className="fx-amenities" style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "13px 26px" }}>
-                    {amenities.slice(0, 8).map((a) => (
-                      <div key={a} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14.5, color: V.ond }}>
-                        <span style={{ color: "#4ec98e", flex: "none" }}>⊘</span>
-                        {a}
+                    {boat?.description ? (
+                      <div key="desc" style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14.5, color: V.ink }}>
+                        <span style={{ color: V.green, flex: "none" }}>⊘</span>
+                        {boat.description}
                       </div>
-                    ))}
+                    ) : (
+                      amenities.slice(0, 8).map((a) => (
+                        <div key={a} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14.5, color: V.ink }}>
+                          <span style={{ color: V.green, flex: "none" }}>⊘</span>
+                          {a}
+                        </div>
+                      ))
+                    )}
                   </div>
                 </section>
 
                 {/* Captain */}
-                <section style={cardDark}>
-                  <h2 style={h2Dark}>Your Captain</h2>
+                <section style={cardLight}>
+                  <h2 style={h2Light}>Your Captain</h2>
                   <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
                     {business?.logo_url ? (
                       <img src={business.logo_url} alt="" style={{ width: 66, height: 66, borderRadius: "50%", objectFit: "cover", flex: "none" }} />
                     ) : (
-                      <div style={{ width: 66, height: 66, borderRadius: "50%", background: "rgba(255,255,255,.08)", color: V.sand, display: "grid", placeItems: "center", fontFamily: V.serif, fontSize: 26, flex: "none" }}>
+                      <div style={{ width: 66, height: 66, borderRadius: "50%", background: V.ond, color: V.sand, display: "grid", placeItems: "center", fontFamily: V.serif, fontSize: 26, flex: "none" }}>
                         {(business?.name ?? "F").slice(0, 1)}
                       </div>
                     )}
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 700, color: "#fff" }}>{business?.name ?? "Fish-X operator"}</div>
-                      <div style={{ fontSize: 13.5, color: V.ondmut, marginTop: 3 }}>Verified operator · Escrow protected · Responds within an hour</div>
+                      <div style={{ fontFamily: V.serif, fontSize: 21, fontWeight: 700, color: V.ink }}>{business?.name ?? "Fish-X operator"}</div>
+                      <div style={{ fontSize: 13.5, color: V.tmut, marginTop: 3 }}>Verified operator · Escrow protected · Responds within an hour</div>
                     </div>
                     {business?.slug && (
-                      <Link to="/b/$slug" params={{ slug: business.slug }} style={{ border: `1px solid ${V.lined}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: V.ond, textDecoration: "none", whiteSpace: "nowrap" }}>
+                      <Link to="/b/$slug" params={{ slug: business.slug }} style={{ border: `1px solid ${V.line}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: V.ink, textDecoration: "none", whiteSpace: "nowrap" }}>
                         View profile
                       </Link>
                     )}
@@ -586,18 +625,18 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 </section>
 
                 {/* Escrow explainer */}
-                <section style={cardDark}>
-                  <h2 style={h2Dark}>How Payment Works</h2>
+                <section style={cardLight}>
+                  <h2 style={h2Light}>How Payment Works</h2>
                   <div className="fx-escrow-steps" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
                     {[
                       ["1", "You pay", "Funds are captured and held by Fish-X — never sent straight to the captain."],
                       ["2", "You fish", "The captain runs the trip. Anything goes wrong, open a resolution case."],
                       ["3", "Captain paid", "Escrow releases 72 hours after the trip is marked complete."],
                     ].map(([n, t, d]) => (
-                      <div key={n} style={{ border: `1px solid ${V.lined}`, borderRadius: 12, padding: 18 }}>
+                      <div key={n} style={{ border: `1px solid ${V.line}`, borderRadius: 12, padding: 18 }}>
                         <span style={{ width: 26, height: 26, borderRadius: "50%", background: V.sand, color: "#1c1303", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{n}</span>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "12px 0 6px" }}>{t}</div>
-                        <div style={{ fontSize: 13.5, lineHeight: 1.55, color: V.ondmut }}>{d}</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: V.ink, margin: "12px 0 6px" }}>{t}</div>
+                        <div style={{ fontSize: 13.5, lineHeight: 1.55, color: V.tmut }}>{d}</div>
                       </div>
                     ))}
                   </div>
@@ -605,11 +644,11 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               </div>
 
               {/* BOOKING RAIL */}
-              <div className="fx-booking-rail" style={{ position: "sticky", top: 84, ...cardDark, padding: 24 }}>
+              <div className="fx-booking-rail" style={{ position: "sticky", top: 84, background: V.card, border: `1px solid ${V.line}`, borderRadius: 20, padding: 24, boxShadow: "0 24px 50px -34px rgba(13,34,54,.4)" }}>
                 <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 18 }}>
-                  <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: "#fff" }}>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)}</span>
-                  <span style={{ fontSize: 13, color: V.ondmut }}>/ trip · {durLabel}</span>
-                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#4ec98e", background: "rgba(78,201,142,.12)", border: "1px solid rgba(78,201,142,.35)", borderRadius: 6, padding: "6px 9px", whiteSpace: "nowrap" }}>
+                  <span style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 32, fontWeight: 700, color: V.ink }}>{money(slot?.priceCents ?? svc.base_price_cents ?? 0)}</span>
+                  <span style={{ fontSize: 13, color: V.tmut }}>/ trip · {durLabel}</span>
+                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: V.green, background: "rgba(78,201,142,.12)", border: "1px solid rgba(78,201,142,.35)", borderRadius: 6, padding: "6px 9px", whiteSpace: "nowrap" }}>
                     Escrow guaranteed
                   </span>
                 </div>
@@ -617,7 +656,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 <div
                   style={{
                     marginBottom: 18,
-                    border: `1px solid ${V.lined}`,
+                    border: `1px solid ${V.line}`,
                     borderRadius: 12,
                     padding: "13px 15px",
                     display: "grid",
@@ -627,10 +666,10 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   <span style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.cyan }}>
                     Departure
                   </span>
-                  <span style={{ fontSize: 14.5, fontWeight: 700, color: "#fff" }}>
+                  <span style={{ fontSize: 14.5, fontWeight: 700, color: V.ink }}>
                     {slot ? `${dateLabel}` : "Not selected yet"}
                   </span>
-                  <span style={{ fontFamily: MONO, fontSize: 12.5, color: V.ondmut }}>
+                  <span style={{ fontFamily: MONO, fontSize: 12.5, color: V.tmut }}>
                     {slot ? timeBlock(slot) : `${openSlots.length} open departure${openSlots.length === 1 ? "" : "s"}`}
                   </span>
                 </div>
@@ -648,18 +687,18 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   </select>
                 </label>
 
-                <div style={{ borderTop: `1px solid ${V.lined}`, paddingTop: 16, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
-                    <span>Trip fee ({party} angler{party === 1 ? "" : "s"})</span><span style={{ color: V.ond }}>{money(price)}</span>
+                <div style={{ borderTop: `1px solid ${V.line}`, paddingTop: 16, fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 13.5 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.tmut }}>
+                    <span>Trip fee ({party} angler{party === 1 ? "" : "s"})</span><span style={{ color: V.ink }}>{money(price)}</span>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.ondmut }}>
-                    <span>Fish-X booking fee</span><span style={{ color: "#4ec98e" }}>$0 (Waived)</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", color: V.tmut }}>
+                    <span>Fish-X booking fee</span><span style={{ color: V.green }}>$0 (Waived)</span>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "14px 0 4px", borderTop: `1px solid ${V.lined}`, marginTop: 10, fontSize: 15.5, fontWeight: 700, color: "#fff" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "14px 0 4px", borderTop: `1px solid ${V.line}`, marginTop: 10, fontSize: 15.5, fontWeight: 700, color: V.ink }}>
                     <span>Deposit due today (25%)</span><span>{money(deposit)}</span>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", color: V.ondmut }}>
-                    <span>Balance paid to captain on the day</span><span style={{ color: V.ond }}>{money(balanceDue)}</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", color: V.tmut }}>
+                    <span>Balance paid to captain on the day</span><span style={{ color: V.ink }}>{money(balanceDue)}</span>
                   </div>
                 </div>
 
@@ -667,13 +706,13 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 <button
                   onClick={() => { setStep("dates"); window.scrollTo(0, 0); }}
                   disabled={openSlots.length === 0}
-                  style={{ width: "100%", background: openSlots.length ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "rgba(255,255,255,.12)", color: openSlots.length ? "#1c1303" : V.ondmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: openSlots.length ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
+                  style={{ width: "100%", background: openSlots.length ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "#dfe6ec", color: openSlots.length ? "#1c1303" : V.tmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: openSlots.length ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
                   {openSlots.length ? (slot ? "Change date & time →" : "Check availability →") : "No dates available"}
                 </button>
 
 
-                <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.ondmut, textAlign: "center", lineHeight: 1.5 }}>
+                <div style={{ fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 11.5, color: V.tmut, textAlign: "center", lineHeight: 1.5 }}>
                   {instantBook
                     ? "Seats held for 15 minutes. Funds released after your trip."
                     : "Card authorised, not charged — the captain has 24 hours to accept."}

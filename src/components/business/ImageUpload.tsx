@@ -73,8 +73,8 @@ export function ImageUpload({
             width: 168,
             aspectRatio: aspect,
             borderRadius: 12,
-            border: "1px dashed rgba(13,34,54,.22)",
-            background: value ? `center/cover no-repeat url(${value})` : "#F0F2F5",
+            border: "1px dashed rgba(255,255,255,.16)",
+            background: value ? `center/cover no-repeat url(${value})` : "#1C2936",
             display: "grid",
             placeItems: "center",
             color: "#92A0AB",
@@ -122,7 +122,7 @@ export function ImageUpload({
                 onClick={() => onChange("")}
                 style={{
                   background: "transparent",
-                  border: "1px solid rgba(13,34,54,.16)",
+                  border: "1px solid rgba(255,255,255,.12)",
                   borderRadius: 10,
                   padding: "9px 14px",
                   fontSize: 13,

@@ -132,7 +132,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
     ? (isCharter ? "Canceled · weather" : "Canceled")
     : status.replaceAll("_", " ");
   const statusColor = isActive ? V.green : isCanceled ? V.tmut : V.cyan;
-  const statusBg = isActive ? V.greensoft : isCanceled ? "rgba(13,34,54,.06)" : V.cyansoft;
+  const statusBg = isActive ? V.greensoft : isCanceled ? "rgba(255,255,255,.06)" : V.cyansoft;
 
   const trip = dateLine(b.trip_date, b.start_time, b.party_size ?? 1);
   const location =
@@ -400,7 +400,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                   return (
                     <div key={i} style={{ display: "flex", gap: 14 }}>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: "none", width: 22 }}>
-                        <span style={{ width: 16, height: 16, borderRadius: "50%", background: done ? V.green : cur ? V.cyan : "#14202B", border: done || cur ? 0 : `2px solid rgba(13,34,54,.18)`, display: "grid", placeItems: "center", color: "#F0F2F5", fontSize: 9, flex: "none" }}>
+                        <span style={{ width: 16, height: 16, borderRadius: "50%", background: done ? V.green : cur ? V.cyan : "#14202B", border: done || cur ? 0 : `2px solid rgba(255,255,255,.18)`, display: "grid", placeItems: "center", color: "#F0F2F5", fontSize: 9, flex: "none" }}>
                           {done ? "✓" : ""}
                         </span>
                         {i < escrowSteps.length - 1 && (
@@ -543,7 +543,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                     <button
                       onClick={doCollectBalance}
                       disabled={busyMoney}
-                      style={{ background: V.ink, color: "#F0F2F5", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                      style={{ background: V.goldtext, color: "#0D161F", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
                     >
                       {busyMoney ? "Saving…" : `Mark ${money(balanceDue)} balance collected`}
                     </button>
@@ -559,7 +559,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                     <button
                       onClick={doReleasePayout}
                       disabled={busyMoney}
-                      style={{ marginTop: 10, width: "100%", background: V.goldtext, color: "#F0F2F5", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
+                      style={{ marginTop: 10, width: "100%", background: V.goldtext, color: "#0D161F", border: 0, borderRadius: 10, padding: "12px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: busyMoney ? "default" : "pointer", opacity: busyMoney ? 0.7 : 1 }}
                     >
                       {busyMoney ? "Releasing…" : `Release ${money(transferCents)} to your bank${balanceCollected ? "" : " & mark balance collected"}`}
                     </button>
@@ -676,7 +676,7 @@ export function CaptainBookingDetail({ bookingId }: { bookingId: string }) {
                       fontFamily: V.sans,
                     }}
                   >
-                    <span style={{ width: 18, height: 18, borderRadius: "50%", border: `2px solid ${on ? V.goldtext : "rgba(13,34,54,.25)"}`, display: "grid", placeItems: "center", flex: "none", marginTop: 1 }}>
+                    <span style={{ width: 18, height: 18, borderRadius: "50%", border: `2px solid ${on ? V.goldtext : "rgba(255,255,255,.25)"}`, display: "grid", placeItems: "center", flex: "none", marginTop: 1 }}>
                       <span style={{ width: 8, height: 8, borderRadius: "50%", background: on ? V.goldtext : "transparent" }} />
                     </span>
                     <span>

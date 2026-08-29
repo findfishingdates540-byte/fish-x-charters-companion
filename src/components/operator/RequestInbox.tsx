@@ -13,7 +13,7 @@ import {
 
 const INK = "#F0F2F5";
 const MUT = "#92A0AB";
-const LINE = "rgba(13,34,54,.10)";
+const LINE = "rgba(255,255,255,.10)";
 
 function money(cents?: number | null) {
   return ((cents ?? 0) / 100).toLocaleString("en-US", {

@@ -45,10 +45,17 @@ export const listCaptainBookings = createServerFn({ method: "GET" })
 
 const serviceInput = z.object({
   id: z.string().uuid().optional(),
+  charter_id: z.string().uuid().optional().nullable(),
   title: z.string().min(2).max(120),
-  kind: z.enum(["charter", "guided_trip", "rental", "lesson", "workshop", "gear", "apparel", "slip_rental", "custom"]),
+  // Captain listings are always charters — the "kind" selector is gone from the
+  // UI; default it so the DB enum (service_kind) is always satisfied.
+  kind: z.literal("charter_trip").default("charter_trip"),
   description: z.string().max(4000).optional().nullable(),
-  hero_url: z.string().url().max(500).optional().nullable(),
+  // NOT a URL: our own uploader returns a relative `/api/public/media/...` path,
+  // which `z.string().url()` rejected — the reason captain hero uploads never saved.
+  hero_url: z.string().max(2000).optional().nullable(),
+  water_type: z.string().max(40).optional().nullable(),
+  boat_id: z.string().uuid().optional().nullable(),
   base_price_cents: z.number().int().min(0),
   deposit_cents: z.number().int().min(0).default(0),
   capacity: z.number().int().min(1).max(50).default(4),
@@ -65,6 +72,18 @@ export const upsertCaptainService = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const businessId = await pickBusinessId(context.supabase, context.userId);
     if (!businessId) throw new Response("No business found", { status: 400 });
+
+    // If a charter_id was provided, ensure that charter exists under this business
+    if (data.charter_id) {
+      const { data: charter } = await context.supabase
+        .from("charters")
+        .select("id")
+        .eq("id", data.charter_id)
+        .eq("business_id", businessId)
+        .maybeSingle();
+      if (!charter) throw new Response("Charter not found or not in your business", { status: 404 });
+    }
+
     const payload = {
       ...data,
       business_id: businessId,

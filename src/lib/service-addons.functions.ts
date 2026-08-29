@@ -79,3 +79,65 @@ export const deleteServiceAddon = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 400 });
     return { ok: true as const };
   });
+
+/**
+ * Copy add-ons from one charter to another.
+ * The captain uses this to "define once, reuse everywhere" — they build add-ons
+ * on one trip, then clone them to other charters. No shared table, no RPC changes.
+ * Each target service gets its own independent rows.
+ */
+const copyInput = z.object({
+  businessId: z.string().uuid(),
+  fromServiceId: z.string().uuid(),
+  toServiceId: z.string().uuid(),
+});
+
+export const copyServiceAddons = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => copyInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { businessId, fromServiceId, toServiceId } = data;
+
+    // Verify both services belong to this business.
+    const { data: services, error: svcErr } = await (context.supabase as any)
+      .from("bookable_services")
+      .select("id")
+      .eq("business_id", businessId)
+      .in("id", [fromServiceId, toServiceId]);
+    if (svcErr) throw new Response(svcErr.message, { status: 500 });
+    if (!services || services.length !== 2) throw new Response("Service(s) not found", { status: 404 });
+
+    // Fetch active add-ons from the source service.
+    const { data: srcAddons, error: srcErr } = await (context.supabase as any)
+      .from("service_addons")
+      .select("id,title,description,price_cents,unit,sort_order,is_active,max_per_booking,capacity_per_slot,lead_time_hours")
+      .eq("service_id", fromServiceId)
+      .eq("business_id", businessId)
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+    if (srcErr) throw new Response(srcErr.message, { status: 500 });
+
+    if (!srcAddons?.length) return { copied: 0, ok: true };
+
+    // Insert cloned rows for the target service.
+    const cloned = srcAddons.map((a: any, idx: number) => ({
+      business_id: businessId,
+      service_id: toServiceId,
+      title: a.title,
+      description: a.description,
+      price_cents: a.price_cents,
+      unit: a.unit,
+      sort_order: idx,
+      is_active: true,
+      max_per_booking: a.max_per_booking,
+      capacity_per_slot: a.capacity_per_slot,
+      lead_time_hours: a.lead_time_hours,
+    }));
+
+    const { error: insErr } = await (context.supabase as any)
+      .from("service_addons")
+      .insert(cloned);
+    if (insErr) throw new Response(insErr.message, { status: 400 });
+
+    return { copied: cloned.length, ok: true };
+  });

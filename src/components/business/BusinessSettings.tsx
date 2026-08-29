@@ -503,7 +503,7 @@ function Pill({ children, tone }: { children: React.ReactNode; tone: "good" | "w
   const map = {
     good: { bg: "rgba(34,197,94,.16)", c: "#22C55E" },
     warn: { bg: "rgba(169,126,60,.12)", c: "#F2B93D" },
-    neutral: { bg: "rgba(13,34,54,.06)", c: "#A9B6C1" },
+    neutral: { bg: "rgba(255,255,255,.06)", c: "#A9B6C1" },
   }[tone];
   return (
     <span style={{ background: map.bg, color: map.c, fontSize: 12, fontWeight: 700, padding: "5px 10px", borderRadius: 999 }}>
@@ -520,7 +520,7 @@ export const input: React.CSSProperties = {
   width: "100%",
   padding: "11px 13px",
   borderRadius: 12,
-  border: "1px solid rgba(13,34,54,.16)",
+  border: "1px solid rgba(255,255,255,.10)",
   background: "#14202B",
   fontSize: 14,
   color: "#F0F2F5",
@@ -544,7 +544,7 @@ export function btn(kind: "primary" | "ghost"): React.CSSProperties {
     : {
         background: "transparent",
         color: "#A9B6C1",
-        border: "1px solid rgba(13,34,54,.18)",
+        border: "1px solid rgba(255,255,255,.12)",
         borderRadius: 12,
         padding: "10px 16px",
         fontSize: 13,

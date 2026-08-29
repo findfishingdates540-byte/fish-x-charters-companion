@@ -25,7 +25,7 @@ export const getCaptainDashboard = createServerFn({ method: "GET" })
     // Pick the user's primary business (owner/manager first).
     const { data: mems, error: memErr } = await supabase
       .from("business_members")
-      .select("role, business:businesses(id,slug,name,category_key,hero_url,logo_url,city,region,verified_at,is_published)")
+      .select("role, business:businesses(id,slug,name,category_key,hero_url,logo_url,city,region,verified_at,is_published,deposit_rate,commission_rate)")
       .eq("user_id", userId);
     if (memErr) throw new Response(memErr.message, { status: 500 });
 
@@ -52,7 +52,7 @@ export const getCaptainDashboard = createServerFn({ method: "GET" })
       supabase.from("profiles").select("display_name,full_name,avatar_url").eq("id", userId).maybeSingle(),
       supabase
         .from("bookable_services")
-        .select("id,slug,title,hero_url,base_price_cents,is_published,capacity")
+        .select("id,slug,title,hero_url,base_price_cents,is_published,capacity,description,duration_minutes,departure_location,target_species,water_type,boat_id,charter_id,boat:boats(name)")
         .eq("business_id", business.id)
         .order("created_at", { ascending: false })
         .limit(8),

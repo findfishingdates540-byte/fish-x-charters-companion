@@ -187,7 +187,7 @@ const th: React.CSSProperties = {
 };
 const td: React.CSSProperties = {
   padding: "12px 10px",
-  borderBottom: "1px solid rgba(13,34,54,.05)",
+  borderBottom: "1px solid rgba(255,255,255,.06)",
   color: "#A9B6C1",
   whiteSpace: "nowrap",
 };
@@ -223,7 +223,7 @@ function Row({ k, v }: { k: string; v: string }) {
         justifyContent: "space-between",
         gap: 12,
         padding: "10px 0",
-        borderBottom: "1px solid rgba(13,34,54,.05)",
+        borderBottom: "1px solid rgba(255,255,255,.06)",
         fontSize: 13.5,
         color: "#A9B6C1",
       }}

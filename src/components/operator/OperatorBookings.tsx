@@ -12,7 +12,7 @@ import { Card, StatusPill, money } from "@/components/operator/OperatorShell";
 import { RequestInbox } from "@/components/operator/RequestInbox";
 
 const MUT = "#92A0AB";
-const LINE = "rgba(13,34,54,.10)";
+const LINE = "rgba(255,255,255,.10)";
 
 const SCOPES = [
   { key: "upcoming", label: "Upcoming" },

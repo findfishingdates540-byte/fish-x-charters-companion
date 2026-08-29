@@ -19,7 +19,7 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
     const { data: svc, error } = await supabase
       .from("bookable_services")
       .select(
-        "id,title,hero_url,duration_minutes,base_price_cents,capacity,includes,departure_location,business_id,instant_book,accept_window_hours,cancellation_policy,business:businesses(id,slug,name,city,region,logo_url,hero_url,created_by)",
+        "id,title,hero_url,duration_minutes,base_price_cents,capacity,includes,departure_location,water_type,target_species,boat_id,business_id,instant_book,accept_window_hours,cancellation_policy,boat:boats(name,make,model,length_ft,capacity,home_port,description,hero_image_url,image_urls),business:businesses(id,slug,name,city,region,logo_url,hero_url,created_by,deposit_rate,commission_rate)",
       )
       .eq("id", data.serviceId)
       .maybeSingle();
