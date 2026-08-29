@@ -136,21 +136,6 @@ export function ImageUpload({
             )}
           </div>
 
-          <input
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            disabled={disabled}
-            placeholder="…or paste an image URL"
-            style={{
-              width: "100%",
-              padding: "9px 12px",
-              borderRadius: 10,
-              border: "1px solid rgba(255,255,255,.09)",
-              fontSize: 12.5,
-              color: "#A9B6C1",
-              background: "#14202B",
-            }}
-          />
           <span style={{ fontSize: 11.5, color: "#92A0AB" }}>
             JPG, PNG or WebP up to 8 MB. Landscape photos look best.
           </span>
