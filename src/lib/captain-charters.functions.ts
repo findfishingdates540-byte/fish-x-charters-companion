@@ -18,7 +18,8 @@ async function pickBusinessId(supabase: any, userId: string): Promise<string | n
   return primary?.business_id ?? null;
 }
 
-const boatSelect = "name,make,model,length_ft,capacity,home_port,description,hero_image_url,image_urls";
+// boats table columns only — no image_urls (doesn't exist)
+const boatSelect = "name,make,model,length_ft,capacity,home_port,description,hero_image_url";
 
 const charterInput = z.object({
   id: z.string().uuid().optional(),
