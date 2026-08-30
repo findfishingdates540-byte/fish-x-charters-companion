@@ -29,6 +29,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as BSlugRouteImport } from './routes/b.$slug'
 import { Route as CaptainsProfileRouteImport } from './routes/captains.profile'
 import { Route as ChartersIndexRouteImport } from './routes/charters.index'
+import { Route as ChartersCharterIdRouteImport } from './routes/charters.$charterId'
 import { Route as ChartersSearchRouteImport } from './routes/charters.search'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
@@ -145,6 +146,11 @@ const ChartersIndexRoute = ChartersIndexRouteImport.update({
   path: '/charters/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChartersCharterIdRoute = ChartersCharterIdRouteImport.update({
+  id: '/charters/$charterId',
+  path: '/charters/$charterId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChartersSearchRoute = ChartersSearchRouteImport.update({
   id: '/charters/search',
   path: '/charters/search',
@@ -241,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
+  '/charters/$charterId': typeof ChartersCharterIdRoute
   '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
+  '/charters/$charterId': typeof ChartersCharterIdRoute
   '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
@@ -313,6 +321,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/b/$slug': typeof BSlugRoute
   '/captains/profile': typeof CaptainsProfileRoute
+  '/charters/$charterId': typeof ChartersCharterIdRoute
   '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
@@ -350,6 +359,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/b/$slug'
     | '/captains/profile'
+    | '/charters/$charterId'
     | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
@@ -385,6 +395,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/b/$slug'
     | '/captains/profile'
+    | '/charters/$charterId'
     | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/b/$slug'
     | '/captains/profile'
+    | '/charters/$charterId'
     | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
@@ -449,6 +461,7 @@ export interface RootRouteChildren {
   TrustRoute: typeof TrustRoute
   BSlugRoute: typeof BSlugRoute
   CaptainsProfileRoute: typeof CaptainsProfileRoute
+  ChartersCharterIdRoute: typeof ChartersCharterIdRoute
   ChartersSearchRoute: typeof ChartersSearchRoute
   GuidesProfileRoute: typeof GuidesProfileRoute
   MarketplaceProductIdRoute: typeof MarketplaceProductIdRoute
@@ -606,6 +619,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChartersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/charters/$charterId': {
+      id: '/charters/$charterId'
+      path: '/charters/$charterId'
+      fullPath: '/charters/$charterId'
+      preLoaderRoute: typeof ChartersCharterIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/charters/search': {
       id: '/charters/search'
       path: '/charters/search'
@@ -749,6 +769,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrustRoute: TrustRoute,
   BSlugRoute: BSlugRoute,
   CaptainsProfileRoute: CaptainsProfileRoute,
+  ChartersCharterIdRoute: ChartersCharterIdRoute,
   ChartersSearchRoute: ChartersSearchRoute,
   GuidesProfileRoute: GuidesProfileRoute,
   MarketplaceProductIdRoute: MarketplaceProductIdRoute,
