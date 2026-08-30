@@ -62,6 +62,7 @@ export const upsertCaptainBoat = createServerFn({ method: "POST" })
 
     const payload = {
       ...data,
+      capacity: data.capacity ?? undefined,
       business_id: businessId,
       captain_id: context.userId, // legacy column for back-compat
     };

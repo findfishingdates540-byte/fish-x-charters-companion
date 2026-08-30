@@ -163,7 +163,7 @@ export function CaptainDashboard() {
           {tab === "overview" && <OverviewPanel data={data} onGoto={setTab} />}
           {tab === "bookings" && <BookingsPanel />}
           {tab === "services" && <ChartersPanel data={data} />}
-          {tab === "blockouts" && <BlockoutDatesPanel data={data} />}
+          {tab === "blockouts" && <BlockoutDatesPanel />}
           {tab === "fleet" && <FleetPanel businessId={data.business?.id ?? null} />}
           {tab === "messages" && <MessagesPanel />}
           {tab === "earnings" && <EarningsPanel businessId={data.business?.id ?? null} />}
