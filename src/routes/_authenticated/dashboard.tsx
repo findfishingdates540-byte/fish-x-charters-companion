@@ -80,7 +80,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       return;
     }
     if (primary === "captain" || primary === "business_owner") {
-      const biz = businesses[0]?.business as { id: string; category_key: string } | undefined;
+      const biz = pickPrimaryBusiness(businesses, primary) as { id: string; category_key: string } | undefined;
       const key = biz?.category_key;
       if (!biz || !key || key === "charter") {
         await context.queryClient.ensureQueryData({
