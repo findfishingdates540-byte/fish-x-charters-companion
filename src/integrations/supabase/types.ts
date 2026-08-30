@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -46,6 +46,7 @@ export type Database = {
       }
       boats: {
         Row: {
+          business_id: string | null
           capacity: number
           captain_id: string
           created_at: string
@@ -53,6 +54,7 @@ export type Database = {
           hero_image_url: string | null
           home_port: string | null
           id: string
+          image_urls: string[]
           is_active: boolean
           length_ft: number | null
           make: string | null
@@ -61,6 +63,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          business_id?: string | null
           capacity?: number
           captain_id: string
           created_at?: string
@@ -68,6 +71,7 @@ export type Database = {
           hero_image_url?: string | null
           home_port?: string | null
           id?: string
+          image_urls?: string[]
           is_active?: boolean
           length_ft?: number | null
           make?: string | null
@@ -76,6 +80,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          business_id?: string | null
           capacity?: number
           captain_id?: string
           created_at?: string
@@ -83,6 +88,7 @@ export type Database = {
           hero_image_url?: string | null
           home_port?: string | null
           id?: string
+          image_urls?: string[]
           is_active?: boolean
           length_ft?: number | null
           make?: string | null
@@ -90,15 +96,25 @@ export type Database = {
           name?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "boats_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bookable_services: {
         Row: {
           accept_window_hours: number
           base_price_cents: number
+          boat_id: string | null
           business_id: string
           cancellation_policy: string
           capacity: number
+          charter_id: string | null
           created_at: string
           departure_location: string | null
           deposit_cents: number
@@ -116,13 +132,16 @@ export type Database = {
           target_species: string[]
           title: string
           updated_at: string
+          water_type: string | null
         }
         Insert: {
           accept_window_hours?: number
           base_price_cents?: number
+          boat_id?: string | null
           business_id: string
           cancellation_policy?: string
           capacity?: number
+          charter_id?: string | null
           created_at?: string
           departure_location?: string | null
           deposit_cents?: number
@@ -140,13 +159,16 @@ export type Database = {
           target_species?: string[]
           title: string
           updated_at?: string
+          water_type?: string | null
         }
         Update: {
           accept_window_hours?: number
           base_price_cents?: number
+          boat_id?: string | null
           business_id?: string
           cancellation_policy?: string
           capacity?: number
+          charter_id?: string | null
           created_at?: string
           departure_location?: string | null
           deposit_cents?: number
@@ -164,13 +186,28 @@ export type Database = {
           target_species?: string[]
           title?: string
           updated_at?: string
+          water_type?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bookable_services_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boats"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookable_services_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookable_services_charter_id_fkey"
+            columns: ["charter_id"]
+            isOneToOne: false
+            referencedRelation: "charters"
             referencedColumns: ["id"]
           },
         ]
@@ -515,6 +552,57 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "trip_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_blockouts: {
+        Row: {
+          business_id: string
+          created_at: string
+          end_date: string
+          id: string
+          is_active: boolean
+          reason: string | null
+          service_id: string | null
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          is_active?: boolean
+          reason?: string | null
+          service_id?: string | null
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          reason?: string | null
+          service_id?: string | null
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_blockouts_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_blockouts_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "bookable_services"
             referencedColumns: ["id"]
           },
         ]
@@ -916,6 +1004,138 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "business_categories"
             referencedColumns: ["key"]
+          },
+        ]
+      }
+      charter_departure_times: {
+        Row: {
+          business_id: string | null
+          charter_id: string
+          created_at: string
+          days_of_week: number[]
+          id: string
+          is_active: boolean
+          label: string | null
+          sort_order: number
+          start_time: string
+        }
+        Insert: {
+          business_id?: string | null
+          charter_id: string
+          created_at?: string
+          days_of_week?: number[]
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          sort_order?: number
+          start_time: string
+        }
+        Update: {
+          business_id?: string | null
+          charter_id?: string
+          created_at?: string
+          days_of_week?: number[]
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          sort_order?: number
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "charter_departure_times_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "charter_departure_times_charter_id_fkey"
+            columns: ["charter_id"]
+            isOneToOne: false
+            referencedRelation: "charters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      charters: {
+        Row: {
+          base_price_cents: number
+          boat_id: string | null
+          business_id: string
+          capacity: number
+          commission_rate: number
+          created_at: string
+          departure_location: string | null
+          deposit_rate: number
+          description: string | null
+          duration_minutes: number | null
+          hero_url: string | null
+          id: string
+          image_urls: string[]
+          is_published: boolean
+          name: string
+          slug: string | null
+          target_species: string[]
+          updated_at: string
+          water_type: string | null
+        }
+        Insert: {
+          base_price_cents?: number
+          boat_id?: string | null
+          business_id: string
+          capacity?: number
+          commission_rate?: number
+          created_at?: string
+          departure_location?: string | null
+          deposit_rate?: number
+          description?: string | null
+          duration_minutes?: number | null
+          hero_url?: string | null
+          id?: string
+          image_urls?: string[]
+          is_published?: boolean
+          name: string
+          slug?: string | null
+          target_species?: string[]
+          updated_at?: string
+          water_type?: string | null
+        }
+        Update: {
+          base_price_cents?: number
+          boat_id?: string | null
+          business_id?: string
+          capacity?: number
+          commission_rate?: number
+          created_at?: string
+          departure_location?: string | null
+          deposit_rate?: number
+          description?: string | null
+          duration_minutes?: number | null
+          hero_url?: string | null
+          id?: string
+          image_urls?: string[]
+          is_published?: boolean
+          name?: string
+          slug?: string | null
+          target_species?: string[]
+          updated_at?: string
+          water_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "charters_boat_id_fkey"
+            columns: ["boat_id"]
+            isOneToOne: false
+            referencedRelation: "boats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "charters_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -2215,6 +2435,7 @@ export type Database = {
           seats_available: number
           seats_booked: number
           service_id: string
+          source: string
           starts_at: string
         }
         Insert: {
@@ -2228,6 +2449,7 @@ export type Database = {
           seats_available?: number
           seats_booked?: number
           service_id: string
+          source?: string
           starts_at: string
         }
         Update: {
@@ -2241,6 +2463,7 @@ export type Database = {
           seats_available?: number
           seats_booked?: number
           service_id?: string
+          source?: string
           starts_at?: string
         }
         Relationships: [
@@ -2253,6 +2476,57 @@ export type Database = {
           },
           {
             foreignKeyName: "service_availability_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "bookable_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_departure_times: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          days_of_week: number[]
+          id: string
+          is_active: boolean
+          label: string | null
+          service_id: string
+          sort_order: number
+          start_time: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          days_of_week?: number[]
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          service_id: string
+          sort_order?: number
+          start_time: string
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          days_of_week?: number[]
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          service_id?: string
+          sort_order?: number
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_departure_times_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_departure_times_service_id_fkey"
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "bookable_services"
@@ -2468,6 +2742,15 @@ export type Database = {
       advance_trip_lifecycle: {
         Args: { _grace_hours?: number; _limit?: number }
         Returns: Json
+      }
+      apply_blockout_slots: {
+        Args: {
+          _block: boolean
+          _business_id: string
+          _end_date: string
+          _start_date: string
+        }
+        Returns: undefined
       }
       auto_decline_expired_requests: {
         Args: { _limit?: number }

@@ -184,7 +184,7 @@ async function insertMissingTemplateSlots(
     .gte("starts_at", nowIso);
   if (existErr) return 0;
 
-  const existingStarts = new Set((existing ?? []).map((s) => s.starts_at));
+  const existingStarts = new Set((existing ?? []).map((s: { starts_at: string }) => s.starts_at));
 
   const base = new Date();
   const rows: Record<string, unknown>[] = [];

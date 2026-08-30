@@ -55,9 +55,8 @@ const charterDetailQO = (charterId: string) =>
   });
 
 export const Route = createFileRoute("/charters/$charterId")({
-  loader: ({ context, params }) => {
-    context.queryClient.ensureQueryData(charterDetailQO(params.charterId));
-  },
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(charterDetailQO(params.charterId)),
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
