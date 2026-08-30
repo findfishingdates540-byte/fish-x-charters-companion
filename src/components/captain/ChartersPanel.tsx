@@ -374,6 +374,73 @@ function CharterForm({
           )}
         </label>
 
+        {businessId && (
+          <div style={{ gridColumn: "1 / -1" }}>
+            <span style={labelStyle}>Gallery photos</span>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+                gap: 10,
+                marginTop: 6,
+              }}
+            >
+              {draft.image_urls.map((url, i) => (
+                <div key={`${url}-${i}`} style={{ position: "relative" }}>
+                  <img
+                    src={url}
+                    alt={`Gallery photo ${i + 1}`}
+                    style={{
+                      width: "100%",
+                      aspectRatio: "16 / 9",
+                      objectFit: "cover",
+                      borderRadius: 10,
+                      border: "1px solid var(--line)",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onChange({
+                        ...draft,
+                        image_urls: draft.image_urls.filter((_, j) => j !== i),
+                      })
+                    }
+                    style={{
+                      position: "absolute",
+                      top: 6,
+                      right: 6,
+                      border: "none",
+                      borderRadius: 999,
+                      width: 24,
+                      height: 24,
+                      cursor: "pointer",
+                      background: "rgba(0,0,0,.65)",
+                      color: "#fff",
+                      fontSize: 13,
+                      lineHeight: "24px",
+                    }}
+                    aria-label="Remove photo"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <ImageUpload
+                businessId={businessId}
+                value=""
+                label="Add photo"
+                onChange={(url) =>
+                  url && onChange({ ...draft, image_urls: [...draft.image_urls, url] })
+                }
+              />
+            </div>
+            <div style={{ fontSize: 11.5, color: "var(--tmut)", marginTop: 6 }}>
+              Extra photos anglers see in the listing gallery. The cover image stays first.
+            </div>
+          </div>
+        )}
+
         <label>
           <span style={labelStyle}>Boat</span>
           <select

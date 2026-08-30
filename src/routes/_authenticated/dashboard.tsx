@@ -33,6 +33,24 @@ const myProfileQO = queryOptions({
   queryFn: () => getMyProfile(),
 });
 
+/**
+ * Pick the workspace that matches the signed-in operator.
+ * Captains always land on their charter business, never on another
+ * vertical (tackle shop, marina…) they happen to be a member of.
+ */
+function pickPrimaryBusiness(
+  businesses: any[],
+  primaryRole: string | null,
+): any | undefined {
+  const owned = businesses.filter((m) => m?.business);
+  if (primaryRole === "captain") {
+    const charter = owned.find((m) => (m.business.category_key ?? "charter") === "charter");
+    if (charter) return charter.business;
+  }
+  const asOwner = owned.find((m) => m.role === "owner");
+  return (asOwner ?? owned[0])?.business;
+}
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   validateSearch: (search: Record<string, unknown>): { tab?: string } =>
@@ -62,7 +80,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       return;
     }
     if (primary === "captain" || primary === "business_owner") {
-      const biz = businesses[0]?.business as { id: string; category_key: string } | undefined;
+      const biz = pickPrimaryBusiness(businesses, primary) as { id: string; category_key: string } | undefined;
       const key = biz?.category_key;
       if (!biz || !key || key === "charter") {
         await context.queryClient.ensureQueryData({
