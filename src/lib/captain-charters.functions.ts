@@ -11,10 +11,14 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 async function pickBusinessId(supabase: any, userId: string): Promise<string | null> {
   const { data, error } = await supabase
     .from("business_members")
-    .select("role,business_id")
+    .select("role,business_id,business:businesses(category_key)")
     .eq("user_id", userId);
   if (error) throw new Error(error.message);
-  const primary = (data ?? []).find((m: any) => m.role === "owner") ?? data?.[0];
+  const mems = data ?? [];
+  // Captains always operate their charter business, even if they own other
+  // verticals (tackle shop, marina…).
+  const charter = mems.find((m: any) => (m.business?.category_key ?? "charter") === "charter");
+  const primary = charter ?? mems.find((m: any) => m.role === "owner") ?? mems[0];
   return primary?.business_id ?? null;
 }
 
