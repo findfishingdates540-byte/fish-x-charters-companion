@@ -73,19 +73,24 @@ export const upsertCaptainService = createServerFn({ method: "POST" })
     const businessId = await pickBusinessId(context.supabase, context.userId);
     if (!businessId) throw new Response("No business found", { status: 400 });
 
+    let inheritedHero: string | null = null;
     // If a charter_id was provided, ensure that charter exists under this business
     if (data.charter_id) {
       const { data: charter } = await context.supabase
         .from("charters")
-        .select("id")
+        .select("id,hero_url,image_urls")
         .eq("id", data.charter_id)
         .eq("business_id", businessId)
         .maybeSingle();
       if (!charter) throw new Response("Charter not found or not in your business", { status: 404 });
+      inheritedHero = charter.hero_url ?? (charter.image_urls as string[] | null)?.[0] ?? null;
     }
 
     const payload = {
       ...data,
+      // Packages without their own image inherit the parent charter's image so
+      // trip/booking cards never render imageless.
+      hero_url: data.hero_url || inheritedHero,
       business_id: businessId,
       kind: data.kind as ServiceKind,
     };

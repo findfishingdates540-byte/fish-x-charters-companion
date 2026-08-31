@@ -51,7 +51,7 @@ export const listCaptainCharters = createServerFn({ method: "GET" })
     if (!businessId) return [];
     const { data: rows, error } = await context.supabase
       .from("charters")
-      .select(`id,slug,name,hero_url,description,water_type,target_species,boat_id,boat:${boatSelect},is_published,base_price_cents,duration_minutes,capacity,created_at,packages:bookable_services(id,title,hero_url,base_price_cents,capacity,duration_minutes,is_published,kind)`)
+      .select(`id,slug,name,hero_url,image_urls,description,water_type,target_species,boat_id,boat:${boatSelect},is_published,base_price_cents,duration_minutes,capacity,created_at,packages:bookable_services(id,title,hero_url,base_price_cents,capacity,duration_minutes,is_published,kind)`)
       .eq("business_id", businessId)
       .order("created_at", { ascending: false })
       .limit(50);
