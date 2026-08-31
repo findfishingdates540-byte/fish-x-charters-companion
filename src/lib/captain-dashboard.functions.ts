@@ -29,7 +29,10 @@ export const getCaptainDashboard = createServerFn({ method: "GET" })
       .eq("user_id", userId);
     if (memErr) throw new Response(memErr.message, { status: 500 });
 
-    const primary = (mems ?? []).find((m) => m.role === "owner") ?? mems?.[0];
+    const memsList = mems ?? [];
+    // Captains always land on their charter business, never another vertical.
+    const charter = memsList.find((m: any) => ((m.business as any)?.category_key ?? "charter") === "charter");
+    const primary = charter ?? memsList.find((m) => m.role === "owner") ?? memsList[0];
     const business = primary?.business ?? null;
 
     if (!business) {

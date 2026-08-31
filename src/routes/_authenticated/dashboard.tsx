@@ -163,7 +163,7 @@ function Dashboard() {
   if (primaryRole === "captain") return <CaptainDashboard />;
 
   if (primaryRole === "business_owner") {
-    const biz = businesses[0]?.business as
+    const biz = pickPrimaryBusiness(businesses, primaryRole) as
       | { id: string; name: string; category_key: string }
       | undefined;
     if (!biz) return <DashboardFrame src="/dashboards/onboarding.html" title="Onboarding" />;
