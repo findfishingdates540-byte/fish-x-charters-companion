@@ -39,7 +39,7 @@ export function PublicHeader({
   useEffect(() => setOpen(false), [pathname]);
 
   const navLink = (active: boolean): React.CSSProperties => ({
-    color: "#eaf1f6",
+    color: "#031029",
     textDecoration: "none",
     fontFamily: "var(--sans)",
     fontSize: 14,
@@ -59,10 +59,10 @@ export function PublicHeader({
         position: "sticky",
         top: 0,
         zIndex: 60,
-        background: "rgba(9,27,44,.94)",
+        background: "rgba(255,255,255,.96)",
         backdropFilter: "saturate(140%) blur(12px)",
         WebkitBackdropFilter: "saturate(140%) blur(12px)",
-        borderBottom: "1px solid rgba(255,255,255,.1)",
+        borderBottom: "1px solid rgba(3,16,41,.10)",
       }}
     >
       <style>{`
@@ -88,7 +88,7 @@ export function PublicHeader({
       >
         <Link
           to={signedIn ? "/dashboard" : "/"}
-          style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "#eaf1f6" }}
+          style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "#031029" }}
         >
           <span
             style={{
@@ -137,7 +137,7 @@ export function PublicHeader({
               <Link
                 to={signedIn ? "/dashboard" : "/auth"}
                 style={{
-                  color: "#eaf1f6",
+                  color: "#031029",
                   textDecoration: "none",
                   fontSize: 14,
                   fontWeight: 600,
@@ -173,7 +173,7 @@ export function PublicHeader({
             <>
               <Link
                 to="/auth"
-                style={{ color: "#eaf1f6", textDecoration: "none", fontSize: 14, fontWeight: 600, opacity: 0.92 }}
+                style={{ color: "#031029", textDecoration: "none", fontSize: 14, fontWeight: 600, opacity: 0.92 }}
               >
                 Sign in
               </Link>
@@ -210,9 +210,9 @@ export function PublicHeader({
             width: 40,
             height: 40,
             borderRadius: 10,
-            background: "rgba(255,255,255,.08)",
-            border: "1px solid rgba(255,255,255,.14)",
-            color: "#eaf1f6",
+            background: "rgba(3,16,41,.05)",
+            border: "1px solid rgba(3,16,41,.12)",
+            color: "#031029",
             cursor: "pointer",
             placeItems: "center",
           }}
@@ -231,7 +231,7 @@ export function PublicHeader({
           flexDirection: "column",
           gap: 4,
           padding: "8px 20px 20px",
-          borderTop: "1px solid rgba(255,255,255,.08)",
+          borderTop: "1px solid rgba(3,16,41,.05)",
         }}
       >
         {!hideNav && NAV.map((n) => (
@@ -239,13 +239,13 @@ export function PublicHeader({
             key={n.to}
             to={n.to}
             style={{
-              color: "#eaf1f6",
+              color: "#031029",
               textDecoration: "none",
               fontFamily: "var(--sans)",
               fontSize: 15,
               fontWeight: 600,
               padding: "12px 6px",
-              borderBottom: "1px solid rgba(255,255,255,.06)",
+              borderBottom: "1px solid rgba(3,16,41,.07)",
             }}
           >
             {n.label}
@@ -278,10 +278,10 @@ export function PublicHeader({
                 style={{
                   flex: 1,
                   textAlign: "center",
-                  color: "#eaf1f6",
+                  color: "#031029",
                   textDecoration: "none",
                   padding: "12px 16px",
-                  border: "1px solid rgba(255,255,255,.18)",
+                  border: "1px solid rgba(3,16,41,.16)",
                   borderRadius: 30,
                   fontWeight: 600,
                   fontSize: 13,
