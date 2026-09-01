@@ -122,7 +122,7 @@ function CharterDetail() {
     .join(", ");
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#0d2236" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
       <PublicHeader />
 
       <section
@@ -130,7 +130,7 @@ function CharterDetail() {
           position: "relative",
           padding: "clamp(48px,8vw,96px) 24px clamp(40px,6vw,72px)",
           background: "#fff",
-          color: "#0d2236",
+          color: "#031029",
         }}
       >
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
@@ -164,7 +164,7 @@ function CharterDetail() {
               </p>
             </div>
             {charter.business?.verified_at && (
-              <span style={{ fontSize: 12, color: "#a97e3c", fontWeight: 600 }}>
+              <span style={{ fontSize: 12, color: "#1F9FBE", fontWeight: 600 }}>
                 Verified captain
               </span>
             )}

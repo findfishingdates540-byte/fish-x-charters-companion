@@ -54,7 +54,7 @@ export function ExploreTab() {
   };
 
   return (
-    <div style={{ background: "#ffffff", minHeight: "calc(100vh - 66px)", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#0d2236" }}>
+    <div style={{ background: "#ffffff", minHeight: "calc(100vh - 66px)", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
       <style>{`
         .fx-ch-search { display: grid; grid-template-columns: 1.3fr 1fr 1.1fr .8fr auto; gap: 0; }
         .fx-ch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -76,7 +76,7 @@ export function ExploreTab() {
         }}
       >
         <div style={{ maxWidth: 980, margin: "0 auto" }}>
-          <span style={{ fontSize: 11, letterSpacing: ".24em", textTransform: "uppercase", color: "var(--sand,#e3c089)", fontWeight: 700 }}>
+          <span style={{ fontSize: 11, letterSpacing: ".24em", textTransform: "uppercase", color: "var(--sand,#2DE2F2)", fontWeight: 700 }}>
             Explore
           </span>
           <h1 style={{ fontFamily: serif, fontSize: "clamp(34px,5vw,60px)", fontWeight: 600, letterSpacing: "-.02em", margin: "10px 0 12px", lineHeight: 1.05 }}>
@@ -117,7 +117,7 @@ export function ExploreTab() {
               </select>
             </Field>
             <div style={{ padding: 10, display: "flex", alignItems: "center" }}>
-              <button type="submit" style={{ width: "100%", height: 52, padding: "0 28px", borderRadius: 12, border: "none", background: "#0d2236", color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
+              <button type="submit" style={{ width: "100%", height: 52, padding: "0 28px", borderRadius: 12, border: "none", background: "#031029", color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
                 Search charters
               </button>
             </div>
@@ -152,7 +152,7 @@ export function ExploreTab() {
                       minHeight: 220,
                       textAlign: "left",
                       color: "#fff",
-                      background: `linear-gradient(180deg, rgba(7,26,42,.15) 30%, rgba(7,26,42,.9)), #0a2236 url(${DEFAULT_HERO}) center/cover`,
+                      background: `linear-gradient(180deg, rgba(7,26,42,.15) 30%, rgba(7,26,42,.9)), #072057 url(${DEFAULT_HERO}) center/cover`,
                     }}
                   >
                     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20 }}>
@@ -160,7 +160,7 @@ export function ExploreTab() {
                       <div style={{ fontSize: 13, color: "#cbd9e4" }}>
                         {p.region ? `${p.region} · ` : ""}
                         {p.captains} {p.captains === 1 ? "captain" : "captains"} · from{" "}
-                        <b style={{ color: "var(--sand,#e3c089)" }}>{money(p.fromCents)}</b>
+                        <b style={{ color: "var(--sand,#2DE2F2)" }}>{money(p.fromCents)}</b>
                       </div>
                     </div>
                   </button>
@@ -179,7 +179,7 @@ export function ExploreTab() {
                     key={r.region}
                     type="button"
                     onClick={() => setFilters({ region: r.region, sort: "recommended" })}
-                    style={{ padding: "10px 18px", borderRadius: 999, background: "#fff", border: "1px solid rgba(13,34,54,.10)", color: "#0d2236", fontSize: 14, fontWeight: 600, cursor: "pointer" }}
+                    style={{ padding: "10px 18px", borderRadius: 999, background: "#fff", border: "1px solid rgba(13,34,54,.10)", color: "#031029", fontSize: 14, fontWeight: 600, cursor: "pointer" }}
                   >
                     {r.region} <span style={{ color: "#5c6b78", fontWeight: 500 }}>· {r.count}</span>
                   </button>
@@ -197,7 +197,7 @@ export function ExploreTab() {
                   <button
                     type="button"
                     onClick={() => setFilters({ sort: "recommended" })}
-                    style={{ background: "none", border: "none", color: "#a97e3c", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}
+                    style={{ background: "none", border: "none", color: "#1F9FBE", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}
                   >
                     See all charters →
                   </button>
@@ -243,7 +243,7 @@ function SearchResults({
             <select
               value={filters.sort}
               onChange={(e) => onChange({ ...filters, sort: e.target.value as Filters["sort"] })}
-              style={{ padding: "9px 12px", borderRadius: 10, border: "1px solid rgba(13,34,54,.14)", background: "#fff", fontSize: 13.5, color: "#0d2236" }}
+              style={{ padding: "9px 12px", borderRadius: 10, border: "1px solid rgba(13,34,54,.14)", background: "#fff", fontSize: 13.5, color: "#031029" }}
             >
               <option value="recommended">Recommended</option>
               <option value="price_asc">Price: low to high</option>
@@ -251,7 +251,7 @@ function SearchResults({
               <option value="duration_asc">Shortest trip</option>
               <option value="newest">Newest</option>
             </select>
-            <button type="button" onClick={onClear} style={{ background: "none", border: "none", color: "#a97e3c", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}>
+            <button type="button" onClick={onClear} style={{ background: "none", border: "none", color: "#1F9FBE", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}>
               ← Back to explore
             </button>
           </div>
@@ -270,8 +270,8 @@ function SearchResults({
                 style={{
                   padding: "8px 14px",
                   borderRadius: 999,
-                  border: `1px solid ${active ? "#0d2236" : "rgba(13,34,54,.12)"}`,
-                  background: active ? "#0d2236" : "#fff",
+                  border: `1px solid ${active ? "#031029" : "rgba(13,34,54,.12)"}`,
+                  background: active ? "#031029" : "#fff",
                   color: active ? "#fff" : "#5c6b78",
                   fontSize: 13,
                   fontWeight: 600,
@@ -306,7 +306,7 @@ const inputStyle: React.CSSProperties = {
   outline: "none",
   fontSize: 15,
   fontFamily: "inherit",
-  color: "#0d2236",
+  color: "#031029",
   background: "transparent",
   padding: 0,
 };
@@ -355,7 +355,7 @@ function CharterCard({ l, rating }: { l: Listing; rating?: { avg: number; count:
         borderRadius: 16,
         overflow: "hidden",
         textDecoration: "none",
-        color: "#0d2236",
+        color: "#031029",
       }}
     >
       <div style={{ aspectRatio: "16/10", background: `#e9edf1 url(${l.hero_url || DEFAULT_HERO}) center/cover` }} />
@@ -381,7 +381,7 @@ function CharterCard({ l, rating }: { l: Listing; rating?: { avg: number; count:
           </div>
         )}
         <div style={{ marginTop: "auto", paddingTop: 12, fontSize: 13, color: "#5c6b78" }}>
-          from <b style={{ fontFamily: serif, fontSize: 21, color: "#a97e3c" }}>{money(l.base_price_cents)}</b>{" "}
+          from <b style={{ fontFamily: serif, fontSize: 21, color: "#1F9FBE" }}>{money(l.base_price_cents)}</b>{" "}
           <span style={{ fontSize: 12 }}>/ trip</span>
         </div>
       </div>

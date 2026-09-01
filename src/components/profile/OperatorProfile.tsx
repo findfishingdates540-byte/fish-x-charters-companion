@@ -125,7 +125,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
   const avg = ratingSummary.average ? ratingSummary.average.toFixed(2) : "—";
 
   const roleLabel = variant === "captain" ? "Verified captain" : "Verified guide";
-  const heroFallback = "linear-gradient(135deg,#F0F2F5,#06151f)";
+  const heroFallback = "linear-gradient(135deg,#F0F2F5,#031029)";
 
   return (
     <div className="fx-shell" style={{ background: "#0D161F", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#F0F2F5" }}>
@@ -219,7 +219,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
                   const active = selectedServiceId === s.id;
                   return (
                     <article key={s.id} style={{ background: "#14202B", border: `1px solid ${active ? "#2DE2F2" : "rgba(255,255,255,.07)"}`, borderRadius: 18, padding: 16, display: "flex", alignItems: "center", gap: 18 }}>
-                      <div style={{ width: 104, height: 80, borderRadius: 12, flex: "none", background: s.hero_url ? `#e9edf1 url(${s.hero_url}) center/cover` : "linear-gradient(135deg,#F0F2F5,#06151f)" }} />
+                      <div style={{ width: 104, height: 80, borderRadius: 12, flex: "none", background: s.hero_url ? `#e9edf1 url(${s.hero_url}) center/cover` : "linear-gradient(135deg,#F0F2F5,#031029)" }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 19, margin: 0, color: "#F0F2F5" }}>{s.title}</h3>
                         <div style={{ fontSize: 13, color: "#92A0AB", marginTop: 4 }}>

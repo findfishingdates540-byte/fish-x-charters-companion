@@ -33,9 +33,9 @@ const cssVars: CSSProperties = {
   // @ts-expect-error custom props
   "--serif": "'Cormorant Garamond',Georgia,serif",
   "--sans": "'Hanken Grotesk',system-ui,sans-serif",
-  "--ink": "#0d2236", "--navy": "#0a2236", "--deep": "#06151f",
+  "--ink": "#031029", "--navy": "#072057", "--deep": "#031029",
   "--paper": "#f4f6f8", "--paper2": "#e9edf1", "--card": "#ffffff",
-  "--sand": "#e3c089", "--sand2": "#d2a566", "--sandsoft": "#f1ddbd", "--goldtext": "#b88c46",
+  "--sand": "#2DE2F2", "--sand2": "#27C0E2", "--sandsoft": "#f1ddbd", "--goldtext": "#1F9FBE",
   "--cyan": "#27c0e2", "--ond": "#eaf1f6", "--ondmut": "#9bb0c0", "--tmut": "#5c6b78",
   "--line": "rgba(13,34,54,.12)", "--lined": "rgba(255,255,255,.13)",
 };
@@ -51,7 +51,7 @@ const labelSpan: CSSProperties = {
   textTransform: "uppercase", color: "var(--tmut)", marginBottom: 7,
 };
 const primaryBtn: CSSProperties = {
-  width: "100%", background: "var(--sand)", color: "#1c1303", border: 0,
+  width: "100%", background: "var(--sand)", color: "#04121B", border: 0,
   borderRadius: 12, padding: 16, fontFamily: "var(--sans)", fontSize: 14,
   fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase",
   cursor: "pointer", marginTop: 4, transition: "filter .2s, transform .2s",
@@ -280,7 +280,7 @@ function AuthPage() {
       <aside style={{ position: "relative", overflow: "hidden", background: "var(--navy)", color: "var(--ond)", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "46px 54px", minHeight: "100vh" }}>
         <img src={asset.seascape} alt="" aria-hidden style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 38%", opacity: .24 }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(155deg,rgba(6,21,31,.74) 0%,rgba(8,28,46,.88) 55%,rgba(6,21,31,.97) 100%)" }} />
-        <div style={{ position: "absolute", top: -140, right: -120, width: 480, height: 480, background: "radial-gradient(circle,rgba(227,192,137,.16),rgba(227,192,137,0) 62%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: -140, right: -120, width: 480, height: 480, background: "radial-gradient(circle,rgba(45,226,242,.16),rgba(45,226,242,0) 62%)", pointerEvents: "none" }} />
 
         <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <a href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "var(--ond)" }}>
@@ -298,7 +298,7 @@ function AuthPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {["Charters, tackle, marinas & wholesale in one place", "Verified operators across every category", "Every transaction secured by escrow"].map((t) => (
               <div key={t} style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 15, color: "var(--ond)" }}>
-                <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(227,192,137,.14)", display: "grid", placeItems: "center", color: "var(--sand)", fontSize: 13, flex: "none" }}>✓</span>
+                <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(45,226,242,.14)", display: "grid", placeItems: "center", color: "var(--sand)", fontSize: 13, flex: "none" }}>✓</span>
                 {t}
               </div>
             ))}
@@ -372,7 +372,7 @@ function AuthPage() {
                   </span>
                 </label>
                 <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", marginTop: -2 }}>
-                  <input name="remember" type="checkbox" style={{ width: 18, height: 18, accentColor: "#b88c46", cursor: "pointer" }} />
+                  <input name="remember" type="checkbox" style={{ width: 18, height: 18, accentColor: "#1F9FBE", cursor: "pointer" }} />
                   <span style={{ fontSize: 13.5, color: "var(--tmut)" }}>Keep me signed in</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
@@ -438,7 +438,7 @@ function AuthPage() {
                 <label style={{ display: "block" }}><span style={labelSpan}>Email address</span><input name="email" type="email" autoComplete="email" placeholder="you@email.com" onInput={clearError} style={inputStyle} /></label>
                 {pwField("new-password", "At least 8 characters")}
                 <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
-                  <input name="terms" type="checkbox" style={{ width: 18, height: 18, marginTop: 1, accentColor: "#b88c46", flex: "none", cursor: "pointer" }} />
+                  <input name="terms" type="checkbox" style={{ width: 18, height: 18, marginTop: 1, accentColor: "#1F9FBE", flex: "none", cursor: "pointer" }} />
                   <span style={{ fontSize: 13, lineHeight: 1.5, color: "var(--tmut)" }}>I agree to the <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Terms</a> and <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Privacy Policy</a>.</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
@@ -495,7 +495,7 @@ function AuthPage() {
                 <VerticalDetail vertical={vertical} />
 
                 <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
-                  <input name="terms" type="checkbox" style={{ width: 18, height: 18, marginTop: 1, accentColor: "#b88c46", flex: "none", cursor: "pointer" }} />
+                  <input name="terms" type="checkbox" style={{ width: 18, height: 18, marginTop: 1, accentColor: "#1F9FBE", flex: "none", cursor: "pointer" }} />
                   <span style={{ fontSize: 13, lineHeight: 1.5, color: "var(--tmut)" }}>I agree to the <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Terms</a>, <a href="#" style={{ color: "var(--goldtext)", textDecoration: "none", fontWeight: 600 }}>Privacy Policy</a> and seller agreement.</span>
                 </label>
                 {error && <ErrorBox msg={error} />}
@@ -546,7 +546,7 @@ function AuthPage() {
                   ))}
                 </div>
               )}
-              <button onClick={handleDoneCta} style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "var(--sand)", color: "#1c1303", border: 0, textDecoration: "none", fontSize: 13, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "15px 30px", borderRadius: 40, cursor: "pointer" }}>{doneCta} →</button>
+              <button onClick={handleDoneCta} style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "var(--sand)", color: "#04121B", border: 0, textDecoration: "none", fontSize: 13, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", padding: "15px 30px", borderRadius: 40, cursor: "pointer" }}>{doneCta} →</button>
               <div style={{ marginTop: 18 }}>
                 <button onClick={reset} style={{ background: "transparent", border: 0, cursor: "pointer", fontSize: 13, color: "var(--tmut)", fontFamily: "var(--sans)" }}>Back to sign in</button>
               </div>

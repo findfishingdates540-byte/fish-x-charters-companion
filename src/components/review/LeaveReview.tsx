@@ -14,14 +14,14 @@ import { DEFAULT_HERO } from "@/lib/platform-photos";
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
-  navy: "#0a2236",
+  ink: "#031029",
+  navy: "#072057",
   paper: "#ffffff",
   card: "#ffffff",
-  sand: "#e3c089",
-  sand2: "#d2a566",
-  sandsoft: "#f4e6cd",
-  goldtext: "#a97e3c",
+  sand: "#2DE2F2",
+  sand2: "#27C0E2",
+  sandsoft: "#E2F6FA",
+  goldtext: "#1F9FBE",
   cyan: "#1f9fbe",
   cyansoft: "#e2eef2",
   green: "#1f8a5b",
@@ -89,7 +89,7 @@ function Toast({ toast }: { toast: string }) {
           height: 22,
           borderRadius: "50%",
           background: V.sand,
-          color: "#1c1303",
+          color: "#04121B",
           display: "grid",
           placeItems: "center",
           fontSize: 12,
@@ -462,7 +462,7 @@ function SuccessState({
             to="/dashboard"
             style={{
               background: V.sand,
-              color: "#1c1303",
+              color: "#04121B",
               textDecoration: "none",
               borderRadius: 12,
               padding: "14px 30px",
@@ -661,7 +661,7 @@ export function LeaveReview({ bookingId }: { bookingId: string }) {
             disabled={!canSubmit}
             style={{
               background: V.sand,
-              color: "#1c1303",
+              color: "#04121B",
               border: 0,
               borderRadius: 12,
               padding: "15px 34px",

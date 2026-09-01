@@ -61,11 +61,11 @@ export function AvatarUpload({
           borderRadius: "50%",
           overflow: "hidden",
           flex: "none",
-          background: value ? `center/cover no-repeat url(${value})` : "#f4e6cd",
-          border: "2px solid #f4e6cd",
+          background: value ? `center/cover no-repeat url(${value})` : "#E2F6FA",
+          border: "2px solid #E2F6FA",
           display: "grid",
           placeItems: "center",
-          color: "#a97e3c",
+          color: "#1F9FBE",
           fontFamily: "'Cormorant Garamond',Georgia,serif",
           fontSize: size / 3,
           fontWeight: 600,
@@ -91,7 +91,7 @@ export function AvatarUpload({
             disabled={disabled || busy}
             onClick={() => fileRef.current?.click()}
             style={{
-              background: "#0d2236",
+              background: "#031029",
               color: "#fff",
               border: 0,
               borderRadius: 10,

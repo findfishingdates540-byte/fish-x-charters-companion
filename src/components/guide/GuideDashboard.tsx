@@ -271,7 +271,7 @@ function TripList({
               padding: "14px 4px",
               borderBottom: "1px solid rgba(255,255,255,.05)",
               alignItems: "center",
-              background: !assigned && !minimal ? "rgba(227,192,137,.06)" : "transparent",
+              background: !assigned && !minimal ? "rgba(45,226,242,.06)" : "transparent",
             }}
           >
             <div>

@@ -15,13 +15,13 @@ const REASONS: Reason[] = ["Weather concerns", "Plans changed", "Booked by mista
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
-  navy: "#0a2236",
+  ink: "#031029",
+  navy: "#072057",
   paper: "#ffffff",
   card: "#ffffff",
-  sand: "#e3c089",
-  sandsoft: "#f4e6cd",
-  goldtext: "#a97e3c",
+  sand: "#2DE2F2",
+  sandsoft: "#E2F6FA",
+  goldtext: "#1F9FBE",
   cyan: "#1f9fbe",
   cyansoft: "#e2eef2",
   green: "#1f8a5b",
@@ -374,7 +374,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                 <button
                   onClick={() => reply.trim() && sendMutation.mutate(reply.trim())}
                   disabled={sendMutation.isPending || !reply.trim()}
-                  style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 11, padding: "0 20px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 700, cursor: "pointer", opacity: sendMutation.isPending ? 0.6 : 1 }}
+                  style={{ background: V.sand, color: "#04121B", border: 0, borderRadius: 11, padding: "0 20px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 700, cursor: "pointer", opacity: sendMutation.isPending ? 0.6 : 1 }}
                 >
                   {sendMutation.isPending ? "Sending…" : "Send"}
                 </button>
@@ -385,7 +385,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
           {/* RAIL */}
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {/* PAYMENT */}
-            <div style={{ background: "linear-gradient(160deg,#0c2a42,#0a2236)", borderRadius: 20, padding: 24, color: V.ond }}>
+            <div style={{ background: "linear-gradient(160deg,#0c2a42,#072057)", borderRadius: 20, padding: 24, color: V.ond }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: V.sand, marginBottom: 14 }}>Payment</div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, padding: "5px 0" }}>
                 <span style={{ color: V.ondmut }}>Charter ({b.party_size} {b.party_size === 1 ? "angler" : "anglers"})</span>
@@ -529,7 +529,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                   <button
                     key={label}
                     onClick={() => setCancelReason(i)}
-                    style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", background: on ? "rgba(227,192,137,.12)" : "transparent", border: `1px solid ${on ? V.sand : "rgba(13,34,54,.12)"}`, borderRadius: 12, padding: "13px 15px", cursor: "pointer", fontFamily: V.sans }}
+                    style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", background: on ? "rgba(45,226,242,.12)" : "transparent", border: `1px solid ${on ? V.sand : "rgba(13,34,54,.12)"}`, borderRadius: 12, padding: "13px 15px", cursor: "pointer", fontFamily: V.sans }}
                   >
                     <span style={{ width: 18, height: 18, borderRadius: "50%", border: `2px solid ${on ? V.goldtext : "rgba(13,34,54,.25)"}`, display: "grid", placeItems: "center", flex: "none" }}>
                       <span style={{ width: 8, height: 8, borderRadius: "50%", background: on ? V.goldtext : "transparent" }} />
@@ -619,7 +619,7 @@ export function TripDetail({ bookingId }: { bookingId: string }) {
                             <button
                               key={s.id}
                               onClick={() => setPickedSlot(s.id)}
-                              style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", textAlign: "left", background: on ? "rgba(227,192,137,.12)" : "transparent", border: `1px solid ${on ? V.sand : "rgba(13,34,54,.12)"}`, borderRadius: 14, padding: "12px 14px", cursor: "pointer", fontFamily: V.sans }}
+                              style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", textAlign: "left", background: on ? "rgba(45,226,242,.12)" : "transparent", border: `1px solid ${on ? V.sand : "rgba(13,34,54,.12)"}`, borderRadius: 14, padding: "12px 14px", cursor: "pointer", fontFamily: V.sans }}
                             >
                               <span style={{ width: 52, flex: "none", textAlign: "center", background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "6px 0" }}>
                                 <span style={{ display: "block", fontSize: 10.5, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: V.tmut }}>

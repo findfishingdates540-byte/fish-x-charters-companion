@@ -16,7 +16,7 @@ import {
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
+  ink: "#031029",
   card: "#ffffff",
   cyan: "#1f9fbe",
   cyansoft: "#e2eef2",
@@ -56,7 +56,7 @@ function Empty({ title, sub, to, cta }: { title: string; sub: string; to: string
           style={{
             display: "inline-block",
             background: V.cyan,
-            color: "#06151F",
+            color: "#031029",
             fontWeight: 700,
             fontSize: 13,
             padding: "10px 18px",

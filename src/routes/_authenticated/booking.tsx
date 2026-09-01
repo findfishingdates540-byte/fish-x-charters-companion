@@ -43,7 +43,7 @@ function BookingError({ error }: { error: Error }) {
         </p>
         <button
           onClick={() => window.location.reload()}
-          style={{ background: "#e3c089", border: 0, borderRadius: 10, padding: "12px 20px", fontWeight: 700, cursor: "pointer" }}
+          style={{ background: "#2DE2F2", border: 0, borderRadius: 10, padding: "12px 20px", fontWeight: 700, cursor: "pointer" }}
         >
           Try again
         </button>

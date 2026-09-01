@@ -63,7 +63,7 @@ const shell: React.CSSProperties = {
   width: "100%",
   minHeight: "calc(100vh - 66px)",
   background: "#ffffff",
-  color: "#0d2236",
+  color: "#031029",
   padding: "clamp(24px,4vw,56px) clamp(16px,5vw,80px) clamp(56px,8vw,96px)",
 };
 
@@ -97,7 +97,7 @@ export function TripsTab() {
             fontSize: "clamp(38px,6vw,64px)",
             lineHeight: 1.05,
             letterSpacing: "-.02em",
-            color: "#0d2236",
+            color: "#031029",
             margin: "0 0 22px",
           }}
         >
@@ -120,8 +120,8 @@ export function TripsTab() {
                 ...eyebrow,
                 background: "transparent",
                 border: 0,
-                borderBottom: `2px solid ${bucket === b ? "#a97e3c" : "transparent"}`,
-                color: bucket === b ? "#a97e3c" : "#5c6b78",
+                borderBottom: `2px solid ${bucket === b ? "#1F9FBE" : "transparent"}`,
+                color: bucket === b ? "#1F9FBE" : "#5c6b78",
                 padding: "0 0 14px",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
@@ -135,7 +135,7 @@ export function TripsTab() {
 
       {trips.length === 0 ? (
         <div style={{ ...glass, padding: "clamp(32px,6vw,64px)", textAlign: "center" }}>
-          <div style={{ fontFamily: "var(--serif)", fontSize: 26, color: "#0d2236", marginBottom: 8 }}>
+          <div style={{ fontFamily: "var(--serif)", fontSize: 26, color: "#031029", marginBottom: 8 }}>
             Nothing {bucket === "upcoming" ? "on the calendar" : `in ${bucket}`} yet
           </div>
           <p style={{ color: "#5c6b78", margin: "0 0 20px", fontSize: 15 }}>
@@ -150,7 +150,7 @@ export function TripsTab() {
               padding: "13px 26px",
               borderRadius: 10,
               background: "var(--sand)",
-              color: "#0a2236",
+              color: "#072057",
               textDecoration: "none",
             }}
           >
@@ -255,7 +255,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
               fontWeight: 600,
               fontSize: "clamp(21px,2.4vw,30px)",
               lineHeight: 1.15,
-              color: "#0d2236",
+              color: "#031029",
               margin: 0,
             }}
           >
@@ -269,8 +269,8 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
                 fontSize: 11,
                 padding: "9px 14px",
                 borderRadius: 10,
-                background: "rgba(227,192,137,.12)",
-                color: "#a97e3c",
+                background: "rgba(45,226,242,.12)",
+                color: "#1F9FBE",
               }}
             >
               {left}
@@ -306,7 +306,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
         >
           <div>
             <div style={{ ...eyebrow, fontSize: 10, color: "#5c6b78" }}>Trip total</div>
-            <div style={{ fontFamily: "var(--serif)", fontSize: 24, color: "#a97e3c", fontWeight: 600 }}>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 24, color: "#1F9FBE", fontWeight: 600 }}>
               {money(trip.total_cents)}
             </div>
           </div>
@@ -320,7 +320,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
                 padding: "13px 20px",
                 borderRadius: 10,
                 border: "1px solid rgba(13,34,54,.16)",
-                color: "#0d2236",
+                color: "#031029",
                 textDecoration: "none",
               }}
             >
@@ -335,7 +335,7 @@ function TripCard({ trip, bucket }: { trip: Trip; bucket: Bucket }) {
                 padding: "13px 22px",
                 borderRadius: 10,
                 background: "var(--sand)",
-                color: "#0a2236",
+                color: "#072057",
                 textDecoration: "none",
               }}
             >
@@ -356,9 +356,9 @@ function Chip({ label }: { label: string }) {
         fontSize: 10,
         padding: "6px 12px",
         borderRadius: 999,
-        border: "1px solid rgba(227,192,137,.25)",
+        border: "1px solid rgba(45,226,242,.25)",
         background: "#ffffff",
-        color: "#a97e3c",
+        color: "#1F9FBE",
       }}
     >
       {label}
@@ -377,12 +377,12 @@ function HelpCard({
 }) {
   return (
     <div style={{ ...glass, padding: 28 }}>
-      <h3 style={{ fontFamily: "var(--serif)", fontSize: 22, color: "#0d2236", margin: "0 0 8px" }}>{title}</h3>
+      <h3 style={{ fontFamily: "var(--serif)", fontSize: 22, color: "#031029", margin: "0 0 8px" }}>{title}</h3>
       <p style={{ color: "#5c6b78", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>{body}</p>
       <Link
         to={link.to}
         search={link.search as never}
-        style={{ ...eyebrow, fontSize: 11, color: "#a97e3c", textDecoration: "none" }}
+        style={{ ...eyebrow, fontSize: 11, color: "#1F9FBE", textDecoration: "none" }}
       >
         {link.label} →
       </Link>

@@ -33,14 +33,14 @@ const money = (cents: number) =>
 const styleVars: React.CSSProperties = {
   ["--serif" as never]: "'Cormorant Garamond',Georgia,serif",
   ["--sans" as never]: "'Hanken Grotesk',system-ui,sans-serif",
-  ["--ink" as never]: "#0d2236",
-  ["--navy" as never]: "#0a2236",
+  ["--ink" as never]: "#031029",
+  ["--navy" as never]: "#072057",
   ["--navy2" as never]: "#0c2a42",
   ["--paper" as never]: "#ffffff",
   ["--card" as never]: "#ffffff",
-  ["--sand" as never]: "#e3c089",
-  ["--sandsoft" as never]: "#f4e6cd",
-  ["--goldtext" as never]: "#a97e3c",
+  ["--sand" as never]: "#2DE2F2",
+  ["--sandsoft" as never]: "#E2F6FA",
+  ["--goldtext" as never]: "#1F9FBE",
   ["--cyan" as never]: "#1f9fbe",
   ["--green" as never]: "#1f8a5b",
   ["--greensoft" as never]: "#e2f2ea",
@@ -206,7 +206,7 @@ export function AnglerDashboard() {
               title="Your account"
               style={{ display: "flex", alignItems: "center", gap: 9, background: "transparent", border: 0, cursor: "pointer", textDecoration: "none" }}
             >
-              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(227,192,137,.16)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, color: "var(--sand)" }}>
+              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(45,226,242,.16)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, color: "var(--sand)" }}>
                 {initial}
               </div>
               <span style={{ fontSize: 13.5, fontWeight: 600, color: "#fff" }}>{firstName}</span>
@@ -351,7 +351,7 @@ function HomeTab(props: {
             ))}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(227,192,137,.16)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", color: "var(--sand)", fontWeight: 600 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(45,226,242,.16)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", color: "var(--sand)", fontWeight: 600 }}>
               {capName.charAt(0).toUpperCase()}
             </div>
             <div style={{ flex: 1 }}>
@@ -364,12 +364,12 @@ function HomeTab(props: {
               <Link
                 to="/trips/detail"
                 search={{ id: nextTrip.id }}
-                style={{ display: "inline-block", background: "var(--sand)", color: "#1c1303", textDecoration: "none", borderRadius: 11, padding: "13px 20px", fontSize: 13, fontWeight: 700, letterSpacing: ".04em" }}
+                style={{ display: "inline-block", background: "var(--sand)", color: "#04121B", textDecoration: "none", borderRadius: 11, padding: "13px 20px", fontSize: 13, fontWeight: 700, letterSpacing: ".04em" }}
               >
                 View trip details
               </Link>
             ) : (
-              <Link to="/marketplace" style={{ display: "inline-block", background: "var(--sand)", color: "#1c1303", textDecoration: "none", borderRadius: 11, padding: "13px 20px", fontSize: 13, fontWeight: 700, letterSpacing: ".04em" }}>
+              <Link to="/marketplace" style={{ display: "inline-block", background: "var(--sand)", color: "#04121B", textDecoration: "none", borderRadius: 11, padding: "13px 20px", fontSize: 13, fontWeight: 700, letterSpacing: ".04em" }}>
                 Explore charters
               </Link>
             )}
@@ -484,7 +484,7 @@ function Stat({ value, label, gold }: { value: string; label: string; gold?: boo
   return (
     <div
       style={{
-        background: gold ? "linear-gradient(160deg,#0c2a42,#0a2236)" : "var(--card)",
+        background: gold ? "linear-gradient(160deg,#0c2a42,#072057)" : "var(--card)",
         border: gold ? "none" : "1px solid var(--line)",
         borderRadius: 16,
         padding: 18,

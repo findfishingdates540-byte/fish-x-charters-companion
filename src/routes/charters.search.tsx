@@ -78,7 +78,7 @@ function CharterResults() {
   const place = search.city || search.region;
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#0d2236" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
       <PublicHeader />
 
       <style>{`
@@ -161,7 +161,7 @@ function CharterResults() {
           <Link
             to="/charters/search"
             search={{ sort: "recommended" as const }}
-            style={{ fontSize: 13, color: "#a97e3c", fontWeight: 700, textDecoration: "none" }}
+            style={{ fontSize: 13, color: "#1F9FBE", fontWeight: 700, textDecoration: "none" }}
           >
             Clear all filters
           </Link>
@@ -209,7 +209,7 @@ const field: React.CSSProperties = {
   border: "1px solid rgba(13,34,54,.14)",
   fontSize: 14,
   fontFamily: "inherit",
-  color: "#0d2236",
+  color: "#031029",
   background: "#fff",
 };
 

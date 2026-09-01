@@ -45,7 +45,7 @@ function DiscoverPage() {
   const { data: categories } = useSuspenseQuery(categoriesQO);
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#0d2236" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#031029" }}>
       <PublicHeader />
       <header style={{ padding: "40px 48px 24px", borderBottom: "1px solid rgba(13,34,54,.08)" }}>
         <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px,5vw,64px)", letterSpacing: "-.02em", margin: "0 0 8px", fontWeight: 600 }}>
@@ -94,17 +94,17 @@ function DiscoverPage() {
               borderRadius: 16,
               overflow: "hidden",
               textDecoration: "none",
-              color: "#0d2236",
+              color: "#031029",
               display: "flex",
               flexDirection: "column",
               transition: "transform .2s, box-shadow .2s",
             }}
           >
-            <div style={{ aspectRatio: "4/3", background: b.hero_url ? `#e9edf1 url(${b.hero_url}) center/cover` : "linear-gradient(135deg,#0a2236,#06151f)" }} />
+            <div style={{ aspectRatio: "4/3", background: b.hero_url ? `#e9edf1 url(${b.hero_url}) center/cover` : "linear-gradient(135deg,#072057,#031029)" }} />
             <div style={{ padding: 18 }}>
-              <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "#b88c46", fontWeight: 700 }}>
+              <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "#1F9FBE", fontWeight: 700 }}>
                 {b.category_key.replace(/_/g, " ")}
-                {b.verified_at && <span style={{ marginLeft: 8, color: "#0d2236" }}>· Verified</span>}
+                {b.verified_at && <span style={{ marginLeft: 8, color: "#031029" }}>· Verified</span>}
               </div>
               <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, marginTop: 6 }}>{b.name}</div>
               {b.tagline && <div style={{ color: "#5c6b78", fontSize: 14, marginTop: 4 }}>{b.tagline}</div>}
@@ -125,8 +125,8 @@ function pill(active: boolean): React.CSSProperties {
   return {
     padding: "8px 16px",
     borderRadius: 999,
-    background: active ? "#0d2236" : "#fff",
-    color: active ? "#fff" : "#0d2236",
+    background: active ? "#031029" : "#fff",
+    color: active ? "#fff" : "#031029",
     border: "1px solid rgba(13,34,54,.10)",
     fontSize: 13,
     fontWeight: 600,

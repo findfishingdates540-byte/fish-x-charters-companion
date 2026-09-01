@@ -16,8 +16,8 @@ import { DEFAULT_HERO, galleryFor } from "@/lib/platform-photos";
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236", navy: "#0a2236", paper: "#ffffff", card: "#fff",
-  sand: "#e3c089", sandsoft: "#f4e6cd", goldtext: "#a97e3c",
+  ink: "#031029", navy: "#072057", paper: "#ffffff", card: "#fff",
+  sand: "#2DE2F2", sandsoft: "#E2F6FA", goldtext: "#1F9FBE",
   cyan: "#1f9fbe", cyansoft: "#e2eef2", green: "#1f8a5b", greensoft: "#e2f2ea",
   ond: "#eaf1f6", ondmut: "#93a7b7", tmut: "#5c6b78",
   line: "rgba(13,34,54,.10)", lined: "rgba(255,255,255,.12)",
@@ -342,7 +342,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
       style: {
         width: 20, height: 20, borderRadius: "50%",
         background: done || active ? V.sand : "rgba(255,255,255,.1)",
-        color: done || active ? "#1c1303" : V.ondmut,
+        color: done || active ? "#04121B" : V.ondmut,
         display: "grid", placeItems: "center", fontSize: 11,
       },
       label: done ? "✓" : String(n),
@@ -517,8 +517,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                               display: "flex",
                               alignItems: "center",
                               gap: 16,
-                              background: active ? "rgba(227,192,137,.16)" : V.paper,
-                              border: `1px solid ${active ? "rgba(227,192,137,.55)" : V.line}`,
+                              background: active ? "rgba(45,226,242,.16)" : V.paper,
+                              border: `1px solid ${active ? "rgba(45,226,242,.55)" : V.line}`,
                               borderRadius: 14,
                               padding: "16px 18px",
                               cursor: active ? "default" : "pointer",
@@ -571,7 +571,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 <section style={cardLight}>
                   <h2 style={h2Light}>Vessel Specifications</h2>
                   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 22 }}>
-                    <span style={{ width: 54, height: 54, borderRadius: 12, background: "rgba(227,192,137,.14)", color: V.sand, display: "grid", placeItems: "center", fontSize: 24, flex: "none" }}>⚓</span>
+                    <span style={{ width: 54, height: 54, borderRadius: 12, background: "rgba(45,226,242,.14)", color: V.sand, display: "grid", placeItems: "center", fontSize: 24, flex: "none" }}>⚓</span>
                     <div>
                       {boat?.name && (
                         <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 700, color: V.ink }}>{boat.name}</div>
@@ -634,7 +634,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                       ["3", "Captain paid", "Escrow releases 72 hours after the trip is marked complete."],
                     ].map(([n, t, d]) => (
                       <div key={n} style={{ border: `1px solid ${V.line}`, borderRadius: 12, padding: 18 }}>
-                        <span style={{ width: 26, height: 26, borderRadius: "50%", background: V.sand, color: "#1c1303", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{n}</span>
+                        <span style={{ width: 26, height: 26, borderRadius: "50%", background: V.sand, color: "#04121B", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{n}</span>
                         <div style={{ fontSize: 15, fontWeight: 700, color: V.ink, margin: "12px 0 6px" }}>{t}</div>
                         <div style={{ fontSize: 13.5, lineHeight: 1.55, color: V.tmut }}>{d}</div>
                       </div>
@@ -682,7 +682,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   <span style={railLabel}>Number of anglers (max {cap})</span>
                   <select value={party} onChange={(e) => setParty(Number(e.target.value))} style={railField}>
                     {Array.from({ length: cap }, (_, i) => i + 1).map((n) => (
-                      <option key={n} value={n} style={{ color: "#0a2236" }}>{n} {n === 1 ? "Angler" : "Anglers"}</option>
+                      <option key={n} value={n} style={{ color: "#072057" }}>{n} {n === 1 ? "Angler" : "Anglers"}</option>
                     ))}
                   </select>
                 </label>
@@ -706,7 +706,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 <button
                   onClick={() => { setStep("dates"); window.scrollTo(0, 0); }}
                   disabled={openSlots.length === 0}
-                  style={{ width: "100%", background: openSlots.length ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "#dfe6ec", color: openSlots.length ? "#1c1303" : V.tmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: openSlots.length ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
+                  style={{ width: "100%", background: openSlots.length ? `linear-gradient(180deg, ${V.sandsoft}, ${V.sand})` : "#dfe6ec", color: openSlots.length ? "#04121B" : V.tmut, border: 0, borderRadius: 12, padding: 16, fontFamily: V.sans, fontSize: 15, fontWeight: 700, cursor: openSlots.length ? "pointer" : "not-allowed", margin: "20px 0 12px" }}
                 >
                   {openSlots.length ? (slot ? "Change date & time →" : "Check availability →") : "No dates available"}
                 </button>
@@ -795,7 +795,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 <button
                   onClick={() => { setStep("extras"); window.scrollTo(0, 0); }}
                   disabled={!slot}
-                  style={{ width: "100%", background: slot ? V.sand : "#dfe6ec", color: slot ? "#1c1303" : V.tmut, border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed" }}
+                  style={{ width: "100%", background: slot ? V.sand : "#dfe6ec", color: slot ? "#04121B" : V.tmut, border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: slot ? "pointer" : "not-allowed" }}
                 >
                   Continue to add-ons →
                 </button>
@@ -928,7 +928,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                 </div>
                 <button
                   onClick={() => { setStep("checkout"); window.scrollTo(0, 0); }}
-                  style={{ width: "100%", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                  style={{ width: "100%", background: V.sand, color: "#04121B", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
                 >
                   Continue to deposit →
                 </button>
@@ -1104,7 +1104,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                     window.scrollTo(0, 0);
                   }}
                   disabled={!reservation || placeMut.isPending || holdExpired}
-                  style={{ width: "100%", background: !reservation || holdExpired ? "#dfe6ec" : V.sand, color: !reservation || holdExpired ? V.tmut : "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: !reservation || holdExpired ? "not-allowed" : "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
+                  style={{ width: "100%", background: !reservation || holdExpired ? "#dfe6ec" : V.sand, color: !reservation || holdExpired ? V.tmut : "#04121B", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13.5, fontWeight: 700, letterSpacing: ".05em", cursor: !reservation || holdExpired ? "not-allowed" : "pointer", opacity: placeMut.isPending ? 0.7 : 1 }}
                 >
                   {holdExpired
                     ? "Hold expired"
@@ -1235,7 +1235,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 20 }}>
                 <button
                   onClick={() => { setTakenSlot(null); setReservation(null); setHoldLeft(null); setStep("dates"); window.scrollTo(0, 0); }}
-                  style={{ flex: "1 1 200px", background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                  style={{ flex: "1 1 200px", background: V.sand, color: "#04121B", border: 0, borderRadius: 12, padding: 14, fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
                 >
                   Pick another date
                 </button>
@@ -1339,7 +1339,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                     <textarea placeholder="Share a few words about your trip…" style={{ width: "100%", minHeight: 78, background: V.paper, border: `1px solid ${V.line}`, borderRadius: 12, padding: 13, fontFamily: V.sans, fontSize: 14, color: V.ink, outline: "none", resize: "vertical", marginBottom: 14 }} />
                     <button
                       onClick={() => { if (stars === 0) { showToast("Tap the stars first"); return; } setReviewed(true); showToast("Review posted — thank you!"); }}
-                      style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 11, padding: "13px 22px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}
+                      style={{ background: V.sand, color: "#04121B", border: 0, borderRadius: 11, padding: "13px 22px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}
                     >
                       Post review
                     </button>
