@@ -68,12 +68,12 @@ export const Route = createFileRoute("/marketplace/$productId")({
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
-  navy: "#0a2236",
+  ink: "#031029",
+  navy: "#072057",
   paper: "#ffffff",
   card: "#ffffff",
-  sand: "#e3c089",
-  goldtext: "#a97e3c",
+  sand: "#2DE2F2",
+  goldtext: "#1F9FBE",
   cyan: "#1f9fbe",
   cyansoft: "#e2eef2",
   ondmut: "#93a7b7",
@@ -193,7 +193,7 @@ function ProductDetail() {
             <Link
               to="/marketplace"
               search={{ cart: "1" }}
-              style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 9, background: "var(--sand, #e3c089)", color: "#1c1303", textDecoration: "none", borderRadius: 30, padding: "11px 18px", fontSize: 12.5, fontWeight: 700, whiteSpace: "nowrap" }}
+              style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 9, background: "var(--sand, #2DE2F2)", color: "#04121B", textDecoration: "none", borderRadius: 30, padding: "11px 18px", fontSize: 12.5, fontWeight: 700, whiteSpace: "nowrap" }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9}>
                 <path d="M6 8h12l-1.2 10H7.2z" />
@@ -201,7 +201,7 @@ function ProductDetail() {
               </svg>
               Cart
               {cartCount > 0 && (
-                <span style={{ background: "#1c1303", color: "var(--sand, #e3c089)", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 7px" }}>
+                <span style={{ background: "#04121B", color: "var(--sand, #2DE2F2)", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 7px" }}>
                   {cartCount}
                 </span>
               )}
@@ -239,7 +239,7 @@ function ProductDetail() {
 
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <span style={{ width: 18, height: 18, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#1c1303", fontSize: 9 }}>✓</span>
+              <span style={{ width: 18, height: 18, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#04121B", fontSize: 9 }}>✓</span>
               <span style={{ fontSize: 13, fontWeight: 600, color: V.tmut }}>{product.seller}</span>
               <span style={{ fontSize: 12, color: V.tmut, opacity: 0.7 }}>· {product.sellerType}</span>
             </div>
@@ -298,7 +298,7 @@ function ProductDetail() {
               <button
                 onClick={() => void buyNow()}
                 disabled={busy}
-                style={{ background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: "14px 22px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: busy ? "wait" : "pointer", opacity: busy ? 0.7 : 1 }}
+                style={{ background: V.sand, color: "#04121B", border: 0, borderRadius: 12, padding: "14px 22px", fontFamily: V.sans, fontSize: 14, fontWeight: 700, cursor: busy ? "wait" : "pointer", opacity: busy ? 0.7 : 1 }}
               >
                 {busy ? "Redirecting…" : "Buy now"}
               </button>

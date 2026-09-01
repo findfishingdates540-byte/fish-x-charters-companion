@@ -30,14 +30,14 @@ const TOKENS: React.CSSProperties = {
   // shared palette from the landing page
   ["--serif" as never]: "'Cormorant Garamond',Georgia,serif",
   ["--sans" as never]: "'Hanken Grotesk',system-ui,sans-serif",
-  ["--ink" as never]: "#0d2236",
-  ["--navy" as never]: "#0a2236",
-  ["--deep" as never]: "#06151f",
+  ["--ink" as never]: "#031029",
+  ["--navy" as never]: "#072057",
+  ["--deep" as never]: "#031029",
   ["--paper" as never]: "#f4f6f8",
   ["--card" as never]: "#ffffff",
-  ["--sand" as never]: "#e3c089",
-  ["--sand2" as never]: "#d2a566",
-  ["--goldtext" as never]: "#b88c46",
+  ["--sand" as never]: "#2DE2F2",
+  ["--sand2" as never]: "#27C0E2",
+  ["--goldtext" as never]: "#1F9FBE",
   ["--cyan" as never]: "#27c0e2",
   ["--ond" as never]: "#eaf1f6",
   ["--ondmut" as never]: "#9bb0c0",
@@ -135,7 +135,7 @@ function BecomeCaptainPage() {
             width: 620,
             height: 620,
             background:
-              "radial-gradient(circle, rgba(227,192,137,.22), rgba(227,192,137,0) 62%)",
+              "radial-gradient(circle, rgba(45,226,242,.22), rgba(45,226,242,0) 62%)",
             animation: "bc-glow 6s ease-in-out infinite",
             pointerEvents: "none",
             zIndex: 1,
@@ -305,7 +305,7 @@ function BecomeCaptainPage() {
 
             <div
               style={{
-                background: "linear-gradient(135deg,#0a2236 0%,#0e2c44 100%)",
+                background: "linear-gradient(135deg,#072057 0%,#0e2c44 100%)",
                 color: "var(--ond)",
                 borderRadius: 20,
                 padding: 40,
@@ -488,7 +488,7 @@ function BecomeCaptainPage() {
         style={{
           padding: "110px 40px",
           background:
-            "radial-gradient(120% 90% at 50% 0%, #0e2c44 0%, #0a2236 60%, #06151f 100%)",
+            "radial-gradient(120% 90% at 50% 0%, #0e2c44 0%, #072057 60%, #031029 100%)",
           color: "var(--ond)",
           textAlign: "center",
         }}
@@ -576,7 +576,7 @@ const ctaBtn: React.CSSProperties = {
   alignItems: "center",
   gap: 8,
   background: "var(--sand)",
-  color: "#1c1303",
+  color: "#04121B",
   textDecoration: "none",
   fontSize: 12,
   fontWeight: 700,

@@ -358,12 +358,12 @@ async function sendEmail(to: string, draft: NotificationDraft) {
 
 function emailHtml(draft: NotificationDraft) {
   const link = draft.link ? `${APP_URL}${draft.link}` : APP_URL;
-  return `<!doctype html><html><body style="margin:0;background:#ffffff;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#0d2236">
+  return `<!doctype html><html><body style="margin:0;background:#ffffff;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#031029">
   <div style="max-width:560px;margin:0 auto;padding:32px 24px">
     <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em">FISH-X.COM</div>
     <h1 style="font-family:Georgia,serif;font-size:26px;margin:24px 0 10px">${escapeHtml(draft.title)}</h1>
     <p style="font-size:15px;line-height:1.6;color:#5c6b78;margin:0 0 24px">${escapeHtml(draft.body ?? "")}</p>
-    <a href="${link}" style="display:inline-block;background:#0d2236;color:#ffffff;text-decoration:none;border-radius:10px;padding:13px 22px;font-size:14px;font-weight:700">Open FISH-X.COM</a>
+    <a href="${link}" style="display:inline-block;background:#031029;color:#ffffff;text-decoration:none;border-radius:10px;padding:13px 22px;font-size:14px;font-weight:700">Open FISH-X.COM</a>
     <p style="font-size:12px;color:#8a97a3;margin-top:32px">You're receiving this because of activity on your FISH-X.COM account. Manage notification settings in your account page.</p>
   </div></body></html>`;
 }
@@ -375,7 +375,7 @@ function receiptHtml(draft: NotificationDraft) {
   const row = (label: string, value: string, strong = false) =>
     `<tr>
       <td style="padding:9px 0;font-size:13.5px;color:#5c6b78">${escapeHtml(label)}</td>
-      <td style="padding:9px 0;font-size:${strong ? "15px;font-weight:700" : "13.5px"};color:#0d2236;text-align:right">${escapeHtml(value)}</td>
+      <td style="padding:9px 0;font-size:${strong ? "15px;font-weight:700" : "13.5px"};color:#031029;text-align:right">${escapeHtml(value)}</td>
     </tr>`;
 
   const addonRows = r.addons.length
@@ -383,10 +383,10 @@ function receiptHtml(draft: NotificationDraft) {
         .map(
           (a) =>
             `<tr>
-              <td style="padding:8px 0;font-size:13.5px;color:#0d2236">${escapeHtml(a.title)}${
+              <td style="padding:8px 0;font-size:13.5px;color:#031029">${escapeHtml(a.title)}${
                 a.unit === "per_person" ? ` <span style="color:#8a97a3">× ${a.quantity} anglers</span>` : ""
               }</td>
-              <td style="padding:8px 0;font-size:13.5px;color:#0d2236;text-align:right">${money(a.totalCents)}</td>
+              <td style="padding:8px 0;font-size:13.5px;color:#031029;text-align:right">${money(a.totalCents)}</td>
             </tr>`,
         )
         .join("")
@@ -395,17 +395,17 @@ function receiptHtml(draft: NotificationDraft) {
   const noteBlock = r.note
     ? `<div style="margin-top:22px;background:#f4f7f9;border-left:3px solid #1f9fbe;border-radius:0 12px 12px 0;padding:16px 18px">
         <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1f9fbe;font-weight:700;margin-bottom:7px">Your note to ${escapeHtml(r.businessName)}</div>
-        <div style="font-size:14px;line-height:1.6;color:#0d2236;white-space:pre-wrap">${escapeHtml(r.note)}</div>
+        <div style="font-size:14px;line-height:1.6;color:#031029;white-space:pre-wrap">${escapeHtml(r.note)}</div>
       </div>`
     : "";
 
   const when = `${r.dateLabel}${r.timeLabel ? ` · ${r.timeLabel}` : ""}`;
 
-  return `<!doctype html><html><body style="margin:0;background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#0d2236">
+  return `<!doctype html><html><body style="margin:0;background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#031029">
   <div style="max-width:600px;margin:0 auto;padding:30px 18px">
     <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em;margin-bottom:16px">FISH-X.COM</div>
-    <div style="background:#0d2236;color:#ffffff;border-radius:18px 18px 0 0;padding:28px 26px">
-      <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#e3c089;font-weight:700">${
+    <div style="background:#031029;color:#ffffff;border-radius:18px 18px 0 0;padding:28px 26px">
+      <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2DE2F2;font-weight:700">${
         r.instant ? "Booking confirmed" : "Request sent to the captain"
       }</div>
       <h1 style="font-family:Georgia,serif;font-size:29px;margin:10px 0 6px;font-weight:600">${escapeHtml(r.packageTitle)}</h1>
@@ -439,7 +439,7 @@ function receiptHtml(draft: NotificationDraft) {
           ? "Your deposit is held in Fish-X escrow and only released to the captain 72 hours after the trip is completed."
           : "Nothing is captured until the captain accepts. If they can't take the date, the authorisation is released in full."
       }</p>
-      <a href="${link}" style="display:inline-block;background:#e3c089;color:#1c1303;text-decoration:none;border-radius:11px;padding:14px 24px;font-size:14px;font-weight:700">View your trip</a>
+      <a href="${link}" style="display:inline-block;background:#2DE2F2;color:#04121B;text-decoration:none;border-radius:11px;padding:14px 24px;font-size:14px;font-weight:700">View your trip</a>
       <p style="font-size:12px;color:#8a97a3;margin-top:28px">Cancel 7+ days out for a full deposit refund. Captain-declared weather calls are always fully refundable or free to reschedule.</p>
     </div>
   </div></body></html>`;

@@ -27,15 +27,15 @@ export const Route = createFileRoute("/trust")({
 const TOKENS: React.CSSProperties = {
   ["--serif" as never]: "'Cormorant Garamond',Georgia,serif",
   ["--sans" as never]: "'Hanken Grotesk',system-ui,sans-serif",
-  ["--ink" as never]: "#0d2236",
-  ["--navy" as never]: "#0a2236",
-  ["--deep" as never]: "#06151f",
+  ["--ink" as never]: "#031029",
+  ["--navy" as never]: "#072057",
+  ["--deep" as never]: "#031029",
   ["--paper" as never]: "#f4f6f8",
   ["--paper2" as never]: "#e9edf1",
   ["--card" as never]: "#ffffff",
-  ["--sand" as never]: "#e3c089",
-  ["--sand2" as never]: "#d2a566",
-  ["--goldtext" as never]: "#b88c46",
+  ["--sand" as never]: "#2DE2F2",
+  ["--sand2" as never]: "#27C0E2",
+  ["--goldtext" as never]: "#1F9FBE",
   ["--cyan" as never]: "#27c0e2",
   ["--ond" as never]: "#eaf1f6",
   ["--ondmut" as never]: "#9bb0c0",
@@ -153,7 +153,7 @@ function TrustPage() {
       <section
         style={{
           background:
-            "radial-gradient(120% 90% at 50% 0%, #0e2c44 0%, #0a2236 46%, #081c2e 100%)",
+            "radial-gradient(120% 90% at 50% 0%, #0e2c44 0%, #072057 46%, #081c2e 100%)",
           color: "var(--ond)",
           textAlign: "center",
           padding: "110px 40px 90px",
@@ -406,7 +406,7 @@ function TrustPage() {
             borderRadius: 24,
             overflow: "hidden",
             background:
-              "radial-gradient(120% 100% at 20% 0%, #0e2c44 0%, #0a2236 55%, #06151f 100%)",
+              "radial-gradient(120% 100% at 20% 0%, #0e2c44 0%, #072057 55%, #031029 100%)",
             color: "var(--ond)",
             padding: "80px 40px",
             textAlign: "center",
@@ -421,7 +421,7 @@ function TrustPage() {
               width: 520,
               height: 520,
               background:
-                "radial-gradient(circle, rgba(227,192,137,.18), rgba(227,192,137,0) 62%)",
+                "radial-gradient(circle, rgba(45,226,242,.18), rgba(45,226,242,0) 62%)",
               pointerEvents: "none",
             }}
           />
@@ -535,7 +535,7 @@ const ctaBtn: React.CSSProperties = {
   alignItems: "center",
   gap: 8,
   background: "var(--sand)",
-  color: "#1c1303",
+  color: "#04121B",
   textDecoration: "none",
   fontSize: 12,
   fontWeight: 700,

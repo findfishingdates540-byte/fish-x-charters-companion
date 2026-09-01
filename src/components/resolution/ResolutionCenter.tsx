@@ -21,14 +21,14 @@ import { DEFAULT_HERO } from "@/lib/platform-photos";
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
-  navy: "#0a2236",
+  ink: "#031029",
+  navy: "#072057",
   paper: "#ffffff",
   card: "#ffffff",
-  sand: "#e3c089",
-  sand2: "#d2a566",
-  sandsoft: "#f4e6cd",
-  goldtext: "#a97e3c",
+  sand: "#2DE2F2",
+  sand2: "#27C0E2",
+  sandsoft: "#E2F6FA",
+  goldtext: "#1F9FBE",
   cyan: "#1f9fbe",
   cyansoft: "#e2eef2",
   green: "#1f8a5b",
@@ -110,7 +110,7 @@ function Toast({ toast }: { toast: string }) {
           height: 22,
           borderRadius: "50%",
           background: V.sand,
-          color: "#1c1303",
+          color: "#04121B",
           display: "grid",
           placeItems: "center",
           fontSize: 12,
@@ -726,7 +726,7 @@ function ResolutionForBooking({ bookingId }: { bookingId: string }) {
                   disabled={sendMut.isPending || !caseMsg.trim()}
                   style={{
                     background: V.sand,
-                    color: "#1c1303",
+                    color: "#04121B",
                     border: 0,
                     borderRadius: 11,
                     padding: "0 20px",
@@ -747,7 +747,7 @@ function ResolutionForBooking({ bookingId }: { bookingId: string }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 16, position: "sticky", top: 86 }}>
             <div
               style={{
-                background: "linear-gradient(160deg,#0c2a42,#0a2236)",
+                background: "linear-gradient(160deg,#0c2a42,#072057)",
                 borderRadius: 18,
                 padding: 22,
                 color: V.ond,
@@ -841,7 +841,7 @@ function ResolutionForBooking({ bookingId }: { bookingId: string }) {
 
   // -------- Wizard (no dispute yet) --------
   const pill = (on: boolean) => ({
-    bg: on ? "rgba(227,192,137,.12)" : "transparent",
+    bg: on ? "rgba(45,226,242,.12)" : "transparent",
     border: on ? V.sand : "rgba(13,34,54,.12)",
     ring: on ? V.goldtext : "rgba(13,34,54,.25)",
     fill: on ? V.goldtext : "transparent",
@@ -1214,7 +1214,7 @@ function ResolutionForBooking({ bookingId }: { bookingId: string }) {
                   style={{
                     flex: 1,
                     background: V.sand,
-                    color: "#1c1303",
+                    color: "#04121B",
                     border: 0,
                     borderRadius: 12,
                     padding: 15,

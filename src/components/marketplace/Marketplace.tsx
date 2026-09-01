@@ -32,12 +32,12 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const V = {
   serif: "'Cormorant Garamond',Georgia,serif",
   sans: "'Hanken Grotesk',system-ui,sans-serif",
-  ink: "#0d2236",
-  navy: "#0a2236",
+  ink: "#031029",
+  navy: "#072057",
   paper: "#ffffff",
   card: "#ffffff",
-  sand: "#e3c089",
-  goldtext: "#a97e3c",
+  sand: "#2DE2F2",
+  goldtext: "#1F9FBE",
   cyan: "#1f9fbe",
   cyansoft: "#e2eef2",
   green: "#1f8a5b",
@@ -345,7 +345,7 @@ export function Marketplace() {
             </label>
             <button
               onClick={() => setCartOpen(true)}
-              style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 9, background: V.sand, color: "#1c1303", border: 0, borderRadius: 30, padding: "11px 18px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}
+              style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 9, background: V.sand, color: "#04121B", border: 0, borderRadius: 30, padding: "11px 18px", fontFamily: V.sans, fontSize: 12.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9}>
                 <path d="M6 8h12l-1.2 10H7.2z" />
@@ -353,7 +353,7 @@ export function Marketplace() {
               </svg>
               Cart
               {count > 0 && (
-                <span style={{ background: "#1c1303", color: V.sand, fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 7px" }}>{count}</span>
+                <span style={{ background: "#04121B", color: V.sand, fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 7px" }}>{count}</span>
               )}
             </button>
           </>
@@ -597,7 +597,7 @@ export function Marketplace() {
                     </div>
                     <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 7, minWidth: 0 }}>
-                        <span style={{ width: 16, height: 16, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#1c1303", fontSize: 8, flex: "none" }}>✓</span>
+                        <span style={{ width: 16, height: 16, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#04121B", fontSize: 8, flex: "none" }}>✓</span>
                         <span style={{ fontSize: 12, fontWeight: 600, color: V.tmut, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.seller}</span>
                       </div>
                       <h3 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 18.5, lineHeight: 1.15, margin: "0 0 8px", color: V.ink }}>
@@ -743,7 +743,7 @@ export function Marketplace() {
                     )}
                     <button
                       onClick={() => setStep("checkout")}
-                      style={{ width: "100%", marginTop: 14, background: V.sand, color: "#1c1303", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: "pointer" }}
+                      style={{ width: "100%", marginTop: 14, background: V.sand, color: "#04121B", border: 0, borderRadius: 12, padding: 15, fontFamily: V.sans, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", cursor: "pointer" }}
                     >
                       Checkout · {money(total)}
                     </button>
@@ -815,7 +815,7 @@ export function Marketplace() {
                 </div>
                 <Link
                   to="/dashboard"
-                  style={{ display: "block", background: V.sand, color: "#1c1303", textDecoration: "none", borderRadius: 12, padding: 15, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase" }}
+                  style={{ display: "block", background: V.sand, color: "#04121B", textDecoration: "none", borderRadius: 12, padding: 15, fontSize: 13, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase" }}
                 >
                   Track in my dashboard
                 </Link>
@@ -834,7 +834,7 @@ export function Marketplace() {
       {/* TOAST */}
       {toast && (
         <div style={{ position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)", zIndex: 80, display: "flex", alignItems: "center", gap: 11, background: V.navy, color: "#fff", border: "1px solid rgba(255,255,255,.12)", borderRadius: 30, padding: "13px 22px", boxShadow: "0 20px 44px -20px rgba(0,0,0,.6)" }}>
-          <span style={{ width: 22, height: 22, borderRadius: "50%", background: V.sand, color: "#1c1303", display: "grid", placeItems: "center", fontSize: 12 }}>✓</span>
+          <span style={{ width: 22, height: 22, borderRadius: "50%", background: V.sand, color: "#04121B", display: "grid", placeItems: "center", fontSize: 12 }}>✓</span>
           <span style={{ fontSize: 13.5, fontWeight: 600 }}>{toast}</span>
         </div>
       )}

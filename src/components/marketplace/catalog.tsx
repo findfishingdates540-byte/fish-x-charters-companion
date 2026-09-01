@@ -93,10 +93,10 @@ export const CATALOG: Product[] = [
 ];
 
 export const tileFor = (cat: Cat): { bg: string; ink: string } => {
-  if (cat === "rods") return { bg: "linear-gradient(150deg,#f4e6cd,#ecd8b8)", ink: "#a97e3c" };
+  if (cat === "rods") return { bg: "linear-gradient(150deg,#E2F6FA,#ecd8b8)", ink: "#1F9FBE" };
   if (cat === "tackle") return { bg: "linear-gradient(150deg,#e2eef2,#d2e4ea)", ink: "#1f9fbe" };
   if (cat === "apparel") return { bg: "linear-gradient(150deg,#e9edf1,#dde3e9)", ink: "#5c6b78" };
-  return { bg: "linear-gradient(150deg,#12314b,#0a2236)", ink: "#e3c089" };
+  return { bg: "linear-gradient(150deg,#12314b,#072057)", ink: "#2DE2F2" };
 };
 
 export const money = (n: number) => `$${Math.round(n).toLocaleString()}`;

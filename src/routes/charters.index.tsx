@@ -67,7 +67,7 @@ function ChartersLanding() {
   };
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#0d2236" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
       <PublicHeader />
 
       <style>{`
@@ -91,7 +91,7 @@ function ChartersLanding() {
         }}
       >
         <div style={{ maxWidth: 980, margin: "0 auto" }}>
-          <span style={{ fontSize: 11, letterSpacing: ".24em", textTransform: "uppercase", color: "var(--sand,#e3c089)", fontWeight: 700 }}>
+          <span style={{ fontSize: 11, letterSpacing: ".24em", textTransform: "uppercase", color: "var(--sand,#2DE2F2)", fontWeight: 700 }}>
             Charters
           </span>
           <h1 style={{ fontFamily: serif, fontSize: "clamp(38px,6vw,68px)", fontWeight: 600, letterSpacing: "-.02em", margin: "10px 0 12px", lineHeight: 1.05 }}>
@@ -162,7 +162,7 @@ function ChartersLanding() {
                   padding: "0 28px",
                   borderRadius: 12,
                   border: "none",
-                  background: "#0d2236",
+                  background: "#031029",
                   color: "#fff",
                   fontWeight: 700,
                   fontSize: 15,
@@ -199,7 +199,7 @@ function ChartersLanding() {
                   minHeight: 220,
                   textDecoration: "none",
                   color: "#fff",
-                  background: `linear-gradient(180deg, rgba(7,26,42,.15) 30%, rgba(7,26,42,.9)), #0a2236 url(${DEFAULT_HERO}) center/cover`,
+                  background: `linear-gradient(180deg, rgba(7,26,42,.15) 30%, rgba(7,26,42,.9)), #072057 url(${DEFAULT_HERO}) center/cover`,
                 }}
               >
                 <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20 }}>
@@ -207,7 +207,7 @@ function ChartersLanding() {
                   <div style={{ fontSize: 13, color: "#cbd9e4" }}>
                     {p.region ? `${p.region} · ` : ""}
                     {p.captains} {p.captains === 1 ? "captain" : "captains"} · from{" "}
-                    <b style={{ color: "var(--sand,#e3c089)" }}>{money(p.fromCents)}</b>
+                    <b style={{ color: "var(--sand,#2DE2F2)" }}>{money(p.fromCents)}</b>
                   </div>
                 </div>
               </Link>
@@ -231,7 +231,7 @@ function ChartersLanding() {
                   borderRadius: 999,
                   background: "#fff",
                   border: "1px solid rgba(13,34,54,.10)",
-                  color: "#0d2236",
+                  color: "#031029",
                   textDecoration: "none",
                   fontSize: 14,
                   fontWeight: 600,
@@ -250,7 +250,7 @@ function ChartersLanding() {
           <SectionHead
             title="Charters to book now"
             action={
-              <Link to="/charters/search" search={{ sort: "recommended" as const }} style={{ color: "#a97e3c", fontWeight: 700, fontSize: 13.5, textDecoration: "none" }}>
+              <Link to="/charters/search" search={{ sort: "recommended" as const }} style={{ color: "#1F9FBE", fontWeight: 700, fontSize: 13.5, textDecoration: "none" }}>
                 See all charters →
               </Link>
             }
@@ -272,7 +272,7 @@ const inputStyle: React.CSSProperties = {
   outline: "none",
   fontSize: 15,
   fontFamily: "inherit",
-  color: "#0d2236",
+  color: "#031029",
   background: "transparent",
   padding: 0,
 };
@@ -333,7 +333,7 @@ export function CharterCard({
     borderRadius: 16,
     overflow: "hidden",
     textDecoration: "none",
-    color: "#0d2236",
+    color: "#031029",
   };
 
   const body = (
@@ -362,7 +362,7 @@ export function CharterCard({
         )}
         <div style={{ marginTop: "auto", paddingTop: 12, fontSize: 13, color: "#5c6b78" }}>
           from{" "}
-          <b style={{ fontFamily: serif, fontSize: 21, color: "#a97e3c" }}>{money(l.base_price_cents)}</b>{" "}
+          <b style={{ fontFamily: serif, fontSize: 21, color: "#1F9FBE" }}>{money(l.base_price_cents)}</b>{" "}
           <span style={{ fontSize: 12 }}>/ trip</span>
         </div>
       </div>

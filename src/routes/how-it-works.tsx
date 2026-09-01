@@ -32,15 +32,15 @@ export const Route = createFileRoute("/how-it-works")({
 const TOKENS: React.CSSProperties = {
   ["--serif" as never]: "'Cormorant Garamond',Georgia,serif",
   ["--sans" as never]: "'Hanken Grotesk',system-ui,sans-serif",
-  ["--ink" as never]: "#0d2236",
-  ["--navy" as never]: "#0a2236",
-  ["--deep" as never]: "#06151f",
+  ["--ink" as never]: "#031029",
+  ["--navy" as never]: "#072057",
+  ["--deep" as never]: "#031029",
   ["--paper" as never]: "#f4f6f8",
   ["--paper2" as never]: "#e9edf1",
   ["--card" as never]: "#ffffff",
-  ["--sand" as never]: "#e3c089",
-  ["--sand2" as never]: "#d2a566",
-  ["--goldtext" as never]: "#b88c46",
+  ["--sand" as never]: "#2DE2F2",
+  ["--sand2" as never]: "#27C0E2",
+  ["--goldtext" as never]: "#1F9FBE",
   ["--cyan" as never]: "#27c0e2",
   ["--ond" as never]: "#eaf1f6",
   ["--ondmut" as never]: "#9bb0c0",
@@ -122,7 +122,7 @@ function HowItWorksPage() {
       <section
         style={{
           background:
-            "radial-gradient(120% 90% at 50% 0%, #0e2c44 0%, #0a2236 46%, #081c2e 100%)",
+            "radial-gradient(120% 90% at 50% 0%, #0e2c44 0%, #072057 46%, #081c2e 100%)",
           color: "var(--ond)",
           textAlign: "center",
           padding: "110px 40px 90px",
@@ -235,7 +235,7 @@ function HowItWorksPage() {
                         marginTop: 22,
                         padding: "8px 14px",
                         borderRadius: 30,
-                        background: "rgba(227,192,137,.15)",
+                        background: "rgba(45,226,242,.15)",
                         border: "1px solid rgba(184,140,70,.3)",
                       }}
                     >
@@ -269,7 +269,7 @@ function HowItWorksPage() {
         style={{
           padding: "100px 40px",
           background:
-            "radial-gradient(120% 90% at 20% 0%, #0e2c44 0%, #0a2236 60%, #06151f 100%)",
+            "radial-gradient(120% 90% at 20% 0%, #0e2c44 0%, #072057 60%, #031029 100%)",
           color: "var(--ond)",
         }}
       >
@@ -314,8 +314,8 @@ function HowItWorksPage() {
                       width: 34,
                       height: 34,
                       borderRadius: 8,
-                      background: "rgba(227,192,137,.15)",
-                      border: "1px solid rgba(227,192,137,.3)",
+                      background: "rgba(45,226,242,.15)",
+                      border: "1px solid rgba(45,226,242,.3)",
                       display: "grid",
                       placeItems: "center",
                       color: "var(--sand)",
@@ -380,8 +380,8 @@ function HowItWorksPage() {
               style={{
                 gridColumn: "1 / -1",
                 background:
-                  "linear-gradient(135deg, rgba(227,192,137,.14), rgba(39,192,226,.08))",
-                border: "1px solid rgba(227,192,137,.28)",
+                  "linear-gradient(135deg, rgba(45,226,242,.14), rgba(39,192,226,.08))",
+                border: "1px solid rgba(45,226,242,.28)",
                 borderRadius: 18,
                 padding: 28,
               }}
@@ -611,7 +611,7 @@ const ctaBtn: React.CSSProperties = {
   alignItems: "center",
   gap: 8,
   background: "var(--sand)",
-  color: "#1c1303",
+  color: "#04121B",
   textDecoration: "none",
   fontSize: 12,
   fontWeight: 700,
