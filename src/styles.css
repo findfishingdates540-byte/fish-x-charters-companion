@@ -90,16 +90,16 @@
   --radius: 0.875rem;
 
   /* Brand palette */
-  --deep-hull: oklch(0.18 0.04 240);          /* deepest navy */
-  --deep-hull-2: oklch(0.24 0.05 240);        /* card / elevated */
+  --deep-hull: #0D161F;                       /* deepest navy */
+  --deep-hull-2: #14202B;                     /* card / elevated */
   --surface-glass: oklch(1 0 0 / 6%);         /* glass on dark */
-  --sandy-gold: oklch(0.82 0.16 80);          /* warm sun yellow */
-  --sandy-gold-soft: oklch(0.82 0.16 80 / 18%);
-  --crisp-cyan: oklch(0.82 0.13 220);         /* wave crest */
+  --sandy-gold: #2DE2F2;                      /* brand accent (cyan) */
+  --sandy-gold-soft: rgba(45, 226, 242, 0.14);
+  --crisp-cyan: #2DE2F2;                      /* wave crest */
   --soft-coral: oklch(0.74 0.16 30);          /* alert */
-  --sea-foam: oklch(0.78 0.13 175);           /* success */
-  --on-deep: oklch(0.98 0.005 240);
-  --on-deep-muted: oklch(0.98 0.005 240 / 70%);
+  --sea-foam: #22C55E;                        /* success */
+  --on-deep: #F0F2F5;
+  --on-deep-muted: #92A0AB;
 
   /* Default theme = dark/maritime (Charters operates on deep canvas) */
   --background: var(--deep-hull);
