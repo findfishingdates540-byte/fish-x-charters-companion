@@ -67,10 +67,24 @@ export const upsertCaptainCharter = createServerFn({ method: "POST" })
     if (!businessId) throw new Error("No business found");
 
     const { id, ...rest } = data;
-    const payload = {
+    const payload: Record<string, unknown> = {
       ...rest,
       business_id: businessId,
     };
+
+    // Fall back to the linked boat's photos so a charter never ships imageless.
+    if (rest.boat_id && (!rest.hero_url || rest.image_urls.length === 0)) {
+      const { data: boat } = await context.supabase
+        .from("boats")
+        .select("hero_image_url,image_urls")
+        .eq("id", rest.boat_id)
+        .eq("business_id", businessId)
+        .maybeSingle();
+      const boatGallery: string[] = Array.isArray(boat?.image_urls) ? boat!.image_urls : [];
+      if (!rest.hero_url) payload.hero_url = boat?.hero_image_url || boatGallery[0] || null;
+      if (rest.image_urls.length === 0 && boatGallery.length) payload.image_urls = boatGallery;
+    }
+
     const q = context.supabase.from("charters");
     const { data: row, error } = id
       ? await q.update(payload).eq("id", id).eq("business_id", businessId).select().single()
