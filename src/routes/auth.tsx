@@ -35,7 +35,7 @@ const cssVars: CSSProperties = {
   "--sans": "'Hanken Grotesk',system-ui,sans-serif",
   "--ink": "#031029", "--navy": "#072057", "--deep": "#031029",
   "--paper": "#f4f6f8", "--paper2": "#e9edf1", "--card": "#ffffff",
-  "--sand": "#2DE2F2", "--sand2": "#27C0E2", "--sandsoft": "#f1ddbd", "--goldtext": "#1F9FBE",
+  "--sand": "#2DE2F2", "--sand2": "#27C0E2", "--sandsoft": "#DFF6FA", "--goldtext": "#1F9FBE",
   "--cyan": "#27c0e2", "--ond": "#eaf1f6", "--ondmut": "#9bb0c0", "--tmut": "#5c6b78",
   "--line": "rgba(13,34,54,.12)", "--lined": "rgba(255,255,255,.13)",
 };
