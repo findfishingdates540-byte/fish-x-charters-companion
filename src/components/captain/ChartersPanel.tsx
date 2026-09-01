@@ -302,7 +302,7 @@ function CharterForm({
 }: {
   businessId: string | null;
   draft: CharterDraft;
-  boats: { id: string; name: string }[];
+  boats: { id: string; name: string; hero_image_url?: string | null; image_urls?: string[] | null }[];
   onChange: (d: CharterDraft) => void;
   onCancel: () => void;
   onSave: () => void;
