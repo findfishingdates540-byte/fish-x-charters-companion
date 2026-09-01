@@ -67,13 +67,11 @@ export const upsertCaptainCharter = createServerFn({ method: "POST" })
     if (!businessId) throw new Error("No business found");
 
     const { id, ...rest } = data;
-    const payload: Record<string, unknown> = {
-      ...rest,
-      business_id: businessId,
-    };
+    let heroUrl = rest.hero_url ?? null;
+    let imageUrls = rest.image_urls;
 
     // Fall back to the linked boat's photos so a charter never ships imageless.
-    if (rest.boat_id && (!rest.hero_url || rest.image_urls.length === 0)) {
+    if (rest.boat_id && (!heroUrl || imageUrls.length === 0)) {
       const { data: boat } = await context.supabase
         .from("boats")
         .select("hero_image_url,image_urls")
@@ -81,9 +79,17 @@ export const upsertCaptainCharter = createServerFn({ method: "POST" })
         .eq("business_id", businessId)
         .maybeSingle();
       const boatGallery: string[] = Array.isArray(boat?.image_urls) ? boat!.image_urls : [];
-      if (!rest.hero_url) payload.hero_url = boat?.hero_image_url || boatGallery[0] || null;
-      if (rest.image_urls.length === 0 && boatGallery.length) payload.image_urls = boatGallery;
+      if (!heroUrl) heroUrl = boat?.hero_image_url || boatGallery[0] || null;
+      if (imageUrls.length === 0 && boatGallery.length) imageUrls = boatGallery;
     }
+
+    const payload = {
+      ...rest,
+      hero_url: heroUrl,
+      image_urls: imageUrls,
+      business_id: businessId,
+    };
+
 
     const q = context.supabase.from("charters");
     const { data: row, error } = id
