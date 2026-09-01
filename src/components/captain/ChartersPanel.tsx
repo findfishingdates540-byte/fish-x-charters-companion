@@ -302,7 +302,7 @@ function CharterForm({
 }: {
   businessId: string | null;
   draft: CharterDraft;
-  boats: { id: string; name: string }[];
+  boats: { id: string; name: string; hero_image_url?: string | null; image_urls?: string[] | null }[];
   onChange: (d: CharterDraft) => void;
   onCancel: () => void;
   onSave: () => void;
@@ -460,6 +460,37 @@ function CharterForm({
               Add a boat in the Fleet tab first.
             </div>
           )}
+          {(() => {
+            const boat = boats.find((b) => b.id === draft.boat_id);
+            const gallery = Array.isArray(boat?.image_urls) ? boat!.image_urls! : [];
+            const cover = boat?.hero_image_url || gallery[0] || "";
+            if (!boat || (!cover && gallery.length === 0)) return null;
+            return (
+              <button
+                type="button"
+                onClick={() =>
+                  onChange({
+                    ...draft,
+                    hero_url: draft.hero_url || cover,
+                    image_urls: Array.from(new Set([...draft.image_urls, ...gallery])),
+                  })
+                }
+                style={{
+                  marginTop: 8,
+                  padding: "6px 10px",
+                  fontSize: 12,
+                  borderRadius: 8,
+                  border: "1px solid var(--tbord, rgba(255,255,255,.14))",
+                  background: "transparent",
+                  color: "inherit",
+                  cursor: "pointer",
+                }}
+              >
+                Use {boat.name} fleet photos
+              </button>
+            );
+          })()}
+
         </label>
 
         <label>
