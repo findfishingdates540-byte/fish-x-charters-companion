@@ -341,3 +341,144 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+function BoatPreview({
+  boat,
+  onClose,
+  onEdit,
+}: {
+  boat: BoatRow;
+  onClose: () => void;
+  onEdit: () => void;
+}) {
+  const b = boat as any;
+  const gallery: string[] = [
+    ...(b.hero_image_url ? [b.hero_image_url] : []),
+    ...(Array.isArray(b.image_urls) ? b.image_urls : []),
+  ].filter((u, i, a) => u && a.indexOf(u) === i);
+  const [active, setActive] = useState(0);
+
+  const specs: Array<[string, string]> = [
+    ["Make", b.make || "—"],
+    ["Model", b.model || "—"],
+    ["Length", b.length_ft ? `${b.length_ft} ft` : "—"],
+    ["Capacity", b.capacity ? `${b.capacity} guests` : "—"],
+    ["Home port", b.home_port || "—"],
+    ["Status", b.is_active === false ? "Inactive" : "Active"],
+  ];
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 90,
+        background: "rgba(4,12,20,.68)",
+        display: "grid",
+        placeItems: "center",
+        padding: 18,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "min(680px,100%)",
+          maxHeight: "88vh",
+          overflowY: "auto",
+          background: "var(--card, #14202B)",
+          border: "1px solid var(--line)",
+          borderRadius: 18,
+          padding: 20,
+          display: "grid",
+          gap: 16,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>{b.name}</div>
+            <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
+              {[b.make, b.model].filter(Boolean).join(" ") || "Boat details"}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{ border: 0, background: "transparent", color: "var(--tmut)", fontSize: 20, cursor: "pointer", lineHeight: 1 }}
+          >
+            ×
+          </button>
+        </div>
+
+        {gallery.length > 0 ? (
+          <div style={{ display: "grid", gap: 10 }}>
+            <div
+              style={{
+                width: "100%",
+                aspectRatio: "16/9",
+                borderRadius: 14,
+                background: `center/cover no-repeat url(${gallery[Math.min(active, gallery.length - 1)]})`,
+              }}
+            />
+            {gallery.length > 1 && (
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {gallery.map((u, i) => (
+                  <button
+                    key={u}
+                    onClick={() => setActive(i)}
+                    style={{
+                      width: 64,
+                      height: 48,
+                      borderRadius: 9,
+                      cursor: "pointer",
+                      padding: 0,
+                      background: `center/cover no-repeat url(${u})`,
+                      border: i === active ? "2px solid #2DE2F2" : "1px solid var(--line)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              aspectRatio: "16/9",
+              borderRadius: 14,
+              background: "var(--line)",
+              display: "grid",
+              placeItems: "center",
+              fontSize: 12.5,
+              color: "var(--tmut)",
+            }}
+          >
+            No photos yet
+          </div>
+        )}
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 12 }}>
+          {specs.map(([k, v]) => (
+            <div key={k}>
+              <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--tmut)" }}>{k}</div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{v}</div>
+            </div>
+          ))}
+        </div>
+
+        {b.description && (
+          <div>
+            <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--tmut)", marginBottom: 4 }}>
+              Description
+            </div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--tmut)" }}>{b.description}</div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <button onClick={onClose} style={btn("ghost")}>Close</button>
+          <button onClick={onEdit} style={btn("primary")}>Edit boat</button>
+        </div>
+      </div>
+    </div>
+  );
+}
