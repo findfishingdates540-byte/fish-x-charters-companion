@@ -2679,6 +2679,44 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_shipping_settings: {
+        Row: {
+          business_id: string
+          created_at: string
+          flat_rate_cents: number
+          free_over_cents: number | null
+          per_item_cents: number
+          policy_note: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          flat_rate_cents?: number
+          free_over_cents?: number | null
+          per_item_cents?: number
+          policy_note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          flat_rate_cents?: number
+          free_over_cents?: number | null
+          per_item_cents?: number
+          policy_note?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_shipping_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       verification_requests: {
         Row: {
           business_id: string
