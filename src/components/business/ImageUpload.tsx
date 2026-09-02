@@ -29,6 +29,8 @@ export function ImageUpload({
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // Instant local preview while the upload (and later the media proxy) resolves.
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
 
   async function upload(file: File) {
     setErr(null);
@@ -36,6 +38,7 @@ export function ImageUpload({
     if (file.size > MAX_BYTES) return setErr("Image must be 8 MB or smaller.");
 
     setBusy(true);
+    setLocalPreview(URL.createObjectURL(file));
     try {
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
       const name = `${crypto.randomUUID()}.${ext || "jpg"}`;
@@ -46,12 +49,16 @@ export function ImageUpload({
       if (error) throw new Error(error.message);
       onChange(`/api/public/media/${path}`);
     } catch (e) {
+      setLocalPreview(null);
       setErr(e instanceof Error ? e.message : "Upload failed. Please try again.");
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";
     }
   }
+
+  const preview = localPreview || value;
+
 
   return (
     <div style={{ display: "grid", gap: 8 }}>
@@ -74,17 +81,28 @@ export function ImageUpload({
             aspectRatio: aspect,
             borderRadius: 12,
             border: "1px dashed rgba(255,255,255,.16)",
-            background: value ? `center/cover no-repeat url(${value})` : "#1C2936",
+            background: "#1C2936",
             display: "grid",
             placeItems: "center",
             color: "#92A0AB",
             fontSize: 12,
             flex: "none",
             overflow: "hidden",
+            position: "relative",
           }}
         >
-          {!value && (busy ? "Uploading…" : "No image")}
+          {preview ? (
+            <img
+              src={preview}
+              alt={label}
+              loading="lazy"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            busy ? "Uploading…" : "No image"
+          )}
         </div>
+
 
         <div style={{ display: "grid", gap: 8, minWidth: 220, flex: 1 }}>
           <input
@@ -114,12 +132,12 @@ export function ImageUpload({
                 opacity: disabled || busy ? 0.65 : 1,
               }}
             >
-              {busy ? "Uploading…" : value ? "Replace image" : "Upload image"}
+              {busy ? "Uploading…" : preview ? "Replace image" : "Upload image"}
             </button>
-            {value && !disabled && (
+            {preview && !disabled && (
               <button
                 type="button"
-                onClick={() => onChange("")}
+                onClick={() => { setLocalPreview(null); onChange(""); }}
                 style={{
                   background: "transparent",
                   border: "1px solid rgba(255,255,255,.12)",
