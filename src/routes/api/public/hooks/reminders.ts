@@ -16,13 +16,16 @@ async function emitOnce(
   aggregateType: string,
   aggregateId: string,
   payload: Record<string, unknown>,
+  since?: string,
 ) {
-  const { data: existing } = await admin
+  let q = admin
     .from("domain_events")
     .select("id")
     .eq("topic", topic)
     .eq("aggregate_id", aggregateId)
     .limit(1);
+  if (since) q = q.gte("created_at", since);
+  const { data: existing } = await q;
   if (existing && existing.length) return false;
   const { error } = await admin.rpc("emit_domain_event", {
     _topic: topic,
@@ -94,6 +97,7 @@ export const Route = createFileRoute("/api/public/hooks/reminders")({
             "user",
             userId,
             { user_id: userId, count: entry.count, link: entry.link, day: stamp },
+            `${stamp}T00:00:00Z`,
           );
           if (ok) nudges++;
         }
