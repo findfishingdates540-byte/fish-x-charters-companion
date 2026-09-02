@@ -5,6 +5,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { signMediaUrls } from "@/lib/media-urls.server";
+
+function imageList(images: unknown): string[] {
+  if (Array.isArray(images)) return images.filter((v): v is string => typeof v === "string");
+  return [];
+}
 
 async function assertMember(
   ctx: { supabase: any; userId: string },
@@ -32,19 +38,31 @@ export const getShopOverview = createServerFn({ method: "GET" })
       supabase
         .from("inventory_products")
         .select(
-          "id, sku, title, category, price_cents, stock_qty, low_stock_threshold, is_published, images",
+          "id, sku, title, description, category, price_cents, compare_at_cents, stock_qty, low_stock_threshold, is_published, images",
         )
         .eq("business_id", data.businessId)
         .order("updated_at", { ascending: false }),
       supabase
         .from("product_orders")
         .select(
-          "id, buyer_name, buyer_email, total_cents, status, created_at, items:product_order_items(id, title, quantity, unit_price_cents)",
+          "id, buyer_name, buyer_email, subtotal_cents, shipping_cents, total_cents, status, tracking_number, shipping_address, created_at, items:product_order_items(id, title, quantity, unit_price_cents)",
         )
         .eq("business_id", data.businessId)
         .order("created_at", { ascending: false })
         .limit(50),
     ]);
+
+    // Product photos live in a private bucket; sign them so the dashboard can
+    // render thumbnails.
+    const productRows = (products ?? []) as any[];
+    const flat = productRows.flatMap((p) => imageList(p.images));
+    const signed = await signMediaUrls(flat, context.supabase as never);
+    let cursor = 0;
+    const withImages = productRows.map((p) => {
+      const imgs = imageList(p.images);
+      const resolved = imgs.map((orig) => signed[cursor++] ?? orig);
+      return { ...p, images: imgs, imageUrls: resolved };
+    });
 
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -60,11 +78,11 @@ export const getShopOverview = createServerFn({ method: "GET" })
     const toShip = orders?.filter((o: any) => o.status === "paid").length ?? 0;
     const shipped = orders?.filter((o: any) => o.status === "shipped").length ?? 0;
     const lowStock =
-      products?.filter((p: any) => p.stock_qty <= (p.low_stock_threshold ?? 5)) ?? [];
-    const published = products?.filter((p: any) => p.is_published).length ?? 0;
+      withImages.filter((p: any) => p.stock_qty <= (p.low_stock_threshold ?? 5));
+    const published = withImages.filter((p: any) => p.is_published).length;
 
     return {
-      products: products ?? [],
+      products: withImages,
       orders: orders ?? [],
       kpis: {
         monthGrossCents: monthGross,
@@ -72,7 +90,7 @@ export const getShopOverview = createServerFn({ method: "GET" })
         shipped,
         lowStockCount: lowStock.length,
         publishedCount: published,
-        totalProducts: products?.length ?? 0,
+        totalProducts: withImages.length,
       },
       lowStock,
     };
@@ -93,6 +111,7 @@ export const upsertProduct = createServerFn({ method: "POST" })
         stockQty: z.number().int().min(0),
         lowStockThreshold: z.number().int().min(0).optional(),
         isPublished: z.boolean(),
+        images: z.array(z.string().max(500)).max(8).optional(),
       })
       .parse(i),
   )
@@ -108,6 +127,7 @@ export const upsertProduct = createServerFn({ method: "POST" })
       stock_qty: data.stockQty,
       low_stock_threshold: data.lowStockThreshold ?? 5,
       is_published: data.isPublished,
+      ...(data.images ? { images: data.images } : {}),
     };
     const q = data.id
       ? context.supabase
@@ -187,3 +207,135 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
     return row;
   });
 
+
+
+/* ------------------------- Shipping settings ------------------------- */
+
+export const getShippingSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: { businessId: string }) =>
+    z.object({ businessId: z.string().uuid() }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertMember(context, data.businessId);
+    const { data: row } = await context.supabase
+      .from("vendor_shipping_settings")
+      .select("flat_rate_cents, per_item_cents, free_over_cents, policy_note")
+      .eq("business_id", data.businessId)
+      .maybeSingle();
+    return {
+      flatRateCents: row?.flat_rate_cents ?? 800,
+      perItemCents: row?.per_item_cents ?? 0,
+      freeOverCents: row?.free_over_cents ?? 15000,
+      policyNote: row?.policy_note ?? "",
+    };
+  });
+
+export const saveShippingSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) =>
+    z
+      .object({
+        businessId: z.string().uuid(),
+        flatRateCents: z.number().int().min(0).max(100000),
+        perItemCents: z.number().int().min(0).max(100000),
+        freeOverCents: z.number().int().min(0).max(1000000).nullable(),
+        policyNote: z.string().max(1000).optional(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertMember(context, data.businessId);
+    const { error } = await context.supabase.from("vendor_shipping_settings").upsert(
+      {
+        business_id: data.businessId,
+        flat_rate_cents: data.flatRateCents,
+        per_item_cents: data.perItemCents,
+        free_over_cents: data.freeOverCents,
+        policy_note: data.policyNote ?? null,
+      },
+      { onConflict: "business_id" },
+    );
+    if (error) throw new Response(error.message, { status: 400 });
+    return { ok: true };
+  });
+
+/* ---------------------------- Refunds ---------------------------- */
+
+/**
+ * Refund a paid product order. Reverses the vendor transfer when the payout
+ * already left, restocks the inventory, and marks the order refunded.
+ */
+export const refundProductOrder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) =>
+    z
+      .object({
+        orderId: z.string().uuid(),
+        businessId: z.string().uuid(),
+        reason: z.string().max(300).optional(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertMember(context, data.businessId);
+
+    const { data: order, error } = await context.supabase
+      .from("product_orders")
+      .select(
+        "id, status, total_cents, stripe_payment_intent_id, stripe_transfer_id, items:product_order_items(product_id, quantity)",
+      )
+      .eq("id", data.orderId)
+      .eq("business_id", data.businessId)
+      .single();
+    if (error || !order) throw new Response("Order not found", { status: 404 });
+    if (order.status === "refunded")
+      throw new Response("This order was already refunded", { status: 400 });
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { getStripe } = await import("@/lib/stripe.server");
+    const stripe = getStripe();
+
+    if (stripe && order.stripe_payment_intent_id) {
+      // Pull the vendor transfer back first so the refund comes out of the
+      // right balance, then refund the buyer.
+      if (order.stripe_transfer_id) {
+        try {
+          await stripe.transfers.createReversal(order.stripe_transfer_id, {});
+        } catch {
+          /* already reversed */
+        }
+      }
+      await stripe.refunds.create(
+        { payment_intent: order.stripe_payment_intent_id, reason: "requested_by_customer" },
+        { idempotencyKey: `product-refund-${order.id}` },
+      );
+    }
+
+    // Restock what was sold.
+    for (const item of (order.items ?? []) as any[]) {
+      if (!item.product_id) continue;
+      const { data: prod } = await supabaseAdmin
+        .from("inventory_products")
+        .select("stock_qty")
+        .eq("id", item.product_id)
+        .maybeSingle();
+      if (prod)
+        await supabaseAdmin
+          .from("inventory_products")
+          .update({ stock_qty: (prod.stock_qty ?? 0) + (item.quantity ?? 0) })
+          .eq("id", item.product_id);
+    }
+
+    const { error: upErr } = await supabaseAdmin
+      .from("product_orders")
+      .update({
+        status: "refunded",
+        notes: data.reason ?? null,
+        payout_released_at: null,
+      })
+      .eq("id", order.id);
+    if (upErr) throw new Response(upErr.message, { status: 400 });
+
+    return { ok: true };
+  });
