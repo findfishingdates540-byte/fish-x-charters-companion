@@ -88,7 +88,7 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
         home_port: draft.home_port || null,
         description: draft.description || null,
         hero_image_url: draft.hero_image_url || null,
-        image_urls: draft.image_urls,
+        image_urls: draft.image_urls.filter(Boolean),
         is_active: draft.is_active,
       },
     }),
