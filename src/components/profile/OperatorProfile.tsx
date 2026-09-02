@@ -107,25 +107,112 @@ type Business = {
   premium_until: string | null;
 };
 
+type Boat = {
+  id: string;
+  name: string;
+  make: string | null;
+  model: string | null;
+  length_ft: number | null;
+  capacity: number | null;
+  home_port: string | null;
+  description: string | null;
+  hero_image_url: string | null;
+  image_urls: string[] | null;
+};
+
+type Product = {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  price_cents: number;
+  compare_at_cents: number | null;
+  stock_qty: number;
+  image: string | null;
+};
+
+type Slip = {
+  id: string;
+  slip_number: string;
+  length_ft: number | null;
+  beam_ft: number | null;
+  draft_ft: number | null;
+  amperage: string | null;
+  monthly_rate_cents: number | null;
+  nightly_rate_cents: number | null;
+  status: string;
+};
+
+type Departure = {
+  id: string;
+  serviceId: string;
+  serviceTitle: string;
+  startsAt: string;
+  endsAt: string;
+  seatsLeft: number;
+  priceCents: number;
+};
+
+type Post = { id: string; body: string; media_json: any; created_at: string };
+
 type Props = {
   business: Business;
   services: Service[];
   reviews: Review[];
   ratingSummary: { average: number; count: number; buckets: number[] };
   variant: "captain" | "guide";
+  boats?: Boat[];
+  products?: Product[];
+  slips?: Slip[];
+  upcoming?: Departure[];
+  posts?: Post[];
 };
 
 const fmtPrice = (cents: number) =>
   `$${Math.round(cents / 100).toLocaleString()}`;
 
-export function OperatorProfile({ business: b, services, reviews, ratingSummary, variant }: Props) {
+const CARD: React.CSSProperties = {
+  background: "#14202B",
+  border: "1px solid rgba(255,255,255,.07)",
+  borderRadius: 20,
+  padding: 26,
+};
+
+const LABEL_BY_CATEGORY: Record<string, { services: string; blurb: string }> = {
+  charter: { services: "Trips offered", blurb: "All escrow-protected" },
+  guide_service: { services: "Guided trips", blurb: "All escrow-protected" },
+  tackle_shop: { services: "Services & clinics", blurb: "Book in-store services" },
+  bait_shop: { services: "Services", blurb: "Book ahead" },
+  marina: { services: "Dockage & services", blurb: "Reserve ahead" },
+  lodge: { services: "Stays & packages", blurb: "Escrow-protected" },
+  apparel: { services: "Services", blurb: "" },
+  gear_mfg: { services: "Services", blurb: "" },
+};
+
+export function OperatorProfile({
+  business: b,
+  services,
+  reviews,
+  ratingSummary,
+  variant,
+  boats = [],
+  products = [],
+  slips = [],
+  upcoming = [],
+  posts = [],
+}: Props) {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(services[0]?.id ?? null);
   const selected = useMemo(() => services.find((s) => s.id === selectedServiceId) ?? services[0], [services, selectedServiceId]);
   const location = [b.city, b.region, b.country].filter(Boolean).join(", ");
   const avg = ratingSummary.average ? ratingSummary.average.toFixed(2) : "—";
+  const hours = normalizeHours((b as any).hours_json);
+  const amenities = normalizeAmenities((b as any).amenities_json);
+  const labels = LABEL_BY_CATEGORY[b.category_key] ?? { services: "What we offer", blurb: "" };
+  const isShop = ["tackle_shop", "bait_shop", "apparel", "gear_mfg"].includes(b.category_key);
 
   const roleLabel = variant === "captain" ? "Verified captain" : "Verified guide";
   const heroFallback = "linear-gradient(135deg,#F0F2F5,#031029)";
+
 
   return (
     <div className="fx-shell" style={{ background: "#0D161F", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#F0F2F5" }}>
@@ -185,11 +272,15 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
             </div>
           </div>
           <FollowButton businessId={b.id} />
-          <div style={{ display: "flex", gap: 26, padding: "16px 22px", background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, flex: "none" }}>
-            <Stat n={services.length} label="trips" />
+          <div style={{ display: "flex", gap: 26, padding: "16px 22px", background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, flex: "none", flexWrap: "wrap" }}>
+            <Stat n={services.length} label={isShop ? "services" : "trips"} />
+            {boats.length > 0 && <Stat n={boats.length} label={boats.length === 1 ? "boat" : "boats"} divider />}
+            {products.length > 0 && <Stat n={products.length} label="products" divider />}
+            {slips.length > 0 && <Stat n={slips.length} label="slips" divider />}
             <Stat n={ratingSummary.count} label="reviews" divider />
             <Stat n={b.verified_at ? "✓" : "—"} label={b.verified_at ? "verified" : "pending"} divider />
           </div>
+
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 360px", gap: 26, marginTop: 34 }}>
@@ -206,15 +297,16 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
             {/* Services / Trips */}
             <section>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16 }}>
-                <h2 style={{ ...sectionTitle, margin: 0 }}>{variant === "guide" ? "Guided trips" : "Trips offered"}</h2>
-                <span style={{ fontSize: 13, color: "#92A0AB" }}>All escrow-protected</span>
+                <h2 style={{ ...sectionTitle, margin: 0 }}>{labels.services}</h2>
+                {labels.blurb && <span style={{ fontSize: 13, color: "#92A0AB" }}>{labels.blurb}</span>}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {services.length === 0 && (
-                  <div style={{ background: "#14202B", border: "1px dashed rgba(13,34,54,.15)", borderRadius: 18, padding: 32, textAlign: "center", color: "#92A0AB" }}>
-                    No published trips yet.
+                  <div style={{ background: "#14202B", border: "1px dashed rgba(255,255,255,.12)", borderRadius: 18, padding: 32, textAlign: "center", color: "#92A0AB" }}>
+                    Nothing published here yet.
                   </div>
                 )}
+
                 {services.map((s) => {
                   const active = selectedServiceId === s.id;
                   return (
@@ -248,6 +340,173 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
                 })}
               </div>
             </section>
+
+            {/* Next departures */}
+            {upcoming.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>Next available departures</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 12 }}>
+                  {upcoming.map((u) => (
+                    <Link
+                      key={u.id}
+                      to="/booking"
+                      search={{ service_id: u.serviceId }}
+                      style={{ textDecoration: "none", background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 14, padding: 14, display: "block", color: "#F0F2F5" }}
+                    >
+                      <div style={{ fontSize: 12, color: "#2DE2F2", fontWeight: 700 }}>
+                        {new Date(u.startsAt).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                      </div>
+                      <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>
+                        {new Date(u.startsAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })} –{" "}
+                        {new Date(u.endsAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                      </div>
+                      <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4 }}>{u.serviceTitle}</div>
+                      <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 6 }}>
+                        {u.seatsLeft} seat{u.seatsLeft === 1 ? "" : "s"} left · {fmtPrice(u.priceCents)}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Fleet */}
+            {boats.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>The fleet</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 16 }}>
+                  {boats.map((bt) => {
+                    const cover = bt.hero_image_url ?? bt.image_urls?.[0] ?? null;
+                    const extra = (bt.image_urls ?? []).filter((u) => u && u !== cover);
+                    return (
+                      <article key={bt.id} style={{ background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, overflow: "hidden" }}>
+                        {cover ? (
+                          <img src={cover} alt={bt.name} style={{ width: "100%", height: 150, objectFit: "cover", display: "block" }} />
+                        ) : (
+                          <div style={{ height: 150, background: "linear-gradient(135deg,#0D161F,#1C2936)" }} />
+                        )}
+                        <div style={{ padding: 14 }}>
+                          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 19, fontWeight: 600 }}>{bt.name}</div>
+                          <div style={{ fontSize: 12.5, color: "#92A0AB", marginTop: 4 }}>
+                            {[
+                              [bt.make, bt.model].filter(Boolean).join(" "),
+                              bt.length_ft ? `${bt.length_ft} ft` : null,
+                              bt.capacity ? `up to ${bt.capacity} anglers` : null,
+                            ].filter(Boolean).join(" · ")}
+                          </div>
+                          {bt.home_port && <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4 }}>⚓ {bt.home_port}</div>}
+                          {bt.description && (
+                            <p style={{ fontSize: 12.5, color: "#92A0AB", lineHeight: 1.5, margin: "8px 0 0" }}>
+                              {bt.description.slice(0, 120)}{bt.description.length > 120 ? "…" : ""}
+                            </p>
+                          )}
+                          {extra.length > 0 && (
+                            <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                              {extra.slice(0, 4).map((u, idx) => (
+                                <img key={idx} src={u} alt="" style={{ width: 42, height: 42, borderRadius: 8, objectFit: "cover" }} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Shop */}
+            {products.length > 0 && (
+              <section style={CARD}>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }}>
+                  <h2 style={{ ...sectionTitle, margin: 0 }}>From the shop</h2>
+                  <Link to="/marketplace" style={{ fontSize: 13, color: "#2DE2F2", textDecoration: "none" }}>All products →</Link>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 14 }}>
+                  {products.map((p) => (
+                    <Link
+                      key={p.id}
+                      to="/marketplace/$productId"
+                      params={{ productId: p.id }}
+                      style={{ textDecoration: "none", color: "#F0F2F5", background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, overflow: "hidden", display: "block" }}
+                    >
+                      {p.image ? (
+                        <img src={p.image} alt={p.title} style={{ width: "100%", height: 130, objectFit: "cover", display: "block" }} />
+                      ) : (
+                        <div style={{ height: 130, background: "linear-gradient(135deg,#0D161F,#1C2936)" }} />
+                      )}
+                      <div style={{ padding: 12 }}>
+                        <div style={{ fontSize: 13.5, fontWeight: 600, lineHeight: 1.3 }}>{p.title}</div>
+                        {p.category && <div style={{ fontSize: 11.5, color: "#92A0AB", marginTop: 3 }}>{p.category}</div>}
+                        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 8 }}>
+                          <span style={{ color: "#2DE2F2", fontWeight: 700 }}>{fmtPrice(p.price_cents)}</span>
+                          {p.compare_at_cents && p.compare_at_cents > p.price_cents && (
+                            <span style={{ fontSize: 12, color: "#92A0AB", textDecoration: "line-through" }}>{fmtPrice(p.compare_at_cents)}</span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: 11.5, color: p.stock_qty > 0 ? "#22C55E" : "#92A0AB", marginTop: 4 }}>
+                          {p.stock_qty > 0 ? `${p.stock_qty} in stock` : "Out of stock"}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Marina slips */}
+            {slips.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>Slips & dockage</h2>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ color: "#92A0AB", textAlign: "left" }}>
+                        <th style={th}>Slip</th>
+                        <th style={th}>LOA</th>
+                        <th style={th}>Beam</th>
+                        <th style={th}>Power</th>
+                        <th style={th}>Nightly</th>
+                        <th style={th}>Monthly</th>
+                        <th style={th}>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {slips.map((s) => (
+                        <tr key={s.id} style={{ borderTop: "1px solid rgba(255,255,255,.07)" }}>
+                          <td style={td}><b>{s.slip_number}</b></td>
+                          <td style={td}>{s.length_ft ? `${s.length_ft} ft` : "—"}</td>
+                          <td style={td}>{s.beam_ft ? `${s.beam_ft} ft` : "—"}</td>
+                          <td style={td}>{s.amperage ?? "—"}</td>
+                          <td style={td}>{s.nightly_rate_cents ? fmtPrice(s.nightly_rate_cents) : "—"}</td>
+                          <td style={td}>{s.monthly_rate_cents ? fmtPrice(s.monthly_rate_cents) : "—"}</td>
+                          <td style={{ ...td, color: s.status === "available" ? "#22C55E" : "#92A0AB", textTransform: "capitalize" }}>{s.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {/* Updates */}
+            {posts.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>Latest updates</h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {posts.map((p) => (
+                    <div key={p.id} style={{ borderTop: "1px solid rgba(255,255,255,.07)", paddingTop: 14 }}>
+                      <div style={{ fontSize: 12, color: "#92A0AB" }}>
+                        {new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                      </div>
+                      <p style={{ margin: "6px 0 0", color: "#F0F2F5", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{p.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+
 
             {/* Reviews */}
             <section style={{ background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 20, padding: 26 }}>
@@ -356,6 +615,33 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
                 {b.website && <a href={b.website} target="_blank" rel="noreferrer" style={{ color: "#2DE2F2", textDecoration: "none" }}>Website ↗</a>}
               </div>
             </div>
+
+            {hours.length > 0 && (
+              <div style={{ ...CARD, padding: 22 }}>
+                <div style={{ fontSize: 10.5, letterSpacing: ".18em", textTransform: "uppercase", color: "#2DE2F2", fontWeight: 700 }}>Hours</div>
+                <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 7, fontSize: 13 }}>
+                  {hours.map((h) => (
+                    <div key={h.day} style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                      <span style={{ color: "#92A0AB", textTransform: "capitalize" }}>{h.day}</span>
+                      <span>{h.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {amenities.length > 0 && (
+              <div style={{ ...CARD, padding: 22 }}>
+                <div style={{ fontSize: 10.5, letterSpacing: ".18em", textTransform: "uppercase", color: "#2DE2F2", fontWeight: 700 }}>Amenities</div>
+                <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {amenities.map((a) => (
+                    <span key={a} style={{ background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 20, padding: "6px 12px", fontSize: 12.5, color: "#F0F2F5" }}>
+                      {a}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </aside>
         </div>
       </main>
@@ -372,6 +658,38 @@ function Stat({ n, label, divider }: { n: number | string; label: string; divide
   );
 }
 
+const DAY_ORDER = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+
+/** hours_json is operator-authored, so tolerate strings or {open,close} shapes. */
+function normalizeHours(raw: unknown): { day: string; value: string }[] {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
+  const out: { day: string; value: string }[] = [];
+  for (const day of DAY_ORDER) {
+    const v = (raw as Record<string, unknown>)[day];
+    if (v == null) continue;
+    if (typeof v === "string") out.push({ day, value: v });
+    else if (typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      if (o.closed) out.push({ day, value: "Closed" });
+      else if (typeof o.open === "string" && typeof o.close === "string") out.push({ day, value: `${o.open} – ${o.close}` });
+    }
+  }
+  return out;
+}
+
+function normalizeAmenities(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.filter((x): x is string => typeof x === "string");
+  if (raw && typeof raw === "object") {
+    return Object.entries(raw as Record<string, unknown>)
+      .filter(([, v]) => v === true)
+      .map(([k]) => k.replace(/_/g, " "));
+  }
+  return [];
+}
+
+const th: React.CSSProperties = { padding: "8px 10px", fontWeight: 600, fontSize: 12, letterSpacing: ".04em", textTransform: "uppercase" };
+const td: React.CSSProperties = { padding: "10px", color: "#F0F2F5" };
+
 const sectionTitle: React.CSSProperties = {
   fontFamily: "'Cormorant Garamond', Georgia, serif",
   fontWeight: 600,
@@ -379,3 +697,4 @@ const sectionTitle: React.CSSProperties = {
   margin: "0 0 14px",
   color: "#F0F2F5",
 };
+
