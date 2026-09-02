@@ -46,12 +46,28 @@ const emptyDraft: BoatDraft = {
   is_active: true,
 };
 
+const toDraft = (b: BoatRow): BoatDraft => ({
+  id: b.id,
+  name: b.name,
+  make: (b as any).make ?? "",
+  model: (b as any).model ?? "",
+  length_ft: (b as any).length_ft ?? 0,
+  capacity: (b as any).capacity ?? 0,
+  home_port: (b as any).home_port ?? "",
+  description: (b as any).description ?? "",
+  hero_image_url: (b as any).hero_image_url ?? "",
+  image_urls: Array.isArray((b as any).image_urls) ? (b as any).image_urls : [],
+  is_active: (b as any).is_active ?? true,
+});
+
 export function FleetPanel({ businessId }: { businessId: string | null }) {
   const qc = useQueryClient();
   const list = useServerFn(listCaptainBoats);
   const upsert = useServerFn(upsertCaptainBoat);
   const del = useServerFn(deleteCaptainBoat);
   const [editing, setEditing] = useState<BoatDraft | null>(null);
+  const [preview, setPreview] = useState<BoatRow | null>(null);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["captain-boats"],
@@ -144,11 +160,16 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
             return (
               <div
                 key={b.id}
+                onClick={() => setPreview(b)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPreview(b); } }}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 14,
                   padding: "14px 0",
+                  cursor: "pointer",
                   borderBottom: i < rows.length - 1 ? "1px solid var(--line)" : "none",
                 }}
               >
@@ -177,27 +198,13 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
                   </div>
                 </div>
                 <button
-                  onClick={() =>
-                    setEditing({
-                      id: b.id,
-                      name: b.name,
-                      make: (b as any).make ?? "",
-                      model: (b as any).model ?? "",
-                      length_ft: (b as any).length_ft ?? 0,
-                      capacity: (b as any).capacity ?? 0,
-                      home_port: (b as any).home_port ?? "",
-                      description: (b as any).description ?? "",
-                      hero_image_url: (b as any).hero_image_url ?? "",
-                      image_urls: Array.isArray((b as any).image_urls) ? (b as any).image_urls : [],
-                      is_active: (b as any).is_active ?? true,
-                    })
-                  }
+                  onClick={(e) => { e.stopPropagation(); setEditing(toDraft(b)); }}
                   style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "var(--goldtext)", fontWeight: 600 }}
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => { if (confirm(`Delete "${b.name}"?`)) mDelete.mutate(b.id); }}
+                  onClick={(e) => { e.stopPropagation(); if (confirm(`Delete "${b.name}"?`)) mDelete.mutate(b.id); }}
                   style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "#F87171" }}
                 >
                   Delete
@@ -206,6 +213,15 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
             );
           })}
       </div>
+
+      {preview && (
+        <BoatPreview
+          boat={preview}
+          onClose={() => setPreview(null)}
+          onEdit={() => { setEditing(toDraft(preview)); setPreview(null); }}
+        />
+      )}
+
     </div>
   );
 }
@@ -323,5 +339,146 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--tmut)" }}>{label}</span>
       {children}
     </label>
+  );
+}
+function BoatPreview({
+  boat,
+  onClose,
+  onEdit,
+}: {
+  boat: BoatRow;
+  onClose: () => void;
+  onEdit: () => void;
+}) {
+  const b = boat as any;
+  const gallery: string[] = [
+    ...(b.hero_image_url ? [b.hero_image_url] : []),
+    ...(Array.isArray(b.image_urls) ? b.image_urls : []),
+  ].filter((u, i, a) => u && a.indexOf(u) === i);
+  const [active, setActive] = useState(0);
+
+  const specs: Array<[string, string]> = [
+    ["Make", b.make || "—"],
+    ["Model", b.model || "—"],
+    ["Length", b.length_ft ? `${b.length_ft} ft` : "—"],
+    ["Capacity", b.capacity ? `${b.capacity} guests` : "—"],
+    ["Home port", b.home_port || "—"],
+    ["Status", b.is_active === false ? "Inactive" : "Active"],
+  ];
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 90,
+        background: "rgba(4,12,20,.68)",
+        display: "grid",
+        placeItems: "center",
+        padding: 18,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "min(680px,100%)",
+          maxHeight: "88vh",
+          overflowY: "auto",
+          background: "var(--card, #14202B)",
+          border: "1px solid var(--line)",
+          borderRadius: 18,
+          padding: 20,
+          display: "grid",
+          gap: 16,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>{b.name}</div>
+            <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
+              {[b.make, b.model].filter(Boolean).join(" ") || "Boat details"}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{ border: 0, background: "transparent", color: "var(--tmut)", fontSize: 20, cursor: "pointer", lineHeight: 1 }}
+          >
+            ×
+          </button>
+        </div>
+
+        {gallery.length > 0 ? (
+          <div style={{ display: "grid", gap: 10 }}>
+            <div
+              style={{
+                width: "100%",
+                aspectRatio: "16/9",
+                borderRadius: 14,
+                background: `center/cover no-repeat url(${gallery[Math.min(active, gallery.length - 1)]})`,
+              }}
+            />
+            {gallery.length > 1 && (
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {gallery.map((u, i) => (
+                  <button
+                    key={u}
+                    onClick={() => setActive(i)}
+                    style={{
+                      width: 64,
+                      height: 48,
+                      borderRadius: 9,
+                      cursor: "pointer",
+                      padding: 0,
+                      background: `center/cover no-repeat url(${u})`,
+                      border: i === active ? "2px solid #2DE2F2" : "1px solid var(--line)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              aspectRatio: "16/9",
+              borderRadius: 14,
+              background: "var(--line)",
+              display: "grid",
+              placeItems: "center",
+              fontSize: 12.5,
+              color: "var(--tmut)",
+            }}
+          >
+            No photos yet
+          </div>
+        )}
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 12 }}>
+          {specs.map(([k, v]) => (
+            <div key={k}>
+              <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--tmut)" }}>{k}</div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{v}</div>
+            </div>
+          ))}
+        </div>
+
+        {b.description && (
+          <div>
+            <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--tmut)", marginBottom: 4 }}>
+              Description
+            </div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--tmut)" }}>{b.description}</div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <button onClick={onClose} style={btn("ghost")}>Close</button>
+          <button onClick={onEdit} style={btn("primary")}>Edit boat</button>
+        </div>
+      </div>
+    </div>
   );
 }
