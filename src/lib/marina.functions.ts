@@ -230,6 +230,16 @@ export const publishSlipForBooking = createServerFn({ method: "POST" })
       throw new Response("Set a nightly rate before publishing this slip.", { status: 400 });
     }
 
+    // A bookable slip takes real money, so payouts must be live first.
+    const { checkVendorsPayable } = await import("./vendor-payments.server");
+    const [payStatus] = await checkVendorsPayable(supabase as never, [data.businessId]);
+    if (payStatus && !payStatus.ready) {
+      throw new Response(
+        "Connect your payout account in Payments before putting a slip up for online booking.",
+        { status: 409 },
+      );
+    }
+
     const payload = {
       business_id: data.businessId,
       kind: "slip_rental" as const,
