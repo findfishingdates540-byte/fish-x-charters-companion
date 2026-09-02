@@ -2,6 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { listPublicBusinesses, listCategories } from "@/lib/businesses.functions";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { searchServices } from "@/lib/services-search.functions";
+import { logImpressions, logListing } from "@/lib/listing-telemetry";
+import { useEffect } from "react";
 
 
 export const businessesQO = (category?: string) =>
@@ -9,6 +12,10 @@ export const businessesQO = (category?: string) =>
     queryKey: ["businesses", category ?? "all"],
     queryFn: () => listPublicBusinesses({ data: { category } }),
   });
+export const rankedQO = queryOptions({
+  queryKey: ["ranked-listings"],
+  queryFn: () => searchServices({ data: { sort: "recommended" } }),
+});
 export const categoriesQO = queryOptions({
   queryKey: ["business-categories"],
   queryFn: () => listCategories(),
@@ -30,6 +37,7 @@ export const Route = createFileRoute("/discover")({
     await Promise.all([
       context.queryClient.ensureQueryData(businessesQO(deps.category)),
       context.queryClient.ensureQueryData(categoriesQO),
+      context.queryClient.ensureQueryData(rankedQO),
     ]);
   },
   component: DiscoverPage,
@@ -43,6 +51,12 @@ function DiscoverPage() {
   const { category } = Route.useSearch();
   const { data: businesses } = useSuspenseQuery(businessesQO(category));
   const { data: categories } = useSuspenseQuery(categoriesQO);
+  const { data: ranked } = useSuspenseQuery(rankedQO);
+  const top = ranked.slice(0, 6);
+
+  useEffect(() => {
+    logImpressions(top.map((r) => r.id), { surface: "discover" });
+  }, [top]);
 
   return (
     <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#031029" }}>
@@ -56,6 +70,39 @@ function DiscoverPage() {
         </p>
       </header>
 
+
+      {top.length > 0 && (
+        <section style={{ padding: "28px 48px 4px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 30, margin: 0, fontWeight: 600 }}>
+              Top-ranked listings
+            </h2>
+            <Link to="/services/search" search={{ sort: "recommended" }} style={{ color: "#1F9FBE", fontWeight: 700, fontSize: 14, textDecoration: "none" }}>
+              Search all experiences →
+            </Link>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px,1fr))", gap: 16 }}>
+            {top.map((r, i) => (
+              <Link
+                key={r.id}
+                to="/b/$slug"
+                params={{ slug: r.business?.slug ?? "" }}
+                onClick={() => void logListing("click", r.id, { position: i + 1, query: { surface: "discover" } })}
+                style={{ textDecoration: "none", color: "inherit", background: "#fff", borderRadius: 14, border: "1px solid rgba(13,34,54,.08)", overflow: "hidden" }}
+              >
+                <div style={{ height: 120, background: r.heroUrl ? `url(${r.heroUrl}) center/cover` : "linear-gradient(135deg,#072057,#1f9fbe)" }} />
+                <div style={{ padding: 14 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>{r.title}</div>
+                  <div style={{ fontSize: 13, color: "#5c6b78" }}>{r.business?.name}</div>
+                  <div style={{ fontSize: 14, fontWeight: 800, marginTop: 6 }}>
+                    ${(r.basePriceCents / 100).toLocaleString()}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <nav style={{ display: "flex", gap: 8, flexWrap: "wrap", padding: "20px 48px", borderBottom: "1px solid rgba(13,34,54,.06)" }}>
         <Link

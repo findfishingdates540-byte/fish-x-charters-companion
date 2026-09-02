@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { MarinaServiceRequest } from "@/components/profile/MarinaServiceRequest";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -487,6 +488,13 @@ export function OperatorProfile({
                   </table>
                 </div>
               </section>
+            )}
+
+            {b.category_key === "marina" && (
+              <MarinaServiceRequest
+                businessId={b.id}
+                amenities={((b as any).amenities_json ?? {}) as Record<string, boolean>}
+              />
             )}
 
             {/* Updates */}

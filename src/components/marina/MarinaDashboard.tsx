@@ -11,7 +11,10 @@ import {
   upsertSlip,
   deleteSlip,
   upsertReservation,
+  publishSlipForBooking,
 } from "@/lib/marina.functions";
+import { MarinaServices } from "@/components/marina/MarinaServices";
+import { ReservationCalendar } from "@/components/marina/ReservationCalendar";
 import {
   OperatorShell,
   OperatorNavItem,
@@ -34,6 +37,8 @@ type Slip = {
   status: string;
   monthly_rate_cents: number | null;
   nightly_rate_cents: number | null;
+  is_bookable?: boolean;
+  service_id?: string | null;
 };
 
 type Reservation = {
@@ -147,7 +152,7 @@ export function MarinaDashboard({
       {active === "reservations" && (
         <Reservations businessId={businessId} data={data} />
       )}
-      {active === "services" && <Services />}
+      {active === "services" && <MarinaServices businessId={businessId} />}
       {active === "listings" && (
         <ServicesManager
           businessId={businessId}
@@ -208,6 +213,11 @@ function Slips({ businessId, data }: { businessId: string; data: any }) {
   const qc = useQueryClient();
   const upsertFn = useServerFn(upsertSlip);
   const deleteFn = useServerFn(deleteSlip);
+  const publishFn = useServerFn(publishSlipForBooking);
+  const publishM = useMutation({
+    mutationFn: publishFn,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["marina-overview", businessId] }),
+  });
   const [editing, setEditing] = useState<Slip | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -294,6 +304,58 @@ function Slips({ businessId, data }: { businessId: string; data: any }) {
           <Legend swatch="#F0F2F5" bordered label={`Available ${data.counts.available}`} />
           <Legend swatch="#F87171" label={`Maintenance ${data.counts.maintenance}`} />
         </div>
+      </Card>
+
+      <Card eyebrow="Online booking" title="Bookable berths">
+        {data.slips.length === 0 ? (
+          <Empty label="Add a slip first." />
+        ) : (
+          <div style={{ display: "grid", gap: 8 }}>
+            {data.slips.map((s: Slip) => (
+              <div
+                key={s.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  flexWrap: "wrap",
+                  padding: "10px 12px",
+                  border: "1px solid rgba(255,255,255,.07)",
+                  borderRadius: 11,
+                }}
+              >
+                <div>
+                  <div style={{ color: "#F0F2F5", fontWeight: 700, fontSize: 14 }}>
+                    Slip {s.slip_number}
+                  </div>
+                  <div style={{ color: "#92A0AB", fontSize: 12.5 }}>
+                    {s.nightly_rate_cents
+                      ? `${money(s.nightly_rate_cents)} / night`
+                      : "Set a nightly rate to publish"}
+                    {s.is_bookable ? " · Bookable online" : ""}
+                  </div>
+                </div>
+                <button
+                  style={s.is_bookable ? btnGhost : btnPrimary}
+                  disabled={publishM.isPending || !s.nightly_rate_cents}
+                  onClick={() =>
+                    publishM.mutate({
+                      data: { businessId, slipId: s.id, enabled: !s.is_bookable },
+                    })
+                  }
+                >
+                  {s.is_bookable ? "Unpublish" : "Publish for booking"}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {publishM.isError && (
+          <div style={{ color: "#F87171", fontSize: 13, marginTop: 10 }}>
+            {(publishM.error as Error).message}
+          </div>
+        )}
       </Card>
 
       {showForm && (
@@ -441,6 +503,7 @@ function Reservations({
   const qc = useQueryClient();
   const upsertFn = useServerFn(upsertReservation);
   const [showForm, setShowForm] = useState(false);
+  const [view, setView] = useState<"calendar" | "list">("calendar");
 
   const upsertM = useMutation({
     mutationFn: upsertFn,
@@ -452,16 +515,27 @@ function Reservations({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <Card
-        title="All reservations"
-        right={
-          <button onClick={() => setShowForm((v) => !v)} style={btnPrimary}>
-            {showForm ? "Close" : "+ New reservation"}
-          </button>
-        }
-      >
-        <ReservationTable rows={data.reservations} />
-      </Card>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <button
+          onClick={() => setView("calendar")}
+          style={view === "calendar" ? btnPrimary : btnGhost}
+        >
+          Calendar
+        </button>
+        <button onClick={() => setView("list")} style={view === "list" ? btnPrimary : btnGhost}>
+          List
+        </button>
+        <button onClick={() => setShowForm((v) => !v)} style={{ ...btnGhost, marginLeft: "auto" }}>
+          {showForm ? "Close" : "+ New reservation"}
+        </button>
+      </div>
+      {view === "calendar" ? (
+        <ReservationCalendar rows={data.reservations} />
+      ) : (
+        <Card title="All reservations">
+          <ReservationTable rows={data.reservations} />
+        </Card>
+      )}
       {showForm && (
         <ReservationForm
           slips={data.slips}
@@ -636,20 +710,6 @@ function ReservationTable({ rows }: { rows: Reservation[] }) {
         </div>
       ))}
     </div>
-  );
-}
-
-function Services() {
-  return (
-    <Card
-      eyebrow="Coming soon"
-      title="Amenities & service requests"
-    >
-      <p style={{ color: "#92A0AB", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-        Amenity toggles (fuel, ice, pump-out, laundry) and inbound service requests
-        will publish here. For now use the Slips tab to manage berth status.
-      </p>
-    </Card>
   );
 }
 
