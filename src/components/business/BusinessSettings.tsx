@@ -32,9 +32,18 @@ const NOTIF_CATEGORIES: Array<{ key: string; label: string; hint: string }> = [
   { key: "system", label: "Account & verification", hint: "Verification and compliance updates." },
 ];
 
+const OP_SECTIONS: Array<{ key: string; label: string; hint: string }> = [
+  { key: "profile", label: "Business profile", hint: "Name, story, photos, hours" },
+  { key: "visibility", label: "Storefront & visibility", hint: "Publish, verification, public page" },
+  { key: "team", label: "Team & roles", hint: "Owners, managers, crew" },
+  { key: "notifications", label: "Notifications", hint: "What we email you about" },
+  { key: "payouts", label: "Payouts", hint: "Bank details & Stripe status" },
+];
+
 export function BusinessSettings({ businessId }: { businessId: string }) {
   const qc = useQueryClient();
   const fetchSettings = useServerFn(getBusinessSettings);
+  const [active, setActive] = useState<string>("profile");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["business-settings", businessId],
@@ -48,17 +57,85 @@ export function BusinessSettings({ businessId }: { businessId: string }) {
   const canEdit = data.myRole === "owner" || data.myRole === "manager";
 
   return (
-    <div style={{ display: "grid", gap: 20 }}>
-      <VisibilityCard business={data.business} canEdit={canEdit} onDone={() => qc.invalidateQueries({ queryKey: ["business-settings", businessId] })} />
-      <ProfileCard business={data.business} canEdit={canEdit} />
-      <TeamCard businessId={businessId} team={data.team} myRole={data.myRole} />
-      <NotificationsCard />
-      <Card eyebrow="Money" title="Payouts">
-        <PayoutsConnect businessId={businessId} />
-      </Card>
+    <div
+      className="fx-settings"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "252px minmax(0,1fr)",
+        gap: 20,
+        alignItems: "start",
+      }}
+    >
+      <nav
+        style={{
+          background: "#14202B",
+          border: "1px solid rgba(255,255,255,.08)",
+          borderRadius: 18,
+          padding: 10,
+          display: "grid",
+          gap: 4,
+          position: "sticky",
+          top: 20,
+        }}
+      >
+        <div
+          style={{
+            padding: "8px 13px 10px",
+            fontSize: 11,
+            fontWeight: 800,
+            letterSpacing: ".14em",
+            textTransform: "uppercase",
+            color: "#5E7183",
+          }}
+        >
+          {data.business.name}
+        </div>
+        {OP_SECTIONS.map((it) => {
+          const on = active === it.key;
+          return (
+            <button
+              key={it.key}
+              onClick={() => setActive(it.key)}
+              style={{
+                textAlign: "left",
+                border: 0,
+                cursor: "pointer",
+                background: on ? "rgba(45,226,242,.12)" : "transparent",
+                borderRadius: 12,
+                padding: "11px 13px",
+                font: "inherit",
+              }}
+            >
+              <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: on ? "#2DE2F2" : "#F0F2F5" }}>
+                {it.label}
+              </span>
+              <span style={{ display: "block", fontSize: 12, color: "#92A0AB", marginTop: 2 }}>{it.hint}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      <section style={{ minWidth: 0, display: "grid", gap: 20 }}>
+        {active === "profile" && <ProfileCard business={data.business} canEdit={canEdit} />}
+        {active === "visibility" && (
+          <VisibilityCard
+            business={data.business}
+            canEdit={canEdit}
+            onDone={() => qc.invalidateQueries({ queryKey: ["business-settings", businessId] })}
+          />
+        )}
+        {active === "team" && <TeamCard businessId={businessId} team={data.team} myRole={data.myRole} />}
+        {active === "notifications" && <NotificationsCard />}
+        {active === "payouts" && (
+          <Card eyebrow="Money" title="Payouts">
+            <PayoutsConnect businessId={businessId} />
+          </Card>
+        )}
+      </section>
     </div>
   );
 }
+
 
 /* ------------------------------- visibility ------------------------------ */
 
