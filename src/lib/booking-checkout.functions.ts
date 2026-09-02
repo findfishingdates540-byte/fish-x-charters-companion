@@ -145,6 +145,20 @@ export const createBookingFromService = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase } = context;
 
+    // -1) The operator must be able to receive money before we hold seats or
+    // charge a card. Applies to charters, guided trips, slips and lodging.
+    const { data: slotSvc } = await supabase
+      .from("service_availability")
+      .select("service:bookable_services(business_id)")
+      .eq("id", data.slotId)
+      .maybeSingle();
+    const vendorBusinessId =
+      (slotSvc?.service as { business_id?: string } | null)?.business_id ?? null;
+    if (vendorBusinessId) {
+      const { assertVendorsPayable } = await import("./vendor-payments.server");
+      await assertVendorsPayable(supabase as never, [vendorBusinessId]);
+    }
+
     // 0) Price the add-ons server-side — never trust client money.
     let addons: Array<{
       id: string;
