@@ -31,6 +31,14 @@ export function ImageUpload({
   const [err, setErr] = useState<string | null>(null);
   // Instant local preview while the upload (and later the media proxy) resolves.
   const [localPreview, setLocalPreview] = useState<string | null>(null);
+  // The preview belongs to one specific value. When the parent swaps in another
+  // record (e.g. editing a different boat) the stale object URL must go, or every
+  // form would keep showing the first image that was uploaded in this session.
+  const [previewFor, setPreviewFor] = useState<string>(value);
+  if (previewFor !== value && !busy) {
+    setPreviewFor(value);
+    setLocalPreview(null);
+  }
 
   async function upload(file: File) {
     setErr(null);
