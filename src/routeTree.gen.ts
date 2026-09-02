@@ -34,6 +34,7 @@ import { Route as ChartersSearchRouteImport } from './routes/charters.search'
 import { Route as GuidesProfileRouteImport } from './routes/guides.profile'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as MarketplaceProductIdRouteImport } from './routes/marketplace.$productId'
+import { Route as ServicesSearchRouteImport } from './routes/services.search'
 import { Route as AuthenticatedBookingsDetailRouteImport } from './routes/_authenticated/bookings.detail'
 import { Route as AuthenticatedTripsDetailRouteImport } from './routes/_authenticated/trips.detail'
 import { Route as ApiPublicFishxWebhookRouteImport } from './routes/api/public/fishx-webhook'
@@ -172,6 +173,11 @@ const MarketplaceProductIdRoute = MarketplaceProductIdRouteImport.update({
   path: '/marketplace/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesSearchRoute = ServicesSearchRouteImport.update({
+  id: '/services/search',
+  path: '/services/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedBookingsDetailRoute =
   AuthenticatedBookingsDetailRouteImport.update({
     id: '/bookings/detail',
@@ -258,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/services/search': typeof ServicesSearchRoute
   '/charters/': typeof ChartersIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByTo {
   '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/services/search': typeof ServicesSearchRoute
   '/charters': typeof ChartersIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/bookings/detail': typeof AuthenticatedBookingsDetailRoute
@@ -334,6 +342,7 @@ export interface FileRoutesById {
   '/charters/search': typeof ChartersSearchRoute
   '/guides/profile': typeof GuidesProfileRoute
   '/marketplace/$productId': typeof MarketplaceProductIdRoute
+  '/services/search': typeof ServicesSearchRoute
   '/charters/': typeof ChartersIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/_authenticated/bookings/detail': typeof AuthenticatedBookingsDetailRoute
@@ -373,6 +382,7 @@ export interface FileRouteTypes {
     | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/services/search'
     | '/charters/'
     | '/marketplace/'
     | '/bookings/detail'
@@ -410,6 +420,7 @@ export interface FileRouteTypes {
     | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/services/search'
     | '/charters'
     | '/marketplace'
     | '/bookings/detail'
@@ -448,6 +459,7 @@ export interface FileRouteTypes {
     | '/charters/search'
     | '/guides/profile'
     | '/marketplace/$productId'
+    | '/services/search'
     | '/charters/'
     | '/marketplace/'
     | '/_authenticated/bookings/detail'
@@ -478,6 +490,7 @@ export interface RootRouteChildren {
   ChartersSearchRoute: typeof ChartersSearchRoute
   GuidesProfileRoute: typeof GuidesProfileRoute
   MarketplaceProductIdRoute: typeof MarketplaceProductIdRoute
+  ServicesSearchRoute: typeof ServicesSearchRoute
   ChartersIndexRoute: typeof ChartersIndexRoute
   MarketplaceIndexRoute: typeof MarketplaceIndexRoute
   ApiPublicFishxWebhookRoute: typeof ApiPublicFishxWebhookRoute
@@ -668,6 +681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketplaceProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/search': {
+      id: '/services/search'
+      path: '/services/search'
+      fullPath: '/services/search'
+      preLoaderRoute: typeof ServicesSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/bookings/detail': {
       id: '/_authenticated/bookings/detail'
       path: '/bookings/detail'
@@ -794,6 +814,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChartersSearchRoute: ChartersSearchRoute,
   GuidesProfileRoute: GuidesProfileRoute,
   MarketplaceProductIdRoute: MarketplaceProductIdRoute,
+  ServicesSearchRoute: ServicesSearchRoute,
   ChartersIndexRoute: ChartersIndexRoute,
   MarketplaceIndexRoute: MarketplaceIndexRoute,
   ApiPublicFishxWebhookRoute: ApiPublicFishxWebhookRoute,
