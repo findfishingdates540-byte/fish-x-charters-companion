@@ -615,6 +615,33 @@ export function OperatorProfile({
                 {b.website && <a href={b.website} target="_blank" rel="noreferrer" style={{ color: "#2DE2F2", textDecoration: "none" }}>Website ↗</a>}
               </div>
             </div>
+
+            {hours.length > 0 && (
+              <div style={{ ...CARD, padding: 22 }}>
+                <div style={{ fontSize: 10.5, letterSpacing: ".18em", textTransform: "uppercase", color: "#2DE2F2", fontWeight: 700 }}>Hours</div>
+                <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 7, fontSize: 13 }}>
+                  {hours.map((h) => (
+                    <div key={h.day} style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                      <span style={{ color: "#92A0AB", textTransform: "capitalize" }}>{h.day}</span>
+                      <span>{h.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {amenities.length > 0 && (
+              <div style={{ ...CARD, padding: 22 }}>
+                <div style={{ fontSize: 10.5, letterSpacing: ".18em", textTransform: "uppercase", color: "#2DE2F2", fontWeight: 700 }}>Amenities</div>
+                <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {amenities.map((a) => (
+                    <span key={a} style={{ background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 20, padding: "6px 12px", fontSize: 12.5, color: "#F0F2F5" }}>
+                      {a}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </aside>
         </div>
       </main>
@@ -631,6 +658,38 @@ function Stat({ n, label, divider }: { n: number | string; label: string; divide
   );
 }
 
+const DAY_ORDER = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+
+/** hours_json is operator-authored, so tolerate strings or {open,close} shapes. */
+function normalizeHours(raw: unknown): { day: string; value: string }[] {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
+  const out: { day: string; value: string }[] = [];
+  for (const day of DAY_ORDER) {
+    const v = (raw as Record<string, unknown>)[day];
+    if (v == null) continue;
+    if (typeof v === "string") out.push({ day, value: v });
+    else if (typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      if (o.closed) out.push({ day, value: "Closed" });
+      else if (typeof o.open === "string" && typeof o.close === "string") out.push({ day, value: `${o.open} – ${o.close}` });
+    }
+  }
+  return out;
+}
+
+function normalizeAmenities(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.filter((x): x is string => typeof x === "string");
+  if (raw && typeof raw === "object") {
+    return Object.entries(raw as Record<string, unknown>)
+      .filter(([, v]) => v === true)
+      .map(([k]) => k.replace(/_/g, " "));
+  }
+  return [];
+}
+
+const th: React.CSSProperties = { padding: "8px 10px", fontWeight: 600, fontSize: 12, letterSpacing: ".04em", textTransform: "uppercase" };
+const td: React.CSSProperties = { padding: "10px", color: "#F0F2F5" };
+
 const sectionTitle: React.CSSProperties = {
   fontFamily: "'Cormorant Garamond', Georgia, serif",
   fontWeight: 600,
@@ -638,3 +697,4 @@ const sectionTitle: React.CSSProperties = {
   margin: "0 0 14px",
   color: "#F0F2F5",
 };
+
