@@ -97,7 +97,31 @@ export const Route = createFileRoute("/charters/$charterId")({
     return { meta };
   },
   component: CharterDetail,
+  errorComponent: CharterUnavailable,
+  notFoundComponent: CharterUnavailable,
 });
+
+function CharterUnavailable() {
+  return (
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
+      <PublicHeader />
+      <div style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,10vw,120px) 24px", textAlign: "center" }}>
+        <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: "clamp(30px,4vw,44px)", margin: "0 0 12px" }}>
+          This charter isn't available
+        </h1>
+        <p style={{ color: "#5c6b78", fontSize: 15, margin: "0 0 24px" }}>
+          The captain may have unlisted it. Browse other trips to find your next day on the water.
+        </p>
+        <Link
+          to="/charters"
+          style={{ display: "inline-block", padding: "12px 22px", borderRadius: 999, background: "#031029", color: "#fff", textDecoration: "none", fontWeight: 600, fontSize: 14 }}
+        >
+          Browse charters
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 function CharterDetail() {
   const params = Route.useParams();
