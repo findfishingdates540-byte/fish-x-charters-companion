@@ -115,7 +115,7 @@ function BookingThreads() {
     queryKey: ["captain-conversations"],
     queryFn: () => listFn(),
   });
-  const rows: any[] = (data as any[]) ?? [];
+  const rows: any[] = Array.isArray(data) ? (data as any[]) : [];
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
