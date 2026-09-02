@@ -93,12 +93,11 @@ export const getBusinessProfile = createServerFn({ method: "GET" })
         .order("slip_number")
         .limit(24),
       sb
-        .from("service_availability")
-        .select("id,service_id,starts_at,ends_at,seats_available,seats_booked,price_cents,is_blackout")
-        .gte("starts_at", nowIso)
-        .eq("is_blackout", false)
-        .order("starts_at")
-        .limit(200),
+        .from("business_posts")
+        .select("id")
+        .eq("business_id", biz.id)
+        .limit(1),
+
       sb
         .from("business_posts")
         .select("id,body,media_json,created_at")
