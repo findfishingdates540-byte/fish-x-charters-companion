@@ -41,6 +41,7 @@ import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/
 import { Route as ApiPublicAvatarsSplatRouteImport } from './routes/api/public/avatars/$'
 import { Route as ApiPublicHooksBookingTimersRouteImport } from './routes/api/public/hooks/booking-timers'
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
+import { Route as ApiPublicHooksListingMetricsRouteImport } from './routes/api/public/hooks/listing-metrics'
 import { Route as ApiPublicHooksReleaseEscrowRouteImport } from './routes/api/public/hooks/release-escrow'
 import { Route as ApiPublicHooksSyncCronSecretRouteImport } from './routes/api/public/hooks/sync-cron-secret'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
@@ -210,6 +211,12 @@ const ApiPublicHooksDispatchEventsRoute =
     path: '/api/public/hooks/dispatch-events',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksListingMetricsRoute =
+  ApiPublicHooksListingMetricsRouteImport.update({
+    id: '/api/public/hooks/listing-metrics',
+    path: '/api/public/hooks/listing-metrics',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksReleaseEscrowRoute =
   ApiPublicHooksReleaseEscrowRouteImport.update({
     id: '/api/public/hooks/release-escrow',
@@ -260,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/api/public/avatars/$': typeof ApiPublicAvatarsSplatRoute
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
+  '/api/public/hooks/listing-metrics': typeof ApiPublicHooksListingMetricsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
   '/api/public/hooks/sync-cron-secret': typeof ApiPublicHooksSyncCronSecretRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -296,6 +304,7 @@ export interface FileRoutesByTo {
   '/api/public/avatars/$': typeof ApiPublicAvatarsSplatRoute
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
+  '/api/public/hooks/listing-metrics': typeof ApiPublicHooksListingMetricsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
   '/api/public/hooks/sync-cron-secret': typeof ApiPublicHooksSyncCronSecretRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -334,6 +343,7 @@ export interface FileRoutesById {
   '/api/public/avatars/$': typeof ApiPublicAvatarsSplatRoute
   '/api/public/hooks/booking-timers': typeof ApiPublicHooksBookingTimersRoute
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
+  '/api/public/hooks/listing-metrics': typeof ApiPublicHooksListingMetricsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
   '/api/public/hooks/sync-cron-secret': typeof ApiPublicHooksSyncCronSecretRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | '/api/public/avatars/$'
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
+    | '/api/public/hooks/listing-metrics'
     | '/api/public/hooks/release-escrow'
     | '/api/public/hooks/sync-cron-secret'
     | '/api/public/media/$'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/api/public/avatars/$'
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
+    | '/api/public/hooks/listing-metrics'
     | '/api/public/hooks/release-escrow'
     | '/api/public/hooks/sync-cron-secret'
     | '/api/public/media/$'
@@ -445,6 +457,7 @@ export interface FileRouteTypes {
     | '/api/public/avatars/$'
     | '/api/public/hooks/booking-timers'
     | '/api/public/hooks/dispatch-events'
+    | '/api/public/hooks/listing-metrics'
     | '/api/public/hooks/release-escrow'
     | '/api/public/hooks/sync-cron-secret'
     | '/api/public/media/$'
@@ -472,6 +485,7 @@ export interface RootRouteChildren {
   ApiPublicAvatarsSplatRoute: typeof ApiPublicAvatarsSplatRoute
   ApiPublicHooksBookingTimersRoute: typeof ApiPublicHooksBookingTimersRoute
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
+  ApiPublicHooksListingMetricsRoute: typeof ApiPublicHooksListingMetricsRoute
   ApiPublicHooksReleaseEscrowRoute: typeof ApiPublicHooksReleaseEscrowRoute
   ApiPublicHooksSyncCronSecretRoute: typeof ApiPublicHooksSyncCronSecretRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
@@ -703,6 +717,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksDispatchEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/listing-metrics': {
+      id: '/api/public/hooks/listing-metrics'
+      path: '/api/public/hooks/listing-metrics'
+      fullPath: '/api/public/hooks/listing-metrics'
+      preLoaderRoute: typeof ApiPublicHooksListingMetricsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/release-escrow': {
       id: '/api/public/hooks/release-escrow'
       path: '/api/public/hooks/release-escrow'
@@ -780,6 +801,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicAvatarsSplatRoute: ApiPublicAvatarsSplatRoute,
   ApiPublicHooksBookingTimersRoute: ApiPublicHooksBookingTimersRoute,
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
+  ApiPublicHooksListingMetricsRoute: ApiPublicHooksListingMetricsRoute,
   ApiPublicHooksReleaseEscrowRoute: ApiPublicHooksReleaseEscrowRoute,
   ApiPublicHooksSyncCronSecretRoute: ApiPublicHooksSyncCronSecretRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
