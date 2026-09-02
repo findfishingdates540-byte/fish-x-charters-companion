@@ -19,10 +19,16 @@ export async function signMediaUrls(values: (string | null | undefined)[]): Prom
   const need = [...new Set(paths)].filter((p) => (cache.get(p)?.exp ?? 0) < now);
 
   if (need.length) {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin.storage.from("business-media").createSignedUrls(need, TTL);
-    for (const row of data ?? []) {
-      if (row.signedUrl && row.path) cache.set(row.path, { url: row.signedUrl, exp: now + (TTL - 600) * 1000 });
+    // Signing is an enhancement: if the service-role binding is unavailable we
+    // keep the proxy paths rather than failing the whole page load.
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data } = await supabaseAdmin.storage.from("business-media").createSignedUrls(need, TTL);
+      for (const row of data ?? []) {
+        if (row.signedUrl && row.path) cache.set(row.path, { url: row.signedUrl, exp: now + (TTL - 600) * 1000 });
+      }
+    } catch (err) {
+      console.warn("[media-urls] signing unavailable, falling back to proxy paths", err);
     }
   }
 
