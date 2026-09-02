@@ -442,12 +442,16 @@ function BoatPreview({
 
         {gallery.length > 0 ? (
           <div style={{ display: "grid", gap: 10 }}>
-            <div
+            <img
+              src={gallery[Math.min(active, gallery.length - 1)]}
+              alt={b.name}
               style={{
                 width: "100%",
                 aspectRatio: "16/9",
+                objectFit: "cover",
                 borderRadius: 14,
-                background: `center/cover no-repeat url(${gallery[Math.min(active, gallery.length - 1)]})`,
+                display: "block",
+                background: "var(--line)",
               }}
             />
             {gallery.length > 1 && (
@@ -462,11 +466,17 @@ function BoatPreview({
                       borderRadius: 9,
                       cursor: "pointer",
                       padding: 0,
-                      background: `center/cover no-repeat url(${u})`,
+                      overflow: "hidden",
+                      background: "var(--line)",
                       border: i === active ? "2px solid #2DE2F2" : "1px solid var(--line)",
                     }}
-                  />
+                  >
+                    <img src={u} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </button>
                 ))}
+              </div>
+            )}
+
               </div>
             )}
           </div>
