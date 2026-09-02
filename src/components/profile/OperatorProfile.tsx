@@ -344,6 +344,13 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
 
             <div style={{ background: "#0D161F", color: "#F0F2F5", borderRadius: 20, padding: 22 }}>
               <div style={{ fontSize: 10.5, letterSpacing: ".18em", textTransform: "uppercase", color: "#2DE2F2", fontWeight: 700 }}>Contact</div>
+              <Link
+                to="/messages"
+                search={{ business: b.id, tab: "shops" as const }}
+                style={{ display: "block", marginTop: 12, textAlign: "center", background: "#2DE2F2", color: "#04121B", borderRadius: 12, padding: "12px 16px", fontSize: 12.5, fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", textDecoration: "none" }}
+              >
+                Message this operator
+              </Link>
               <div style={{ marginTop: 10, fontSize: 13.5, display: "flex", flexDirection: "column", gap: 8 }}>
                 {b.address && <div>📍 {[b.address, b.city].filter(Boolean).join(", ")}</div>}
                 {b.website && <a href={b.website} target="_blank" rel="noreferrer" style={{ color: "#2DE2F2", textDecoration: "none" }}>Website ↗</a>}
