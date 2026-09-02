@@ -11,6 +11,9 @@ import {
   upsertProduct,
   deleteProduct,
   updateOrderStatus,
+  getShippingSettings,
+  saveShippingSettings,
+  refundProductOrder,
 } from "@/lib/tackle.functions";
 import {
   OperatorShell,
@@ -23,6 +26,8 @@ import {
 import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { BusinessInbox } from "@/components/messages/BusinessInbox";
+import { ImageUpload } from "@/components/business/ImageUpload";
+import { useQuery } from "@tanstack/react-query";
 
 type Product = {
   id: string;
@@ -33,7 +38,10 @@ type Product = {
   stock_qty: number;
   low_stock_threshold: number;
   is_published: boolean;
-  images: unknown;
+  description: string | null;
+  images: string[];
+  /** Signed, renderable versions of `images`. */
+  imageUrls: (string | null)[];
 };
 
 type Order = {
@@ -43,6 +51,10 @@ type Order = {
   total_cents: number;
   status: string;
   created_at: string;
+  subtotal_cents?: number | null;
+  shipping_cents?: number | null;
+  tracking_number?: string | null;
+  shipping_address?: Record<string, any> | null;
   items: { id: string; title: string; quantity: number; unit_price_cents: number }[];
 };
 
@@ -294,9 +306,29 @@ function Products({ businessId, data }: { businessId: string; data: any }) {
                   fontFamily: "inherit",
                 }}
               >
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>{p.title}</div>
-                  <div style={{ fontSize: 12, color: "#92A0AB" }}>{p.category ?? "Uncategorised"}</div>
+                <div style={{ display: "flex", gap: 12, alignItems: "center", minWidth: 0 }}>
+                  <div
+                    style={{
+                      width: 46,
+                      height: 46,
+                      borderRadius: 10,
+                      flex: "none",
+                      background: "#1C2936",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {p.imageUrls?.[0] && (
+                      <img
+                        src={p.imageUrls[0]}
+                        alt=""
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    )}
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>{p.title}</div>
+                    <div style={{ fontSize: 12, color: "#92A0AB" }}>{p.category ?? "Uncategorised"}</div>
+                  </div>
                 </div>
                 <span style={{ fontSize: 13, color: "#F0F2F5" }}>{p.sku ?? "—"}</span>
                 <span style={{ fontSize: 14, fontWeight: 600, color: "#F0F2F5" }}>{money(p.price_cents)}</span>
@@ -318,6 +350,8 @@ function Products({ businessId, data }: { businessId: string; data: any }) {
 
       {showForm && (
         <ProductForm
+          businessId={businessId}
+          key={editing?.id ?? "new"}
           initial={editing ?? undefined}
           saving={upsertM.isPending}
           onCancel={() => { setEditing(null); setShowForm(false); }}
@@ -336,12 +370,14 @@ function Products({ businessId, data }: { businessId: string; data: any }) {
 }
 
 function ProductForm({
+  businessId,
   initial,
   onCancel,
   onSave,
   onDelete,
   saving,
 }: {
+  businessId: string;
   initial?: Product;
   onCancel: () => void;
   onSave: (v: {
@@ -353,6 +389,7 @@ function ProductForm({
     stockQty: number;
     lowStockThreshold: number;
     isPublished: boolean;
+    images: string[];
   }) => void;
   onDelete?: () => void;
   saving: boolean;
@@ -364,7 +401,9 @@ function ProductForm({
   const [stock, setStock] = useState(initial ? String(initial.stock_qty) : "0");
   const [low, setLow] = useState(initial ? String(initial.low_stock_threshold) : "5");
   const [isPublished, setPublished] = useState(initial?.is_published ?? false);
-  const [description, setDescription] = useState("");
+  // Seed from the saved product, otherwise editing silently wipes the copy.
+  const [description, setDescription] = useState(initial?.description ?? "");
+  const [images, setImages] = useState<string[]>(initial?.images ?? []);
 
   return (
     <Card title={initial ? "Edit product" : "Add product"}>
@@ -398,6 +437,57 @@ function ProductForm({
           />
         </Field>
       </div>
+      <div style={{ marginTop: 18 }}>
+        <div
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: ".1em",
+            textTransform: "uppercase",
+            color: "#92A0AB",
+            marginBottom: 10,
+          }}
+        >
+          Photos
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))",
+            gap: 12,
+          }}
+        >
+          {images.map((url, i) => (
+            <div key={`${url}-${i}`}>
+              <ImageUpload
+                businessId={businessId}
+                value={url}
+                label={i === 0 ? "Main photo" : `Photo ${i + 1}`}
+                aspect="1 / 1"
+                onChange={(next) =>
+                  setImages((prev) => prev.map((u, idx) => (idx === i ? next : u)).filter(Boolean))
+                }
+              />
+              <button
+                onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
+                style={{ ...btnGhost, padding: "6px 10px", fontSize: 12, marginTop: 6 }}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          {images.length < 8 && (
+            <ImageUpload
+              businessId={businessId}
+              value=""
+              label={images.length ? "Add photo" : "Main photo"}
+              aspect="1 / 1"
+              onChange={(url) => url && setImages((prev) => [...prev, url])}
+            />
+          )}
+        </div>
+      </div>
+
       <label style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 14, fontSize: 13, color: "#F0F2F5" }}>
         <input
           type="checkbox"
@@ -419,6 +509,7 @@ function ProductForm({
               stockQty: Number(stock) || 0,
               lowStockThreshold: Number(low) || 5,
               isPublished,
+              images,
             })
           }
           style={btnPrimary}
@@ -495,6 +586,12 @@ function OrderList({
 }) {
   const qc = useQueryClient();
   const shipFn = useServerFn(updateOrderStatus);
+  const refundFn = useServerFn(refundProductOrder);
+  const refundM = useMutation({
+    mutationFn: refundFn,
+    onSuccess: () =>
+      businessId && qc.invalidateQueries({ queryKey: ["shop-overview", businessId] }),
+  });
   const shipM = useMutation({
     mutationFn: shipFn,
     onSuccess: () =>
@@ -546,20 +643,53 @@ function OrderList({
             >
               {o.items?.map((it) => `${it.quantity}× ${it.title}`).join(", ") || "—"}
             </div>
+            {!minimal && o.shipping_address && (
+              <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4, lineHeight: 1.5 }}>
+                Ship to: {formatAddress(o.shipping_address)}
+              </div>
+            )}
           </div>
           <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#F0F2F5" }}>
             {money(o.total_cents)}
           </span>
           <StatusPill label={o.status} tone={toneFor(o.status) as any} />
-          {!minimal && businessId && o.status === "paid" && (
-            <button
-              onClick={() =>
-                shipM.mutate({ data: { id: o.id, businessId, status: "shipped" } })
-              }
-              style={{ ...btnPrimary, padding: "8px 12px", fontSize: 12 }}
-            >
-              Mark shipped
-            </button>
+          {!minimal && businessId && (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              {o.status === "paid" && (
+                <button
+                  onClick={() => shipM.mutate({ data: { id: o.id, businessId, status: "shipped" } })}
+                  style={{ ...btnPrimary, padding: "8px 12px", fontSize: 12 }}
+                >
+                  Mark shipped
+                </button>
+              )}
+              {o.status === "shipped" && (
+                <button
+                  onClick={() => shipM.mutate({ data: { id: o.id, businessId, status: "delivered" } })}
+                  style={{ ...btnPrimary, padding: "8px 12px", fontSize: 12 }}
+                >
+                  Mark delivered
+                </button>
+              )}
+              {["paid", "shipped", "delivered"].includes(o.status) && (
+                <button
+                  disabled={refundM.isPending}
+                  onClick={() => {
+                    if (!window.confirm("Refund this order to the buyer and restock the items?")) return;
+                    refundM.mutate({ data: { orderId: o.id, businessId } });
+                  }}
+                  style={{
+                    ...btnGhost,
+                    padding: "8px 12px",
+                    fontSize: 12,
+                    color: "#F87171",
+                    borderColor: "rgba(216,81,74,.28)",
+                  }}
+                >
+                  {refundM.isPending ? "Refunding…" : "Refund"}
+                </button>
+              )}
+            </div>
           )}
         </div>
       ))}
@@ -567,8 +697,124 @@ function OrderList({
   );
 }
 
+function formatAddress(a: Record<string, any>): string {
+  return [a.name, a.line1, a.line2, a.city, a.state, a.postal_code, a.country]
+    .filter(Boolean)
+    .join(", ");
+}
+
+function ShippingSettingsCard({ businessId }: { businessId: string }) {
+  const qc = useQueryClient();
+  const loadFn = useServerFn(getShippingSettings);
+  const saveFn = useServerFn(saveShippingSettings);
+  const q = useQuery({
+    queryKey: ["shipping-settings", businessId],
+    queryFn: () => loadFn({ data: { businessId } }),
+  });
+  const [draft, setDraft] = useState<{
+    flat: string;
+    perItem: string;
+    freeOver: string;
+    note: string;
+  } | null>(null);
+
+  const s = q.data;
+  const view =
+    draft ??
+    (s
+      ? {
+          flat: String(s.flatRateCents / 100),
+          perItem: String(s.perItemCents / 100),
+          freeOver: s.freeOverCents == null ? "" : String(s.freeOverCents / 100),
+          note: s.policyNote ?? "",
+        }
+      : null);
+
+  const saveM = useMutation({
+    mutationFn: saveFn,
+    onSuccess: () => {
+      setDraft(null);
+      qc.invalidateQueries({ queryKey: ["shipping-settings", businessId] });
+    },
+  });
+
+  return (
+    <Card eyebrow="Fulfillment" title="Shipping & returns">
+      {!view ? (
+        <div style={{ fontSize: 13, color: "#92A0AB" }}>Loading shipping settings…</div>
+      ) : (
+        <>
+          <div style={{ fontSize: 13, color: "#92A0AB", marginBottom: 14, lineHeight: 1.6 }}>
+            Buyers are charged these rates at checkout — Fish-X calculates shipping on the server
+            from what you set here.
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+            <Field label="Flat rate $">
+              <input
+                type="number"
+                value={view.flat}
+                onChange={(e) => setDraft({ ...view, flat: e.target.value })}
+                style={inputStyle}
+              />
+            </Field>
+            <Field label="Each extra item $">
+              <input
+                type="number"
+                value={view.perItem}
+                onChange={(e) => setDraft({ ...view, perItem: e.target.value })}
+                style={inputStyle}
+              />
+            </Field>
+            <Field label="Free over $ (blank = never)">
+              <input
+                type="number"
+                value={view.freeOver}
+                onChange={(e) => setDraft({ ...view, freeOver: e.target.value })}
+                style={inputStyle}
+              />
+            </Field>
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <Field label="Shipping & returns note (shown to buyers)">
+              <textarea
+                rows={3}
+                value={view.note}
+                onChange={(e) => setDraft({ ...view, note: e.target.value })}
+                style={{ ...inputStyle, fontFamily: "inherit" }}
+              />
+            </Field>
+          </div>
+          <button
+            disabled={saveM.isPending || !draft}
+            onClick={() =>
+              saveM.mutate({
+                data: {
+                  businessId,
+                  flatRateCents: Math.round(Number(view.flat || 0) * 100),
+                  perItemCents: Math.round(Number(view.perItem || 0) * 100),
+                  freeOverCents:
+                    view.freeOver === "" ? null : Math.round(Number(view.freeOver) * 100),
+                  policyNote: view.note,
+                },
+              })
+            }
+            style={{ ...btnPrimary, marginTop: 16 }}
+          >
+            {saveM.isPending ? "Saving…" : "Save shipping settings"}
+          </button>
+        </>
+      )}
+    </Card>
+  );
+}
+
 function Settings({ businessId }: { businessId: string }) {
-  return <BusinessSettings businessId={businessId} />;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <ShippingSettingsCard businessId={businessId} />
+      <BusinessSettings businessId={businessId} />
+    </div>
+  );
 }
 
 /* --- shared UI helpers --- */
