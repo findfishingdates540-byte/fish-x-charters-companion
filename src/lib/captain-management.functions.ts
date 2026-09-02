@@ -192,7 +192,7 @@ export const listCaptainConversations = createServerFn({ method: "GET" })
 
     const { data: bookings, error } = await context.supabase
       .from("bookings")
-      .select("id,customer_id,angler_id,trip_date,start_time,end_time,party_size,status,service:bookable_services(title,hero_url),customer:customers(full_name)")
+      .select("id,customer_id,angler_id,trip_date,start_time,party_size,status,service:bookable_services(title,hero_url),customer:customers(full_name)")
       .eq("business_id", businessId)
       .order("updated_at", { ascending: false })
       .limit(40);
@@ -223,7 +223,6 @@ export const listCaptainConversations = createServerFn({ method: "GET" })
         trip_title: b.service?.title ?? "Charter",
         trip_date: b.trip_date,
         start_time: b.start_time,
-        end_time: b.end_time,
         party_size: b.party_size,
         angler_id: b.angler_id,
         status: b.status,
@@ -242,7 +241,7 @@ export const getCaptainThread = createServerFn({ method: "GET" })
     const bookingRes = await supabase
       .from("bookings")
       .select(
-        "id,status,trip_date,start_time,end_time,party_size,business_id,angler_id,service:bookable_services(title,hero_url),customer:customers(full_name)",
+        "id,status,trip_date,start_time,party_size,business_id,angler_id,service:bookable_services(title,hero_url),customer:customers(full_name)",
       )
       .eq("id", data.bookingId)
       .maybeSingle();
