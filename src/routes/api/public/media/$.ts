@@ -17,6 +17,22 @@ export const Route = createFileRoute("/api/public/media/$")({
         if (!PATH_RE.test(path)) return new Response("Not found", { status: 404 });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+        // Redirect to a short-lived signed URL instead of streaming the bytes
+        // through the worker — much faster and avoids stalled image loads.
+        const signed = await supabaseAdmin.storage
+          .from("business-media")
+          .createSignedUrl(path, 60 * 60);
+        if (!signed.error && signed.data?.signedUrl) {
+          return new Response(null, {
+            status: 302,
+            headers: {
+              Location: signed.data.signedUrl,
+              "Cache-Control": "public, max-age=1800",
+            },
+          });
+        }
+
         const { data, error } = await supabaseAdmin.storage.from("business-media").download(path);
         if (error || !data) return new Response("Not found", { status: 404 });
 
@@ -29,6 +45,7 @@ export const Route = createFileRoute("/api/public/media/$")({
             "Cache-Control": "public, max-age=31536000, immutable",
           },
         });
+
       },
     },
   },
