@@ -265,7 +265,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
         // Someone locked this exact departure first — refresh availability and
         // show the recovery screen instead of a raw error toast.
         setTakenSlot({ label: `${dateLabel}${time ? ` · ${time}` : ""}` });
-        setAttemptKey(crypto.randomUUID());
+        setAttemptSeed(crypto.randomUUID());
         void qc.invalidateQueries({ queryKey: ["checkout", serviceId] });
         setStep("slot_taken");
         window.scrollTo(0, 0);
@@ -305,8 +305,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   }, [addonAvail]);
   // Changing what you're buying starts a fresh reservation attempt.
   useEffect(() => {
-    setAttemptKey(crypto.randomUUID());
-    // Any change to what's being bought invalidates the existing hold.
+    // Any change to what's being bought invalidates the existing hold; the key
+    // is derived from the selection, so no new seed is needed here.
     setReservation(null);
     setHoldLeft(null);
   }, [slotId, party, selectedAddons, notes]);
@@ -1002,7 +1002,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   onClick={() => {
                     setReservation(null);
                     setHoldLeft(null);
-                    setAttemptKey(crypto.randomUUID());
+                    setAttemptSeed(crypto.randomUUID());
                     void qc.invalidateQueries({ queryKey: ["checkout", serviceId] });
                     setStep("dates");
                     window.scrollTo(0, 0);
