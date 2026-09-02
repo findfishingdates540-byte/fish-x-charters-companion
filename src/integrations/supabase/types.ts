@@ -1746,6 +1746,75 @@ export type Database = {
           },
         ]
       }
+      marina_service_requests: {
+        Row: {
+          business_id: string
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          note: string | null
+          requested_date: string | null
+          requester_id: string | null
+          service_key: string
+          slip_id: string | null
+          staff_note: string | null
+          status: string
+          updated_at: string
+          vessel_name: string | null
+        }
+        Insert: {
+          business_id: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          requested_date?: string | null
+          requester_id?: string | null
+          service_key: string
+          slip_id?: string | null
+          staff_note?: string | null
+          status?: string
+          updated_at?: string
+          vessel_name?: string | null
+        }
+        Update: {
+          business_id?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          requested_date?: string | null
+          requester_id?: string | null
+          service_key?: string
+          slip_id?: string | null
+          staff_note?: string | null
+          status?: string
+          updated_at?: string
+          vessel_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marina_service_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marina_service_requests_slip_id_fkey"
+            columns: ["slip_id"]
+            isOneToOne: false
+            referencedRelation: "marina_slips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marina_slips: {
         Row: {
           amperage: string | null
@@ -1754,10 +1823,12 @@ export type Database = {
           created_at: string
           draft_ft: number | null
           id: string
+          is_bookable: boolean
           length_ft: number | null
           monthly_rate_cents: number | null
           nightly_rate_cents: number | null
           notes: string | null
+          service_id: string | null
           slip_number: string
           status: string
           updated_at: string
@@ -1769,10 +1840,12 @@ export type Database = {
           created_at?: string
           draft_ft?: number | null
           id?: string
+          is_bookable?: boolean
           length_ft?: number | null
           monthly_rate_cents?: number | null
           nightly_rate_cents?: number | null
           notes?: string | null
+          service_id?: string | null
           slip_number: string
           status?: string
           updated_at?: string
@@ -1784,10 +1857,12 @@ export type Database = {
           created_at?: string
           draft_ft?: number | null
           id?: string
+          is_bookable?: boolean
           length_ft?: number | null
           monthly_rate_cents?: number | null
           nightly_rate_cents?: number | null
           notes?: string | null
+          service_id?: string | null
           slip_number?: string
           status?: string
           updated_at?: string
@@ -1798,6 +1873,13 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marina_slips_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "bookable_services"
             referencedColumns: ["id"]
           },
         ]
@@ -2061,6 +2143,8 @@ export type Database = {
           sku: string | null
           title: string
           unit_price_cents: number
+          variant_id: string | null
+          variant_label: string | null
         }
         Insert: {
           created_at?: string
@@ -2071,6 +2155,8 @@ export type Database = {
           sku?: string | null
           title: string
           unit_price_cents?: number
+          variant_id?: string | null
+          variant_label?: string | null
         }
         Update: {
           created_at?: string
@@ -2081,6 +2167,8 @@ export type Database = {
           sku?: string | null
           title?: string
           unit_price_cents?: number
+          variant_id?: string | null
+          variant_label?: string | null
         }
         Relationships: [
           {
@@ -2095,6 +2183,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "inventory_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
             referencedColumns: ["id"]
           },
         ]
@@ -2187,6 +2282,156 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_price_tiers: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          min_qty: number
+          product_id: string
+          unit_price_cents: number
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          min_qty: number
+          product_id: string
+          unit_price_cents: number
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          min_qty?: number
+          product_id?: string
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_price_tiers_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_price_tiers_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_variants: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          option_name: string
+          option_value: string
+          price_delta_cents: number
+          product_id: string
+          sku: string | null
+          sort_order: number
+          stock_qty: number
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          option_name?: string
+          option_value: string
+          price_delta_cents?: number
+          product_id: string
+          sku?: string | null
+          sort_order?: number
+          stock_qty?: number
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          option_name?: string
+          option_value?: string
+          price_delta_cents?: number
+          product_id?: string
+          sku?: string | null
+          sort_order?: number
+          stock_qty?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_wholesale_settings: {
+        Row: {
+          business_id: string
+          case_pack: number
+          created_at: string
+          min_order_qty: number
+          product_id: string
+          updated_at: string
+          wholesale_only: boolean
+          wholesale_price_cents: number | null
+        }
+        Insert: {
+          business_id: string
+          case_pack?: number
+          created_at?: string
+          min_order_qty?: number
+          product_id: string
+          updated_at?: string
+          wholesale_only?: boolean
+          wholesale_price_cents?: number | null
+        }
+        Update: {
+          business_id?: string
+          case_pack?: number
+          created_at?: string
+          min_order_qty?: number
+          product_id?: string
+          updated_at?: string
+          wholesale_only?: boolean
+          wholesale_price_cents?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_wholesale_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_wholesale_settings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "inventory_products"
             referencedColumns: ["id"]
           },
         ]
@@ -2586,6 +2831,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "sponsored_challenges_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trade_accounts: {
+        Row: {
+          business_id: string
+          buyer_id: string
+          company_name: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          note: string | null
+          status: string
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          buyer_id: string
+          company_name: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          buyer_id?: string
+          company_name?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_accounts_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"

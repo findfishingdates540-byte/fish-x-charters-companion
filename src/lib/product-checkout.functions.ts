@@ -25,6 +25,17 @@ export type StoreProduct = {
   businessId: string;
   sellerName: string;
   sellerCategory: string | null;
+  variants?: ProductVariant[];
+  wholesaleOnly?: boolean;
+};
+
+export type ProductVariant = {
+  id: string;
+  option_name: string;
+  option_value: string;
+  sku: string | null;
+  price_delta_cents: number;
+  stock_qty: number;
 };
 
 const firstImage = (images: unknown): string | null => {
@@ -51,7 +62,15 @@ export const listStoreProducts = createServerFn({ method: "GET" }).handler(async
     .limit(200);
   if (error) throw new Response(error.message, { status: 500 });
 
+  // Wholesale-only lines never appear in the retail marketplace.
+  const { data: tradeOnly } = await supabaseAdmin
+    .from("product_wholesale_settings")
+    .select("product_id")
+    .eq("wholesale_only", true);
+  const hidden = new Set((tradeOnly ?? []).map((r) => r.product_id));
+
   return (data ?? [])
+    .filter((p) => !hidden.has(p.id))
     .filter((p) => (p.business as { is_published?: boolean } | null)?.is_published !== false)
     .map<StoreProduct>((p) => ({
       id: p.id,
@@ -169,7 +188,13 @@ export const quoteShipping = createServerFn({ method: "POST" })
 
 const CheckoutInput = z.object({
   items: z
-    .array(z.object({ productId: z.string().uuid(), quantity: z.number().int().min(1).max(50) }))
+    .array(
+      z.object({
+        productId: z.string().uuid(),
+        quantity: z.number().int().min(1).max(200),
+        variantId: z.string().uuid().optional(),
+      }),
+    )
     .min(1)
     .max(30),
   origin: z.string().url().optional(),
@@ -191,20 +216,96 @@ export const createProductCheckout = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 500 });
 
     const byId = new Map((products ?? []).map((p) => [p.id, p]));
+
+    // Variants carry their own SKU, stock and price delta.
+    const variantIds = data.items.map((i) => i.variantId).filter(Boolean) as string[];
+    const variantById = new Map<string, any>();
+    if (variantIds.length) {
+      const { data: variants } = await supabaseAdmin
+        .from("product_variants")
+        .select("id,product_id,option_name,option_value,sku,price_delta_cents,stock_qty")
+        .in("id", variantIds);
+      for (const v of variants ?? []) variantById.set(v.id, v);
+    }
+
+    // Approved trade buyers get wholesale pricing, MOQ and break pricing.
+    const businessIds = [...new Set((products ?? []).map((p) => p.business_id))];
+    const { data: approved } = await supabaseAdmin
+      .from("trade_accounts")
+      .select("business_id")
+      .eq("buyer_id", userId)
+      .eq("status", "approved")
+      .in("business_id", businessIds);
+    const tradeFor = new Set((approved ?? []).map((r) => r.business_id));
+
+    const { data: wholesaleRows } = await supabaseAdmin
+      .from("product_wholesale_settings")
+      .select("product_id,business_id,min_order_qty,case_pack,wholesale_only,wholesale_price_cents")
+      .in("product_id", ids);
+    const wholesaleBy = new Map((wholesaleRows ?? []).map((r) => [r.product_id, r]));
+    const { data: tierRows } = await supabaseAdmin
+      .from("product_price_tiers")
+      .select("product_id,min_qty,unit_price_cents")
+      .in("product_id", ids)
+      .order("min_qty");
+
+    const unitPriceFor = (product: any, qty: number, variant: any | null) => {
+      const base = (product.price_cents ?? 0) + (variant?.price_delta_cents ?? 0);
+      const w = wholesaleBy.get(product.id);
+      if (!w || !tradeFor.has(product.business_id)) return base;
+      let price = w.wholesale_price_cents ?? base;
+      for (const t of tierRows ?? []) {
+        if (t.product_id === product.id && qty >= t.min_qty) price = t.unit_price_cents;
+      }
+      return price + (variant?.price_delta_cents ?? 0);
+    };
+
     for (const item of data.items) {
       const p = byId.get(item.productId);
       if (!p || !p.is_published) throw new Response("Product is no longer available", { status: 404 });
-      if ((p.stock_qty ?? 0) < item.quantity) {
-        throw new Response(`Only ${p.stock_qty ?? 0} left of "${p.title}"`, { status: 409 });
+      const w = wholesaleBy.get(p.id);
+      if (w?.wholesale_only && !tradeFor.has(p.business_id)) {
+        throw new Response(`"${p.title}" is available to approved trade buyers only`, { status: 403 });
+      }
+      if (w && tradeFor.has(p.business_id)) {
+        if (item.quantity < (w.min_order_qty ?? 1)) {
+          throw new Response(
+            `"${p.title}" has a minimum order of ${w.min_order_qty} units`,
+            { status: 400 },
+          );
+        }
+        if ((w.case_pack ?? 1) > 1 && item.quantity % w.case_pack !== 0) {
+          throw new Response(
+            `"${p.title}" ships in cases of ${w.case_pack}`,
+            { status: 400 },
+          );
+        }
+      }
+      const variant = item.variantId ? variantById.get(item.variantId) : null;
+      if (item.variantId && (!variant || variant.product_id !== p.id)) {
+        throw new Response("That option is no longer available", { status: 404 });
+      }
+      const available = variant ? variant.stock_qty : (p.stock_qty ?? 0);
+      if (available < item.quantity) {
+        throw new Response(`Only ${available} left of "${p.title}"`, { status: 409 });
       }
     }
 
     // Group the cart by vendor — one order row per business.
-    const groups = new Map<string, Array<{ product: NonNullable<ReturnType<typeof byId.get>>; qty: number }>>();
+    const groups = new Map<
+      string,
+      Array<{ product: NonNullable<ReturnType<typeof byId.get>>; qty: number; variant: any | null; unit: number }>
+    >();
     for (const item of data.items) {
       const p = byId.get(item.productId)!;
+      const variant = item.variantId ? variantById.get(item.variantId) : null;
       const list = groups.get(p.business_id) ?? [];
-      list.push({ product: p, qty: item.quantity });
+      list.push({
+        product: p,
+        qty: item.quantity,
+        variant,
+        unit: unitPriceFor(p, item.quantity, variant),
+      });
       groups.set(p.business_id, list);
     }
 
@@ -223,7 +324,7 @@ export const createProductCheckout = createServerFn({ method: "POST" })
     let grandTotal = 0;
 
     for (const [businessId, lines] of groups) {
-      const subtotal = lines.reduce((a, l) => a + (l.product.price_cents ?? 0) * l.qty, 0);
+      const subtotal = lines.reduce((a, l) => a + l.unit * l.qty, 0);
       const units = lines.reduce((a, l) => a + l.qty, 0);
       // Each vendor ships separately, so each order carries its own shipping.
       const shipping = shippingFor(
@@ -259,9 +360,13 @@ export const createProductCheckout = createServerFn({ method: "POST" })
         lines.map((l) => ({
           order_id: order.id,
           product_id: l.product.id,
+          variant_id: l.variant?.id ?? null,
+          variant_label: l.variant
+            ? `${l.variant.option_name}: ${l.variant.option_value}`
+            : null,
           title: l.product.title,
-          sku: l.product.sku,
-          unit_price_cents: l.product.price_cents ?? 0,
+          sku: l.variant?.sku ?? l.product.sku,
+          unit_price_cents: l.unit,
           quantity: l.qty,
         })),
       );
@@ -273,9 +378,11 @@ export const createProductCheckout = createServerFn({ method: "POST" })
           quantity: l.qty,
           price_data: {
             currency: "usd",
-            unit_amount: l.product.price_cents ?? 0,
+            unit_amount: l.unit,
             product_data: {
-              name: l.product.title,
+              name: l.variant
+                ? `${l.product.title} (${l.variant.option_value})`
+                : l.product.title,
               ...(image ? { images: [image] } : {}),
             },
           },
@@ -345,6 +452,19 @@ export const getStoreProduct = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Response(error.message, { status: 500 });
     if (!p || !p.is_published) return null;
+    const [{ data: variants }, { data: wholesale }] = await Promise.all([
+      supabaseAdmin
+        .from("product_variants")
+        .select("id,option_name,option_value,sku,price_delta_cents,stock_qty")
+        .eq("product_id", p.id)
+        .eq("is_active", true)
+        .order("sort_order"),
+      supabaseAdmin
+        .from("product_wholesale_settings")
+        .select("wholesale_only")
+        .eq("product_id", p.id)
+        .maybeSingle(),
+    ]);
     const product: StoreProduct = {
       id: p.id,
       title: p.title,
@@ -357,6 +477,8 @@ export const getStoreProduct = createServerFn({ method: "GET" })
       businessId: p.business_id,
       sellerName: (p.business as { name?: string } | null)?.name ?? "Fish-X vendor",
       sellerCategory: (p.business as { category_key?: string } | null)?.category_key ?? null,
+      variants: variants ?? [],
+      wholesaleOnly: wholesale?.wholesale_only ?? false,
     };
     return product;
   });
