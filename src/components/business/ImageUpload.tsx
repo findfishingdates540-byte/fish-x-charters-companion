@@ -132,12 +132,12 @@ export function ImageUpload({
                 opacity: disabled || busy ? 0.65 : 1,
               }}
             >
-              {busy ? "Uploading…" : value ? "Replace image" : "Upload image"}
+              {busy ? "Uploading…" : preview ? "Replace image" : "Upload image"}
             </button>
-            {value && !disabled && (
+            {preview && !disabled && (
               <button
                 type="button"
-                onClick={() => onChange("")}
+                onClick={() => { setLocalPreview(null); onChange(""); }}
                 style={{
                   background: "transparent",
                   border: "1px solid rgba(255,255,255,.12)",
