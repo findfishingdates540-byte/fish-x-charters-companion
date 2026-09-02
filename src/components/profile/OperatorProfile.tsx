@@ -297,15 +297,16 @@ export function OperatorProfile({
             {/* Services / Trips */}
             <section>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16 }}>
-                <h2 style={{ ...sectionTitle, margin: 0 }}>{variant === "guide" ? "Guided trips" : "Trips offered"}</h2>
-                <span style={{ fontSize: 13, color: "#92A0AB" }}>All escrow-protected</span>
+                <h2 style={{ ...sectionTitle, margin: 0 }}>{labels.services}</h2>
+                {labels.blurb && <span style={{ fontSize: 13, color: "#92A0AB" }}>{labels.blurb}</span>}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {services.length === 0 && (
-                  <div style={{ background: "#14202B", border: "1px dashed rgba(13,34,54,.15)", borderRadius: 18, padding: 32, textAlign: "center", color: "#92A0AB" }}>
-                    No published trips yet.
+                  <div style={{ background: "#14202B", border: "1px dashed rgba(255,255,255,.12)", borderRadius: 18, padding: 32, textAlign: "center", color: "#92A0AB" }}>
+                    Nothing published here yet.
                   </div>
                 )}
+
                 {services.map((s) => {
                   const active = selectedServiceId === s.id;
                   return (
