@@ -239,7 +239,7 @@ export function AvailabilityCalendar({
                         ? blocked
                           ? "#F87171"
                           : booked
-                            ? "#c98a12"
+                            ? "#2DE2F2"
                             : "#22C55E"
                         : "transparent",
                     }}
