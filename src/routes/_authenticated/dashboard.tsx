@@ -171,53 +171,57 @@ function Dashboard() {
     }
   }, [primaryRole, businesses, navigate]);
 
-  if (primaryRole === "angler") return <AnglerDashboard />;
-  if (primaryRole === "captain") return <CaptainDashboard />;
+  return <Suspense fallback={null}>{renderDashboard()}</Suspense>;
 
-  if (primaryRole === "business_owner") {
-    const biz = pickPrimaryBusiness(businesses, primaryRole) as
-      | { id: string; name: string; category_key: string }
-      | undefined;
-    if (!biz) return <DashboardFrame src="/dashboards/onboarding.html" title="Onboarding" />;
+  function renderDashboard() {
+    if (primaryRole === "angler") return <AnglerDashboard />;
+    if (primaryRole === "captain") return <CaptainDashboard />;
 
-    const operatorName =
-      profile?.display_name || profile?.full_name || "Operator";
-    const key = biz.category_key;
+    if (primaryRole === "business_owner") {
+      const biz = pickPrimaryBusiness(businesses, primaryRole) as
+        | { id: string; name: string; category_key: string }
+        | undefined;
+      if (!biz) return <DashboardFrame src="/dashboards/onboarding.html" title="Onboarding" />;
 
-    if (!key || key === "charter") return <CaptainDashboard />;
-    if (key === "marina" || key === "lodge")
-      return (
-        <MarinaDashboard
-          businessId={biz.id}
-          workspaceName={biz.name}
-          operatorName={operatorName}
-        />
-      );
-    if (
-      key === "tackle_shop" ||
-      key === "bait_shop" ||
-      key === "gear_mfg" ||
-      key === "apparel"
-    )
-      return (
-        <ShopDashboard
-          businessId={biz.id}
-          workspaceName={biz.name}
-          operatorName={operatorName}
-          categoryKey={key}
-        />
-      );
-    if (key === "guide_service")
-      return (
-        <GuideDashboard
-          businessId={biz.id}
-          workspaceName={biz.name}
-          operatorName={operatorName}
-        />
-      );
-    return <DashboardFrame src="/dashboards/captain.html" title="Operator dashboard" />;
+      const operatorName =
+        profile?.display_name || profile?.full_name || "Operator";
+      const key = biz.category_key;
+
+      if (!key || key === "charter") return <CaptainDashboard />;
+      if (key === "marina" || key === "lodge")
+        return (
+          <MarinaDashboard
+            businessId={biz.id}
+            workspaceName={biz.name}
+            operatorName={operatorName}
+          />
+        );
+      if (
+        key === "tackle_shop" ||
+        key === "bait_shop" ||
+        key === "gear_mfg" ||
+        key === "apparel"
+      )
+        return (
+          <ShopDashboard
+            businessId={biz.id}
+            workspaceName={biz.name}
+            operatorName={operatorName}
+            categoryKey={key}
+          />
+        );
+      if (key === "guide_service")
+        return (
+          <GuideDashboard
+            businessId={biz.id}
+            workspaceName={biz.name}
+            operatorName={operatorName}
+          />
+        );
+      return <DashboardFrame src="/dashboards/captain.html" title="Operator dashboard" />;
+    }
+
+    return <DashboardFrame src="/dashboards/angler.html" title="Dashboard" />;
   }
-
-  return <DashboardFrame src="/dashboards/angler.html" title="Dashboard" />;
 }
 
