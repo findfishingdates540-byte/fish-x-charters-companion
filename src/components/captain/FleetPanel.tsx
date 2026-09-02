@@ -52,6 +52,8 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
   const upsert = useServerFn(upsertCaptainBoat);
   const del = useServerFn(deleteCaptainBoat);
   const [editing, setEditing] = useState<BoatDraft | null>(null);
+  const [preview, setPreview] = useState<BoatRow | null>(null);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["captain-boats"],
