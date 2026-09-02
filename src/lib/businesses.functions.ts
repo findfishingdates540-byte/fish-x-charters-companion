@@ -92,6 +92,7 @@ export const getBusinessProfile = createServerFn({ method: "GET" })
         .eq("business_id", biz.id)
         .order("slip_number")
         .limit(24),
+      sb
         .from("business_posts")
         .select("id,body,media_json,created_at")
         .eq("business_id", biz.id)
