@@ -61,7 +61,7 @@ export const listMessageThreads = createServerFn({ method: "GET" })
         ? supabase.from("bookable_services").select("id,title,hero_url").in("id", serviceIds)
         : Promise.resolve({ data: [], error: null }),
       businessIds.length
-        ? supabase.from("businesses").select("id,name").in("id", businessIds)
+        ? supabase.from("businesses").select("id,name,logo_url,hero_url").in("id", businessIds)
         : Promise.resolve({ data: [], error: null }),
       captainIds.length
         ? supabase.from("profiles").select("id,full_name,display_name,avatar_url").in("id", captainIds)
@@ -114,7 +114,7 @@ export const getThread = createServerFn({ method: "GET" })
         ? supabase.from("bookable_services").select("id,title,hero_url").eq("id", booking.service_id).maybeSingle()
         : Promise.resolve({ data: null, error: null }),
       booking.business_id
-        ? supabase.from("businesses").select("id,name").eq("id", booking.business_id).maybeSingle()
+        ? supabase.from("businesses").select("id,name,logo_url,hero_url").eq("id", booking.business_id).maybeSingle()
         : Promise.resolve({ data: null, error: null }),
       booking.captain_id
         ? supabase
