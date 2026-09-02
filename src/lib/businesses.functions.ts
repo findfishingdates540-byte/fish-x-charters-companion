@@ -117,9 +117,18 @@ export const getBusinessProfile = createServerFn({ method: "GET" })
     ratings.forEach((r) => { if (r >= 1 && r <= 5) buckets[r - 1]++; });
 
     const services = servicesRes.data ?? [];
-    const serviceIds = new Set(services.map((s) => s.id));
+    const serviceIds = services.map((s) => s.id);
+    const slotsRes = serviceIds.length
+      ? await sb
+          .from("service_availability")
+          .select("id,service_id,starts_at,ends_at,seats_available,seats_booked,price_cents")
+          .in("service_id", serviceIds)
+          .gte("starts_at", nowIso)
+          .eq("is_blackout", false)
+          .order("starts_at")
+          .limit(40)
+      : { data: [] as any[] };
     const upcoming = (slotsRes.data ?? [])
-      .filter((s) => serviceIds.has(s.service_id))
       .filter((s) => (s.seats_available ?? 0) - (s.seats_booked ?? 0) > 0)
       .slice(0, 8)
       .map((s) => ({
