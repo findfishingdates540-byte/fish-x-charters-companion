@@ -9,7 +9,6 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
 import {
   CATALOG,
   tileFor,
@@ -21,7 +20,7 @@ import {
   type Cat,
   type Product,
 } from "./catalog";
-import { listStoreProducts, createProductCheckout } from "@/lib/product-checkout.functions";
+import { listStoreProducts, createProductCheckout, quoteShipping } from "@/lib/product-checkout.functions";
 import { listCategories } from "@/lib/businesses.functions";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { listMyWishlistIds, toggleWishlist } from "@/lib/shopping.functions";
