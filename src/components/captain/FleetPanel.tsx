@@ -149,8 +149,10 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
           onChange={setEditing}
           onCancel={() => setEditing(null)}
           onSave={() => mUpsert.mutate(editing)}
-          onAddImage={(url) => addImage(editing, url)}
-          onRemoveImage={(url) => removeImage(editing, url)}
+          onAddImage={() => addImage(editing)}
+          onSetImage={(idx, url) => setImageAt(editing, idx, url)}
+          onRemoveImage={(idx) => removeImageAt(editing, idx)}
+
           saving={mUpsert.isPending}
           error={mUpsert.error ? String(mUpsert.error) : null}
         />
