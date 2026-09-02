@@ -353,7 +353,7 @@ function ThreadList({ activeId }: { activeId: string | null }) {
                   background: active ? V.sandsoft : "transparent",
                 }}
               >
-                <CounterpartAvatar url={t.captain?.avatar_url} label={name} size={46} />
+                <CounterpartAvatar url={(t.business as any)?.logo_url || (t.business as any)?.hero_url || t.captain?.avatar_url} label={name} size={46} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
@@ -526,7 +526,7 @@ function ThreadView({ bookingId }: { bookingId: string }) {
           borderBottom: `1px solid ${V.line}`,
         }}
       >
-        <CounterpartAvatar url={data.captain?.avatar_url} label={name} size={42} />
+        <CounterpartAvatar url={(data.business as any)?.logo_url || (data.business as any)?.hero_url || data.captain?.avatar_url} label={name} size={42} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
@@ -621,7 +621,7 @@ function ThreadView({ bookingId }: { bookingId: string }) {
                   marginRight: mine ? 0 : "auto",
                 }}
               >
-                {!mine && <CounterpartAvatar url={data.captain?.avatar_url} label={name} size={30} />}
+                {!mine && <CounterpartAvatar url={(data.business as any)?.logo_url || (data.business as any)?.hero_url || data.captain?.avatar_url} label={name} size={30} />}
                 <div style={{ minWidth: 0 }}>
                   <div
                     style={{
