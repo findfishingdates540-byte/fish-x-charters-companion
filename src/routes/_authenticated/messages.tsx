@@ -1,9 +1,17 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { Messages } from "@/components/messages/Messages";
+import { BusinessInbox } from "@/components/messages/BusinessInbox";
+import { startBusinessConversation } from "@/lib/business-messages.functions";
 import { getThread, listMessageThreads } from "@/lib/messages.functions";
 
-const searchSchema = z.object({ booking: z.string().uuid().optional() });
+const searchSchema = z.object({
+  booking: z.string().uuid().optional(),
+  business: z.string().uuid().optional(),
+  tab: z.enum(["trips", "shops"]).optional(),
+});
 
 export const Route = createFileRoute("/_authenticated/messages")({
   validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
@@ -25,10 +33,16 @@ export const Route = createFileRoute("/_authenticated/messages")({
       { title: "Messages — FISH-X.COM Bookings & Marketplace" },
       {
         name: "description",
-        content: "Message your captain about each booking — one thread per trip.",
+        content:
+          "Message captains about each booking, and talk directly with tackle shops, marinas, guides and brands.",
       },
       { property: "og:title", content: "Messages — FISH-X.COM Bookings & Marketplace" },
-      { property: "og:description", content: "Your conversations with each captain, tied to your bookings." },
+      {
+        property: "og:description",
+        content: "Your conversations with captains, shops, marinas and guide services.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: MessagesPage,
@@ -42,6 +56,62 @@ export const Route = createFileRoute("/_authenticated/messages")({
 });
 
 function MessagesPage() {
-  const { booking } = useSearch({ from: "/_authenticated/messages" });
-  return <Messages bookingId={booking ?? null} />;
+  const { booking, business, tab } = useSearch({ from: "/_authenticated/messages" });
+  const active: "trips" | "shops" = tab ?? (business ? "shops" : "trips");
+
+  const startFn = useServerFn(startBusinessConversation);
+  const convo = useQuery({
+    queryKey: ["start-business-convo", business],
+    queryFn: () => startFn({ data: { businessId: business! } }),
+    enabled: !!business,
+  });
+
+  return (
+    <div style={{ fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          padding: "16px 20px 0",
+          background: "#fff",
+        }}
+      >
+        {(
+          [
+            { key: "trips", label: "Trip messages" },
+            { key: "shops", label: "Shops & operators" },
+          ] as const
+        ).map((t) => (
+          <Link
+            key={t.key}
+            to="/messages"
+            search={{ tab: t.key }}
+            style={{
+              textDecoration: "none",
+              borderRadius: 30,
+              padding: "9px 18px",
+              fontSize: 12.5,
+              fontWeight: 700,
+              border: "1px solid rgba(13,34,54,.10)",
+              background: active === t.key ? "#2DE2F2" : "transparent",
+              color: active === t.key ? "#04121B" : "#5c6b78",
+            }}
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
+
+      {active === "trips" ? (
+        <Messages bookingId={booking ?? null} />
+      ) : (
+        <div style={{ padding: 20, background: "#fff", minHeight: "70vh" }}>
+          <BusinessInbox
+            theme="light"
+            initialConversationId={(convo.data as any)?.conversationId ?? null}
+          />
+        </div>
+      )}
+    </div>
+  );
 }
