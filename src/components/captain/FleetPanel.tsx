@@ -476,9 +476,6 @@ function BoatPreview({
                 ))}
               </div>
             )}
-
-              </div>
-            )}
           </div>
         ) : (
           <div
