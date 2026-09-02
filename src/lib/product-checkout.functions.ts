@@ -68,13 +68,111 @@ export const listStoreProducts = createServerFn({ method: "GET" }).handler(async
     }));
 });
 
+
+/* ---------------- Shipping (server-authoritative) ---------------- */
+
+export type VendorShipping = {
+  flatRateCents: number;
+  perItemCents: number;
+  freeOverCents: number | null;
+  policyNote: string | null;
+};
+
+/** Fallback used when a vendor hasn't configured shipping yet. */
+export const DEFAULT_SHIPPING: VendorShipping = {
+  flatRateCents: 800,
+  perItemCents: 0,
+  freeOverCents: 15000,
+  policyNote: null,
+};
+
+type ShippingClient = {
+  from: (t: string) => any;
+};
+
+async function loadShippingSettings(
+  client: ShippingClient,
+  businessIds: string[],
+): Promise<Map<string, VendorShipping>> {
+  const map = new Map<string, VendorShipping>();
+  if (!businessIds.length) return map;
+  const { data } = await client
+    .from("vendor_shipping_settings")
+    .select("business_id,flat_rate_cents,per_item_cents,free_over_cents,policy_note")
+    .in("business_id", businessIds);
+  for (const row of (data ?? []) as any[]) {
+    map.set(row.business_id, {
+      flatRateCents: row.flat_rate_cents ?? 0,
+      perItemCents: row.per_item_cents ?? 0,
+      freeOverCents: row.free_over_cents ?? null,
+      policyNote: row.policy_note ?? null,
+    });
+  }
+  return map;
+}
+
+/** Shipping charged by one vendor for a given subtotal / unit count. */
+export function shippingFor(
+  settings: VendorShipping,
+  subtotalCents: number,
+  units: number,
+): number {
+  if (subtotalCents <= 0) return 0;
+  if (settings.freeOverCents != null && subtotalCents >= settings.freeOverCents) return 0;
+  const extras = Math.max(0, units - 1) * settings.perItemCents;
+  return settings.flatRateCents + extras;
+}
+
+/**
+ * Public shipping quote so the cart can show the same number the server will
+ * charge. Reads published products only.
+ */
+export const quoteShipping = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        items: z
+          .array(z.object({ productId: z.string().uuid(), quantity: z.number().int().min(1).max(50) }))
+          .max(30),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data }) => {
+    if (!data.items.length) return { shippingCents: 0, byVendor: [] as Array<{ businessId: string; shippingCents: number }> };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: products } = await supabaseAdmin
+      .from("inventory_products")
+      .select("id,price_cents,business_id,is_published")
+      .in("id", data.items.map((i) => i.productId));
+
+    const byId = new Map((products ?? []).map((p) => [p.id, p]));
+    const groups = new Map<string, { subtotal: number; units: number }>();
+    for (const item of data.items) {
+      const p = byId.get(item.productId);
+      if (!p || !p.is_published) continue;
+      const g = groups.get(p.business_id) ?? { subtotal: 0, units: 0 };
+      g.subtotal += (p.price_cents ?? 0) * item.quantity;
+      g.units += item.quantity;
+      groups.set(p.business_id, g);
+    }
+
+    const settings = await loadShippingSettings(supabaseAdmin as never, [...groups.keys()]);
+    const byVendor = [...groups.entries()].map(([businessId, g]) => ({
+      businessId,
+      shippingCents: shippingFor(settings.get(businessId) ?? DEFAULT_SHIPPING, g.subtotal, g.units),
+    }));
+    return {
+      shippingCents: byVendor.reduce((a, v) => a + v.shippingCents, 0),
+      byVendor,
+    };
+  });
+
 const CheckoutInput = z.object({
   items: z
     .array(z.object({ productId: z.string().uuid(), quantity: z.number().int().min(1).max(50) }))
     .min(1)
     .max(30),
   origin: z.string().url().optional(),
-  shippingCents: z.number().int().min(0).max(100000).optional(),
 });
 
 export const createProductCheckout = createServerFn({ method: "POST" })
@@ -110,7 +208,6 @@ export const createProductCheckout = createServerFn({ method: "POST" })
       groups.set(p.business_id, list);
     }
 
-    const shippingTotal = data.shippingCents ?? 0;
     const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("full_name,display_name")
@@ -118,14 +215,23 @@ export const createProductCheckout = createServerFn({ method: "POST" })
       .maybeSingle();
     const buyerName = profile?.full_name ?? profile?.display_name ?? null;
 
+    const shippingSettings = await loadShippingSettings(supabaseAdmin as never, [...groups.keys()]);
+    let shippingTotal = 0;
+
     const orderIds: string[] = [];
     const lineItems: Array<Record<string, unknown>> = [];
     let grandTotal = 0;
 
     for (const [businessId, lines] of groups) {
       const subtotal = lines.reduce((a, l) => a + (l.product.price_cents ?? 0) * l.qty, 0);
-      // Shipping is charged once on the first vendor group.
-      const shipping = orderIds.length === 0 ? shippingTotal : 0;
+      const units = lines.reduce((a, l) => a + l.qty, 0);
+      // Each vendor ships separately, so each order carries its own shipping.
+      const shipping = shippingFor(
+        shippingSettings.get(businessId) ?? DEFAULT_SHIPPING,
+        subtotal,
+        units,
+      );
+      shippingTotal += shipping;
       const total = subtotal + shipping;
       const { platformFeeCents, vendorCents } = splitAmount(total, PRODUCT_FEE_RATE);
 
