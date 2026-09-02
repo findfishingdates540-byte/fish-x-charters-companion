@@ -15,6 +15,7 @@ import {
   listCaptainConversations,
   getCaptainEarnings,
 } from "@/lib/captain-management.functions";
+import { CaptainMessages } from "./CaptainMessages";
 import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
@@ -165,7 +166,7 @@ export function CaptainDashboard() {
           {tab === "services" && <ChartersPanel data={data} />}
           {tab === "blockouts" && <BlockoutDatesPanel />}
           {tab === "fleet" && <FleetPanel businessId={data.business?.id ?? null} />}
-          {tab === "messages" && <MessagesPanel />}
+          {tab === "messages" && <CaptainMessages />}
           {tab === "earnings" && <EarningsPanel businessId={data.business?.id ?? null} />}
           {tab === "settings" && <SettingsPanel data={data} />}
         </main>
