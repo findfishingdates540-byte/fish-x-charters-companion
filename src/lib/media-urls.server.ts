@@ -10,7 +10,20 @@ const TTL = 60 * 60 * 6;
 
 const cache = new Map<string, { url: string; exp: number }>();
 
-export async function signMediaUrls(values: (string | null | undefined)[]): Promise<(string | null)[]> {
+type StorageClient = {
+  storage: {
+    from: (bucket: string) => {
+      createSignedUrls: (paths: string[], expiresIn: number) => Promise<{
+        data: Array<{ path?: string | null; signedUrl?: string | null }> | null;
+      }>;
+    };
+  };
+};
+
+export async function signMediaUrls(
+  values: (string | null | undefined)[],
+  client?: StorageClient,
+): Promise<(string | null)[]> {
   const paths = values
     .map((v) => (typeof v === "string" && v.startsWith(PREFIX) ? v.slice(PREFIX.length) : null))
     .filter((p): p is string => !!p);
@@ -22,8 +35,8 @@ export async function signMediaUrls(values: (string | null | undefined)[]): Prom
     // Signing is an enhancement: if the service-role binding is unavailable we
     // keep the proxy paths rather than failing the whole page load.
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data } = await supabaseAdmin.storage.from("business-media").createSignedUrls(need, TTL);
+      const storageClient = client ?? (await import("@/integrations/supabase/client.server")).supabaseAdmin;
+      const { data } = await storageClient.storage.from("business-media").createSignedUrls(need, TTL);
       for (const row of data ?? []) {
         if (row.signedUrl && row.path) cache.set(row.path, { url: row.signedUrl, exp: now + (TTL - 600) * 1000 });
       }
@@ -42,12 +55,13 @@ export async function signMediaUrls(values: (string | null | undefined)[]): Prom
 /** Convenience for a row with a cover image plus a gallery array. */
 export async function signRowMedia<T extends { hero_image_url?: string | null; image_urls?: string[] | null }>(
   rows: T[],
+  client?: StorageClient,
 ): Promise<T[]> {
   const flat: (string | null | undefined)[] = [];
   for (const r of rows) {
     flat.push(r.hero_image_url ?? null, ...((r.image_urls ?? []) as string[]));
   }
-  const signed = await signMediaUrls(flat);
+  const signed = await signMediaUrls(flat, client);
   let i = 0;
   return rows.map((r) => {
     const hero = signed[i++] ?? null;
