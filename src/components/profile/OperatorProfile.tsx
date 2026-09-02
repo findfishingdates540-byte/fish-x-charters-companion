@@ -272,11 +272,15 @@ export function OperatorProfile({
             </div>
           </div>
           <FollowButton businessId={b.id} />
-          <div style={{ display: "flex", gap: 26, padding: "16px 22px", background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, flex: "none" }}>
-            <Stat n={services.length} label="trips" />
+          <div style={{ display: "flex", gap: 26, padding: "16px 22px", background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, flex: "none", flexWrap: "wrap" }}>
+            <Stat n={services.length} label={isShop ? "services" : "trips"} />
+            {boats.length > 0 && <Stat n={boats.length} label={boats.length === 1 ? "boat" : "boats"} divider />}
+            {products.length > 0 && <Stat n={products.length} label="products" divider />}
+            {slips.length > 0 && <Stat n={slips.length} label="slips" divider />}
             <Stat n={ratingSummary.count} label="reviews" divider />
             <Stat n={b.verified_at ? "✓" : "—"} label={b.verified_at ? "verified" : "pending"} divider />
           </div>
+
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 360px", gap: 26, marginTop: 34 }}>
