@@ -86,7 +86,7 @@ export function AnglerDashboard() {
   useEffect(() => {
     setTab(initialTab);
   }, [initialTab]);
-  
+  const [bellOpen, setBellOpen] = useState(false);
   const navigate = useNavigate();
   const { data: home } = useSuspenseQuery(anglerHomeQO);
   const { data: recos } = useSuspenseQuery(recosQO);
@@ -182,6 +182,15 @@ export function AnglerDashboard() {
                 style={{ border: 0, outline: "none", background: "transparent", fontFamily: "var(--sans)", fontSize: 13.5, color: "#fff", width: "100%" }}
               />
             </label>
+            <button
+              onClick={() => setBellOpen((v) => !v)}
+              style={{ position: "relative", width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", cursor: "pointer", display: "grid", placeItems: "center", color: "var(--ond)" }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 0 0 4 0" />
+              </svg>
+              <span style={{ position: "absolute", top: 8, right: 9, width: 8, height: 8, borderRadius: "50%", background: "var(--sand)", border: "2px solid var(--navy)" }} />
+            </button>
             <Link
               to="/settings"
               title="Settings"
@@ -215,6 +224,23 @@ export function AnglerDashboard() {
         </div>
       </header>
 
+      {bellOpen && (
+        <div style={{ position: "absolute", top: 72, right: "max(24px, calc(50% - 580px))", zIndex: 40, width: 330, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, boxShadow: "0 30px 60px -30px rgba(13,34,54,.5)", overflow: "hidden" }}>
+          <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--line)", fontSize: 13, fontWeight: 700, color: "var(--ink)" }}>Notifications</div>
+          <div style={{ padding: "14px 18px", fontSize: 13, color: "var(--tmut)" }}>
+            {nextTrip
+              ? `Trip confirmed & escrow-protected — ${nextTrip.business?.name ?? "your captain"}`
+              : "You're all caught up."}
+          </div>
+          <Link
+            to="/messages"
+            onClick={() => setBellOpen(false)}
+            style={{ display: "block", padding: "12px 18px", borderTop: "1px solid var(--line)", fontSize: 13, fontWeight: 700, color: "var(--goldtext)", textDecoration: "none" }}
+          >
+            Open Messages →
+          </Link>
+        </div>
+      )}
 
       <main
         style={
