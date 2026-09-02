@@ -15,6 +15,7 @@ import {
   listCaptainConversations,
   getCaptainEarnings,
 } from "@/lib/captain-management.functions";
+import { CaptainMessages } from "./CaptainMessages";
 import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { DEFAULT_HERO } from "@/lib/platform-photos";
@@ -165,7 +166,7 @@ export function CaptainDashboard() {
           {tab === "services" && <ChartersPanel data={data} />}
           {tab === "blockouts" && <BlockoutDatesPanel />}
           {tab === "fleet" && <FleetPanel businessId={data.business?.id ?? null} />}
-          {tab === "messages" && <MessagesPanel />}
+          {tab === "messages" && <CaptainMessages />}
           {tab === "earnings" && <EarningsPanel businessId={data.business?.id ?? null} />}
           {tab === "settings" && <SettingsPanel data={data} />}
         </main>
@@ -407,47 +408,6 @@ function EarningsPanel({ businessId }: { businessId: string | null }) {
 }
 
 /* ---------------- MESSAGES ---------------- */
-
-function MessagesPanel() {
-  const fn = useServerFn(listCaptainConversations);
-  const { data, isLoading } = useQuery({ queryKey: ["captain-conversations"], queryFn: () => fn() });
-  if (isLoading) return <Empty text="Loading conversations…" />;
-  const rows = data ?? [];
-  return (
-    <Panel title="Recent conversations">
-      {rows.length === 0 && <Empty text="No messages yet. Guest messages will appear here after a booking." />}
-      {rows.map((c: any, i: number) => (
-        <Link
-          key={c.booking_id}
-          to="/bookings/detail"
-          search={{ id: c.booking_id }}
-          style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i < rows.length - 1 ? "1px solid var(--line)" : "none", textDecoration: "none", color: "inherit" }}
-        >
-          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(31,159,190,.12)", color: "var(--cyan)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", fontWeight: 600, fontSize: 18 }}>
-            {(c.customer_name || "G").charAt(0).toUpperCase()}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 600 }}>{c.customer_name}</span>
-              <span style={{ fontSize: 12, color: "var(--tmut)" }}>· {c.trip_title}</span>
-              {c.unread_count > 0 && (
-                <span style={{ marginLeft: 6, background: "var(--cyan)", color: "#04121B", fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "1px 8px" }}>{c.unread_count}</span>
-              )}
-            </div>
-            <div style={{ fontSize: 13, color: "var(--tmut)", marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {c.last_message?.body ?? "—"}
-            </div>
-          </div>
-          <div style={{ fontSize: 12, color: "var(--tmut)", flex: "none" }}>
-            {c.last_message?.created_at ? new Date(c.last_message.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""}
-          </div>
-        </Link>
-      ))}
-    </Panel>
-  );
-}
-
-/* ---------------- SETTINGS ---------------- */
 
 function SettingsPanel({ data }: { data: CaptainData }) {
   const biz = data.business;
