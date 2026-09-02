@@ -307,6 +307,11 @@ export const createProductCheckout = createServerFn({ method: "POST" })
         line_items: lineItems as never,
         metadata,
         payment_intent_data: { metadata },
+        // Vendors need somewhere to ship to.
+        shipping_address_collection: {
+          allowed_countries: ["US", "CA", "GB", "AU", "NZ", "IE", "MX", "ZA", "NG"],
+        },
+        phone_number_collection: { enabled: true },
         success_url: `${origin}/marketplace?paid=1&order=${orderIds[0]}`,
         cancel_url: `${origin}/marketplace?canceled=1`,
       },
