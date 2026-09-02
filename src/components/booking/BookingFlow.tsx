@@ -220,9 +220,19 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 2400); };
 
   const createBookingRPC = useServerFn(createBookingFromService);
-  // Stable per attempt: a double-click or retry returns the same booking
-  // instead of reserving a second set of seats.
-  const [attemptKey, setAttemptKey] = useState(() => crypto.randomUUID());
+  // The key is derived from exactly what's being bought, so re-entering the
+  // deposit step with an unchanged selection returns the SAME booking instead
+  // of stacking a second hold on the departure. A genuinely new attempt (a
+  // fresh seed after a conflict) rolls the key over, and the server releases
+  // this angler's previous unpaid hold before creating the new one.
+  const [attemptSeed, setAttemptSeed] = useState(() => crypto.randomUUID());
+  const attemptKey = useMemo(() => {
+    const sig = [slotId, party, [...selectedAddons].sort().join("|"), notes.trim()].join("~");
+    let h = 5381;
+    for (let i = 0; i < sig.length; i++) h = ((h << 5) + h + sig.charCodeAt(i)) >>> 0;
+    return `${attemptSeed}-${h.toString(36)}`;
+  }, [attemptSeed, slotId, party, selectedAddons, notes]);
+
   const placeMut = useMutation({
     mutationFn: () => {
       if (!slot) throw new Error("Pick an available departure first.");
