@@ -19,6 +19,7 @@ import {
   FollowedSellersSection,
 } from "@/components/shopping/ShoppingSections";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
+import { AnglerNotifications } from "@/components/settings/AnglerNotifications";
 import { supabase } from "@/integrations/supabase/client";
 
 const V = {
@@ -53,6 +54,7 @@ export function SettingsPage() {
     { key: "orders", label: "My orders", hint: "Marketplace purchases & delivery" },
     { key: "wishlist", label: "Saved items", hint: "Your marketplace wishlist" },
     { key: "sellers", label: "Followed sellers", hint: "Shops, marinas & brands" },
+    { key: "notifications", label: "Notifications", hint: "Emails, reminders & alerts" },
     ...memberships.map((m: any) => ({
       key: `biz:${m.business.id}`,
       label: m.business.name,
@@ -195,6 +197,13 @@ export function SettingsPage() {
             <>
               <SectionHead title="Followed sellers" sub="Shops, marinas and brands you keep an eye on." />
               <FollowedSellersSection />
+            </>
+          )}
+
+          {active === "notifications" && (
+            <>
+              <SectionHead title="Notifications" sub="Choose what Fish-X emails you about and what stays in-app." />
+              <AnglerNotifications />
             </>
           )}
 
