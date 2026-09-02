@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listCaptainConversations, getCaptainThread } from "@/lib/captain-management.functions";
 import { sendMessage, markThreadRead } from "@/lib/messages.functions";
+import { BusinessInbox } from "@/components/messages/BusinessInbox";
 
 const C = {
   card: "var(--card, #14202B)",
@@ -70,7 +71,45 @@ function Avatar({ label, url, size = 44 }: { label: string; url?: string | null;
   );
 }
 
-export function CaptainMessages() {
+export function CaptainMessages({ businessId }: { businessId?: string | null }) {
+  const [mode, setMode] = useState<"trips" | "direct">("trips");
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+        {([["trips", "Trip threads"], ["direct", "Direct enquiries"]] as const).map(([k, label]) => (
+          <button
+            key={k}
+            type="button"
+            onClick={() => setMode(k)}
+            style={{
+              borderRadius: 30,
+              padding: "9px 18px",
+              fontSize: 12.5,
+              fontWeight: 700,
+              cursor: "pointer",
+              border: `1px solid ${C.line}`,
+              background: mode === k ? C.cyan : "transparent",
+              color: mode === k ? "#04121B" : C.tmut,
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {mode === "trips" ? (
+        <BookingThreads />
+      ) : businessId ? (
+        <BusinessInbox theme="dark" businessId={businessId} />
+      ) : (
+        <div style={{ padding: 24, color: C.tmut, fontSize: 13 }}>
+          Connect your charter business to receive direct enquiries.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BookingThreads() {
   const listFn = useServerFn(listCaptainConversations);
   const { data, isLoading } = useQuery({
     queryKey: ["captain-conversations"],

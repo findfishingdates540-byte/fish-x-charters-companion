@@ -26,6 +26,7 @@ import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { ServicesManager } from "@/components/business/ServicesManager";
 import { RequestInbox } from "@/components/operator/RequestInbox";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
+import { BusinessInbox } from "@/components/messages/BusinessInbox";
 
 const overviewQO = (businessId: string) =>
   queryOptions({
@@ -75,6 +76,7 @@ export function GuideDashboard({
       badge: data.requests.length || undefined,
     },
     { key: "listings", label: "Listings", icon: <TagIcon /> },
+    { key: "messages", label: "Messages", icon: <InboxIcon /> },
     { key: "payouts", label: "Payouts", icon: <PayoutIcon /> },
     { key: "settings", label: "Settings", icon: <GearIcon /> },
   ];
@@ -89,6 +91,7 @@ export function GuideDashboard({
     slots: { t: "Availability", s: "Bookable slots across your services." },
     requests: { t: "Requests", s: "New bookings waiting on you." },
     listings: { t: "Listings", s: "Your bookable guided trips and clinics." },
+    messages: { t: "Messages", s: "Direct conversations with anglers." },
     payouts: { t: "Payouts", s: "Connect your bank and manage payouts." },
     settings: { t: "Settings", s: "Profile, team, notifications and payouts." },
   };
@@ -142,6 +145,7 @@ export function GuideDashboard({
           <PaymentsDashboard businessId={businessId} />
         </div>
       )}
+      {active === "messages" && <BusinessInbox theme="dark" businessId={businessId} />}
       {active === "settings" && <BusinessSettings businessId={businessId} />}
     </OperatorShell>
   );
