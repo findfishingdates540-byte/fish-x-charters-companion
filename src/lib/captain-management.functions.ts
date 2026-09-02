@@ -192,7 +192,7 @@ export const listCaptainConversations = createServerFn({ method: "GET" })
 
     const { data: bookings, error } = await context.supabase
       .from("bookings")
-      .select("id,customer_id,trip_date,status,service:bookable_services(title),customer:customers(full_name)")
+      .select("id,customer_id,angler_id,trip_date,start_time,end_time,party_size,status,service:bookable_services(title,hero_url),customer:customers(full_name)")
       .eq("business_id", businessId)
       .order("updated_at", { ascending: false })
       .limit(40);
@@ -222,10 +222,57 @@ export const listCaptainConversations = createServerFn({ method: "GET" })
         customer_name: b.customer?.full_name ?? "Guest",
         trip_title: b.service?.title ?? "Charter",
         trip_date: b.trip_date,
+        start_time: b.start_time,
+        end_time: b.end_time,
+        party_size: b.party_size,
+        angler_id: b.angler_id,
         status: b.status,
         last_message: latestByBooking.get(b.id) ?? null,
         unread_count: unreadByBooking.get(b.id) ?? 0,
       }))
-      .filter((c) => c.last_message)
       .sort((a, b) => (b.last_message.created_at ?? "").localeCompare(a.last_message.created_at ?? ""));
+  });
+
+/** One booking thread for the operator side (messages + guest context). */
+export const getCaptainThread = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ bookingId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const bookingRes = await supabase
+      .from("bookings")
+      .select(
+        "id,status,trip_date,start_time,end_time,party_size,business_id,angler_id,service:bookable_services(title,hero_url),customer:customers(full_name)",
+      )
+      .eq("id", data.bookingId)
+      .maybeSingle();
+    if (bookingRes.error) throw new Response(bookingRes.error.message, { status: 500 });
+    const booking: any = bookingRes.data;
+    if (!booking) throw new Response("Booking not found", { status: 404 });
+
+    const messagesRes = await supabase
+      .from("booking_messages")
+      .select("id,body,sender_id,created_at,read_at")
+      .eq("booking_id", data.bookingId)
+      .order("created_at", { ascending: true })
+      .limit(500);
+    if (messagesRes.error) throw new Response(messagesRes.error.message, { status: 500 });
+
+    let angler: any = null;
+    if (booking.angler_id) {
+      const res = await supabase
+        .from("profiles")
+        .select("id,full_name,display_name,avatar_url")
+        .eq("id", booking.angler_id)
+        .maybeSingle();
+      angler = res.data ?? null;
+    }
+
+    return {
+      booking,
+      angler,
+      guestName: angler?.display_name || angler?.full_name || booking.customer?.full_name || "Guest",
+      messages: messagesRes.data ?? [],
+      viewerId: userId,
+    };
   });
