@@ -158,10 +158,14 @@ export const getBusinessProfile = createServerFn({ method: "GET" })
     });
     const servicesSigned = services.map((s) => ({ ...s, hero_url: signed[i++] ?? s.hero_url }));
 
-    const products = (productsRes.data ?? []).map((p) => {
-      const imgs = Array.isArray(p.images) ? (p.images as unknown[]).filter((x): x is string => typeof x === "string") : [];
-      return { ...p, image: imgs[0] ?? null };
-    });
+    const productRows = productsRes.data ?? [];
+    const productImgs = await signMediaUrls(
+      productRows.map((p) => {
+        const imgs = Array.isArray(p.images) ? (p.images as unknown[]).filter((x): x is string => typeof x === "string") : [];
+        return imgs[0] ?? null;
+      }),
+    );
+    const products = productRows.map((p, idx) => ({ ...p, image: productImgs[idx] ?? null }));
 
     return {
       business: biz,
