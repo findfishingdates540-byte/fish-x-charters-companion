@@ -83,7 +83,7 @@ const V = {
 };
 
 function ProductDetail() {
-  const { product } = Route.useLoaderData();
+  const { product, businessId } = Route.useLoaderData();
   const tile = tileFor(product.cat);
   const related = CATALOG.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
   const startCheckout = useServerFn(createProductCheckout);
