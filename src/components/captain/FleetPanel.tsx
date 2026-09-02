@@ -46,6 +46,20 @@ const emptyDraft: BoatDraft = {
   is_active: true,
 };
 
+const toDraft = (b: BoatRow): BoatDraft => ({
+  id: b.id,
+  name: b.name,
+  make: (b as any).make ?? "",
+  model: (b as any).model ?? "",
+  length_ft: (b as any).length_ft ?? 0,
+  capacity: (b as any).capacity ?? 0,
+  home_port: (b as any).home_port ?? "",
+  description: (b as any).description ?? "",
+  hero_image_url: (b as any).hero_image_url ?? "",
+  image_urls: Array.isArray((b as any).image_urls) ? (b as any).image_urls : [],
+  is_active: (b as any).is_active ?? true,
+});
+
 export function FleetPanel({ businessId }: { businessId: string | null }) {
   const qc = useQueryClient();
   const list = useServerFn(listCaptainBoats);
