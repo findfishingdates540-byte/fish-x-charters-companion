@@ -81,17 +81,28 @@ export function ImageUpload({
             aspectRatio: aspect,
             borderRadius: 12,
             border: "1px dashed rgba(255,255,255,.16)",
-            background: value ? `center/cover no-repeat url(${value})` : "#1C2936",
+            background: "#1C2936",
             display: "grid",
             placeItems: "center",
             color: "#92A0AB",
             fontSize: 12,
             flex: "none",
             overflow: "hidden",
+            position: "relative",
           }}
         >
-          {!value && (busy ? "Uploading…" : "No image")}
+          {preview ? (
+            <img
+              src={preview}
+              alt={label}
+              loading="lazy"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            busy ? "Uploading…" : "No image"
+          )}
         </div>
+
 
         <div style={{ display: "grid", gap: 8, minWidth: 220, flex: 1 }}>
           <input
