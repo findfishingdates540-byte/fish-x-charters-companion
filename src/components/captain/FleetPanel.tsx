@@ -298,20 +298,22 @@ function BoatForm({
       {businessId && (
         <Field label="Photo gallery">
           <div style={{ display: "grid", gap: 10 }}>
-            {draft.image_urls.map((u) => (
-              <div key={u} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <ImageUpload businessId={businessId} label={`Photo ${draft.image_urls.indexOf(u) + 1}`} value={u} onChange={(url) => {
-                  const idx = draft.image_urls.indexOf(u);
-                  if (idx >= 0) {
-                    const next = [...draft.image_urls];
-                    if (url === "") next.splice(idx, 1);
-                    else next[idx] = url;
-                    upd({ image_urls: next });
-                  }
-                }} />
+            {draft.image_urls.length === 0 && (
+              <span style={{ fontSize: 12.5, color: "var(--tmut)" }}>
+                No gallery photos yet — add a few so anglers can see the boat.
+              </span>
+            )}
+            {draft.image_urls.map((u, idx) => (
+              <div key={`slot-${idx}`} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <ImageUpload
+                  businessId={businessId}
+                  label={`Photo ${idx + 1}`}
+                  value={u}
+                  onChange={(url) => onSetImage(idx, url)}
+                />
                 <button
                   type="button"
-                  onClick={() => onRemoveImage(u)}
+                  onClick={() => onRemoveImage(idx)}
                   style={{ ...btn("ghost"), padding: "8px 12px", fontSize: 12, color: "#F87171", flex: "none" }}
                 >
                   Remove
@@ -322,13 +324,17 @@ function BoatForm({
         </Field>
       )}
 
-      <button
-        type="button"
-        onClick={() => onAddImage("")}
-        style={{ ...btn("ghost"), justifySelf: "start", padding: "8px 14px", fontSize: 12.5 }}
-      >
-        + Add photo
-      </button>
+      {businessId && (
+        <button
+          type="button"
+          onClick={onAddImage}
+          style={{ ...btn("ghost"), justifySelf: "start", padding: "8px 14px", fontSize: 12.5 }}
+        >
+          + Add photo
+        </button>
+      )}
+
+
 
       <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
         <input type="checkbox" checked={draft.is_active} onChange={(e) => upd({ is_active: e.target.checked })} />
