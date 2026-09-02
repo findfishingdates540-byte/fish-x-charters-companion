@@ -108,14 +108,23 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
     },
   });
 
-  const addImage = (draft: BoatDraft, url: string) => {
-    if (url && !draft.image_urls.includes(url)) {
-      setEditing({ ...draft, image_urls: [...draft.image_urls, url] });
-    }
+  // Adds a slot (empty slot = a fresh upload tile the captain can fill in).
+  const addImage = (draft: BoatDraft) => {
+    if (draft.image_urls.some((u) => !u)) return; // one blank slot at a time
+    setEditing({ ...draft, image_urls: [...draft.image_urls, ""] });
   };
-  const removeImage = (draft: BoatDraft, url: string) => {
-    setEditing({ ...draft, image_urls: draft.image_urls.filter((u) => u !== url) });
+  const setImageAt = (draft: BoatDraft, idx: number, url: string) => {
+    const next = [...draft.image_urls];
+    if (url === "") next.splice(idx, 1);
+    else next[idx] = url;
+    setEditing({ ...draft, image_urls: next });
   };
+  const removeImageAt = (draft: BoatDraft, idx: number) => {
+    const next = [...draft.image_urls];
+    next.splice(idx, 1);
+    setEditing({ ...draft, image_urls: next });
+  };
+
 
   return (
     <div>
