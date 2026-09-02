@@ -144,11 +144,16 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
             return (
               <div
                 key={b.id}
+                onClick={() => setPreview(b)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPreview(b); } }}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 14,
                   padding: "14px 0",
+                  cursor: "pointer",
                   borderBottom: i < rows.length - 1 ? "1px solid var(--line)" : "none",
                 }}
               >
@@ -177,27 +182,13 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
                   </div>
                 </div>
                 <button
-                  onClick={() =>
-                    setEditing({
-                      id: b.id,
-                      name: b.name,
-                      make: (b as any).make ?? "",
-                      model: (b as any).model ?? "",
-                      length_ft: (b as any).length_ft ?? 0,
-                      capacity: (b as any).capacity ?? 0,
-                      home_port: (b as any).home_port ?? "",
-                      description: (b as any).description ?? "",
-                      hero_image_url: (b as any).hero_image_url ?? "",
-                      image_urls: Array.isArray((b as any).image_urls) ? (b as any).image_urls : [],
-                      is_active: (b as any).is_active ?? true,
-                    })
-                  }
+                  onClick={(e) => { e.stopPropagation(); setEditing(toDraft(b)); }}
                   style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "var(--goldtext)", fontWeight: 600 }}
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => { if (confirm(`Delete "${b.name}"?`)) mDelete.mutate(b.id); }}
+                  onClick={(e) => { e.stopPropagation(); if (confirm(`Delete "${b.name}"?`)) mDelete.mutate(b.id); }}
                   style={{ border: 0, background: "transparent", cursor: "pointer", fontSize: 13, color: "#F87171" }}
                 >
                   Delete
@@ -206,6 +197,15 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
             );
           })}
       </div>
+
+      {preview && (
+        <BoatPreview
+          boat={preview}
+          onClose={() => setPreview(null)}
+          onEdit={() => { setEditing(toDraft(preview)); setPreview(null); }}
+        />
+      )}
+
     </div>
   );
 }
