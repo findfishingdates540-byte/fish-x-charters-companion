@@ -85,7 +85,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                 status: "paid",
                 paid_at: new Date().toISOString(),
                 ...(paymentIntentId ? { stripe_payment_intent_id: paymentIntentId } : {}),
-                ...(buyer?.shippingAddress ? { shipping_address: buyer.shippingAddress } : {}),
+                ...(buyer?.shippingAddress ? { shipping_address: buyer.shippingAddress as never } : {}),
                 ...(buyer?.email ? { buyer_email: buyer.email } : {}),
                 ...(buyer?.name ? { buyer_name: buyer.name } : {}),
               })
