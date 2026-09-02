@@ -75,6 +75,7 @@ export function GuideDashboard({
       badge: data.requests.length || undefined,
     },
     { key: "listings", label: "Listings", icon: <TagIcon /> },
+    { key: "messages", label: "Messages", icon: <InboxIcon /> },
     { key: "payouts", label: "Payouts", icon: <PayoutIcon /> },
     { key: "settings", label: "Settings", icon: <GearIcon /> },
   ];
@@ -142,6 +143,7 @@ export function GuideDashboard({
           <PaymentsDashboard businessId={businessId} />
         </div>
       )}
+      {active === "messages" && <BusinessInbox theme="dark" businessId={businessId} />}
       {active === "settings" && <BusinessSettings businessId={businessId} />}
     </OperatorShell>
   );

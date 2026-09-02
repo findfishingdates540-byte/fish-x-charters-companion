@@ -26,6 +26,7 @@ import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { ServicesManager } from "@/components/business/ServicesManager";
 import { OperatorBookings } from "@/components/operator/OperatorBookings";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
+import { BusinessInbox } from "@/components/messages/BusinessInbox";
 
 type Slip = {
   id: string;
@@ -59,6 +60,7 @@ const NAV: OperatorNavItem[] = [
   { key: "reservations", label: "Reservations", icon: <CalIcon /> },
   { key: "services", label: "Services", icon: <WrenchIcon /> },
   { key: "listings", label: "Listings", icon: <MTagIcon /> },
+  { key: "messages", label: "Messages", icon: <MTagIcon /> },
   { key: "payouts", label: "Payouts", icon: <PayoutIcon /> },
   { key: "settings", label: "Settings", icon: <MGearIcon /> },
 ];
@@ -87,6 +89,7 @@ export function MarinaDashboard({
     reservations: { t: "Reservations", s: "Vessels arriving and staying." },
     services: { t: "Marina services", s: "Amenities and operating settings." },
     listings: { t: "Bookable listings", s: "Transient slips, lodging and experiences." },
+    messages: { t: "Messages", s: "Direct conversations with anglers and boat owners." },
     payouts: { t: "Payouts", s: "Connect your bank and manage payouts." },
     settings: { t: "Settings", s: "Profile, team, notifications and payouts." },
   };
@@ -162,6 +165,7 @@ export function MarinaDashboard({
           <PaymentsDashboard businessId={businessId} />
         </div>
       )}
+      {active === "messages" && <BusinessInbox theme="dark" businessId={businessId} />}
       {active === "settings" && <BusinessSettings businessId={businessId} />}
     </OperatorShell>
   );
