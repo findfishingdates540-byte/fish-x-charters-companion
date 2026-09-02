@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import {
   CATALOG,
   tileFor,
@@ -255,8 +256,23 @@ export function Marketplace() {
   const chargeLines = hasDemoOnly ? lines : liveLines;
   const demoLineCount = lines.length - liveLines.length;
   const subtotal = chargeLines.reduce((a, l) => a + l.p.price * l.qty, 0);
-  const freeShip = subtotal >= 150 || subtotal === 0;
-  const ship = freeShip ? 0 : 8;
+
+  // Shipping comes from each vendor's own settings, quoted by the server so the
+  // cart shows exactly what Stripe will charge.
+  const quoteFn = useServerFn(quoteShipping);
+  const liveItems = liveLines.map((l) => ({ productId: l.p.id, quantity: l.qty }));
+  const shipQuote = useQuery({
+    queryKey: ["shipping-quote", liveItems],
+    queryFn: () => quoteFn({ data: { items: liveItems } }),
+    enabled: liveItems.length > 0,
+    staleTime: 60_000,
+  });
+  const ship = hasDemoOnly
+    ? subtotal >= 150 || subtotal === 0
+      ? 0
+      : 8
+    : (shipQuote.data?.shippingCents ?? 0) / 100;
+  const freeShip = ship === 0;
   const total = subtotal + ship;
 
   const placeOrder = async () => {
@@ -273,7 +289,6 @@ export function Marketplace() {
       const res = await startCheckout({
         data: {
           items: liveLines.map((l) => ({ productId: l.p.id, quantity: l.qty })),
-          shippingCents: Math.round(ship * 100),
           origin: window.location.origin,
         },
       });
