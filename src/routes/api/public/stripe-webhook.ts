@@ -56,13 +56,20 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
 
         /**
          * Marks vendor product orders paid, decrements stock and transfers the
-         * vendor's 80% to their connected account. Retail has no dispute
+         * vendor's share (order total minus the 8% platform fee) to their
+         * connected account. Retail has no dispute
          * window, so the transfer goes out as soon as the charge lands.
          */
         const settleProductOrders = async (
           orderIds: string[],
           paymentIntentId: string | null,
           chargeId: string | null,
+          buyer?: {
+            shippingAddress?: Record<string, unknown> | null;
+            email?: string | null;
+            phone?: string | null;
+            name?: string | null;
+          },
         ) => {
           for (const orderId of orderIds) {
             const { data: order } = await supabaseAdmin
@@ -78,6 +85,9 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                 status: "paid",
                 paid_at: new Date().toISOString(),
                 ...(paymentIntentId ? { stripe_payment_intent_id: paymentIntentId } : {}),
+                ...(buyer?.shippingAddress ? { shipping_address: buyer.shippingAddress } : {}),
+                ...(buyer?.email ? { buyer_email: buyer.email } : {}),
+                ...(buyer?.name ? { buyer_name: buyer.name } : {}),
               })
               .eq("id", orderId);
 
@@ -157,7 +167,23 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                   const pi = await stripe.paymentIntents.retrieve(piId);
                   chargeId = typeof pi.latest_charge === "string" ? pi.latest_charge : null;
                 }
-                await settleProductOrders(orderIds, piId, chargeId);
+                const details = session.customer_details;
+                const shipping =
+                  (session as unknown as { shipping_details?: { name?: string | null; address?: Record<string, unknown> | null } })
+                    .shipping_details ?? null;
+                const address = shipping?.address ?? details?.address ?? null;
+                await settleProductOrders(orderIds, piId, chargeId, {
+                  shippingAddress: address
+                    ? {
+                        ...address,
+                        name: shipping?.name ?? details?.name ?? null,
+                        phone: details?.phone ?? null,
+                      }
+                    : null,
+                  email: details?.email ?? null,
+                  phone: details?.phone ?? null,
+                  name: shipping?.name ?? details?.name ?? null,
+                });
               }
               break;
             }
