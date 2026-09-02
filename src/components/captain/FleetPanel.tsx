@@ -190,15 +190,26 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
                     height: 56,
                     borderRadius: 12,
                     flex: "none",
-                    background: cover ? `center/cover no-repeat url(${cover})` : "var(--line)",
+                    overflow: "hidden",
+                    background: "var(--line)",
                     display: "grid",
                     placeItems: "center",
                     fontSize: 10,
                     color: "var(--tmut)",
                   }}
                 >
-                  {!cover && "No img"}
+                  {cover ? (
+                    <img
+                      src={cover}
+                      alt={b.name}
+                      loading="lazy"
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    />
+                  ) : (
+                    "No img"
+                  )}
                 </div>
+
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 14, fontWeight: 600 }}>{b.name}</div>
                   <div style={{ fontSize: 12.5, color: "var(--tmut)" }}>
