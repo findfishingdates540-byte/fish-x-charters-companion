@@ -174,7 +174,8 @@ function ProductDetail() {
 
   const unitCents =
     trade && trade.status === "approved"
-      ? tradeUnitPrice(trade, qty) + (variant?.price_delta_cents ?? 0)
+      ? tradeUnitPrice(Math.round(product.price * 100), trade, qty) +
+        (variant?.price_delta_cents ?? 0)
       : Math.round(product.price * 100) + (variant?.price_delta_cents ?? 0);
 
   const maxQty = variant
@@ -384,7 +385,7 @@ function ProductDetail() {
                   Minimum order {trade.minOrderQty} units
                   {trade.casePack > 1 ? ` · cases of ${trade.casePack}` : ""}
                   {trade.tiers.length
-                    ? ` · breaks: ${trade.tiers.map((t) => `${t.minQty}+ @ ${money(t.unitPriceCents / 100)}`).join(", ")}`
+                    ? ` · breaks: ${trade.tiers.map((t) => `${t.min_qty}+ @ ${money(t.unit_price_cents / 100)}`).join(", ")}`
                     : ""}
                 </div>
               </div>
