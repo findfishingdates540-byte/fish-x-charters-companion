@@ -316,6 +316,11 @@ export const createProductCheckout = createServerFn({ method: "POST" })
       .maybeSingle();
     const buyerName = profile?.full_name ?? profile?.display_name ?? null;
 
+    // Every seller in the cart must be able to receive money before we take
+    // the buyer's card — otherwise the charge lands with no payable vendor.
+    const { assertVendorsPayable } = await import("./vendor-payments.server");
+    await assertVendorsPayable(supabaseAdmin as never, [...groups.keys()]);
+
     const shippingSettings = await loadShippingSettings(supabaseAdmin as never, [...groups.keys()]);
     let shippingTotal = 0;
 
