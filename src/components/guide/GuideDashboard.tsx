@@ -313,14 +313,14 @@ function TripList({
                 }
                 style={{
                   appearance: "none",
-                  background: assigned ? "#14202B" : "rgba(242,185,61,.15)",
+                  background: assigned ? "#14202B" : "rgba(45,226,242,.15)",
                   border: `1px solid ${assigned ? "rgba(255,255,255,.09)" : "#273744"}`,
                   borderRadius: 10,
                   padding: "9px 12px",
                   fontFamily: "inherit",
                   fontSize: 12.5,
                   fontWeight: 700,
-                  color: assigned ? "#F0F2F5" : "#F2B93D",
+                  color: assigned ? "#F0F2F5" : "#2DE2F2",
                   cursor: "pointer",
                 }}
               >
@@ -378,7 +378,7 @@ function Roster({ data }: { data: any }) {
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: 20,
                 fontWeight: 600,
-                color: "#F2B93D",
+                color: "#2DE2F2",
                 flex: "none",
               }}
             >

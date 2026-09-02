@@ -42,7 +42,7 @@ const shell: React.CSSProperties = {
   ["--navy" as never]: "#0D161F",
   ["--paper" as never]: "#0D161F",
   ["--card" as never]: "#14202B",
-  ["--goldtext" as never]: "#F2B93D",
+  ["--goldtext" as never]: "#2DE2F2",
   ["--cyan" as never]: "#2DE2F2",
   ["--green" as never]: "#22C55E",
   ["--greensoft" as never]: "rgba(34,197,94,.14)",
@@ -493,8 +493,8 @@ function Empty({ text }: { text: string }) {
 
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, { bg: string; fg: string; label: string }> = {
-    pending_payment: { bg: "rgba(242,185,61,.15)", fg: "#F2B93D", label: "Awaiting payment" },
-    pending_confirmation: { bg: "rgba(242,185,61,.15)", fg: "#F2B93D", label: "Pending" },
+    pending_payment: { bg: "rgba(45,226,242,.15)", fg: "#2DE2F2", label: "Awaiting payment" },
+    pending_confirmation: { bg: "rgba(45,226,242,.15)", fg: "#2DE2F2", label: "Pending" },
     confirmed: { bg: "rgba(45,226,242,.12)", fg: "#2DE2F2", label: "In escrow" },
     in_progress: { bg: "rgba(34,197,94,.14)", fg: "#22C55E", label: "In progress" },
     completed: { bg: "rgba(34,197,94,.14)", fg: "#22C55E", label: "Completed" },

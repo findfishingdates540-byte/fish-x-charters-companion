@@ -125,7 +125,7 @@ export function OperatorBookings({
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: 17,
                 fontWeight: 600,
-                color: "#F2B93D",
+                color: "#2DE2F2",
                 minWidth: 90,
                 textAlign: "right",
               }}

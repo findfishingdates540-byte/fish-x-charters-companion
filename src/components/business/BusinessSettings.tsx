@@ -579,7 +579,7 @@ function Grid3({ children }: { children: React.ReactNode }) {
 function Pill({ children, tone }: { children: React.ReactNode; tone: "good" | "warn" | "neutral" }) {
   const map = {
     good: { bg: "rgba(34,197,94,.16)", c: "#22C55E" },
-    warn: { bg: "rgba(169,126,60,.12)", c: "#F2B93D" },
+    warn: { bg: "rgba(169,126,60,.12)", c: "#2DE2F2" },
     neutral: { bg: "rgba(255,255,255,.06)", c: "#A9B6C1" },
   }[tone];
   return (

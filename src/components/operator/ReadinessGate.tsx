@@ -47,7 +47,7 @@ export function ReadinessGate({
 
   if (compact && r.ready && r.isPublished) return null;
 
-  const tone = r.ready ? "#22C55E" : "#F2B93D";
+  const tone = r.ready ? "#22C55E" : "#2DE2F2";
 
   return (
     <div
@@ -145,7 +145,7 @@ export function ReadinessGate({
                 fontSize: 11,
                 fontWeight: 700,
                 color: "#F0F2F5",
-                background: it.done ? "#22C55E" : it.blocking ? "#F2B93D" : "#3A4A57",
+                background: it.done ? "#22C55E" : it.blocking ? "#2DE2F2" : "#3A4A57",
               }}
             >
               {it.done ? "✓" : "!"}
@@ -165,7 +165,7 @@ export function ReadinessGate({
                 style={{
                   background: "transparent",
                   border: 0,
-                  color: "#F2B93D",
+                  color: "#2DE2F2",
                   fontSize: 12.5,
                   fontWeight: 700,
                   cursor: "pointer",

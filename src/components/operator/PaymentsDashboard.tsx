@@ -115,7 +115,7 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
                     <td style={td}>
                       <strong style={{ color: "#F0F2F5" }}>{x.label}</strong>
                       {x.balanceDueCents > 0 && (
-                        <div style={{ fontSize: 12, color: "#b07a1e" }}>
+                        <div style={{ fontSize: 12, color: "#2DE2F2" }}>
                           {money2(x.balanceDueCents)} balance due on the day
                         </div>
                       )}
