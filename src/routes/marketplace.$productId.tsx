@@ -11,14 +11,24 @@ import {
   iconFromCategory,
   type Product,
 } from "@/components/marketplace/catalog";
-import { getStoreProduct, createProductCheckout } from "@/lib/product-checkout.functions";
+import {
+  getStoreProduct,
+  createProductCheckout,
+  type ProductVariant,
+} from "@/lib/product-checkout.functions";
+import { getTradePricing, applyForTradeAccount, tradeUnitPrice } from "@/lib/wholesale.functions";
 import { listMyWishlistIds, toggleWishlist } from "@/lib/shopping.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/marketplace/$productId")({
   loader: async ({ params }) => {
     const demo = CATALOG.find((p) => p.id === params.productId);
-    if (demo) return { product: demo, businessId: null as string | null };
+    if (demo)
+      return {
+        product: demo,
+        businessId: null as string | null,
+        variants: [] as ProductVariant[],
+      };
     // Real vendor inventory row (UUID id).
     const isUuid = /^[0-9a-f-]{36}$/i.test(params.productId);
     if (isUuid) {
@@ -40,7 +50,11 @@ export const Route = createFileRoute("/marketplace/$productId")({
           image: row.image,
           stockQty: row.stockQty,
         };
-        return { product, businessId: row.businessId as string };
+        return {
+          product,
+          businessId: row.businessId as string,
+          variants: (row.variants ?? []) as ProductVariant[],
+        };
       }
     }
     throw notFound();
@@ -83,7 +97,7 @@ const V = {
 };
 
 function ProductDetail() {
-  const { product, businessId } = Route.useLoaderData();
+  const { product, businessId, variants } = Route.useLoaderData();
   const tile = tileFor(product.cat);
   const related = CATALOG.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
   const startCheckout = useServerFn(createProductCheckout);
@@ -130,7 +144,44 @@ function ProductDetail() {
     };
   }, [product.id, product.live, loadSavedIds]);
 
-  const maxQty = product.live && product.stockQty != null ? Math.max(1, product.stockQty) : 99;
+  // ---- Variants (size / colour / weight) ----
+  const [variantId, setVariantId] = useState<string | null>(variants[0]?.id ?? null);
+  const variant = variants.find((v) => v.id === variantId) ?? null;
+
+  // ---- Trade pricing for approved wholesale buyers ----
+  const loadTrade = useServerFn(getTradePricing);
+  const applyTrade = useServerFn(applyForTradeAccount);
+  const [trade, setTrade] = useState<Awaited<ReturnType<typeof getTradePricing>> | null>(null);
+  const [tradeCompany, setTradeCompany] = useState("");
+  const [tradeMsg, setTradeMsg] = useState("");
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      if (!product.live || !businessId) return;
+      const { data } = await supabase.auth.getSession();
+      if (!alive || !data.session) return;
+      try {
+        const res = await loadTrade({ data: { businessId, productId: product.id } });
+        if (alive) setTrade(res);
+      } catch {
+        /* non-fatal */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [product.id, product.live, businessId, loadTrade]);
+
+  const unitCents =
+    trade && trade.status === "approved"
+      ? tradeUnitPrice(trade, qty) + (variant?.price_delta_cents ?? 0)
+      : Math.round(product.price * 100) + (variant?.price_delta_cents ?? 0);
+
+  const maxQty = variant
+    ? Math.max(1, variant.stock_qty)
+    : product.live && product.stockQty != null
+      ? Math.max(1, product.stockQty)
+      : 99;
 
   /** Shared cart (localStorage) — the marketplace page hydrates from the same key. */
   const addToCart = () => {
@@ -159,7 +210,13 @@ function ProductDetail() {
     try {
       const res = await startCheckout({
         data: {
-          items: [{ productId: product.id, quantity: qty }],
+          items: [
+            {
+              productId: product.id,
+              quantity: qty,
+              ...(variantId ? { variantId } : {}),
+            },
+          ],
           origin: window.location.origin,
         },
       });
@@ -277,6 +334,100 @@ function ProductDetail() {
                 <b>Escrow-protected.</b> Seller is paid only after your delivery is confirmed.
               </span>
             </div>
+
+            {variants.length > 0 && (
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: V.tmut, marginBottom: 8 }}>
+                  {variants[0]!.option_name}
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {variants.map((v) => {
+                    const on = v.id === variantId;
+                    const out = v.stock_qty <= 0;
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        disabled={out}
+                        onClick={() => {
+                          setVariantId(v.id);
+                          setQty(1);
+                        }}
+                        style={{
+                          padding: "9px 14px",
+                          borderRadius: 10,
+                          border: `1px solid ${on ? V.navy : V.line}`,
+                          background: on ? V.navy : V.card,
+                          color: on ? "#fff" : out ? V.ondmut : V.ink,
+                          fontFamily: V.sans,
+                          fontSize: 13,
+                          fontWeight: 700,
+                          cursor: out ? "not-allowed" : "pointer",
+                          textDecoration: out ? "line-through" : "none",
+                        }}
+                      >
+                        {v.option_value}
+                        {v.price_delta_cents ? ` (+${money(v.price_delta_cents / 100)})` : ""}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {trade && trade.status === "approved" && (
+              <div style={{ marginBottom: 14, border: `1px solid ${V.line}`, borderRadius: 12, padding: 14, background: V.cyansoft }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: V.ink }}>
+                  Trade price {money(unitCents / 100)} / unit
+                </div>
+                <div style={{ fontSize: 12, color: V.tmut, marginTop: 4 }}>
+                  Minimum order {trade.minOrderQty} units
+                  {trade.casePack > 1 ? ` · cases of ${trade.casePack}` : ""}
+                  {trade.tiers.length
+                    ? ` · breaks: ${trade.tiers.map((t) => `${t.minQty}+ @ ${money(t.unitPriceCents / 100)}`).join(", ")}`
+                    : ""}
+                </div>
+              </div>
+            )}
+
+            {trade && trade.status !== "approved" && businessId && (
+              <div style={{ marginBottom: 14, border: `1px solid ${V.line}`, borderRadius: 12, padding: 14 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: V.ink, marginBottom: 6 }}>
+                  {trade.status === "pending"
+                    ? "Trade account pending review"
+                    : trade.status === "rejected"
+                      ? "Trade application declined"
+                      : "Buying for a shop? Apply for trade pricing"}
+                </div>
+                {trade.status === "none" && (
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <input
+                      value={tradeCompany}
+                      onChange={(e) => setTradeCompany(e.target.value)}
+                      placeholder="Business name"
+                      style={{ flex: 1, minWidth: 180, padding: "10px 12px", borderRadius: 10, border: `1px solid ${V.line}`, fontFamily: V.sans, fontSize: 13 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!tradeCompany.trim()) return;
+                        try {
+                          await applyTrade({ data: { businessId, companyName: tradeCompany.trim() } });
+                          setTrade({ ...trade, status: "pending" });
+                          setTradeMsg("Application sent.");
+                        } catch {
+                          setTradeMsg("Could not send application.");
+                        }
+                      }}
+                      style={{ background: V.navy, color: "#fff", border: 0, borderRadius: 10, padding: "10px 16px", fontFamily: V.sans, fontSize: 13, fontWeight: 700, cursor: "pointer" }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                )}
+                {tradeMsg && <div style={{ fontSize: 12, color: V.tmut, marginTop: 6 }}>{tradeMsg}</div>}
+              </div>
+            )}
 
             <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
               <div style={{ display: "inline-flex", alignItems: "center", border: `1px solid ${V.line}`, borderRadius: 12, background: V.card, overflow: "hidden" }}>
