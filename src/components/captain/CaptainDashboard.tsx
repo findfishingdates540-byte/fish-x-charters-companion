@@ -166,7 +166,7 @@ export function CaptainDashboard() {
           {tab === "services" && <ChartersPanel data={data} />}
           {tab === "blockouts" && <BlockoutDatesPanel />}
           {tab === "fleet" && <FleetPanel businessId={data.business?.id ?? null} />}
-          {tab === "messages" && <CaptainMessages />}
+          {tab === "messages" && <CaptainMessages businessId={data.business?.id ?? null} />}
           {tab === "earnings" && <EarningsPanel businessId={data.business?.id ?? null} />}
           {tab === "settings" && <SettingsPanel data={data} />}
         </main>

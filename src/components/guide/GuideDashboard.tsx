@@ -91,6 +91,7 @@ export function GuideDashboard({
     slots: { t: "Availability", s: "Bookable slots across your services." },
     requests: { t: "Requests", s: "New bookings waiting on you." },
     listings: { t: "Listings", s: "Your bookable guided trips and clinics." },
+    messages: { t: "Messages", s: "Direct conversations with anglers." },
     payouts: { t: "Payouts", s: "Connect your bank and manage payouts." },
     settings: { t: "Settings", s: "Profile, team, notifications and payouts." },
   };
