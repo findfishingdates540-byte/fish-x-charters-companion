@@ -52,7 +52,8 @@ export const listCaptainBoats = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
 
     if (error) throw new Response(error.message, { status: 500 });
-    return { businessId, rows: rows ?? [] };
+    const { signRowMedia } = await import("./media-urls.server");
+    return { businessId, rows: await signRowMedia((rows ?? []) as any[]) };
   });
 
 /* ---------------- UPSERT ---------------- */
