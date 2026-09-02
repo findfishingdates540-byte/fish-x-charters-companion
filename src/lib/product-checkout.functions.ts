@@ -3,9 +3,11 @@
  *
  * Money model mirrors bookings: the buyer pays the PLATFORM account, orders are
  * created as `pending_payment`, and the Stripe webhook marks them paid and
- * transfers 80% to each vendor's connected account (20% platform fee).
+ * transfers the vendor's share to their connected account. The platform keeps
+ * PRODUCT_FEE_RATE (8%) of the order total.
  * A multi-vendor cart produces one order row per vendor but a single Stripe
- * Checkout session.
+ * Checkout session. Shipping is computed on the SERVER from each vendor's
+ * shipping settings — never trusted from the browser.
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
