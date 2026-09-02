@@ -288,6 +288,23 @@ export async function draftsForEvent(
           severity: "critical",
         });
         break;
+      case "booking.reminder_48h":
+      case "booking.reminder_24h": {
+        const hrs = topic.endsWith("48h") ? 48 : 24;
+        push([anglerId], {
+          category: "reminder",
+          title: `${tripLabel} in ${hrs} hours`,
+          body: `${dateLabel} with ${businessName}. Check the departure details and message your captain with any questions.`,
+          link: anglerLink,
+        });
+        push(operatorIds, {
+          category: "reminder",
+          title: `Trip in ${hrs} hours`,
+          body: `${tripLabel} on ${dateLabel} · ${booking.party_size} angler(s).`,
+          link: opLink,
+        });
+        break;
+      }
       case "payout.released":
         push(operatorIds, {
           category: "payout",
@@ -301,6 +318,21 @@ export async function draftsForEvent(
         return [];
     }
     return out;
+  }
+
+  if (topic === "message.unread_nudge") {
+    const userId = evt.payload["user_id"] as string | undefined;
+    const count = Number(evt.payload["count"] ?? 0);
+    if (!userId || count < 1) return [];
+    return [
+      {
+        userId,
+        category: "message",
+        title: `${count} unread message${count === 1 ? "" : "s"}`,
+        body: "Someone is waiting on your reply inside Fish-X.",
+        link: (evt.payload["link"] as string) ?? "/messages",
+      },
+    ];
   }
 
   return [];

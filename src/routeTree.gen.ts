@@ -44,6 +44,7 @@ import { Route as ApiPublicHooksBookingTimersRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksDispatchEventsRouteImport } from './routes/api/public/hooks/dispatch-events'
 import { Route as ApiPublicHooksListingMetricsRouteImport } from './routes/api/public/hooks/listing-metrics'
 import { Route as ApiPublicHooksReleaseEscrowRouteImport } from './routes/api/public/hooks/release-escrow'
+import { Route as ApiPublicHooksRemindersRouteImport } from './routes/api/public/hooks/reminders'
 import { Route as ApiPublicHooksSyncCronSecretRouteImport } from './routes/api/public/hooks/sync-cron-secret'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
@@ -229,6 +230,11 @@ const ApiPublicHooksReleaseEscrowRoute =
     path: '/api/public/hooks/release-escrow',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksRemindersRoute = ApiPublicHooksRemindersRouteImport.update({
+  id: '/api/public/hooks/reminders',
+  path: '/api/public/hooks/reminders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSyncCronSecretRoute =
   ApiPublicHooksSyncCronSecretRouteImport.update({
     id: '/api/public/hooks/sync-cron-secret',
@@ -276,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/listing-metrics': typeof ApiPublicHooksListingMetricsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
+  '/api/public/hooks/reminders': typeof ApiPublicHooksRemindersRoute
   '/api/public/hooks/sync-cron-secret': typeof ApiPublicHooksSyncCronSecretRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/listing-metrics': typeof ApiPublicHooksListingMetricsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
+  '/api/public/hooks/reminders': typeof ApiPublicHooksRemindersRoute
   '/api/public/hooks/sync-cron-secret': typeof ApiPublicHooksSyncCronSecretRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/api/public/hooks/dispatch-events': typeof ApiPublicHooksDispatchEventsRoute
   '/api/public/hooks/listing-metrics': typeof ApiPublicHooksListingMetricsRoute
   '/api/public/hooks/release-escrow': typeof ApiPublicHooksReleaseEscrowRoute
+  '/api/public/hooks/reminders': typeof ApiPublicHooksRemindersRoute
   '/api/public/hooks/sync-cron-secret': typeof ApiPublicHooksSyncCronSecretRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -394,6 +403,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/listing-metrics'
     | '/api/public/hooks/release-escrow'
+    | '/api/public/hooks/reminders'
     | '/api/public/hooks/sync-cron-secret'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
@@ -432,6 +442,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/listing-metrics'
     | '/api/public/hooks/release-escrow'
+    | '/api/public/hooks/reminders'
     | '/api/public/hooks/sync-cron-secret'
     | '/api/public/media/$'
   id:
@@ -471,6 +482,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/dispatch-events'
     | '/api/public/hooks/listing-metrics'
     | '/api/public/hooks/release-escrow'
+    | '/api/public/hooks/reminders'
     | '/api/public/hooks/sync-cron-secret'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
@@ -500,6 +512,7 @@ export interface RootRouteChildren {
   ApiPublicHooksDispatchEventsRoute: typeof ApiPublicHooksDispatchEventsRoute
   ApiPublicHooksListingMetricsRoute: typeof ApiPublicHooksListingMetricsRoute
   ApiPublicHooksReleaseEscrowRoute: typeof ApiPublicHooksReleaseEscrowRoute
+  ApiPublicHooksRemindersRoute: typeof ApiPublicHooksRemindersRoute
   ApiPublicHooksSyncCronSecretRoute: typeof ApiPublicHooksSyncCronSecretRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
@@ -751,6 +764,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksReleaseEscrowRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/reminders': {
+      id: '/api/public/hooks/reminders'
+      path: '/api/public/hooks/reminders'
+      fullPath: '/api/public/hooks/reminders'
+      preLoaderRoute: typeof ApiPublicHooksRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-cron-secret': {
       id: '/api/public/hooks/sync-cron-secret'
       path: '/api/public/hooks/sync-cron-secret'
@@ -824,6 +844,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksDispatchEventsRoute: ApiPublicHooksDispatchEventsRoute,
   ApiPublicHooksListingMetricsRoute: ApiPublicHooksListingMetricsRoute,
   ApiPublicHooksReleaseEscrowRoute: ApiPublicHooksReleaseEscrowRoute,
+  ApiPublicHooksRemindersRoute: ApiPublicHooksRemindersRoute,
   ApiPublicHooksSyncCronSecretRoute: ApiPublicHooksSyncCronSecretRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
