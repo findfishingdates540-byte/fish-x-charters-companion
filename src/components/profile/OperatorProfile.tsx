@@ -341,6 +341,173 @@ export function OperatorProfile({
               </div>
             </section>
 
+            {/* Next departures */}
+            {upcoming.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>Next available departures</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 12 }}>
+                  {upcoming.map((u) => (
+                    <Link
+                      key={u.id}
+                      to="/booking"
+                      search={{ service_id: u.serviceId }}
+                      style={{ textDecoration: "none", background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 14, padding: 14, display: "block", color: "#F0F2F5" }}
+                    >
+                      <div style={{ fontSize: 12, color: "#2DE2F2", fontWeight: 700 }}>
+                        {new Date(u.startsAt).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                      </div>
+                      <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>
+                        {new Date(u.startsAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })} –{" "}
+                        {new Date(u.endsAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                      </div>
+                      <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4 }}>{u.serviceTitle}</div>
+                      <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 6 }}>
+                        {u.seatsLeft} seat{u.seatsLeft === 1 ? "" : "s"} left · {fmtPrice(u.priceCents)}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Fleet */}
+            {boats.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>The fleet</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 16 }}>
+                  {boats.map((bt) => {
+                    const cover = bt.hero_image_url ?? bt.image_urls?.[0] ?? null;
+                    const extra = (bt.image_urls ?? []).filter((u) => u && u !== cover);
+                    return (
+                      <article key={bt.id} style={{ background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, overflow: "hidden" }}>
+                        {cover ? (
+                          <img src={cover} alt={bt.name} style={{ width: "100%", height: 150, objectFit: "cover", display: "block" }} />
+                        ) : (
+                          <div style={{ height: 150, background: "linear-gradient(135deg,#0D161F,#1C2936)" }} />
+                        )}
+                        <div style={{ padding: 14 }}>
+                          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 19, fontWeight: 600 }}>{bt.name}</div>
+                          <div style={{ fontSize: 12.5, color: "#92A0AB", marginTop: 4 }}>
+                            {[
+                              [bt.make, bt.model].filter(Boolean).join(" "),
+                              bt.length_ft ? `${bt.length_ft} ft` : null,
+                              bt.capacity ? `up to ${bt.capacity} anglers` : null,
+                            ].filter(Boolean).join(" · ")}
+                          </div>
+                          {bt.home_port && <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4 }}>⚓ {bt.home_port}</div>}
+                          {bt.description && (
+                            <p style={{ fontSize: 12.5, color: "#92A0AB", lineHeight: 1.5, margin: "8px 0 0" }}>
+                              {bt.description.slice(0, 120)}{bt.description.length > 120 ? "…" : ""}
+                            </p>
+                          )}
+                          {extra.length > 0 && (
+                            <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                              {extra.slice(0, 4).map((u, idx) => (
+                                <img key={idx} src={u} alt="" style={{ width: 42, height: 42, borderRadius: 8, objectFit: "cover" }} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Shop */}
+            {products.length > 0 && (
+              <section style={CARD}>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }}>
+                  <h2 style={{ ...sectionTitle, margin: 0 }}>From the shop</h2>
+                  <Link to="/marketplace" style={{ fontSize: 13, color: "#2DE2F2", textDecoration: "none" }}>All products →</Link>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 14 }}>
+                  {products.map((p) => (
+                    <Link
+                      key={p.id}
+                      to="/marketplace/$productId"
+                      params={{ productId: p.id }}
+                      style={{ textDecoration: "none", color: "#F0F2F5", background: "#1C2936", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, overflow: "hidden", display: "block" }}
+                    >
+                      {p.image ? (
+                        <img src={p.image} alt={p.title} style={{ width: "100%", height: 130, objectFit: "cover", display: "block" }} />
+                      ) : (
+                        <div style={{ height: 130, background: "linear-gradient(135deg,#0D161F,#1C2936)" }} />
+                      )}
+                      <div style={{ padding: 12 }}>
+                        <div style={{ fontSize: 13.5, fontWeight: 600, lineHeight: 1.3 }}>{p.title}</div>
+                        {p.category && <div style={{ fontSize: 11.5, color: "#92A0AB", marginTop: 3 }}>{p.category}</div>}
+                        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 8 }}>
+                          <span style={{ color: "#2DE2F2", fontWeight: 700 }}>{fmtPrice(p.price_cents)}</span>
+                          {p.compare_at_cents && p.compare_at_cents > p.price_cents && (
+                            <span style={{ fontSize: 12, color: "#92A0AB", textDecoration: "line-through" }}>{fmtPrice(p.compare_at_cents)}</span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: 11.5, color: p.stock_qty > 0 ? "#22C55E" : "#92A0AB", marginTop: 4 }}>
+                          {p.stock_qty > 0 ? `${p.stock_qty} in stock` : "Out of stock"}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Marina slips */}
+            {slips.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>Slips & dockage</h2>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ color: "#92A0AB", textAlign: "left" }}>
+                        <th style={th}>Slip</th>
+                        <th style={th}>LOA</th>
+                        <th style={th}>Beam</th>
+                        <th style={th}>Power</th>
+                        <th style={th}>Nightly</th>
+                        <th style={th}>Monthly</th>
+                        <th style={th}>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {slips.map((s) => (
+                        <tr key={s.id} style={{ borderTop: "1px solid rgba(255,255,255,.07)" }}>
+                          <td style={td}><b>{s.slip_number}</b></td>
+                          <td style={td}>{s.length_ft ? `${s.length_ft} ft` : "—"}</td>
+                          <td style={td}>{s.beam_ft ? `${s.beam_ft} ft` : "—"}</td>
+                          <td style={td}>{s.amperage ?? "—"}</td>
+                          <td style={td}>{s.nightly_rate_cents ? fmtPrice(s.nightly_rate_cents) : "—"}</td>
+                          <td style={td}>{s.monthly_rate_cents ? fmtPrice(s.monthly_rate_cents) : "—"}</td>
+                          <td style={{ ...td, color: s.status === "available" ? "#22C55E" : "#92A0AB", textTransform: "capitalize" }}>{s.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {/* Updates */}
+            {posts.length > 0 && (
+              <section style={CARD}>
+                <h2 style={sectionTitle}>Latest updates</h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {posts.map((p) => (
+                    <div key={p.id} style={{ borderTop: "1px solid rgba(255,255,255,.07)", paddingTop: 14 }}>
+                      <div style={{ fontSize: 12, color: "#92A0AB" }}>
+                        {new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                      </div>
+                      <p style={{ margin: "6px 0 0", color: "#F0F2F5", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{p.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+
+
             {/* Reviews */}
             <section style={{ background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 20, padding: 26 }}>
               <div style={{ display: "flex", gap: 34, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 24 }}>
