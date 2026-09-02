@@ -10,12 +10,16 @@ import type { Database } from "@/integrations/supabase/types";
 async function pickBusinessId(supabase: any, userId: string): Promise<string | null> {
   const { data, error } = await supabase
     .from("business_members")
-    .select("role,business_id")
+    .select("role,business_id,business:businesses(category_key)")
     .eq("user_id", userId);
   if (error) throw new Response(error.message, { status: 500 });
-  const primary = (data ?? []).find((m: any) => m.role === "owner") ?? data?.[0];
+  const mems = data ?? [];
+  // Captains always operate their charter business, even if they own others.
+  const charter = mems.find((m: any) => (m.business?.category_key ?? "charter") === "charter");
+  const primary = charter ?? mems.find((m: any) => m.role === "owner") ?? mems[0];
   return primary?.business_id ?? null;
 }
+
 
 /* ---------------- SCHEMAS ---------------- */
 

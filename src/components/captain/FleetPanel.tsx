@@ -88,7 +88,7 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
         home_port: draft.home_port || null,
         description: draft.description || null,
         hero_image_url: draft.hero_image_url || null,
-        image_urls: draft.image_urls,
+        image_urls: draft.image_urls.filter(Boolean),
         is_active: draft.is_active,
       },
     }),
@@ -108,14 +108,23 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
     },
   });
 
-  const addImage = (draft: BoatDraft, url: string) => {
-    if (url && !draft.image_urls.includes(url)) {
-      setEditing({ ...draft, image_urls: [...draft.image_urls, url] });
-    }
+  // Adds a slot (empty slot = a fresh upload tile the captain can fill in).
+  const addImage = (draft: BoatDraft) => {
+    if (draft.image_urls.some((u) => !u)) return; // one blank slot at a time
+    setEditing({ ...draft, image_urls: [...draft.image_urls, ""] });
   };
-  const removeImage = (draft: BoatDraft, url: string) => {
-    setEditing({ ...draft, image_urls: draft.image_urls.filter((u) => u !== url) });
+  const setImageAt = (draft: BoatDraft, idx: number, url: string) => {
+    const next = [...draft.image_urls];
+    if (url === "") next.splice(idx, 1);
+    else next[idx] = url;
+    setEditing({ ...draft, image_urls: next });
   };
+  const removeImageAt = (draft: BoatDraft, idx: number) => {
+    const next = [...draft.image_urls];
+    next.splice(idx, 1);
+    setEditing({ ...draft, image_urls: next });
+  };
+
 
   return (
     <div>
@@ -140,8 +149,10 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
           onChange={setEditing}
           onCancel={() => setEditing(null)}
           onSave={() => mUpsert.mutate(editing)}
-          onAddImage={(url) => addImage(editing, url)}
-          onRemoveImage={(url) => removeImage(editing, url)}
+          onAddImage={() => addImage(editing)}
+          onSetImage={(idx, url) => setImageAt(editing, idx, url)}
+          onRemoveImage={(idx) => removeImageAt(editing, idx)}
+
           saving={mUpsert.isPending}
           error={mUpsert.error ? String(mUpsert.error) : null}
         />
@@ -233,6 +244,7 @@ function BoatForm({
   onCancel,
   onSave,
   onAddImage,
+  onSetImage,
   onRemoveImage,
   saving,
   error,
@@ -242,8 +254,10 @@ function BoatForm({
   onChange: (d: BoatDraft) => void;
   onCancel: () => void;
   onSave: () => void;
-  onAddImage: (url: string) => void;
-  onRemoveImage: (url: string) => void;
+  onAddImage: () => void;
+  onSetImage: (idx: number, url: string) => void;
+  onRemoveImage: (idx: number) => void;
+
   saving: boolean;
   error: string | null;
 }) {
@@ -284,20 +298,22 @@ function BoatForm({
       {businessId && (
         <Field label="Photo gallery">
           <div style={{ display: "grid", gap: 10 }}>
-            {draft.image_urls.map((u) => (
-              <div key={u} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <ImageUpload businessId={businessId} label={`Photo ${draft.image_urls.indexOf(u) + 1}`} value={u} onChange={(url) => {
-                  const idx = draft.image_urls.indexOf(u);
-                  if (idx >= 0) {
-                    const next = [...draft.image_urls];
-                    if (url === "") next.splice(idx, 1);
-                    else next[idx] = url;
-                    upd({ image_urls: next });
-                  }
-                }} />
+            {draft.image_urls.length === 0 && (
+              <span style={{ fontSize: 12.5, color: "var(--tmut)" }}>
+                No gallery photos yet — add a few so anglers can see the boat.
+              </span>
+            )}
+            {draft.image_urls.map((u, idx) => (
+              <div key={`slot-${idx}`} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <ImageUpload
+                  businessId={businessId}
+                  label={`Photo ${idx + 1}`}
+                  value={u}
+                  onChange={(url) => onSetImage(idx, url)}
+                />
                 <button
                   type="button"
-                  onClick={() => onRemoveImage(u)}
+                  onClick={() => onRemoveImage(idx)}
                   style={{ ...btn("ghost"), padding: "8px 12px", fontSize: 12, color: "#F87171", flex: "none" }}
                 >
                   Remove
@@ -308,13 +324,17 @@ function BoatForm({
         </Field>
       )}
 
-      <button
-        type="button"
-        onClick={() => onAddImage("")}
-        style={{ ...btn("ghost"), justifySelf: "start", padding: "8px 14px", fontSize: 12.5 }}
-      >
-        + Add photo
-      </button>
+      {businessId && (
+        <button
+          type="button"
+          onClick={onAddImage}
+          style={{ ...btn("ghost"), justifySelf: "start", padding: "8px 14px", fontSize: 12.5 }}
+        >
+          + Add photo
+        </button>
+      )}
+
+
 
       <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
         <input type="checkbox" checked={draft.is_active} onChange={(e) => upd({ is_active: e.target.checked })} />
