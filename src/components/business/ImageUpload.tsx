@@ -29,6 +29,8 @@ export function ImageUpload({
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // Instant local preview while the upload (and later the media proxy) resolves.
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
 
   async function upload(file: File) {
     setErr(null);
@@ -36,6 +38,7 @@ export function ImageUpload({
     if (file.size > MAX_BYTES) return setErr("Image must be 8 MB or smaller.");
 
     setBusy(true);
+    setLocalPreview(URL.createObjectURL(file));
     try {
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
       const name = `${crypto.randomUUID()}.${ext || "jpg"}`;
@@ -46,12 +49,16 @@ export function ImageUpload({
       if (error) throw new Error(error.message);
       onChange(`/api/public/media/${path}`);
     } catch (e) {
+      setLocalPreview(null);
       setErr(e instanceof Error ? e.message : "Upload failed. Please try again.");
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";
     }
   }
+
+  const preview = localPreview || value;
+
 
   return (
     <div style={{ display: "grid", gap: 8 }}>
