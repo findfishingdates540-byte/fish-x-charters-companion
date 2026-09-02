@@ -107,25 +107,112 @@ type Business = {
   premium_until: string | null;
 };
 
+type Boat = {
+  id: string;
+  name: string;
+  make: string | null;
+  model: string | null;
+  length_ft: number | null;
+  capacity: number | null;
+  home_port: string | null;
+  description: string | null;
+  hero_image_url: string | null;
+  image_urls: string[] | null;
+};
+
+type Product = {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  price_cents: number;
+  compare_at_cents: number | null;
+  stock_qty: number;
+  image: string | null;
+};
+
+type Slip = {
+  id: string;
+  slip_number: string;
+  length_ft: number | null;
+  beam_ft: number | null;
+  draft_ft: number | null;
+  amperage: string | null;
+  monthly_rate_cents: number | null;
+  nightly_rate_cents: number | null;
+  status: string;
+};
+
+type Departure = {
+  id: string;
+  serviceId: string;
+  serviceTitle: string;
+  startsAt: string;
+  endsAt: string;
+  seatsLeft: number;
+  priceCents: number;
+};
+
+type Post = { id: string; body: string; media_json: any; created_at: string };
+
 type Props = {
   business: Business;
   services: Service[];
   reviews: Review[];
   ratingSummary: { average: number; count: number; buckets: number[] };
   variant: "captain" | "guide";
+  boats?: Boat[];
+  products?: Product[];
+  slips?: Slip[];
+  upcoming?: Departure[];
+  posts?: Post[];
 };
 
 const fmtPrice = (cents: number) =>
   `$${Math.round(cents / 100).toLocaleString()}`;
 
-export function OperatorProfile({ business: b, services, reviews, ratingSummary, variant }: Props) {
+const CARD: React.CSSProperties = {
+  background: "#14202B",
+  border: "1px solid rgba(255,255,255,.07)",
+  borderRadius: 20,
+  padding: 26,
+};
+
+const LABEL_BY_CATEGORY: Record<string, { services: string; blurb: string }> = {
+  charter: { services: "Trips offered", blurb: "All escrow-protected" },
+  guide_service: { services: "Guided trips", blurb: "All escrow-protected" },
+  tackle_shop: { services: "Services & clinics", blurb: "Book in-store services" },
+  bait_shop: { services: "Services", blurb: "Book ahead" },
+  marina: { services: "Dockage & services", blurb: "Reserve ahead" },
+  lodge: { services: "Stays & packages", blurb: "Escrow-protected" },
+  apparel: { services: "Services", blurb: "" },
+  gear_mfg: { services: "Services", blurb: "" },
+};
+
+export function OperatorProfile({
+  business: b,
+  services,
+  reviews,
+  ratingSummary,
+  variant,
+  boats = [],
+  products = [],
+  slips = [],
+  upcoming = [],
+  posts = [],
+}: Props) {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(services[0]?.id ?? null);
   const selected = useMemo(() => services.find((s) => s.id === selectedServiceId) ?? services[0], [services, selectedServiceId]);
   const location = [b.city, b.region, b.country].filter(Boolean).join(", ");
   const avg = ratingSummary.average ? ratingSummary.average.toFixed(2) : "—";
+  const hours = normalizeHours((b as any).hours_json);
+  const amenities = normalizeAmenities((b as any).amenities_json);
+  const labels = LABEL_BY_CATEGORY[b.category_key] ?? { services: "What we offer", blurb: "" };
+  const isShop = ["tackle_shop", "bait_shop", "apparel", "gear_mfg"].includes(b.category_key);
 
   const roleLabel = variant === "captain" ? "Verified captain" : "Verified guide";
   const heroFallback = "linear-gradient(135deg,#F0F2F5,#031029)";
+
 
   return (
     <div className="fx-shell" style={{ background: "#0D161F", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#F0F2F5" }}>
