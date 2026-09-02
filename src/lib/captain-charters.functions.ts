@@ -56,7 +56,32 @@ export const listCaptainCharters = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) throw new Error(error.message);
-    return rows ?? [];
+    const { signMediaUrls } = await import("./media-urls.server");
+    // Resolve every stored media path (charter cover + gallery, boat photos,
+    // package covers) to a signed URL so images render on every host.
+    const list = (rows ?? []) as any[];
+    const flat: (string | null)[] = [];
+    for (const r of list) {
+      flat.push(r.hero_url ?? null, ...((r.image_urls ?? []) as string[]));
+      flat.push(r.boat?.hero_image_url ?? null, ...((r.boat?.image_urls ?? []) as string[]));
+      for (const p of (r.packages ?? []) as any[]) flat.push(p.hero_url ?? null);
+    }
+    const signed = await signMediaUrls(flat);
+    let i = 0;
+    return list.map((r) => {
+      const hero = signed[i++] ?? null;
+      const gallery = ((r.image_urls ?? []) as string[]).map(() => signed[i++] ?? "").filter(Boolean);
+      const boatHero = signed[i++] ?? null;
+      const boatGallery = ((r.boat?.image_urls ?? []) as string[]).map(() => signed[i++] ?? "").filter(Boolean);
+      const packages = ((r.packages ?? []) as any[]).map((p) => ({ ...p, hero_url: signed[i++] ?? null }));
+      return {
+        ...r,
+        hero_url: hero,
+        image_urls: gallery,
+        boat: r.boat ? { ...r.boat, hero_image_url: boatHero, image_urls: boatGallery } : r.boat,
+        packages,
+      };
+    });
   });
 
 export const upsertCaptainCharter = createServerFn({ method: "POST" })
