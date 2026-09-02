@@ -1,14 +1,26 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { getMyRoles, hasPrimaryRole, getMyProfile } from "@/lib/auth.functions";
 import { getMyBusinesses } from "@/lib/my-businesses.functions";
 import { DashboardFrame } from "@/components/DashboardFrame";
-import { AnglerDashboard } from "@/components/angler/AnglerDashboard";
-import { CaptainDashboard } from "@/components/captain/CaptainDashboard";
-import { MarinaDashboard } from "@/components/marina/MarinaDashboard";
-import { ShopDashboard } from "@/components/tackle/ShopDashboard";
-import { GuideDashboard } from "@/components/guide/GuideDashboard";
+// Each persona dashboard is a large surface; loading only the one the signed-in
+// user actually needs keeps the initial dashboard bundle small and fast.
+const AnglerDashboard = lazy(() =>
+  import("@/components/angler/AnglerDashboard").then((m) => ({ default: m.AnglerDashboard })),
+);
+const CaptainDashboard = lazy(() =>
+  import("@/components/captain/CaptainDashboard").then((m) => ({ default: m.CaptainDashboard })),
+);
+const MarinaDashboard = lazy(() =>
+  import("@/components/marina/MarinaDashboard").then((m) => ({ default: m.MarinaDashboard })),
+);
+const ShopDashboard = lazy(() =>
+  import("@/components/tackle/ShopDashboard").then((m) => ({ default: m.ShopDashboard })),
+);
+const GuideDashboard = lazy(() =>
+  import("@/components/guide/GuideDashboard").then((m) => ({ default: m.GuideDashboard })),
+);
 import {
   getAnglerDashboard,
   listRecommendedCharters,
