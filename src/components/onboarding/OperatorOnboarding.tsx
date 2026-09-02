@@ -97,19 +97,19 @@ type PayoutConfig = {
 };
 
 const DEFAULT_ESCROW_FLOW: PayoutFlowStep[] = [
-  { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "rgba(242,185,61,.18)", ic: "#F2B93D" },
+  { n: 1, t: "Angler pays", d: "Funds captured at booking.", c: "rgba(45,226,242,.18)", ic: "#2DE2F2" },
   { n: 2, t: "Held in escrow", d: "Safe — not your balance yet.", c: "rgba(45,226,242,.12)", ic: "#2DE2F2" },
   { n: 3, t: "You're paid", d: "Released after the trip.", c: "rgba(34,197,94,.14)", ic: "#22C55E" },
 ];
 
 const RETAIL_FLOW: PayoutFlowStep[] = [
-  { n: 1, t: "Customer checks out", d: "Card charged at purchase.", c: "rgba(242,185,61,.18)", ic: "#F2B93D" },
+  { n: 1, t: "Customer checks out", d: "Card charged at purchase.", c: "rgba(45,226,242,.18)", ic: "#2DE2F2" },
   { n: 2, t: "Order settles", d: "Funds clear after fulfillment.", c: "rgba(45,226,242,.12)", ic: "#2DE2F2" },
   { n: 3, t: "Payout to you", d: "Net proceeds sent on schedule.", c: "rgba(34,197,94,.14)", ic: "#22C55E" },
 ];
 
 const STAY_FLOW: PayoutFlowStep[] = [
-  { n: 1, t: "Guest reserves", d: "Deposit taken at booking.", c: "rgba(242,185,61,.18)", ic: "#F2B93D" },
+  { n: 1, t: "Guest reserves", d: "Deposit taken at booking.", c: "rgba(45,226,242,.18)", ic: "#2DE2F2" },
   { n: 2, t: "Balance on arrival", d: "Remaining balance clears at check-in.", c: "rgba(45,226,242,.12)", ic: "#2DE2F2" },
   { n: 3, t: "Payout to you", d: "Released after checkout.", c: "rgba(34,197,94,.14)", ic: "#22C55E" },
 ];
@@ -681,7 +681,7 @@ export function OperatorOnboarding() {
         <div className="flex items-center gap-[10px] mb-6">
           <div className="flex-1 h-[6px] rounded-md bg-[#14202B]/10 overflow-hidden">
             <div
-              className="h-full rounded-md bg-gradient-to-r from-[#2DE2F2] to-[#F2B93D] transition-all duration-500"
+              className="h-full rounded-md bg-gradient-to-r from-[#2DE2F2] to-[#2DE2F2] transition-all duration-500"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -742,7 +742,7 @@ export function OperatorOnboarding() {
                 >
                   ✓
                 </div>
-                <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#F2B93D]">
+                <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#2DE2F2]">
                   You're live on Fish-X
                 </div>
                 <h1
@@ -921,7 +921,7 @@ export function OperatorOnboarding() {
 function StepHeader({ step, heading, sub }: { step: number; heading: string; sub: string }) {
   return (
     <div className="mb-8">
-      <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#F2B93D]">Step {step + 1} of 5</div>
+      <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#2DE2F2]">Step {step + 1} of 5</div>
       <h1
         className="font-semibold text-[34px] leading-[1.05] mt-2 mb-1.5 text-[#F0F2F5]"
         style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
@@ -1021,7 +1021,7 @@ function VerifyStep({
   return (
     <div className="flex flex-col gap-[14px] max-w-[720px]">
       <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[16px_20px]">
-        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#F2B93D] mb-1">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#2DE2F2] mb-1">
           {categoryLabel}
         </div>
         <div className="text-[13.5px] text-[#F0F2F5] leading-[1.5]">{config.headline}</div>
@@ -1033,7 +1033,7 @@ function VerifyStep({
             key={meta.key}
             className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[18px_20px] flex items-center gap-4"
           >
-            <span className="w-11 h-11 rounded-xl bg-[rgba(242,185,61,0.16)] grid place-items-center text-[#F2B93D] flex-none">
+            <span className="w-11 h-11 rounded-xl bg-[rgba(45,226,242,0.16)] grid place-items-center text-[#2DE2F2] flex-none">
               📄
             </span>
             <div className="flex-1 min-w-0">
@@ -1098,7 +1098,7 @@ function PayoutsStep({
   return (
     <>
       <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[16px_20px] max-w-[720px] mb-4">
-        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#F2B93D] mb-1">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#2DE2F2] mb-1">
           {config.eyebrow}
         </div>
         <div className="text-[13.5px] text-[#F0F2F5] leading-[1.5]">{config.headline}</div>
@@ -1195,7 +1195,7 @@ function ListingStep({
   return (
     <div className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-[18px] p-6 max-w-[720px]">
       <div className="mb-5">
-        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#F2B93D]">
+        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#2DE2F2]">
           {config.eyebrow}
         </div>
         <div
@@ -1272,7 +1272,7 @@ function ListingStep({
                 style={{
                   background: on ? "#2DE2F2" : "#14202B",
                   borderColor: on ? "#2DE2F2" : "rgba(13,34,54,.10)",
-                  color: on ? "#F2B93D" : "#F0F2F5",
+                  color: on ? "#2DE2F2" : "#F0F2F5",
                 }}
               >
                 {ch.label}

@@ -129,7 +129,7 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
                   : "Connect your bank to receive escrow payouts."}
             </div>
             {!connected && s && s.requirementsDue.length > 0 && (
-              <div style={{ fontSize: 12, color: "#F2B93D", marginTop: 4 }}>
+              <div style={{ fontSize: 12, color: "#2DE2F2", marginTop: 4 }}>
                 Stripe still needs a few details to finish setup.
               </div>
             )}
@@ -172,7 +172,7 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
                 style={{
                   background: "transparent",
                   border: 0,
-                  color: "var(--goldtext, #F2B93D)",
+                  color: "var(--goldtext, #2DE2F2)",
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: busy ? "default" : "pointer",

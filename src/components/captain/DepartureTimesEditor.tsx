@@ -58,7 +58,7 @@ const ghostBtn: React.CSSProperties = {
 };
 
 const primaryBtn: React.CSSProperties = {
-  background: "#F2B93D",
+  background: "#2DE2F2",
   color: "#0D161F",
   border: 0,
   borderRadius: 10,

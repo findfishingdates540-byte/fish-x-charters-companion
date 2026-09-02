@@ -151,7 +151,7 @@ export function RequestInbox({
                     fontFamily: "'Cormorant Garamond', Georgia, serif",
                     fontSize: 20,
                     fontWeight: 600,
-                    color: "#F2B93D",
+                    color: "#2DE2F2",
                   }}
                 >
                   {money(b.deposit_cents || b.total_cents)}
@@ -177,8 +177,8 @@ export function RequestInbox({
                   fontWeight: 700,
                   borderRadius: 20,
                   padding: "5px 12px",
-                  background: t?.urgent ? "rgba(216,81,74,.16)" : "rgba(242,185,61,.15)",
-                  color: t?.urgent ? "#F87171" : "#F2B93D",
+                  background: t?.urgent ? "rgba(216,81,74,.16)" : "rgba(45,226,242,.15)",
+                  color: t?.urgent ? "#F87171" : "#2DE2F2",
                 }}
               >
                 {t?.label ?? "Awaiting your response"}

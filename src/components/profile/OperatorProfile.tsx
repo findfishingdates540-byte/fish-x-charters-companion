@@ -166,7 +166,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
             <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
               <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 38, letterSpacing: "-.01em", lineHeight: 1, margin: 0 }}>{b.name}</h1>
               {ratingSummary.average >= 4.9 && ratingSummary.count >= 10 && (
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(242,185,61,.15)", color: "#F2B93D", fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", borderRadius: 20, padding: "5px 11px" }}>★ Top rated</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(45,226,242,.15)", color: "#2DE2F2", fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", borderRadius: 20, padding: "5px 11px" }}>★ Top rated</span>
               )}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: "#92A0AB", marginTop: 8, flexWrap: "wrap" }}>
@@ -233,7 +233,7 @@ export function OperatorProfile({ business: b, services, reviews, ratingSummary,
                       <div style={{ textAlign: "right", flex: "none" }}>
                         <div>
                           <span style={{ fontSize: 11, color: "#92A0AB" }}>from </span>
-                          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: "#F2B93D" }}>{fmtPrice(s.base_price_cents)}</span>
+                          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: "#2DE2F2" }}>{fmtPrice(s.base_price_cents)}</span>
                         </div>
                         <div style={{ fontSize: 11.5, color: "#92A0AB" }}>per trip</div>
                       </div>

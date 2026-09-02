@@ -378,7 +378,7 @@ export function AvailabilityCalendar({
               style={{
                 fontSize: 12.5,
                 color: "#8a5a00",
-                background: "rgba(242,185,61,.14)",
+                background: "rgba(45,226,242,.14)",
                 border: "1px solid rgba(31,159,190,.35)",
                 borderRadius: 12,
                 padding: "10px 12px",

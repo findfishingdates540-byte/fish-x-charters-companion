@@ -468,7 +468,7 @@ export function Card({
                   fontWeight: 700,
                   letterSpacing: ".14em",
                   textTransform: "uppercase",
-                  color: "#F2B93D",
+                  color: "#2DE2F2",
                 }}
               >
                 {eyebrow}
@@ -506,7 +506,7 @@ export function StatusPill({
   const tones: Record<string, { bg: string; fg: string }> = {
     muted: { bg: "#1C2936", fg: "#92A0AB" },
     green: { bg: "rgba(34,197,94,.14)", fg: "#22C55E" },
-    gold: { bg: "rgba(242,185,61,.15)", fg: "#F2B93D" },
+    gold: { bg: "rgba(45,226,242,.15)", fg: "#2DE2F2" },
     cyan: { bg: "rgba(45,226,242,.12)", fg: "#2DE2F2" },
     red: { bg: "rgba(216,81,74,.16)", fg: "#F87171" },
     navy: { bg: "#0D161F", fg: "#F0F2F5" },
