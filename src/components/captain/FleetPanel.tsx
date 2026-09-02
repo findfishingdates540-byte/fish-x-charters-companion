@@ -244,6 +244,7 @@ function BoatForm({
   onCancel,
   onSave,
   onAddImage,
+  onSetImage,
   onRemoveImage,
   saving,
   error,
@@ -253,8 +254,10 @@ function BoatForm({
   onChange: (d: BoatDraft) => void;
   onCancel: () => void;
   onSave: () => void;
-  onAddImage: (url: string) => void;
-  onRemoveImage: (url: string) => void;
+  onAddImage: () => void;
+  onSetImage: (idx: number, url: string) => void;
+  onRemoveImage: (idx: number) => void;
+
   saving: boolean;
   error: string | null;
 }) {
