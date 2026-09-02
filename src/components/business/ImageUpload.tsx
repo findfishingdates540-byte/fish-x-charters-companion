@@ -55,9 +55,12 @@ export function ImageUpload({
         .from("business-media")
         .upload(path, file, { cacheControl: "31536000", upsert: false, contentType: file.type });
       if (error) throw new Error(error.message);
-      onChange(`/api/public/media/${path}`);
+      const nextUrl = `/api/public/media/${path}`;
+      setPreviewFor(nextUrl);
+      onChange(nextUrl);
     } catch (e) {
       setLocalPreview(null);
+      setPreviewFor(value);
       setErr(e instanceof Error ? e.message : "Upload failed. Please try again.");
     } finally {
       setBusy(false);
