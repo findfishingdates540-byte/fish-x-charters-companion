@@ -59,7 +59,7 @@ export const getBusinessProfile = createServerFn({ method: "GET" })
     if (!biz) throw new Response("Not found", { status: 404 });
 
     const nowIso = new Date().toISOString();
-    const [servicesRes, reviewsRes, boatsRes, productsRes, slipsRes, slotsRes, postsRes] = await Promise.all([
+    const [servicesRes, reviewsRes, boatsRes, productsRes, slipsRes, postsRes] = await Promise.all([
       sb
         .from("bookable_services")
         .select("id,slug,kind,title,description,hero_url,duration_minutes,capacity,base_price_cents,deposit_cents,target_species,departure_location")
