@@ -432,8 +432,24 @@ export const submitServiceRequest = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data }) => {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { error } = await supabase.from("marina_service_requests").insert({
+    // Server-side publishable client: the browser client can't run here, and
+    // the insert policy already allows anonymous requests for published marinas.
+    const { createClient } = await import("@supabase/supabase-js");
+    const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+    const client = createClient(process.env["SUPABASE_URL"]!, key, {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: {
+        fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+          const h = new Headers(init?.headers);
+          if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) {
+            h.delete("Authorization");
+          }
+          h.set("apikey", key);
+          return fetch(input, { ...init, headers: h });
+        },
+      },
+    });
+    const { error } = await client.from("marina_service_requests").insert({
       business_id: data.businessId,
       service_key: data.serviceKey,
       vessel_name: data.vesselName ?? null,
