@@ -26,6 +26,7 @@ import { BusinessSettings } from "@/components/business/BusinessSettings";
 import { ServicesManager } from "@/components/business/ServicesManager";
 import { RequestInbox } from "@/components/operator/RequestInbox";
 import { ReadinessGate } from "@/components/operator/ReadinessGate";
+import { BusinessInbox } from "@/components/messages/BusinessInbox";
 
 const overviewQO = (businessId: string) =>
   queryOptions({

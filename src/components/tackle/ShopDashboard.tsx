@@ -22,6 +22,7 @@ import {
 } from "@/components/operator/OperatorShell";
 import { PaymentsDashboard } from "@/components/operator/PaymentsDashboard";
 import { BusinessSettings } from "@/components/business/BusinessSettings";
+import { BusinessInbox } from "@/components/messages/BusinessInbox";
 
 type Product = {
   id: string;
