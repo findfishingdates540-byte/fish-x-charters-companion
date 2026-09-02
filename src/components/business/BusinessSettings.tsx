@@ -163,7 +163,7 @@ function VisibilityCard({
           to="/b/$slug"
           params={{ slug: business.slug }}
           target="_blank"
-          style={{ fontSize: 13, fontWeight: 700, color: "#F2B93D", textDecoration: "none" }}
+          style={{ fontSize: 13, fontWeight: 700, color: "#2DE2F2", textDecoration: "none" }}
         >
           View public page ↗
         </Link>
