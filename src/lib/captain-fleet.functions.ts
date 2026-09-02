@@ -53,7 +53,9 @@ export const listCaptainBoats = createServerFn({ method: "GET" })
 
     if (error) throw new Response(error.message, { status: 500 });
     const { signRowMedia } = await import("./media-urls.server");
-    return { businessId, rows: await signRowMedia((rows ?? []) as any[]) };
+    // Use the captain's authenticated Storage session. It is the same access
+    // path used by uploads and does not depend on a service-role binding.
+    return { businessId, rows: await signRowMedia((rows ?? []) as any[], context.supabase as any) };
   });
 
 /* ---------------- UPSERT ---------------- */

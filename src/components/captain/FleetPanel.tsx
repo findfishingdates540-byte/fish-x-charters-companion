@@ -3,7 +3,7 @@
  * Business-scoped CRUD for boats (specs + multi-image gallery), reusing the
  * dark `input`/`btn` atoms from BusinessSettings and ImageUpload for uploads.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -32,6 +32,25 @@ type BoatDraft = {
   image_urls: string[];
   is_active: boolean;
 };
+
+function BoatImage({ sources, alt, style }: { sources: string[]; alt: string; style: React.CSSProperties }) {
+  const usable = sources.filter((url, index) => Boolean(url) && sources.indexOf(url) === index);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => setIndex(0), [sources.join("|")]);
+
+  if (!usable[index]) return <span style={{ fontSize: 10, color: "var(--tmut)" }}>No img</span>;
+
+  return (
+    <img
+      src={usable[index]}
+      alt={alt}
+      loading="lazy"
+      onError={() => setIndex((current) => current + 1)}
+      style={style}
+    />
+  );
+}
 
 const emptyDraft: BoatDraft = {
   name: "",
@@ -198,16 +217,11 @@ export function FleetPanel({ businessId }: { businessId: string | null }) {
                     color: "var(--tmut)",
                   }}
                 >
-                  {cover ? (
-                    <img
-                      src={cover}
-                      alt={b.name}
-                      loading="lazy"
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                    />
-                  ) : (
-                    "No img"
-                  )}
+                  <BoatImage
+                    sources={[cover, ...(b.image_urls ?? [])]}
+                    alt={b.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -442,8 +456,8 @@ function BoatPreview({
 
         {gallery.length > 0 ? (
           <div style={{ display: "grid", gap: 10 }}>
-            <img
-              src={gallery[Math.min(active, gallery.length - 1)]}
+            <BoatImage
+              sources={gallery.slice(Math.min(active, gallery.length - 1)).concat(gallery.slice(0, Math.min(active, gallery.length - 1)))}
               alt={b.name}
               style={{
                 width: "100%",
