@@ -18,7 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/marketplace/$productId")({
   loader: async ({ params }) => {
     const demo = CATALOG.find((p) => p.id === params.productId);
-    if (demo) return { product: demo };
+    if (demo) return { product: demo, businessId: null as string | null };
     // Real vendor inventory row (UUID id).
     const isUuid = /^[0-9a-f-]{36}$/i.test(params.productId);
     if (isUuid) {
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/marketplace/$productId")({
           image: row.image,
           stockQty: row.stockQty,
         };
-        return { product };
+        return { product, businessId: row.businessId as string };
       }
     }
     throw notFound();
@@ -242,6 +242,15 @@ function ProductDetail() {
               <span style={{ width: 18, height: 18, borderRadius: "50%", background: V.sand, display: "grid", placeItems: "center", color: "#04121B", fontSize: 9 }}>✓</span>
               <span style={{ fontSize: 13, fontWeight: 600, color: V.tmut }}>{product.seller}</span>
               <span style={{ fontSize: 12, color: V.tmut, opacity: 0.7 }}>· {product.sellerType}</span>
+              {businessId && (
+                <Link
+                  to="/messages"
+                  search={{ business: businessId, tab: "shops" as const }}
+                  style={{ fontSize: 12, fontWeight: 700, color: "#0f7f95", textDecoration: "none", borderBottom: "1px solid #2DE2F2" }}
+                >
+                  Message seller
+                </Link>
+              )}
             </div>
             <h1 style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 40, lineHeight: 1.05, letterSpacing: "-.01em", margin: "0 0 12px" }}>
               {product.name}
