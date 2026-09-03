@@ -348,7 +348,7 @@ function ThreadList({ activeId }: { activeId: string | null }) {
 
 /* -------------------------------------------------------------- Thread view -- */
 
-function ThreadView({ bookingId }: { bookingId: string }) {
+function ThreadView({ bookingId, mobile = false }: { bookingId: string; mobile?: boolean }) {
   const { data } = useSuspenseQuery({
     queryKey: ["thread", bookingId],
     queryFn: () => getThread({ data: { bookingId } }),
