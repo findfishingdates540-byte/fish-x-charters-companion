@@ -165,6 +165,7 @@ function CounterpartAvatar({
 /* ------------------------------------------------------------- Thread list -- */
 
 function ThreadList({ activeId }: { activeId: string | null }) {
+  const isMobile = useIsMobile();
   const { data } = useSuspenseQuery({
     queryKey: ["message-threads"],
     queryFn: () => listMessageThreads(),
@@ -175,30 +176,13 @@ function ThreadList({ activeId }: { activeId: string | null }) {
       style={{
         height: "100%",
         background: V.card,
-        border: `1px solid ${V.line}`,
-        borderRadius: 20,
+        border: isMobile ? "none" : `1px solid ${V.line}`,
+        borderRadius: isMobile ? 0 : 20,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <div style={{ padding: "20px 22px", borderBottom: `1px solid ${V.line}` }}>
-        <h1
-          style={{
-            fontFamily: V.serif,
-            fontWeight: 600,
-            fontSize: 24,
-            letterSpacing: "-.01em",
-            margin: 0,
-            color: V.ink,
-          }}
-        >
-          Messages
-        </h1>
-        <p style={{ fontSize: 12.5, color: V.tmut, margin: "4px 0 0" }}>
-          Your conversations with each captain — one per booking.
-        </p>
-      </div>
 
       {data.threads.length === 0 ? (
         <div style={{ padding: "48px 26px", textAlign: "center" }}>
