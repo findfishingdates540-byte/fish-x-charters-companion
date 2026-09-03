@@ -403,8 +403,8 @@ function ThreadView({ bookingId, mobile = false }: { bookingId: string; mobile?:
       style={{
         height: "100%",
         background: V.card,
-        border: `1px solid ${V.line}`,
-        borderRadius: 20,
+        border: mobile ? "none" : `1px solid ${V.line}`,
+        borderRadius: mobile ? 0 : 20,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
@@ -416,12 +416,29 @@ function ThreadView({ bookingId, mobile = false }: { bookingId: string; mobile?:
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 14,
-          padding: "16px 22px",
+          gap: mobile ? 10 : 14,
+          padding: mobile ? "10px 12px" : "16px 22px",
           borderBottom: `1px solid ${V.line}`,
         }}
       >
-        <CounterpartAvatar url={(data.business as any)?.logo_url || (data.business as any)?.hero_url || data.captain?.avatar_url} label={name} size={42} />
+        {mobile && (
+          <Link
+            to="/messages"
+            search={{ tab: "trips" as const }}
+            aria-label="Back to conversations"
+            style={{
+              flex: "none",
+              textDecoration: "none",
+              color: V.ink,
+              fontSize: 20,
+              lineHeight: 1,
+              padding: "4px 2px",
+            }}
+          >
+            ←
+          </Link>
+        )}
+        <CounterpartAvatar url={(data.business as any)?.logo_url || (data.business as any)?.hero_url || data.captain?.avatar_url} label={name} size={mobile ? 36 : 42} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
