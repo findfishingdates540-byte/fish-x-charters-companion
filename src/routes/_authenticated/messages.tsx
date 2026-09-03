@@ -67,51 +67,83 @@ function MessagesPage() {
   });
 
   return (
-    <div style={{ fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          padding: "16px 20px 0",
-          background: "#fff",
-        }}
-      >
-        {(
-          [
-            { key: "trips", label: "Trip messages" },
-            { key: "shops", label: "Shops & operators" },
-          ] as const
-        ).map((t) => (
+    <div
+      style={{
+        fontFamily: "'Hanken Grotesk',system-ui,sans-serif",
+        height: "100dvh",
+        display: "flex",
+        flexDirection: "column",
+        background: "#fff",
+        overflow: "hidden",
+      }}
+    >
+      {/* One header, always the same — never swaps between tabs or threads. */}
+      <header style={{ flex: "none", background: "#072057", color: "#eaf1f6" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "12px 16px",
+          }}
+        >
           <Link
-            key={t.key}
-            to="/messages"
-            search={{ tab: t.key }}
+            to="/dashboard"
+            aria-label="Back to dashboard"
+            style={{ color: "#93a7b7", textDecoration: "none", fontSize: 18, lineHeight: 1 }}
+          >
+            ←
+          </Link>
+          <span
             style={{
-              textDecoration: "none",
-              borderRadius: 30,
-              padding: "9px 18px",
-              fontSize: 12.5,
-              fontWeight: 700,
-              border: "1px solid rgba(13,34,54,.10)",
-              background: active === t.key ? "#2DE2F2" : "transparent",
-              color: active === t.key ? "#04121B" : "#5c6b78",
+              fontFamily: "'Cormorant Garamond',Georgia,serif",
+              fontSize: 21,
+              fontWeight: 600,
             }}
           >
-            {t.label}
-          </Link>
-        ))}
-      </div>
-
-      {active === "trips" ? (
-        <Messages bookingId={booking ?? null} />
-      ) : (
-        <div style={{ padding: 20, background: "#fff", minHeight: "70vh" }}>
-          <BusinessInbox
-            theme="light"
-            initialConversationId={(convo.data as any)?.conversationId ?? null}
-          />
+            Messages
+          </span>
         </div>
-      )}
+        <div style={{ display: "flex", gap: 8, padding: "0 16px 12px" }}>
+          {(
+            [
+              { key: "trips", label: "Trips" },
+              { key: "shops", label: "Shops & operators" },
+            ] as const
+          ).map((t) => (
+            <Link
+              key={t.key}
+              to="/messages"
+              search={{ tab: t.key }}
+              style={{
+                textDecoration: "none",
+                borderRadius: 30,
+                padding: "8px 16px",
+                fontSize: 12.5,
+                fontWeight: 700,
+                border: "1px solid rgba(255,255,255,.14)",
+                background: active === t.key ? "#2DE2F2" : "transparent",
+                color: active === t.key ? "#04121B" : "#93a7b7",
+              }}
+            >
+              {t.label}
+            </Link>
+          ))}
+        </div>
+      </header>
+
+      <main style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
+        {active === "trips" ? (
+          <Messages bookingId={booking ?? null} />
+        ) : (
+          <div style={{ height: "100%", overflowY: "auto", background: "#fff" }}>
+            <BusinessInbox
+              theme="light"
+              initialConversationId={(convo.data as any)?.conversationId ?? null}
+            />
+          </div>
+        )}
+      </main>
     </div>
   );
 }

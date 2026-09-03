@@ -6,6 +6,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -121,95 +122,6 @@ function Toast({ toast }: { toast: string }) {
   );
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        background: V.paper,
-        color: V.ink,
-        fontFamily: V.sans,
-        overflow: "hidden",
-      }}
-    >
-      <header style={{ flex: "none", background: V.navy, color: V.ond }}>
-        <div
-          style={{
-            padding: "0 28px",
-            height: 62,
-            display: "flex",
-            alignItems: "center",
-            gap: 22,
-          }}
-        >
-          <Link
-            to="/dashboard"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              color: V.ondmut,
-              textDecoration: "none",
-              fontSize: 13,
-              fontWeight: 600,
-            }}
-          >
-            <span>←</span> Back
-          </Link>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "0 auto" }}>
-            <span
-              style={{
-                width: 10,
-                height: 10,
-                background: V.sand,
-                transform: "rotate(45deg)",
-                display: "inline-block",
-                borderRadius: 1,
-              }}
-            />
-            <span
-              style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, letterSpacing: ".02em", whiteSpace: "nowrap" }}
-            >
-              FISH-X.COM
-            </span>
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: ".16em",
-                textTransform: "uppercase",
-                color: V.sand,
-                marginLeft: 4,
-              }}
-            >
-              Messages
-            </span>
-          </div>
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 7,
-              border: `1px solid ${V.lined}`,
-              borderRadius: 30,
-              padding: "8px 14px",
-              fontSize: 11.5,
-              fontWeight: 600,
-              color: V.ond,
-            }}
-          >
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: V.cyan }} /> One
-            thread per trip
-          </span>
-        </div>
-      </header>
-      <main style={{ flex: 1, minHeight: 0, padding: "22px 28px 28px" }}>{children}</main>
-    </div>
-  );
-}
-
 const avatarInitial = (label: string) => (label.trim()[0] ?? "C").toUpperCase();
 
 function CounterpartAvatar({
@@ -254,6 +166,7 @@ function CounterpartAvatar({
 /* ------------------------------------------------------------- Thread list -- */
 
 function ThreadList({ activeId }: { activeId: string | null }) {
+  const isMobile = useIsMobile();
   const { data } = useSuspenseQuery({
     queryKey: ["message-threads"],
     queryFn: () => listMessageThreads(),
@@ -264,30 +177,13 @@ function ThreadList({ activeId }: { activeId: string | null }) {
       style={{
         height: "100%",
         background: V.card,
-        border: `1px solid ${V.line}`,
-        borderRadius: 20,
+        border: isMobile ? "none" : `1px solid ${V.line}`,
+        borderRadius: isMobile ? 0 : 20,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <div style={{ padding: "20px 22px", borderBottom: `1px solid ${V.line}` }}>
-        <h1
-          style={{
-            fontFamily: V.serif,
-            fontWeight: 600,
-            fontSize: 24,
-            letterSpacing: "-.01em",
-            margin: 0,
-            color: V.ink,
-          }}
-        >
-          Messages
-        </h1>
-        <p style={{ fontSize: 12.5, color: V.tmut, margin: "4px 0 0" }}>
-          Your conversations with each captain — one per booking.
-        </p>
-      </div>
 
       {data.threads.length === 0 ? (
         <div style={{ padding: "48px 26px", textAlign: "center" }}>
@@ -453,7 +349,7 @@ function ThreadList({ activeId }: { activeId: string | null }) {
 
 /* -------------------------------------------------------------- Thread view -- */
 
-function ThreadView({ bookingId }: { bookingId: string }) {
+function ThreadView({ bookingId, mobile = false }: { bookingId: string; mobile?: boolean }) {
   const { data } = useSuspenseQuery({
     queryKey: ["thread", bookingId],
     queryFn: () => getThread({ data: { bookingId } }),
@@ -508,8 +404,8 @@ function ThreadView({ bookingId }: { bookingId: string }) {
       style={{
         height: "100%",
         background: V.card,
-        border: `1px solid ${V.line}`,
-        borderRadius: 20,
+        border: mobile ? "none" : `1px solid ${V.line}`,
+        borderRadius: mobile ? 0 : 20,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
@@ -521,12 +417,29 @@ function ThreadView({ bookingId }: { bookingId: string }) {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 14,
-          padding: "16px 22px",
+          gap: mobile ? 10 : 14,
+          padding: mobile ? "10px 12px" : "16px 22px",
           borderBottom: `1px solid ${V.line}`,
         }}
       >
-        <CounterpartAvatar url={(data.business as any)?.logo_url || (data.business as any)?.hero_url || data.captain?.avatar_url} label={name} size={42} />
+        {mobile && (
+          <Link
+            to="/messages"
+            search={{ tab: "trips" as const }}
+            aria-label="Back to conversations"
+            style={{
+              flex: "none",
+              textDecoration: "none",
+              color: V.ink,
+              fontSize: 20,
+              lineHeight: 1,
+              padding: "4px 2px",
+            }}
+          >
+            ←
+          </Link>
+        )}
+        <CounterpartAvatar url={(data.business as any)?.logo_url || (data.business as any)?.hero_url || data.captain?.avatar_url} label={name} size={mobile ? 36 : 42} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
@@ -766,20 +679,35 @@ function ThreadPlaceholder() {
 /* ---------------------------------------------------------------- Screen --- */
 
 export function Messages({ bookingId }: { bookingId: string | null }) {
-  return (
-    <Shell>
-      <div
-        style={{
-          height: "100%",
-          display: "grid",
-          gridTemplateColumns: "minmax(300px, 380px) 1fr",
-          gap: 22,
-          alignItems: "stretch",
-        }}
-      >
-        <ThreadList activeId={bookingId} />
-        {bookingId ? <ThreadView key={bookingId} bookingId={bookingId} /> : <ThreadPlaceholder />}
+  const isMobile = useIsMobile();
+
+  // WhatsApp behaviour on phones: the list IS the screen, and opening a chat
+  // replaces it full-bleed (with an in-chat back arrow). Desktop keeps 2 panes.
+  if (isMobile) {
+    return (
+      <div style={{ height: "100%", minHeight: 0 }}>
+        {bookingId ? (
+          <ThreadView key={bookingId} bookingId={bookingId} mobile />
+        ) : (
+          <ThreadList activeId={null} />
+        )}
       </div>
-    </Shell>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "minmax(300px, 380px) 1fr",
+        gap: 18,
+        alignItems: "stretch",
+        minHeight: 0,
+      }}
+    >
+      <ThreadList activeId={bookingId} />
+      {bookingId ? <ThreadView key={bookingId} bookingId={bookingId} /> : <ThreadPlaceholder />}
+    </div>
   );
 }

@@ -5,6 +5,7 @@
  * operator side to scope threads to that workspace.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -95,6 +96,7 @@ export function BusinessInbox({
   initialConversationId?: string | null;
 }) {
   const c = palette(theme);
+  const isMobile = useIsMobile();
   const qc = useQueryClient();
   const side: "angler" | "business" = businessId ? "business" : "angler";
 
@@ -115,8 +117,9 @@ export function BusinessInbox({
     if (initialConversationId) setActiveId(initialConversationId);
   }, [initialConversationId]);
   useEffect(() => {
+    if (isMobile) return; // phones start on the conversation list, WhatsApp-style
     if (!activeId && threads.length) setActiveId(threads[0].id);
-  }, [activeId, threads]);
+  }, [activeId, threads, isMobile]);
 
   const thread = useQuery({
     queryKey: ["business-thread", activeId],
@@ -177,17 +180,24 @@ export function BusinessInbox({
     <div
       className="fx-inbox"
       style={{
-        display: "grid",
+        display: isMobile ? "block" : "grid",
         gridTemplateColumns: "minmax(240px,320px) 1fr",
         gap: 0,
-        border: `1px solid ${c.line}`,
-        borderRadius: 16,
+        border: isMobile ? "none" : `1px solid ${c.line}`,
+        borderRadius: isMobile ? 0 : 16,
         overflow: "hidden",
         background: c.card,
-        minHeight: 520,
+        minHeight: isMobile ? 0 : 520,
       }}
     >
-      <div style={{ borderRight: `1px solid ${c.line}`, maxHeight: 640, overflowY: "auto" }}>
+      <div
+        style={{
+          display: isMobile && activeId ? "none" : "block",
+          borderRight: isMobile ? "none" : `1px solid ${c.line}`,
+          maxHeight: isMobile ? "none" : 640,
+          overflowY: "auto",
+        }}
+      >
         {threads.map((t) => {
           const on = t.id === activeId;
           return (
@@ -254,8 +264,18 @@ export function BusinessInbox({
         })}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", minHeight: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", borderBottom: `1px solid ${c.line}` }}>
+      <div style={{ display: isMobile && !activeId ? "none" : "flex", flexDirection: "column", minHeight: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: isMobile ? "10px 12px" : "14px 18px", borderBottom: `1px solid ${c.line}` }}>
+          {isMobile && (
+            <button
+              type="button"
+              aria-label="Back to conversations"
+              onClick={() => setActiveId(null)}
+              style={{ background: "none", border: 0, color: c.text, fontSize: 20, lineHeight: 1, cursor: "pointer", padding: "4px 2px" }}
+            >
+              ←
+            </button>
+          )}
           {active && <Avatar c={c} label={counterpart(active)} url={counterpartPhoto(active)} size={38} />}
           <div>
             <div style={{ fontFamily: serif, fontSize: 19, color: c.text }}>
@@ -267,7 +287,7 @@ export function BusinessInbox({
           </div>
         </div>
 
-        <div style={{ flex: 1, minHeight: 240, maxHeight: 460, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ flex: 1, minHeight: 240, maxHeight: isMobile ? "none" : 460, overflowY: "auto", padding: isMobile ? 14 : 18, display: "flex", flexDirection: "column", gap: 10 }}>
           {thread.isLoading && <div style={{ color: c.mut, fontSize: 13 }}>Loading…</div>}
           {(thread.data as any)?.messages?.length === 0 && (
             <div style={{ color: c.mut, fontSize: 13 }}>Say hello to start the conversation.</div>
