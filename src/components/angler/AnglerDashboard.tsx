@@ -108,12 +108,12 @@ export function AnglerDashboard() {
     <div id="ang-dash" style={styleVars}>
       {/* TOP NAV */}
       <header style={{ position: "sticky", top: 0, zIndex: 30, background: "var(--navy)", color: "var(--ond)" }}>
-        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 28px", height: 66, display: "flex", alignItems: "center", gap: 28 }}>
+        <div className="ang-topbar" style={{ maxWidth: 1160, margin: "0 auto", padding: "0 28px", height: 66, display: "flex", alignItems: "center", gap: 28 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
             <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
           </div>
-          <nav style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <nav className="ang-topnav" style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {(["home", "trips", "explore", "wallet", "orders"] as Tab[]).map((t) => (
               <button
                 key={t}
@@ -167,10 +167,10 @@ export function AnglerDashboard() {
               Marketplace ↗
             </Link>
           </nav>
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="ang-topactions" style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
             <NotificationBell />
 
-            <label style={{ display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", borderRadius: 30, padding: "9px 15px", width: 230 }}>
+            <label className="ang-topsearch" style={{ display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", borderRadius: 30, padding: "9px 15px", width: 230 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93a7b7" strokeWidth="1.8">
                 <circle cx="11" cy="11" r="7" />
                 <path d="m21 21-4.3-4.3" />

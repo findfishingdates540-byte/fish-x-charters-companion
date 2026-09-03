@@ -792,3 +792,16 @@ body.dc-body { margin:0; background:#072057; }
 .fx-shell select option { background: #14202b; color: #f0f2f5; }
 .fx-shell input[type="checkbox"],
 .fx-shell input[type="radio"] { accent-color: #2de2f2; }
+
+/* Angler dashboard top bar — mobile */
+@media (max-width: 860px) {
+  .ang-topbar { gap: 12px; padding: 0 14px !important; height: auto !important; min-height: 60px; flex-wrap: wrap; align-items: center; }
+  .ang-topsearch { display: none !important; }
+  .ang-topactions { gap: 8px !important; margin-left: auto; }
+  .ang-topnav {
+    order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap;
+    padding-bottom: 8px; scrollbar-width: none;
+  }
+  .ang-topnav::-webkit-scrollbar { display: none; }
+  .ang-topactions > a[title="Settings"] { display: none !important; }
+}
