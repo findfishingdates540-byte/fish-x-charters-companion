@@ -677,20 +677,35 @@ function ThreadPlaceholder() {
 /* ---------------------------------------------------------------- Screen --- */
 
 export function Messages({ bookingId }: { bookingId: string | null }) {
-  return (
-    <Shell>
-      <div
-        style={{
-          height: "100%",
-          display: "grid",
-          gridTemplateColumns: "minmax(300px, 380px) 1fr",
-          gap: 22,
-          alignItems: "stretch",
-        }}
-      >
-        <ThreadList activeId={bookingId} />
-        {bookingId ? <ThreadView key={bookingId} bookingId={bookingId} /> : <ThreadPlaceholder />}
+  const isMobile = useIsMobile();
+
+  // WhatsApp behaviour on phones: the list IS the screen, and opening a chat
+  // replaces it full-bleed (with an in-chat back arrow). Desktop keeps 2 panes.
+  if (isMobile) {
+    return (
+      <div style={{ height: "100%", minHeight: 0 }}>
+        {bookingId ? (
+          <ThreadView key={bookingId} bookingId={bookingId} mobile />
+        ) : (
+          <ThreadList activeId={null} />
+        )}
       </div>
-    </Shell>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "minmax(300px, 380px) 1fr",
+        gap: 18,
+        alignItems: "stretch",
+        minHeight: 0,
+      }}
+    >
+      <ThreadList activeId={bookingId} />
+      {bookingId ? <ThreadView key={bookingId} bookingId={bookingId} /> : <ThreadPlaceholder />}
+    </div>
   );
 }
