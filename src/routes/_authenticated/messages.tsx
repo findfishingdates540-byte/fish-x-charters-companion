@@ -132,7 +132,7 @@ function MessagesPage() {
         </div>
       </header>
 
-      <main style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
+      <main className="fx-messages-main" style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
         {active === "trips" ? (
           <Messages bookingId={booking ?? null} />
         ) : (

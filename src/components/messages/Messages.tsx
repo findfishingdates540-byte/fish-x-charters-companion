@@ -174,6 +174,7 @@ function ThreadList({ activeId }: { activeId: string | null }) {
 
   return (
     <aside
+      className="fx-thread-list"
       style={{
         height: "100%",
         background: V.card,
@@ -242,6 +243,8 @@ function ThreadList({ activeId }: { activeId: string | null }) {
                   display: "flex",
                   gap: 14,
                   padding: "16px 20px",
+                  width: "100%",
+                  boxSizing: "border-box",
                   textDecoration: "none",
                   color: V.ink,
                   borderBottom: `1px solid ${V.line}`,
