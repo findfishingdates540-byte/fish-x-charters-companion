@@ -101,6 +101,17 @@ function AuthPage() {
   const [showPw, setShowPw] = useState(false);
   const [doneKind, setDoneKind] = useState<DoneKind>("login");
 
+  // Already signed in? Skip the sign-in form entirely.
+  useEffect(() => {
+    let cancelled = false;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled && data.session) navigate({ to: "/dashboard", replace: true });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
   useEffect(() => {
     document.body.classList.add("dc-body");
     return () => document.body.classList.remove("dc-body");
