@@ -27,6 +27,19 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   const hostRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  // Signed-in visitors go straight to their dashboard instead of the marketing page.
+  useEffect(() => {
+    let cancelled = false;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled && data.session) navigate({ to: "/dashboard", replace: true });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
   const { template, script } = useMemo(() => {
     const parsed = parseDcHtml(landingRaw);
     return { template: cleanTemplate(parsed.template), script: parsed.script };
