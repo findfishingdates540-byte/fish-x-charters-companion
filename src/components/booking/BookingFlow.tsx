@@ -139,6 +139,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const qc = useQueryClient();
   const [step, setStep] = useState<Step>("detail");
   const [takenSlot, setTakenSlot] = useState<{ label: string } | null>(null);
+  const [payBlocked, setPayBlocked] = useState<string | null>(null);
+
   const openSlots = svc.openSlots ?? [];
   // Nothing is pre-picked: the angler chooses a departure on the dates page.
   const [slotId, setSlotId] = useState("");
