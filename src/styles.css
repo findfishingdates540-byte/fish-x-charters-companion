@@ -196,7 +196,7 @@
 
 .display-text {
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
-  font-size: 6rem;
+  font-size: 3.5rem;
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1;
@@ -204,12 +204,13 @@
 }
 
 @media (max-width: 768px) {
-  .display-text { font-size: 3rem; }
+  .display-text { font-size: 2.5rem; }
 }
 
 @media (min-width: 1024px) {
-  .display-text { font-size: 5rem; }
+  .display-text { font-size: 4rem; }
 }
+
 
 @utility text-scoreboard {
   font-family: var(--font-scoreboard);
