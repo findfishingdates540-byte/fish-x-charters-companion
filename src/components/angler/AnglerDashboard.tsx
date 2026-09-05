@@ -167,7 +167,7 @@ export function AnglerDashboard() {
               Marketplace ↗
             </Link>
           </nav>
-          <div className="ang-topactions" style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="ang-topactions" style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
             <NotificationBell />
 
             <label className="ang-topsearch" style={{ display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", borderRadius: 30, padding: "9px 15px", width: 230 }}>
