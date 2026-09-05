@@ -103,6 +103,6 @@ export async function assertVendorsPayable(client: MinimalClient, businessIds: s
   const statuses = await checkVendorsPayable(client, businessIds);
   const blocked = statuses.filter((s) => !s.ready);
   if (blocked.length) {
-    throw new Response(blocked.map((b) => b.reason).join(" "), { status: 409 });
+    throw new Error(blocked.map((b) => b.reason).join(" "));
   }
 }
