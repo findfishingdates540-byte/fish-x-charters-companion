@@ -23,8 +23,8 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
       )
       .eq("id", data.serviceId)
       .maybeSingle();
-    if (error) throw new Response(error.message, { status: 500 });
-    if (!svc) throw new Response("Service not found", { status: 404 });
+    if (error) throw new Error(error.message);
+    if (!svc) throw new Error("Service not found");
 
     const { data: slots } = await supabase
       .from("service_availability")
@@ -188,7 +188,7 @@ export const createBookingFromService = createServerFn({ method: "POST" })
         _slot_id: data.slotId,
         _quantity: l.quantity,
       } as never);
-      if (reason) throw new Response(`ADDON_UNAVAILABLE: ${reason}`, { status: 409 });
+      if (reason) throw new Error(`ADDON_UNAVAILABLE: ${reason}`);
     }
 
     // 1) Reserve the seats atomically. Throws if the slot is full/blacked out.
@@ -200,8 +200,8 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       _hold_minutes: 15,
       _addon_cents: addonCents,
     } as never);
-    if (rpcErr) throw new Response(rpcErr.message, { status: 400 });
-    if (!booking) throw new Response("Could not reserve this slot", { status: 400 });
+    if (rpcErr) throw new Error(rpcErr.message);
+    if (!booking) throw new Error("Could not reserve this slot");
 
 
     const row = booking as unknown as {
@@ -229,12 +229,9 @@ export const createBookingFromService = createServerFn({ method: "POST" })
         _lines: addonLines.map((l) => ({ addon_id: l.id, quantity: l.quantity })),
       });
       if (addonErr) {
-        throw new Response(
-          addonErr.message?.includes("ADDON_UNAVAILABLE")
+        throw new Error(addonErr.message?.includes("ADDON_UNAVAILABLE")
             ? addonErr.message
-            : `ADDON_UNAVAILABLE: ${addonErr.message}`,
-          { status: 409 },
-        );
+            : `ADDON_UNAVAILABLE: ${addonErr.message}`);
       }
     }
 
