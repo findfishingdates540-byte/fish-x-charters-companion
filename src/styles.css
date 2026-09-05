@@ -881,7 +881,7 @@ body.dc-body { margin:0; background:#072057; }
 @media (max-width: 860px) {
   .ang-topbar { gap: 10px; padding: 0 16px !important; height: auto !important; min-height: 58px; flex-wrap: wrap; align-items: center; }
   .ang-topsearch { display: none !important; }
-  .ang-topactions { gap: 10px !important; margin-left: auto; }
+  .ang-topactions { gap: 10px !important; }
   .ang-topname { display: none !important; }
   .ang-signout { display: none !important; }
   .ang-topactions > a[title="Settings"] { display: none !important; }
