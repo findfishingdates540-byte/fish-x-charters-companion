@@ -301,17 +301,18 @@ body.dc-body { margin:0; background:#072057; }
 .dc-landing #fishx-root > header > div[style*="max-width:1280px"],
 .dc-landing #fishx-root > section > div[style*="max-width:1280px"] {
   max-width: 100% !important;
-  padding-left: 32px !important;
-  padding-right: 32px !important;
+  padding-left: 48px !important;
+  padding-right: 48px !important;
 }
 
 @media (max-width: 900px) {
   .dc-landing #fishx-root > header > div[style*="max-width:1280px"],
   .dc-landing #fishx-root > section > div[style*="max-width:1280px"] {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
   }
 }
+
 
 /* =============================================================
  * Landing page — mobile responsiveness
