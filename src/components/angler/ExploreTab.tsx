@@ -72,7 +72,7 @@ export function ExploreTab() {
           padding: "clamp(48px,6vw,92px) 24px clamp(40px,5vw,72px)",
           background: `linear-gradient(180deg, rgba(7,26,42,.86), rgba(7,26,42,.94)), #071a2a url(${DEFAULT_HERO}) center/cover`,
           color: "#eaf1f6",
-          textAlign: "center",
+          textAlign: "left",
         }}
       >
         <div style={{ maxWidth: 980, margin: "0 auto" }}>
@@ -82,7 +82,7 @@ export function ExploreTab() {
           <h1 style={{ fontFamily: serif, fontSize: "clamp(34px,5vw,60px)", fontWeight: 600, letterSpacing: "-.02em", margin: "10px 0 12px", lineHeight: 1.05 }}>
             Book your next fishing charter.
           </h1>
-          <p style={{ color: "#b8c9d6", fontSize: 16, maxWidth: 620, margin: "0 auto 30px" }}>
+          <p style={{ color: "#b8c9d6", fontSize: 16, maxWidth: 620, margin: "0 0 30px" }}>
             Search verified captains by port, date and target species. Every departure is an exclusive
             time block — never double-booked.
           </p>
