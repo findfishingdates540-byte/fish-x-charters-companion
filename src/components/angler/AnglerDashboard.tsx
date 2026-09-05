@@ -109,9 +109,9 @@ export function AnglerDashboard() {
       {/* TOP NAV */}
       <header style={{ position: "sticky", top: 0, zIndex: 30, background: "var(--navy)", color: "var(--ond)" }}>
         <div className="ang-topbar" style={{ maxWidth: 1160, margin: "0 auto", padding: "0 28px", height: 66, display: "flex", alignItems: "center", gap: 28 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-            <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+            <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1, flexShrink: 0 }} />
+            <span style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: 18, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
           </div>
           <nav className="ang-topnav" style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {(["home", "trips", "explore", "wallet", "orders"] as Tab[]).map((t) => (
@@ -196,12 +196,13 @@ export function AnglerDashboard() {
               title="Your account"
               style={{ display: "flex", alignItems: "center", gap: 9, background: "transparent", border: 0, cursor: "pointer", textDecoration: "none" }}
             >
-              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(45,226,242,.16)", display: "grid", placeItems: "center", fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, color: "var(--sand)" }}>
+              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(45,226,242,.16)", display: "grid", placeItems: "center", fontFamily: "var(--sans)", fontSize: 15, fontWeight: 700, color: "var(--sand)" }}>
                 {initial}
               </div>
-              <span style={{ fontSize: 13.5, fontWeight: 600, color: "#fff" }}>{firstName}</span>
+              <span className="ang-topname" style={{ fontSize: 13.5, fontWeight: 600, color: "#fff" }}>{firstName}</span>
             </Link>
             <button
+              className="ang-signout"
               onClick={handleSignOut}
               title="Sign out"
               style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.06)", border: "1px solid var(--lined)", cursor: "pointer", display: "grid", placeItems: "center", color: "var(--ond)" }}
