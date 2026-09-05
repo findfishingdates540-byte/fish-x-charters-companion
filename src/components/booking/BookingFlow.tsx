@@ -965,6 +965,14 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
               You pay 25% now to lock the boat. The rest goes to your captain at the dock.
             </p>
 
+            {payBlocked && (
+              <div style={{ background: "#fff4f2", border: "1px solid rgba(190,60,40,.3)", borderRadius: 14, padding: "14px 18px", marginBottom: 20 }}>
+                <div style={{ fontWeight: 700, fontSize: 14.5, marginBottom: 4 }}>This operator can't take payments yet</div>
+                <div style={{ fontSize: 13.5, color: V.tmut }}>{payBlocked} Try another trip, or message the operator to finish their payment setup.</div>
+              </div>
+            )}
+
+
             {/* Hold countdown — the departure is off the market while it runs. */}
             {!holdExpired && (
               <div
