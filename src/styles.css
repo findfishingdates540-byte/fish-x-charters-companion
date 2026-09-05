@@ -491,22 +491,26 @@ body.dc-body { margin:0; background:#072057; }
   .fx-authed header[style*="sticky"] nav {
     display: none !important;
   }
-  /* When the menu is open, drop sticky so the expanded header pushes
-     page content down instead of overlaying it. */
-  .fx-authed header[style*="sticky"][data-nav-open="true"] {
+  /* When the menu is open, keep the header sticky and overlay the nav
+     dropdown on top of the page content instead of pushing it down. */
+  .fx-authed header[style*="sticky"][data-nav-open="true"] > div:first-child {
     position: relative !important;
-    top: auto !important;
   }
   .fx-authed header[style*="sticky"][data-nav-open="true"] nav {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 40 !important;
     display: flex !important;
-    order: 3 !important;
-    width: 100% !important;
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 2px !important;
-    padding: 6px 4px 2px !important;
-    border-top: 1px solid rgba(255,255,255,.08);
-    margin-top: 6px !important;
+    padding: 8px 12px 10px !important;
+    background: var(--navy, #072057) !important;
+    border-top: 1px solid rgba(255,255,255,.08) !important;
+    border-bottom: 1px solid rgba(255,255,255,.08) !important;
+    box-shadow: 0 18px 40px -12px rgba(0,0,0,.35) !important;
   }
   .fx-authed header[style*="sticky"][data-nav-open="true"] nav > * {
     flex: none !important;
