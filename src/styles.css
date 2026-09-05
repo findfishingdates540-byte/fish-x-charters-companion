@@ -536,7 +536,6 @@ body.dc-body { margin:0; background:#072057; }
     color: inherit;
     cursor: pointer;
     padding: 0;
-    margin-left: auto;
   }
   .fx-authed .fx-hamburger svg { width: 20px; height: 20px; }
   /* Hide the wide search field on tablets/phones */
