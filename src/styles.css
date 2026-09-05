@@ -269,7 +269,6 @@ body.dc-body { margin:0; background:#072057; }
     padding: 0 20px !important;
   }
   .dc-landing [data-screen-label="Hero"] { padding: 24px 0 56px !important; }
-  .dc-landing [data-screen-label="Hero"] h1.display-text { font-size: clamp(2.5rem, 10vw, 3.5rem) !important; }
   .dc-landing [data-screen-label="Hero"] > div > div:last-child { height: 340px !important; }
   .dc-landing [data-screen-label="Hero"] > div > div:last-child > div:first-child { width: min(240px, 58%) !important; }
   .dc-landing [data-screen-label="Hero"] > div > div:last-child > div:last-child { width: min(220px, 56%) !important; }
