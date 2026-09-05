@@ -208,7 +208,7 @@
 }
 
 @media (min-width: 1024px) {
-  .display-text { font-size: 8rem; }
+  .display-text { font-size: 5rem; }
 }
 
 @utility text-scoreboard {
