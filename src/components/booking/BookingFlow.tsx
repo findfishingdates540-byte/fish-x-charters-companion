@@ -139,6 +139,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const qc = useQueryClient();
   const [step, setStep] = useState<Step>("detail");
   const [takenSlot, setTakenSlot] = useState<{ label: string } | null>(null);
+  const [payBlocked, setPayBlocked] = useState<string | null>(null);
+
   const openSlots = svc.openSlots ?? [];
   // Nothing is pre-picked: the angler chooses a departure on the dates page.
   const [slotId, setSlotId] = useState("");
@@ -248,7 +250,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
       }));
     },
 
-    onMutate: () => setProcessing(true),
+    onMutate: () => { setProcessing(true); setPayBlocked(null); },
     onSuccess: (res) => {
       // Seats are now locked to this angler until the hold lapses.
       setReservation({
@@ -261,7 +263,15 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     onError: (e: unknown) => {
       setProcessing(false);
       const msg = e instanceof Error ? e.message : String(e ?? "Booking failed");
+      if (/payment setup|accepting payments|payment verification/i.test(msg)) {
+        setPayBlocked(msg);
+        setStep("checkout");
+        window.scrollTo(0, 0);
+        showToast(msg);
+        return;
+      }
       if (SLOT_CONFLICT.test(msg)) {
+
         // Someone locked this exact departure first — refresh availability and
         // show the recovery screen instead of a raw error toast.
         setTakenSlot({ label: `${dateLabel}${time ? ` · ${time}` : ""}` });
@@ -964,6 +974,14 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
             <p style={{ fontSize: 14.5, color: V.tmut, margin: "0 0 18px" }}>
               You pay 25% now to lock the boat. The rest goes to your captain at the dock.
             </p>
+
+            {payBlocked && (
+              <div style={{ background: "#fff4f2", border: "1px solid rgba(190,60,40,.3)", borderRadius: 14, padding: "14px 18px", marginBottom: 20 }}>
+                <div style={{ fontWeight: 700, fontSize: 14.5, marginBottom: 4 }}>This operator can't take payments yet</div>
+                <div style={{ fontSize: 13.5, color: V.tmut }}>{payBlocked} Try another trip, or message the operator to finish their payment setup.</div>
+              </div>
+            )}
+
 
             {/* Hold countdown — the departure is off the market while it runs. */}
             {!holdExpired && (
