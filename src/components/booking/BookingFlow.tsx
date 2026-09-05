@@ -250,7 +250,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
       }));
     },
 
-    onMutate: () => setProcessing(true),
+    onMutate: () => { setProcessing(true); setPayBlocked(null); },
     onSuccess: (res) => {
       // Seats are now locked to this angler until the hold lapses.
       setReservation({
@@ -263,7 +263,15 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
     onError: (e: unknown) => {
       setProcessing(false);
       const msg = e instanceof Error ? e.message : String(e ?? "Booking failed");
+      if (/payment setup|accepting payments|payment verification/i.test(msg)) {
+        setPayBlocked(msg);
+        setStep("checkout");
+        window.scrollTo(0, 0);
+        showToast(msg);
+        return;
+      }
       if (SLOT_CONFLICT.test(msg)) {
+
         // Someone locked this exact departure first — refresh availability and
         // show the recovery screen instead of a raw error toast.
         setTakenSlot({ label: `${dateLabel}${time ? ` · ${time}` : ""}` });
