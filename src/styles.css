@@ -273,6 +273,9 @@ body.dc-body { margin:0; background:#072057; }
   .dc-landing [data-screen-label="Hero"] > div > div:last-child { height: 340px !important; }
   .dc-landing [data-screen-label="Hero"] > div > div:last-child > div:first-child { width: min(240px, 58%) !important; }
   .dc-landing [data-screen-label="Hero"] > div > div:last-child > div:last-child { width: min(220px, 56%) !important; }
+  .dc-landing #fishx-root > header > div { padding: 14px 20px !important; gap: 14px !important; }
+  .dc-landing #fishx-root > header nav { gap: 18px !important; }
+  .dc-landing #fishx-root > header nav a { font-size: 13px !important; }
 }
 
 @media (max-width: 640px) {
@@ -284,6 +287,9 @@ body.dc-body { margin:0; background:#072057; }
   .dc-landing [data-screen-label="Hero"] [style*="grid-template-columns:1.6fr 1fr auto"] { grid-template-columns: 1fr !important; }
   .dc-landing [data-screen-label="Hero"] [style*="grid-template-columns:1.6fr 1fr auto"] label + label { border-left: none !important; border-top: 1px solid rgba(255,255,255,.13) !important; }
   .dc-landing [data-screen-label="Hero"] [data-search-btn] { justify-content: center !important; padding: 14px 24px !important; }
+  .dc-landing #fishx-root > header nav { display: none !important; }
+  .dc-landing #fishx-root > header > div > div:last-child { gap: 12px !important; }
+  .dc-landing #fishx-root > header > div > div:last-child > a:last-child { padding: 10px 16px !important; font-size: 11px !important; }
 }
 
 /* =============================================================
