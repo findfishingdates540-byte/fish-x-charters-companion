@@ -491,10 +491,10 @@ body.dc-body { margin:0; background:#072057; }
   .fx-authed header[style*="sticky"] nav {
     display: none !important;
   }
-  /* When the menu is open, keep the header sticky and overlay the nav
-     dropdown on top of the page content instead of pushing it down. */
-  .fx-authed header[style*="sticky"][data-nav-open="true"] > div:first-child {
-    position: relative !important;
+  /* When the menu is open, keep the header sticky and overlay a full-width
+     nav dropdown on top of the page content instead of pushing it down. */
+  .fx-authed header[style*="sticky"][data-nav-open="true"] {
+    position: sticky !important;
   }
   .fx-authed header[style*="sticky"][data-nav-open="true"] nav {
     position: absolute !important;
@@ -506,7 +506,7 @@ body.dc-body { margin:0; background:#072057; }
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 2px !important;
-    padding: 8px 12px 10px !important;
+    padding: 8px 0 10px !important;
     background: var(--navy, #072057) !important;
     border-top: 1px solid rgba(255,255,255,.08) !important;
     border-bottom: 1px solid rgba(255,255,255,.08) !important;
@@ -515,7 +515,7 @@ body.dc-body { margin:0; background:#072057; }
   .fx-authed header[style*="sticky"][data-nav-open="true"] nav > * {
     flex: none !important;
     white-space: nowrap !important;
-    padding: 10px 12px !important;
+    padding: 10px 16px !important;
     font-size: 14px !important;
     text-align: left !important;
     justify-content: flex-start !important;
