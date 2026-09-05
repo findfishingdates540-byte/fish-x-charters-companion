@@ -194,6 +194,23 @@
   line-height: 1.05;
 }
 
+.display-text {
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  font-size: 6rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: #141414;
+}
+
+@media (max-width: 768px) {
+  .display-text { font-size: 3rem; }
+}
+
+@media (min-width: 1024px) {
+  .display-text { font-size: 8rem; }
+}
+
 @utility text-scoreboard {
   font-family: var(--font-scoreboard);
   font-weight: 500;
