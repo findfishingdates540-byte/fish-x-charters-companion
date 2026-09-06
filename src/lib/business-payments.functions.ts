@@ -43,7 +43,7 @@ export const getBusinessPayments = createServerFn({ method: "GET" })
       supabase
         .from("product_orders")
         .select(
-          "id,status,total_cents,payout_cents,application_fee_cents,paid_at,payout_released_at,delivered_at,created_at,buyer_name",
+          "id,status,total_cents,payout_cents,application_fee_cents,paid_at,payout_due_at,payout_released_at,delivered_at,stripe_transfer_id,created_at,buyer_name",
         )
         .eq("business_id", businessId)
         .order("created_at", { ascending: false })
@@ -124,6 +124,8 @@ export const getBusinessPayments = createServerFn({ method: "GET" })
         netCents: money(b.payout_cents),
         escrowState: String(b.escrow_state ?? "none"),
         releasedAt: b.payout_released_at as string | null,
+        payoutDueAt: (b.dispute_window_ends_at as string | null) ?? null,
+        settleable: false,
       })),
       ...orders.slice(0, 40).map((o) => ({
         id: o.id,
@@ -138,6 +140,14 @@ export const getBusinessPayments = createServerFn({ method: "GET" })
         netCents: money(o.payout_cents),
         escrowState: o.payout_released_at ? "released" : "held",
         releasedAt: o.payout_released_at as string | null,
+        // Shops settle their own orders from the ledger once funds clear.
+        payoutDueAt: (o.payout_due_at as string | null) ?? null,
+        settleable:
+          Boolean(o.paid_at) &&
+          !o.payout_released_at &&
+          !o.stripe_transfer_id &&
+          !["refunded", "cancelled"].includes(String(o.status)) &&
+          (!o.payout_due_at || new Date(o.payout_due_at as string) <= new Date()),
       })),
     ].sort((a, b) => (a.date < b.date ? 1 : -1));
 
