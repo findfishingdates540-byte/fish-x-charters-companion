@@ -207,3 +207,98 @@ export const toggleFollowSeller = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 400 });
     return { following: true };
   });
+
+/**
+ * Buyer-initiated cancellation. Allowed while the shop hasn't shipped yet:
+ * the card payment is refunded through Stripe, any vendor transfer already
+ * made is pulled back, and the stock goes back on the shelf.
+ */
+export const cancelMyOrder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({ orderId: z.string().uuid(), reason: z.string().max(300).optional() })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: order, error } = await supabase
+      .from("product_orders")
+      .select(
+        "id,status,buyer_id,total_cents,stripe_payment_intent_id,stripe_transfer_id,shipped_at,items:product_order_items(product_id,quantity)",
+      )
+      .eq("id", data.orderId)
+      .eq("buyer_id", userId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!order) throw new Error("We couldn't find that order on your account.");
+    if (order.status === "refunded" || order.status === "cancelled") {
+      return { ok: true as const, alreadyCancelled: true };
+    }
+    if (order.shipped_at || ["shipped", "delivered"].includes(String(order.status))) {
+      throw new Error(
+        "This order has already shipped — message the shop to arrange a return instead.",
+      );
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { getStripe } = await import("@/lib/stripe.server");
+    const stripe = getStripe();
+
+    if (stripe && order.stripe_payment_intent_id) {
+      if (order.stripe_transfer_id) {
+        try {
+          await stripe.transfers.createReversal(order.stripe_transfer_id, {});
+        } catch {
+          /* already reversed */
+        }
+      }
+      try {
+        await stripe.refunds.create(
+          { payment_intent: order.stripe_payment_intent_id, reason: "requested_by_customer" },
+          { idempotencyKey: `buyer-cancel-${order.id}` },
+        );
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("[stripe] buyer refund failed", message);
+        throw new Error(`We couldn't send the refund: ${message}`);
+      }
+    }
+
+    for (const item of (order.items ?? []) as Array<{ product_id: string | null; quantity: number }>) {
+      if (!item.product_id) continue;
+      const { data: prod } = await supabaseAdmin
+        .from("inventory_products")
+        .select("stock_qty")
+        .eq("id", item.product_id)
+        .maybeSingle();
+      if (prod) {
+        await supabaseAdmin
+          .from("inventory_products")
+          .update({ stock_qty: (prod.stock_qty ?? 0) + (item.quantity ?? 0) })
+          .eq("id", item.product_id);
+      }
+    }
+
+    const now = new Date().toISOString();
+    const nextStatus = order.stripe_payment_intent_id ? "refunded" : "cancelled";
+    await supabaseAdmin
+      .from("product_orders")
+      .update({
+        status: nextStatus,
+        notes: data.reason ?? "Cancelled by buyer",
+        payout_released_at: null,
+        payout_due_at: null,
+        updated_at: now,
+      })
+      .eq("id", order.id);
+
+    await supabaseAdmin.from("domain_events").insert({
+      topic: "order.cancelled_by_buyer",
+      aggregate_type: "product_order",
+      aggregate_id: order.id,
+      payload: { order_id: order.id, amount_cents: order.total_cents, cancelled_by: userId },
+    });
+
+    return { ok: true as const, alreadyCancelled: false, status: nextStatus };
+  });
