@@ -1167,13 +1167,22 @@ function PayoutsStep({
                 onClick={() => setSchedule(opt.key)}
                 className="border rounded-xl p-4 text-left"
                 style={{
-                  borderColor: on ? "#2DE2F2" : "rgba(13,34,54,.10)",
-                  background: on ? "#2DE2F2" : "#14202B",
+                  borderColor: on ? "#2DE2F2" : "rgba(45,226,242,.14)",
+                  background: on ? "rgba(45,226,242,.12)" : "#14202B",
+                  boxShadow: on ? "0 0 0 1px #2DE2F2 inset" : "none",
                 }}
               >
-                <div className="text-[13.5px] font-semibold text-[#F0F2F5]">{opt.title}</div>
-                <div className="text-[12px] text-[#92A0AB] mt-1">{opt.desc}</div>
+                <div
+                  className="text-[13.5px] font-semibold"
+                  style={{ color: on ? "#2DE2F2" : "#F0F2F5" }}
+                >
+                  {opt.title}
+                </div>
+                <div className="text-[12px] mt-1" style={{ color: on ? "#C9D6DE" : "#92A0AB" }}>
+                  {opt.desc}
+                </div>
               </button>
+
             );
           })}
         </div>
