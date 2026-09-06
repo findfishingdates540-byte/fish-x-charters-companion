@@ -82,7 +82,7 @@ function BrandStoryPage() {
   return (
     <div style={TOKENS}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap');
+        
         .bs-serif{font-family:var(--serif)}
         .bs-eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;font-weight:600}
         .bs-reveal{opacity:0;transform:translateY(20px);animation:bs-rise .9s cubic-bezier(.22,1,.36,1) forwards}
