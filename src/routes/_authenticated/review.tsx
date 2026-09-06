@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/review")({
   }),
   component: ReviewPage,
   errorComponent: ({ error }) => (
-    <div style={{ padding: 40, fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
+    <div style={{ padding: 40, fontFamily: "'Outfit',system-ui,sans-serif" }}>
       <h1>Couldn't load the review screen</h1>
       <p>{error instanceof Error ? error.message : "Unknown error"}</p>
     </div>

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/bookings/detail")({
   head: () => ({ meta: [{ title: "Booking detail — FISH-X.COM Bookings & Marketplace" }] }),
   component: BookingDetailPage,
   errorComponent: ({ error }) => (
-    <div style={{ padding: 40, fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
+    <div style={{ padding: 40, fontFamily: "'Outfit',system-ui,sans-serif" }}>
       <h1>Couldn't load booking</h1>
       <p>{error instanceof Error ? error.message : "Unknown error"}</p>
     </div>

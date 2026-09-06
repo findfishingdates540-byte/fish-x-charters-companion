@@ -35,7 +35,7 @@ function BookingError({ error }: { error: Error }) {
   return (
     <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", padding: 24, textAlign: "center" }}>
       <div style={{ maxWidth: 460 }}>
-        <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 32, margin: "0 0 10px" }}>
+        <h1 style={{ fontFamily: "'Outfit',Georgia,serif", fontSize: 32, margin: "0 0 10px" }}>
           We couldn’t load this trip
         </h1>
         <p style={{ color: "#5c6b78", fontSize: 14, margin: "0 0 18px" }}>

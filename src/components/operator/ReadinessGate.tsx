@@ -82,7 +82,7 @@ export function ReadinessGate({
           </div>
           <div
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontFamily: "'Outfit', Georgia, serif",
               fontSize: 21,
               fontWeight: 600,
               color: INK,

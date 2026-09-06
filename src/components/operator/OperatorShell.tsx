@@ -53,7 +53,7 @@ export function OperatorShell({
         minHeight: "100vh",
         background: "#0D161F",
         color: "#F0F2F5",
-        fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+        fontFamily: "'Outfit', system-ui, sans-serif",
       }}
     >
       {/* SIDEBAR */}
@@ -96,7 +96,7 @@ export function OperatorShell({
           />
           <span
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontFamily: "'Outfit', Georgia, serif",
               fontWeight: 600,
               fontSize: 20,
               letterSpacing: ".1em",
@@ -251,7 +251,7 @@ export function OperatorShell({
               background: "rgba(45,226,242,.16)",
               display: "grid",
               placeItems: "center",
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontFamily: "'Outfit', Georgia, serif",
               fontSize: 16,
               fontWeight: 600,
               color: "#2DE2F2",
@@ -316,7 +316,7 @@ export function OperatorShell({
           <div style={{ minWidth: 0 }}>
             <div
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontFamily: "'Outfit', Georgia, serif",
                 fontWeight: 600,
                 fontSize: 26,
                 lineHeight: 1.1,
@@ -417,7 +417,7 @@ export function KPICard({
       </div>
       <div
         style={{
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontFamily: "'Outfit', Georgia, serif",
           fontWeight: 600,
           fontSize: 34,
           lineHeight: 1,
@@ -477,7 +477,7 @@ export function Card({
             {title && (
               <div
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontFamily: "'Outfit', Georgia, serif",
                   fontWeight: 600,
                   fontSize: 22,
                   color: "#F0F2F5",

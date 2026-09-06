@@ -37,8 +37,8 @@ const money = (cents: number) =>
   `$${(Math.max(0, cents) / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
 const shell: React.CSSProperties = {
-  ["--serif" as never]: "'Cormorant Garamond',Georgia,serif",
-  ["--sans" as never]: "'Hanken Grotesk',system-ui,sans-serif",
+  ["--serif" as never]: "'Outfit',Georgia,serif",
+  ["--sans" as never]: "'Outfit',system-ui,sans-serif",
   ["--ink" as never]: "#F0F2F5",
   ["--navy" as never]: "#0D161F",
   ["--paper" as never]: "#0D161F",

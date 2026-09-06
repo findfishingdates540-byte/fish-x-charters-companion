@@ -122,7 +122,7 @@ export function OperatorBookings({
             <StatusPill label={String(b.status).replace(/_/g, " ")} tone={toneFor(b.status)} />
             <div
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontFamily: "'Outfit', Georgia, serif",
                 fontSize: 17,
                 fontWeight: 600,
                 color: "#2DE2F2",

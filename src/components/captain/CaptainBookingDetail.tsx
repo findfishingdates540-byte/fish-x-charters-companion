@@ -15,8 +15,8 @@ import {
 import { markBalanceCollected, refundBookingDeposit, releaseBookingPayout } from "@/lib/booking-money.functions";
 
 const V = {
-  serif: "'Cormorant Garamond',Georgia,serif",
-  sans: "'Hanken Grotesk',system-ui,sans-serif",
+  serif: "'Outfit',Georgia,serif",
+  sans: "'Outfit',system-ui,sans-serif",
   ink: "#F0F2F5",
   navy: "#0D161F",
   paper: "#0D161F",

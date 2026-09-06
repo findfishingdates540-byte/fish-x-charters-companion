@@ -46,13 +46,13 @@ export const Route = createFileRoute("/b/$slug")({
   },
   component: BusinessPage,
   errorComponent: ({ error }) => (
-    <div style={{ padding: 40, fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
+    <div style={{ padding: 40, fontFamily: "'Outfit',system-ui,sans-serif" }}>
       Couldn't load operator: {error.message}
     </div>
   ),
   notFoundComponent: () => (
-    <div style={{ padding: 60, textAlign: "center", fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
-      <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}>Operator not found</h1>
+    <div style={{ padding: 60, textAlign: "center", fontFamily: "'Outfit',system-ui,sans-serif" }}>
+      <h1 style={{ fontFamily: "'Outfit',Georgia,serif" }}>Operator not found</h1>
       <Link to="/discover" search={{}}>Back to directory →</Link>
     </div>
   ),

@@ -57,7 +57,7 @@ export const Route = createFileRoute("/services/search")({
   notFoundComponent: () => <div className="p-10">Not found.</div>,
 });
 
-const serif = "'Cormorant Garamond', Georgia, serif";
+const serif = "'Outfit', Georgia, serif";
 const money = (c: number) => `$${(c / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
 function ServiceResults() {
@@ -83,7 +83,7 @@ function ServiceResults() {
     });
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#031029" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Outfit', system-ui, sans-serif", color: "#031029" }}>
       <PublicHeader />
       <style>{`
         .fx-svc-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:20px; }

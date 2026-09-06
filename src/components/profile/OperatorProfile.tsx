@@ -216,13 +216,13 @@ export function OperatorProfile({
 
 
   return (
-    <div className="fx-shell" style={{ background: "#0D161F", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#F0F2F5" }}>
+    <div className="fx-shell" style={{ background: "#0D161F", minHeight: "100vh", fontFamily: "'Outfit', system-ui, sans-serif", color: "#F0F2F5" }}>
       {/* Nav */}
       <header style={{ position: "sticky", top: 0, zIndex: 40, background: "rgba(9,27,44,.94)", backdropFilter: "saturate(140%) blur(12px)", borderBottom: "1px solid rgba(255,255,255,.1)", color: "#F0F2F5" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 28px", height: 62, display: "flex", alignItems: "center", gap: 24 }}>
           <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "#F0F2F5" }}>
             <span style={{ width: 11, height: 11, background: "#2DE2F2", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1 }} />
-            <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
+            <span style={{ fontFamily: "'Outfit', Georgia, serif", fontWeight: 600, fontSize: 20, letterSpacing: ".02em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
           </Link>
           <Link to="/discover" style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "#92A0AB", textDecoration: "none", fontSize: 13, fontWeight: 500 }}>
             <span>←</span> Back to directory
@@ -242,7 +242,7 @@ export function OperatorProfile({
             {b.logo_url ? (
               <img src={b.logo_url} alt={b.name} style={{ width: 128, height: 128, borderRadius: 24, objectFit: "cover", border: "5px solid #273744", boxShadow: "0 24px 48px -24px rgba(4,10,16,.62)" }} />
             ) : (
-              <div style={{ width: 128, height: 128, borderRadius: 24, background: "#0D161F", border: "5px solid #273744", display: "grid", placeItems: "center", color: "#2DE2F2", fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 44, fontWeight: 600, boxShadow: "0 24px 48px -24px rgba(4,10,16,.62)" }}>
+              <div style={{ width: 128, height: 128, borderRadius: 24, background: "#0D161F", border: "5px solid #273744", display: "grid", placeItems: "center", color: "#2DE2F2", fontFamily: "'Outfit', Georgia, serif", fontSize: 44, fontWeight: 600, boxShadow: "0 24px 48px -24px rgba(4,10,16,.62)" }}>
                 {b.name.charAt(0)}
               </div>
             )}
@@ -252,7 +252,7 @@ export function OperatorProfile({
           </div>
           <div style={{ flex: 1, minWidth: 260, paddingBottom: 4 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 38, letterSpacing: "-.01em", lineHeight: 1, margin: 0 }}>{b.name}</h1>
+              <h1 style={{ fontFamily: "'Outfit', Georgia, serif", fontWeight: 600, fontSize: 38, letterSpacing: "-.01em", lineHeight: 1, margin: 0 }}>{b.name}</h1>
               {ratingSummary.average >= 4.9 && ratingSummary.count >= 10 && (
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(45,226,242,.15)", color: "#2DE2F2", fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", borderRadius: 20, padding: "5px 11px" }}>★ Top rated</span>
               )}
@@ -314,7 +314,7 @@ export function OperatorProfile({
                     <article key={s.id} style={{ background: "#14202B", border: `1px solid ${active ? "#2DE2F2" : "rgba(255,255,255,.07)"}`, borderRadius: 18, padding: 16, display: "flex", alignItems: "center", gap: 18 }}>
                       <div style={{ width: 104, height: 80, borderRadius: 12, flex: "none", background: s.hero_url ? `#e9edf1 url(${s.hero_url}) center/cover` : "linear-gradient(135deg,#F0F2F5,#031029)" }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 19, margin: 0, color: "#F0F2F5" }}>{s.title}</h3>
+                        <h3 style={{ fontFamily: "'Outfit', Georgia, serif", fontWeight: 600, fontSize: 19, margin: 0, color: "#F0F2F5" }}>{s.title}</h3>
                         <div style={{ fontSize: 13, color: "#92A0AB", marginTop: 4 }}>
                           {[
                             s.duration_minutes ? `${Math.round(s.duration_minutes / 60)} hr` : null,
@@ -326,7 +326,7 @@ export function OperatorProfile({
                       <div style={{ textAlign: "right", flex: "none" }}>
                         <div>
                           <span style={{ fontSize: 11, color: "#92A0AB" }}>from </span>
-                          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: "#2DE2F2" }}>{fmtPrice(s.base_price_cents)}</span>
+                          <span style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: 22, fontWeight: 600, color: "#2DE2F2" }}>{fmtPrice(s.base_price_cents)}</span>
                         </div>
                         <div style={{ fontSize: 11.5, color: "#92A0AB" }}>per trip</div>
                       </div>
@@ -387,7 +387,7 @@ export function OperatorProfile({
                           <div style={{ height: 150, background: "linear-gradient(135deg,#0D161F,#1C2936)" }} />
                         )}
                         <div style={{ padding: 14 }}>
-                          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 19, fontWeight: 600 }}>{bt.name}</div>
+                          <div style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: 19, fontWeight: 600 }}>{bt.name}</div>
                           <div style={{ fontSize: 12.5, color: "#92A0AB", marginTop: 4 }}>
                             {[
                               [bt.make, bt.model].filter(Boolean).join(" "),
@@ -520,7 +520,7 @@ export function OperatorProfile({
             <section style={{ background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 20, padding: 26 }}>
               <div style={{ display: "flex", gap: 34, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 24 }}>
                 <div style={{ flex: "none", textAlign: "center", padding: "6px 0" }}>
-                  <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 54, lineHeight: 1 }}>{avg}</div>
+                  <div style={{ fontFamily: "'Outfit', Georgia, serif", fontWeight: 600, fontSize: 54, lineHeight: 1 }}>{avg}</div>
                   <div style={{ color: "#2DE2F2", fontSize: 14, letterSpacing: 2, margin: "6px 0 2px" }}>★★★★★</div>
                   <div style={{ fontSize: 12, color: "#92A0AB" }}>{ratingSummary.count} verified review{ratingSummary.count === 1 ? "" : "s"}</div>
                 </div>
@@ -577,7 +577,7 @@ export function OperatorProfile({
             <div style={{ background: "#14202B", border: "1px solid rgba(255,255,255,.07)", borderRadius: 20, padding: 24, boxShadow: "0 30px 60px -44px rgba(4,10,16,.62)" }}>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16 }}>
                 <div>
-                  <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 27, fontWeight: 600 }}>
+                  <span style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: 27, fontWeight: 600 }}>
                     {selected ? fmtPrice(selected.base_price_cents) : "—"}
                   </span>
                   <span style={{ fontSize: 12.5, color: "#92A0AB" }}> per trip</span>
@@ -660,7 +660,7 @@ export function OperatorProfile({
 function Stat({ n, label, divider }: { n: number | string; label: string; divider?: boolean }) {
   return (
     <div style={divider ? { borderLeft: "1px solid rgba(255,255,255,.07)", paddingLeft: 26 } : undefined}>
-      <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, lineHeight: 1 }}>{n}</div>
+      <div style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: 24, fontWeight: 600, lineHeight: 1 }}>{n}</div>
       <div style={{ fontSize: 11.5, color: "#92A0AB", marginTop: 3 }}>{label}</div>
     </div>
   );
@@ -699,7 +699,7 @@ const th: React.CSSProperties = { padding: "8px 10px", fontWeight: 600, fontSize
 const td: React.CSSProperties = { padding: "10px", color: "#F0F2F5" };
 
 const sectionTitle: React.CSSProperties = {
-  fontFamily: "'Cormorant Garamond', Georgia, serif",
+  fontFamily: "'Outfit', Georgia, serif",
   fontWeight: 600,
   fontSize: 23,
   margin: "0 0 14px",

@@ -14,8 +14,8 @@ import {
 } from "@/lib/shopping.functions";
 
 const V = {
-  serif: "'Cormorant Garamond',Georgia,serif",
-  sans: "'Hanken Grotesk',system-ui,sans-serif",
+  serif: "'Outfit',Georgia,serif",
+  sans: "'Outfit',system-ui,sans-serif",
   ink: "#031029",
   card: "#ffffff",
   cyan: "#1f9fbe",

@@ -61,7 +61,7 @@ export const Route = createFileRoute("/charters/search")({
   errorComponent: ({ error }) => <div className="p-10">Couldn't load results: {error.message}</div>,
 });
 
-const serif = "'Cormorant Garamond', Georgia, serif";
+const serif = "'Outfit', Georgia, serif";
 
 function CharterResults() {
   const search = Route.useSearch();
@@ -78,7 +78,7 @@ function CharterResults() {
   const place = search.city || search.region;
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Outfit', system-ui)", color: "#031029" }}>
       <PublicHeader />
 
       <style>{`

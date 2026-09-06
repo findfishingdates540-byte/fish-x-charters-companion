@@ -59,10 +59,10 @@ function DiscoverPage() {
   }, [top]);
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Hanken Grotesk', system-ui, sans-serif", color: "#031029" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "'Outfit', system-ui, sans-serif", color: "#031029" }}>
       <PublicHeader />
       <header style={{ padding: "40px 48px 24px", borderBottom: "1px solid rgba(13,34,54,.08)" }}>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px,5vw,64px)", letterSpacing: "-.02em", margin: "0 0 8px", fontWeight: 600 }}>
+        <h1 style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: "clamp(40px,5vw,64px)", letterSpacing: "-.02em", margin: "0 0 8px", fontWeight: 600 }}>
           Discover operators.
         </h1>
         <p style={{ color: "#5c6b78", fontSize: 16, maxWidth: 560 }}>
@@ -74,7 +74,7 @@ function DiscoverPage() {
       {top.length > 0 && (
         <section style={{ padding: "28px 48px 4px" }}>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 30, margin: 0, fontWeight: 600 }}>
+            <h2 style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: 30, margin: 0, fontWeight: 600 }}>
               Top-ranked listings
             </h2>
             <Link to="/services/search" search={{ sort: "recommended" }} style={{ color: "#1F9FBE", fontWeight: 700, fontSize: 14, textDecoration: "none" }}>
@@ -153,7 +153,7 @@ function DiscoverPage() {
                 {b.category_key.replace(/_/g, " ")}
                 {b.verified_at && <span style={{ marginLeft: 8, color: "#031029" }}>· Verified</span>}
               </div>
-              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, marginTop: 6 }}>{b.name}</div>
+              <div style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: 24, fontWeight: 600, marginTop: 6 }}>{b.name}</div>
               {b.tagline && <div style={{ color: "#5c6b78", fontSize: 14, marginTop: 4 }}>{b.tagline}</div>}
               {(b.city || b.country) && (
                 <div style={{ color: "#5c6b78", fontSize: 13, marginTop: 10 }}>

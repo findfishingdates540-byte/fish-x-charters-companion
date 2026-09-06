@@ -119,7 +119,7 @@ const CARD: React.CSSProperties = {
 };
 
 const title: React.CSSProperties = {
-  fontFamily: "'Cormorant Garamond', Georgia, serif",
+  fontFamily: "'Outfit', Georgia, serif",
   fontSize: 26,
   fontWeight: 600,
   margin: "0 0 14px",
@@ -133,7 +133,7 @@ const input: React.CSSProperties = {
   padding: "10px 12px",
   color: "#F0F2F5",
   fontSize: 14,
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
   outline: "none",
   boxSizing: "border-box",
 };
@@ -148,5 +148,5 @@ const btn: React.CSSProperties = {
   fontSize: 13.5,
   fontWeight: 800,
   cursor: "pointer",
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
 };
