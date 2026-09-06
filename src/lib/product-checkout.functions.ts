@@ -407,7 +407,7 @@ export const createProductCheckout = createServerFn({ method: "POST" })
     }
 
     const stripe = requireStripe();
-    const origin = data.origin ?? "https://fishx-charter-hub.lovable.app";
+    const origin = data.origin ?? "https://booking.fish-x.com";
     const metadata = {
       kind: "product_order",
       order_ids: orderIds.join(","),
