@@ -45,11 +45,11 @@ export const getShopOverview = createServerFn({ method: "GET" })
       supabase
         .from("product_orders")
         .select(
-          "id, buyer_name, buyer_email, subtotal_cents, shipping_cents, total_cents, status, tracking_number, shipping_address, created_at, items:product_order_items(id, title, quantity, unit_price_cents)",
+          "id, buyer_name, buyer_email, subtotal_cents, shipping_cents, total_cents, status, tracking_number, shipping_address, created_at, paid_at, shipped_at, delivered_at, payout_released_at, notes, items:product_order_items(id, title, quantity, unit_price_cents)",
         )
         .eq("business_id", data.businessId)
         .order("created_at", { ascending: false })
-        .limit(50),
+        .limit(300),
     ]);
 
     // Product photos live in a private bucket; sign them so the dashboard can

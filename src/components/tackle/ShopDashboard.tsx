@@ -56,6 +56,11 @@ type Order = {
   shipping_cents?: number | null;
   tracking_number?: string | null;
   shipping_address?: Record<string, any> | null;
+  paid_at?: string | null;
+  shipped_at?: string | null;
+  delivered_at?: string | null;
+  payout_released_at?: string | null;
+  notes?: string | null;
   items: { id: string; title: string; quantity: number; unit_price_cents: number }[];
 };
 
@@ -542,21 +547,42 @@ function ProductForm({
 }
 
 function Orders({ businessId, data }: { businessId: string; data: any }) {
-  const [tab, setTab] = useState<"all" | "paid" | "shipped" | "delivered">("all");
-  const filtered = useMemo(
-    () =>
-      tab === "all"
-        ? data.orders
-        : data.orders.filter((o: Order) => o.status === tab),
-    [tab, data.orders],
-  );
+  const [tab, setTab] = useState<
+    "all" | "paid" | "shipped" | "delivered" | "refunded"
+  >("all");
+  const [q, setQ] = useState("");
+  const filtered = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    return (data.orders as Order[]).filter((o) => {
+      const byTab =
+        tab === "all"
+          ? true
+          : tab === "refunded"
+            ? o.status === "refunded" || o.status === "cancelled"
+            : o.status === tab;
+      if (!byTab) return false;
+      if (!term) return true;
+      const hay = [
+        o.id,
+        o.buyer_name,
+        o.buyer_email,
+        o.tracking_number,
+        o.shipping_address ? formatAddress(o.shipping_address) : "",
+        ...(o.items ?? []).map((i) => i.title),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(term);
+    });
+  }, [tab, q, data.orders]);
 
   return (
     <Card
-      title="Orders"
+      title="Order history"
       right={
-        <div style={{ display: "flex", gap: 4, background: "#1C2936", borderRadius: 11, padding: 4 }}>
-          {(["all", "paid", "shipped", "delivered"] as const).map((k) => (
+        <div style={{ display: "flex", gap: 4, background: "#1C2936", borderRadius: 11, padding: 4, flexWrap: "wrap" }}>
+          {(["all", "paid", "shipped", "delivered", "refunded"] as const).map((k) => (
             <button
               key={k}
               onClick={() => setTab(k)}
@@ -573,12 +599,28 @@ function Orders({ businessId, data }: { businessId: string; data: any }) {
                 textTransform: "capitalize",
               }}
             >
-              {k === "paid" ? "To ship" : k}
+              {k === "paid" ? "To ship" : k === "refunded" ? "Refunded" : k}
             </button>
           ))}
         </div>
       }
     >
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Search by buyer, item, address, tracking or order number"
+        style={{
+          width: "100%",
+          background: "#0D161F",
+          border: "1px solid rgba(255,255,255,.08)",
+          borderRadius: 11,
+          padding: "11px 14px",
+          color: "#F0F2F5",
+          fontSize: 13,
+          fontFamily: "inherit",
+          marginBottom: 8,
+        }}
+      />
       <OrderList rows={filtered} businessId={businessId} />
     </Card>
   );
@@ -594,6 +636,7 @@ function OrderList({
   minimal?: boolean;
 }) {
   const qc = useQueryClient();
+  const [trackDrafts, setTrackDrafts] = useState<Record<string, string>>({});
   const shipFn = useServerFn(updateOrderStatus);
   const refundFn = useServerFn(refundProductOrder);
   const refundM = useMutation({
@@ -652,9 +695,62 @@ function OrderList({
             >
               {o.items?.map((it) => `${it.quantity}× ${it.title}`).join(", ") || "—"}
             </div>
-            {!minimal && o.shipping_address && (
+            {!minimal && (
               <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4, lineHeight: 1.5 }}>
-                Ship to: {formatAddress(o.shipping_address)}
+                {o.shipping_address ? (
+                  <div>Ship to: {formatAddress(o.shipping_address)}</div>
+                ) : (
+                  <div>No delivery address on this order yet.</div>
+                )}
+                <div style={{ marginTop: 2 }}>
+                  {[
+                    o.paid_at ? `Paid ${dayOf(o.paid_at)}` : null,
+                    o.shipped_at ? `Shipped ${dayOf(o.shipped_at)}` : null,
+                    o.delivered_at ? `Delivered ${dayOf(o.delivered_at)}` : null,
+                    o.payout_released_at ? `Paid out ${dayOf(o.payout_released_at)}` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || `Placed ${dayOf(o.created_at)}`}
+                </div>
+                {o.tracking_number && (
+                  <div style={{ marginTop: 2, color: "#2DE2F2" }}>Tracking {o.tracking_number}</div>
+                )}
+                {["paid", "shipped"].includes(o.status) && (
+                  <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
+                    <input
+                      value={trackDrafts[o.id] ?? o.tracking_number ?? ""}
+                      onChange={(e) => setTrackDrafts((d) => ({ ...d, [o.id]: e.target.value }))}
+                      placeholder="Tracking number"
+                      style={{
+                        background: "#0D161F",
+                        border: "1px solid rgba(255,255,255,.08)",
+                        borderRadius: 9,
+                        padding: "7px 10px",
+                        color: "#F0F2F5",
+                        fontSize: 12,
+                        fontFamily: "inherit",
+                        minWidth: 160,
+                      }}
+                    />
+                    <button
+                      onClick={() =>
+                        businessId &&
+                        shipM.mutate({
+                          data: {
+                            id: o.id,
+                            businessId,
+                            status: o.status as "paid" | "shipped",
+                            trackingNumber: (trackDrafts[o.id] ?? "").trim(),
+                          },
+                        })
+                      }
+                      disabled={!((trackDrafts[o.id] ?? "").trim())}
+                      style={{ ...btnGhost, padding: "7px 12px", fontSize: 12 }}
+                    >
+                      Save tracking
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -705,6 +801,9 @@ function OrderList({
     </div>
   );
 }
+
+const dayOf = (d?: string | null) =>
+  d ? new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
 
 function formatAddress(a: Record<string, any>): string {
   return [a.name, a.line1, a.line2, a.city, a.state, a.postal_code, a.country]
