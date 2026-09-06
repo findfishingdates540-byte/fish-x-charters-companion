@@ -187,8 +187,8 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
               disabled={busy}
               style={{
                 flex: "none",
-                background: "var(--ink, #1C2936)",
-                color: "#F0F2F5",
+                background: "#2DE2F2",
+                color: "#0D161F",
                 border: 0,
                 borderRadius: 10,
                 padding: "11px 20px",
@@ -200,6 +200,7 @@ export function PayoutsConnect({ businessId }: { businessId?: string }) {
             >
               {busy ? "Opening…" : started ? "Finish connecting bank" : "Connect bank"}
             </button>
+
           )}
         </div>
       )}
