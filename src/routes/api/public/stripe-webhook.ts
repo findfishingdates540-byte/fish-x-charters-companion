@@ -110,35 +110,20 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                 .eq("id", item.product_id);
             }
 
-            // Pay the vendor via Stripe Connect.
+            // Funds stay in escrow on the platform balance; the shop settles
+            // the payout itself from its Payments screen once the hold clears.
             const { data: biz } = await supabaseAdmin
               .from("businesses")
-              .select("stripe_account_id,payouts_enabled")
+              .select("payout_delay_days")
               .eq("id", order.business_id)
               .maybeSingle();
-            if (!biz?.stripe_account_id || !biz.payouts_enabled || order.stripe_transfer_id) continue;
-            try {
-              const transfer = await stripe.transfers.create(
-                {
-                  amount: order.payout_cents ?? 0,
-                  currency: "usd",
-                  destination: biz.stripe_account_id,
-                  transfer_group: `order_${orderId}`,
-                  ...(chargeId ? { source_transaction: chargeId } : {}),
-                  metadata: { order_id: orderId },
-                },
-                { idempotencyKey: `order-transfer-${orderId}` },
-              );
-              await supabaseAdmin
-                .from("product_orders")
-                .update({
-                  stripe_transfer_id: transfer.id,
-                  payout_released_at: new Date().toISOString(),
-                })
-                .eq("id", orderId);
-            } catch (err) {
-              console.error(`[stripe] vendor transfer failed for order ${orderId}`, err);
-            }
+            const delayDays = biz?.payout_delay_days ?? 3;
+            const dueAt = new Date(Date.now() + delayDays * 24 * 60 * 60 * 1000).toISOString();
+            await supabaseAdmin
+              .from("product_orders")
+              .update({ payout_due_at: dueAt })
+              .eq("id", orderId);
+            void chargeId;
           }
         };
 

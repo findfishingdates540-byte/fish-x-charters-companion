@@ -2,13 +2,27 @@
  * Money view shared by every operator vertical: revenue, escrow, fees,
  * outstanding on-the-day balances, transactions and the payout ledger.
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { getBusinessPayments } from "@/lib/business-payments.functions";
+import { releaseProductOrderPayout } from "@/lib/product-payouts.functions";
 
 const money = (c: number) =>
   (c / 100).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const money2 = (c: number) =>
   (c / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+
+const settleBtn: React.CSSProperties = {
+  background: "#2DE2F2",
+  color: "#0D161F",
+  border: "none",
+  borderRadius: 999,
+  padding: "7px 14px",
+  fontWeight: 700,
+  fontSize: 12.5,
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+};
 
 const card: React.CSSProperties = {
   background: "#14202B",
@@ -19,9 +33,20 @@ const card: React.CSSProperties = {
 };
 
 export function PaymentsDashboard({ businessId }: { businessId: string }) {
+  const qc = useQueryClient();
+  const [notice, setNotice] = useState<string | null>(null);
   const { data, isLoading, error } = useQuery({
     queryKey: ["business-payments", businessId],
     queryFn: () => getBusinessPayments({ data: { businessId } }),
+  });
+
+  const settle = useMutation({
+    mutationFn: (orderId: string) => releaseProductOrderPayout({ data: { orderId } }),
+    onSuccess: () => {
+      setNotice("Payout sent — the money is on its way to your bank account.");
+      qc.invalidateQueries({ queryKey: ["business-payments", businessId] });
+    },
+    onError: (e: unknown) => setNotice(e instanceof Error ? e.message : "Payout failed."),
   });
 
   if (isLoading) return <div style={{ ...card, color: "#92A0AB" }}>Loading payments…</div>;
@@ -95,6 +120,21 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
 
       <div style={card}>
         <Head eyebrow="Ledger" title="Transactions" />
+        {notice && (
+          <div
+            style={{
+              marginTop: 12,
+              background: "rgba(45,226,242,.08)",
+              border: "1px solid rgba(45,226,242,.3)",
+              color: "#CFF9FE",
+              borderRadius: 12,
+              padding: "10px 12px",
+              fontSize: 13,
+            }}
+          >
+            {notice}
+          </div>
+        )}
         {data.transactions.length === 0 ? (
           <Empty label="No payments yet — they'll appear here as anglers book." />
         ) : (
@@ -102,7 +142,7 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13.5 }}>
               <thead>
                 <tr>
-                  {["Item", "Date", "Status", "Gross", "Fee", "Your net", "Escrow"].map((h) => (
+                  {["Item", "Date", "Status", "Gross", "Fee", "Your net", "Escrow", ""].map((h) => (
                     <th key={h} style={th}>
                       {h}
                     </th>
@@ -126,6 +166,21 @@ export function PaymentsDashboard({ businessId }: { businessId: string }) {
                     <td style={td}>−{money2(x.feeCents)}</td>
                     <td style={{ ...td, fontWeight: 700, color: "#F0F2F5" }}>{money2(x.netCents)}</td>
                     <td style={td}>{x.releasedAt ? "released" : x.escrowState}</td>
+                    <td style={{ ...td, textAlign: "right" }}>
+                      {(x as any).settleable ? (
+                        <button
+                          onClick={() => settle.mutate(x.id)}
+                          disabled={settle.isPending}
+                          style={settleBtn}
+                        >
+                          {settle.isPending && settle.variables === x.id ? "Sending…" : "Settle payout"}
+                        </button>
+                      ) : x.kind === "order" && !x.releasedAt && (x as any).payoutDueAt ? (
+                        <span style={{ fontSize: 12, color: "#92A0AB" }}>
+                          clears {String((x as any).payoutDueAt).slice(0, 10)}
+                        </span>
+                      ) : null}
+                    </td>
                   </tr>
                 ))}
               </tbody>
