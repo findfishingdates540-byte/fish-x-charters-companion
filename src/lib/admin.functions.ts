@@ -52,7 +52,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         .limit(200),
       supabaseAdmin
         .from("businesses")
-        .select("id,name,slug,category_key,city,region,is_verified,charges_enabled,payouts_enabled")
+        .select("id,name,slug,category_key,city,region,verified_at,charges_enabled,payouts_enabled")
         .limit(1000),
     ]);
 
@@ -121,7 +121,7 @@ export const decideVerification = createServerFn({ method: "POST" })
     // Approving a request is what actually flips the badge on the storefront.
     await supabaseAdmin
       .from("businesses")
-      .update({ is_verified: data.approve })
+      .update({ verified_at: data.approve ? new Date().toISOString() : null })
       .eq("id", req.business_id);
 
     return { ok: true, status };
