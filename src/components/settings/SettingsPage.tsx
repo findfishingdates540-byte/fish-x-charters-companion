@@ -85,19 +85,7 @@ export function SettingsPage() {
             ← Back
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "0 auto" }}>
-            <span
-              style={{
-                width: 10,
-                height: 10,
-                background: V.sand,
-                transform: "rotate(45deg)",
-                display: "inline-block",
-                borderRadius: 1,
-              }}
-            />
-            <span style={{ fontFamily: V.serif, fontWeight: 600, fontSize: 19, whiteSpace: "nowrap" }}>
-              FISH-X.COM
-            </span>
+            <BrandLogo tone="dark" size={17} />
             <span
               style={{
                 fontSize: 11,
