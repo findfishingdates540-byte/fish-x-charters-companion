@@ -52,7 +52,7 @@ export type BookingReceipt = {
 };
 
 const APP_URL =
-  process.env["PUBLIC_APP_URL"] ?? "https://fishx-charter-hub.lovable.app";
+  process.env["PUBLIC_APP_URL"] ?? "https://booking.fish-x.com";
 
 function money(cents?: number | null) {
   if (typeof cents !== "number") return "";

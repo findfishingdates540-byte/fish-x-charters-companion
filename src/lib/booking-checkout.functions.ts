@@ -318,7 +318,7 @@ export const createBookingFromService = createServerFn({ method: "POST" })
       return { ...result, checkoutUrl: null as string | null };
     }
 
-    const origin = data.origin ?? "https://fishx-charter-hub.lovable.app";
+    const origin = data.origin ?? "https://booking.fish-x.com";
     const metadata = {
       booking_id: row.id,
       slot_id: data.slotId,
