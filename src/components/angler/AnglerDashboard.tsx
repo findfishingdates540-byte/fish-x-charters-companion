@@ -109,8 +109,9 @@ export function AnglerDashboard() {
       {/* TOP NAV */}
       <header style={{ position: "sticky", top: 0, zIndex: 30, background: "var(--navy)", color: "var(--ond)" }}>
         <div className="ang-topbar" style={{ maxWidth: 1160, margin: "0 auto", padding: "0 28px", height: 66, display: "flex", alignItems: "center", gap: 28 }}>
-          <div style={{ minWidth: 0 }}>
-            <BrandLogo tone="dark" size={17} />
+          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+            <span style={{ width: 11, height: 11, background: "var(--sand)", transform: "rotate(45deg)", display: "inline-block", borderRadius: 1, flexShrink: 0 }} />
+            <span style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: 18, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>FISH-X.COM</span>
           </div>
           <nav className="ang-topnav" style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {(["home", "trips", "explore", "wallet", "orders"] as Tab[]).map((t) => (

@@ -78,12 +78,32 @@ export function OperatorShell({
           style={{
             display: "flex",
             alignItems: "center",
+            gap: 10,
             padding: "6px 10px 22px",
             textDecoration: "none",
             color: "inherit",
           }}
         >
-          <BrandLogo tone="dark" />
+          <span
+            style={{
+              width: 11,
+              height: 11,
+              background: "#2DE2F2",
+              transform: "rotate(45deg)",
+              display: "inline-block",
+              borderRadius: 1,
+            }}
+          />
+          <span
+            style={{
+              fontFamily: "'Outfit', Georgia, serif",
+              fontWeight: 600,
+              fontSize: 20,
+              letterSpacing: ".1em",
+            }}
+          >
+            FISH&mdash;X
+          </span>
         </Link>
 
         <div
