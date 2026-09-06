@@ -120,6 +120,8 @@ function AdminConsole() {
   const payMut = useMutation({
     mutationFn: (payoutId: string) => payPayout({ data: { payoutId } }),
     onSuccess: refresh,
+    onError: (e: unknown) =>
+      window.alert(e instanceof Error ? e.message : "That payout could not be sent."),
   });
 
   if (error) {
