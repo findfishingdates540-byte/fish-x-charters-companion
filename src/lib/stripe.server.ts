@@ -46,10 +46,7 @@ export function getStripe(): Stripe | null {
 export function requireStripe(): Stripe {
   const stripe = getStripe();
   if (!stripe) {
-    throw new Response(
-      "Stripe is not configured yet. Add STRIPE_SECRET_KEY to enable live payments.",
-      { status: 503 },
-    );
+    throw new Error("Payments aren't switched on yet — the Stripe key is missing.");
   }
   return stripe;
 }
