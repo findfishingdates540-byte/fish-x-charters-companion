@@ -160,10 +160,98 @@ export const markPayoutPaid = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+
+    const { data: payout, error: payErr } = await supabaseAdmin
       .from("payouts")
-      .update({ status: "paid", paid_at: new Date().toISOString() })
-      .eq("id", data.payoutId);
-    if (error) throw new Error(error.message);
-    return { ok: true };
+      .select("id,business_id,booking_id,amount_cents,currency,status,stripe_payout_id,paid_at")
+      .eq("id", data.payoutId)
+      .maybeSingle();
+    if (payErr) throw new Error(payErr.message);
+    if (!payout) throw new Error("Payout not found");
+    if (payout.status === "paid" && payout.stripe_payout_id) {
+      return { ok: true as const, alreadyPaid: true, transferId: payout.stripe_payout_id };
+    }
+
+    const { data: biz } = await supabaseAdmin
+      .from("businesses")
+      .select("id,name,stripe_account_id,payouts_enabled")
+      .eq("id", payout.business_id ?? "")
+      .maybeSingle();
+    if (!biz?.stripe_account_id || !biz.payouts_enabled) {
+      throw new Error(`${biz?.name ?? "This business"} hasn't finished bank setup — no money can be sent yet.`);
+    }
+
+    const amount = Math.max(0, payout.amount_cents ?? 0);
+    if (amount <= 0) throw new Error("This payout has no amount to send.");
+
+    // The source charge, when we know it, keeps the transfer tied to the
+    // buyer's payment instead of drawing on the platform's own balance.
+    let sourceCharge: string | null = null;
+    if (payout.booking_id) {
+      const { data: booking } = await supabaseAdmin
+        .from("bookings")
+        .select("stripe_charge_id")
+        .eq("id", payout.booking_id)
+        .maybeSingle();
+      sourceCharge = (booking?.stripe_charge_id as string | null) ?? null;
+    }
+
+    const { requireStripe } = await import("./stripe.server");
+    const stripe = requireStripe();
+
+    let transferId: string;
+    try {
+      const transfer = await stripe.transfers.create(
+        {
+          amount,
+          currency: (payout.currency ?? "usd").toLowerCase(),
+          destination: biz.stripe_account_id,
+          ...(sourceCharge ? { source_transaction: sourceCharge } : {}),
+          metadata: {
+            payout_id: payout.id,
+            ...(payout.booking_id ? { booking_id: payout.booking_id } : {}),
+            approved_by: context.userId,
+          },
+        },
+        { idempotencyKey: `admin-payout-${payout.id}` },
+      );
+      transferId = transfer.id;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("[stripe] admin payout transfer failed", message);
+      await supabaseAdmin
+        .from("payouts")
+        .update({ status: "failed", failure_message: message.slice(0, 400) })
+        .eq("id", payout.id);
+      throw new Error(`Payout failed: ${message}`);
+    }
+
+    const now = new Date().toISOString();
+    await supabaseAdmin
+      .from("payouts")
+      .update({ status: "paid", paid_at: now, stripe_payout_id: transferId, failure_message: null })
+      .eq("id", payout.id);
+
+    if (payout.booking_id) {
+      await supabaseAdmin
+        .from("bookings")
+        .update({ escrow_state: "released", payout_released_at: now, stripe_transfer_id: transferId })
+        .eq("id", payout.booking_id)
+        .is("payout_released_at", null);
+    }
+
+    await supabaseAdmin.from("domain_events").insert({
+      topic: "payout.released",
+      aggregate_type: "payout",
+      aggregate_id: payout.id,
+      payload: {
+        payout_id: payout.id,
+        business_id: biz.id,
+        amount_cents: amount,
+        transfer_id: transferId,
+        approved_by: context.userId,
+      },
+    });
+
+    return { ok: true as const, alreadyPaid: false, transferId, amountCents: amount };
   });
