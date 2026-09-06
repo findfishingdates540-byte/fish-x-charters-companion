@@ -228,7 +228,16 @@ function AdminConsole() {
                   <td style={{ padding: "12px 14px", borderBottom: `1px solid ${T.line}`, color: T.mut }}>{day(p.paid_at)}</td>
                   <td style={{ padding: "12px 14px", borderBottom: `1px solid ${T.line}` }}>
                     {p.status !== "paid" && (
-                      <button style={ghost} disabled={payMut.isPending} onClick={() => payMut.mutate(p.id)}>Mark paid</button>
+                      <button
+                        style={ghost}
+                        disabled={payMut.isPending}
+                        onClick={() => {
+                          if (!window.confirm(`Send ${money(p.amount_cents)} to ${p.business?.name ?? "this business"} now?`)) return;
+                          payMut.mutate(p.id);
+                        }}
+                      >
+                        {payMut.isPending && payMut.variables === p.id ? "Sending…" : "Approve & send"}
+                      </button>
                     )}
                   </td>
                 </tr>
