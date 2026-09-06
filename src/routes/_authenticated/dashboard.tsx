@@ -174,10 +174,12 @@ function Dashboard() {
   return <Suspense fallback={null}>{renderDashboard()}</Suspense>;
 
   function renderDashboard() {
-    if (primaryRole === "angler") return <AnglerDashboard />;
+    if (primaryRole === "angler" && businesses.length === 0) return <AnglerDashboard />;
     if (primaryRole === "captain") return <CaptainDashboard />;
 
-    if (primaryRole === "business_owner") {
+    // Anyone who owns/belongs to a business gets the operator console for that
+    // vertical, even if their role row wasn't stamped as business_owner.
+    if (primaryRole === "business_owner" || businesses.length > 0) {
       const biz = pickPrimaryBusiness(businesses, primaryRole) as
         | { id: string; name: string; category_key: string }
         | undefined;
@@ -221,7 +223,9 @@ function Dashboard() {
       return <DashboardFrame src="/dashboards/captain.html" title="Operator dashboard" />;
     }
 
+    if (primaryRole === "angler") return <AnglerDashboard />;
     return <DashboardFrame src="/dashboards/angler.html" title="Dashboard" />;
   }
+
 }
 
