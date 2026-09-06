@@ -19,7 +19,7 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
     const { data: svc, error } = await supabase
       .from("bookable_services")
       .select(
-        "id,title,hero_url,duration_minutes,base_price_cents,capacity,includes,departure_location,water_type,target_species,boat_id,business_id,instant_book,accept_window_hours,cancellation_policy,boat:boats(name,make,model,length_ft,capacity,home_port,description,hero_image_url,image_urls),business:businesses(id,slug,name,city,region,logo_url,hero_url,created_by,deposit_rate,commission_rate)",
+        "id,kind,title,hero_url,duration_minutes,base_price_cents,capacity,includes,departure_location,water_type,target_species,boat_id,business_id,instant_book,accept_window_hours,cancellation_policy,boat:boats(name,make,model,length_ft,capacity,home_port,description,hero_image_url,image_urls),business:businesses(id,slug,name,city,region,logo_url,hero_url,created_by,deposit_rate,commission_rate)",
       )
       .eq("id", data.serviceId)
       .maybeSingle();
@@ -63,10 +63,23 @@ export const getCheckoutContext = createServerFn({ method: "GET" })
         .order("sort_order", { ascending: true }),
     ]);
 
+    // Marina slips price by the night and can switch to a monthly rate on
+    // long stays, so the booking screen needs the slip's rate card too.
+    const slipRes =
+      svc.kind === "slip_rental"
+        ? await supabase
+            .from("marina_slips")
+            .select("slip_number,length_ft,beam_ft,amperage,nightly_rate_cents,monthly_rate_cents")
+            .eq("service_id", data.serviceId)
+            .maybeSingle()
+        : { data: null };
+
     return {
       ...svc,
       openSlots,
+      slip: slipRes.data ?? null,
       packages: packagesRes.data ?? [],
+
       addons: (addonsRes.data ?? []) as Array<{
         id: string;
         title: string;
@@ -135,9 +148,15 @@ const CreateBookingInput = z.object({
   notes: z.string().max(2000).optional(),
   addonIds: z.array(z.string().uuid()).max(20).default([]),
   origin: z.string().url().optional(),
+  /**
+   * Marina slips only: number of consecutive nights starting at the selected
+   * arrival night. Anything above 1 books the whole stay atomically.
+   */
+  nights: z.number().int().min(1).max(120).optional(),
   /** Client-generated; a retry returns the original booking. */
   idempotencyKey: z.string().min(8).max(120),
 });
+
 
 export const createBookingFromService = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -192,16 +211,44 @@ export const createBookingFromService = createServerFn({ method: "POST" })
     }
 
     // 1) Reserve the seats atomically. Throws if the slot is full/blacked out.
-    const { data: booking, error: rpcErr } = await supabase.rpc("reserve_slot", {
-      _slot_id: data.slotId,
-      _party_size: data.partySize,
-      _idempotency_key: data.idempotencyKey,
-      _notes: data.notes ?? undefined,
-      _hold_minutes: 15,
-      _addon_cents: addonCents,
-    } as never);
+    // A marina stay of several nights locks every night in the range at once.
+    let booking: unknown = null;
+    let rpcErr: { message: string } | null = null;
+    if ((data.nights ?? 1) > 1) {
+      const { data: stayCtx } = await supabase
+        .from("service_availability")
+        .select("service_id,starts_at")
+        .eq("id", data.slotId)
+        .maybeSingle();
+      if (!stayCtx) throw new Error("That arrival night is no longer available");
+      const start = new Date(stayCtx.starts_at as string);
+      const startISO = start.toISOString().slice(0, 10);
+      const end = new Date(start);
+      end.setUTCDate(end.getUTCDate() + (data.nights ?? 1));
+      const res = await supabase.rpc("reserve_slip_stay", {
+        _service_id: stayCtx.service_id,
+        _start: startISO,
+        _end: end.toISOString().slice(0, 10),
+        _idempotency_key: data.idempotencyKey,
+        _hold_minutes: 15,
+      } as never);
+      booking = res.data;
+      rpcErr = res.error;
+    } else {
+      const res = await supabase.rpc("reserve_slot", {
+        _slot_id: data.slotId,
+        _party_size: data.partySize,
+        _idempotency_key: data.idempotencyKey,
+        _notes: data.notes ?? undefined,
+        _hold_minutes: 15,
+        _addon_cents: addonCents,
+      } as never);
+      booking = res.data;
+      rpcErr = res.error;
+    }
     if (rpcErr) throw new Error(rpcErr.message);
     if (!booking) throw new Error("Could not reserve this slot");
+
 
 
     const row = booking as unknown as {
