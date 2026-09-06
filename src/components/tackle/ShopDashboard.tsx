@@ -636,6 +636,7 @@ function OrderList({
   minimal?: boolean;
 }) {
   const qc = useQueryClient();
+  const [trackDrafts, setTrackDrafts] = useState<Record<string, string>>({});
   const shipFn = useServerFn(updateOrderStatus);
   const refundFn = useServerFn(refundProductOrder);
   const refundM = useMutation({
@@ -694,9 +695,62 @@ function OrderList({
             >
               {o.items?.map((it) => `${it.quantity}× ${it.title}`).join(", ") || "—"}
             </div>
-            {!minimal && o.shipping_address && (
+            {!minimal && (
               <div style={{ fontSize: 12, color: "#92A0AB", marginTop: 4, lineHeight: 1.5 }}>
-                Ship to: {formatAddress(o.shipping_address)}
+                {o.shipping_address ? (
+                  <div>Ship to: {formatAddress(o.shipping_address)}</div>
+                ) : (
+                  <div>No delivery address on this order yet.</div>
+                )}
+                <div style={{ marginTop: 2 }}>
+                  {[
+                    o.paid_at ? `Paid ${dayOf(o.paid_at)}` : null,
+                    o.shipped_at ? `Shipped ${dayOf(o.shipped_at)}` : null,
+                    o.delivered_at ? `Delivered ${dayOf(o.delivered_at)}` : null,
+                    o.payout_released_at ? `Paid out ${dayOf(o.payout_released_at)}` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || `Placed ${dayOf(o.created_at)}`}
+                </div>
+                {o.tracking_number && (
+                  <div style={{ marginTop: 2, color: "#2DE2F2" }}>Tracking {o.tracking_number}</div>
+                )}
+                {["paid", "shipped"].includes(o.status) && (
+                  <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
+                    <input
+                      value={trackDrafts[o.id] ?? o.tracking_number ?? ""}
+                      onChange={(e) => setTrackDrafts((d) => ({ ...d, [o.id]: e.target.value }))}
+                      placeholder="Tracking number"
+                      style={{
+                        background: "#0D161F",
+                        border: "1px solid rgba(255,255,255,.08)",
+                        borderRadius: 9,
+                        padding: "7px 10px",
+                        color: "#F0F2F5",
+                        fontSize: 12,
+                        fontFamily: "inherit",
+                        minWidth: 160,
+                      }}
+                    />
+                    <button
+                      onClick={() =>
+                        businessId &&
+                        shipM.mutate({
+                          data: {
+                            id: o.id,
+                            businessId,
+                            status: o.status as "paid" | "shipped",
+                            trackingNumber: (trackDrafts[o.id] ?? "").trim(),
+                          },
+                        })
+                      }
+                      disabled={!((trackDrafts[o.id] ?? "").trim())}
+                      style={{ ...btnGhost, padding: "7px 12px", fontSize: 12 }}
+                    >
+                      Save tracking
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -747,6 +801,9 @@ function OrderList({
     </div>
   );
 }
+
+const dayOf = (d?: string | null) =>
+  d ? new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
 
 function formatAddress(a: Record<string, any>): string {
   return [a.name, a.line1, a.line2, a.city, a.state, a.postal_code, a.country]
