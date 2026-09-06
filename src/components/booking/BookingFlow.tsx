@@ -188,8 +188,23 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const instantBook = svc.instant_book !== false;
   const seatsLeft = slot?.seatsLeft ?? 0;
   const cap = Math.max(1, Math.min(svc.capacity ?? 8, seatsLeft || svc.capacity || 8));
+  /** Marina slips are priced per night and can flip to a monthly rate. */
+  const isSlip = (svc as any).kind === "slip_rental";
+  const slipInfo = ((svc as any).slip ?? null) as {
+    slip_number?: string | null;
+    nightly_rate_cents?: number | null;
+    monthly_rate_cents?: number | null;
+  } | null;
+  const [nights, setNights] = useState(1);
   /** The listed fee is the price of the whole trip — it is NOT multiplied by party size. */
-  const price = slot?.priceCents ?? svc.base_price_cents ?? 0;
+  const nightlyPrice = slot?.priceCents ?? svc.base_price_cents ?? 0;
+  const monthlyRate = slipInfo?.monthly_rate_cents ?? 0;
+  /** 28+ nights get the monthly rate pro-rated when it beats paying nightly. */
+  const monthlyPrice =
+    isSlip && nights >= 28 && monthlyRate > 0 ? Math.round((monthlyRate / 30) * nights) : null;
+  const nightlyTotal = nightlyPrice * (isSlip ? nights : 1);
+  const monthlyApplies = monthlyPrice != null && monthlyPrice < nightlyTotal;
+  const price = isSlip ? (monthlyApplies ? monthlyPrice! : nightlyTotal) : nightlyPrice;
   const addonLines = addons
     .filter((a) => selectedAddons.includes(a.id))
     .map((a) => {
@@ -199,6 +214,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   const addonCents = addonLines.reduce((s, l) => s + l.lineCents, 0);
   const fee = 0;
   const total = price + addonCents + fee;
+
   /** Deposit rate = min(max(business.deposit_rate, business.commission_rate), 1.0) — matches reserve_slot. */
   const depositRate = (() => {
     const b = svc.business as { deposit_rate?: number | null; commission_rate?: number | null } | null;
@@ -229,11 +245,11 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
   // this angler's previous unpaid hold before creating the new one.
   const [attemptSeed, setAttemptSeed] = useState(() => crypto.randomUUID());
   const attemptKey = useMemo(() => {
-    const sig = [slotId, party, [...selectedAddons].sort().join("|"), notes.trim()].join("~");
+    const sig = [slotId, party, nights, [...selectedAddons].sort().join("|"), notes.trim()].join("~");
     let h = 5381;
     for (let i = 0; i < sig.length; i++) h = ((h << 5) + h + sig.charCodeAt(i)) >>> 0;
     return `${attemptSeed}-${h.toString(36)}`;
-  }, [attemptSeed, slotId, party, selectedAddons, notes]);
+  }, [attemptSeed, slotId, party, nights, selectedAddons, notes]);
 
   const placeMut = useMutation({
     mutationFn: () => {
@@ -242,6 +258,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
         data: {
           slotId: slot.id,
           partySize: party,
+          ...(isSlip && nights > 1 ? { nights } : {}),
           idempotencyKey: attemptKey,
           addonIds: selectedAddons,
           notes: notes.trim() || undefined,
@@ -755,6 +772,35 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
 
             <div className="fx-booking-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 30, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                {isSlip ? (
+                  <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+                      <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600 }}>Length of stay</div>
+                      <select
+                        value={nights}
+                        onChange={(e) => setNights(Number(e.target.value))}
+                        style={{ background: V.paper, border: `1px solid ${V.line}`, borderRadius: 10, padding: "11px 13px", fontFamily: MONO, fontSize: 14, fontWeight: 600, color: V.ink, outline: "none" }}
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 10, 14, 21, 28, 30, 60, 90].map((n) => (
+                          <option key={n} value={n}>{n} {n === 1 ? "night" : "nights"}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div style={{ fontSize: 13, color: V.tmut }}>
+                      Pick your arrival night below — we hold every night through to departure.
+                      {monthlyRate > 0 && (
+                        <>
+                          {" "}Stays of 28 nights or more switch to the monthly rate of {money(monthlyRate)}.
+                        </>
+                      )}
+                    </div>
+                    {monthlyApplies && (
+                      <div style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: "#0F7B5F" }}>
+                        Monthly rate applied — you save {money(nightlyTotal - price)}.
+                      </div>
+                    )}
+                  </section>
+                ) : (
                 <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
                     <div style={{ fontFamily: V.serif, fontSize: 22, fontWeight: 600 }}>Party size</div>
@@ -773,6 +819,8 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                     doesn&rsquo;t change with party size.
                   </div>
                 </section>
+                )}
+
 
                 <section style={{ background: V.card, border: `1px solid ${V.line}`, borderRadius: 18, padding: 24 }}>
                   <PublicAvailabilityCalendar
@@ -795,7 +843,7 @@ export function BookingFlow({ serviceId, baseId }: { serviceId: string; baseId?:
                   ["Duration", durLabel],
                   ["Date", slot ? dateLabel : "Not selected"],
                   ["Departure", slot ? timeBlock(slot) : "Not selected"],
-                  ["Party size", `${party}`],
+                  isSlip ? ["Nights", `${nights}`] : ["Party size", `${party}`],
                 ].map(([k, v]) => (
                   <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13.5, padding: "7px 0", color: V.tmut }}>
                     <span>{k}</span><span style={{ color: V.ink, fontWeight: 600, textAlign: "right" }}>{v}</span>
