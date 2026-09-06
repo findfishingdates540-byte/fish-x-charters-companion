@@ -42,7 +42,7 @@ export const Route = createFileRoute("/charters/")({
 const money = (c: number | null) =>
   c == null ? "—" : `$${Math.round(c / 100).toLocaleString()}`;
 
-const serif = "'Cormorant Garamond', Georgia, serif";
+const serif = "'Outfit', Georgia, serif";
 
 function ChartersLanding() {
   const { data } = useSuspenseQuery(charterDirectoryQO);
@@ -67,7 +67,7 @@ function ChartersLanding() {
   };
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Outfit', system-ui)", color: "#031029" }}>
       <PublicHeader />
 
       <style>{`

@@ -293,7 +293,7 @@ function TripList({
             {!minimal && (
               <span
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontFamily: "'Outfit', Georgia, serif",
                   fontSize: 17,
                   fontWeight: 600,
                   color: "#F0F2F5",
@@ -379,7 +379,7 @@ function Roster({ data }: { data: any }) {
                 border: "1px solid rgba(255,255,255,.07)",
                 display: "grid",
                 placeItems: "center",
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontFamily: "'Outfit', Georgia, serif",
                 fontSize: 20,
                 fontWeight: 600,
                 color: "#2DE2F2",
@@ -406,7 +406,7 @@ function Roster({ data }: { data: any }) {
             <div>
               <div
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontFamily: "'Outfit', Georgia, serif",
                   fontSize: 19,
                   fontWeight: 600,
                   color: "#F0F2F5",
@@ -419,7 +419,7 @@ function Roster({ data }: { data: any }) {
             <div style={{ borderLeft: "1px solid rgba(255,255,255,.05)", paddingLeft: 18 }}>
               <div
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontFamily: "'Outfit', Georgia, serif",
                   fontSize: 19,
                   fontWeight: 600,
                   color: "#F0F2F5",
@@ -521,7 +521,7 @@ function Slots({ businessId, data }: { businessId: string; data: any }) {
                 </span>
                 <span
                   style={{
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    fontFamily: "'Outfit', Georgia, serif",
                     fontSize: 16,
                     fontWeight: 600,
                     color: "#F0F2F5",
@@ -726,7 +726,7 @@ function Requests({ businessId, data }: { businessId: string; data: any }) {
           </div>
           <div
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontFamily: "'Outfit', Georgia, serif",
               fontSize: 20,
               color: "#F0F2F5",
             }}
@@ -780,7 +780,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 10,
   padding: "10px 12px",
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
   fontSize: 14,
   background: "#14202B",
   color: "#F0F2F5",
@@ -793,7 +793,7 @@ const btnPrimary: React.CSSProperties = {
   border: 0,
   borderRadius: 11,
   padding: "10px 16px",
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
   fontSize: 13,
   fontWeight: 700,
   cursor: "pointer",
@@ -805,7 +805,7 @@ const btnGhost: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 11,
   padding: "10px 16px",
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
   fontSize: 13,
   fontWeight: 600,
   cursor: "pointer",

@@ -16,8 +16,8 @@ import { AvatarUpload } from "@/components/profile/AvatarUpload";
 
 
 const V = {
-  serif: "'Cormorant Garamond',Georgia,serif",
-  sans: "'Hanken Grotesk',system-ui,sans-serif",
+  serif: "'Outfit',Georgia,serif",
+  sans: "'Outfit',system-ui,sans-serif",
   ink: "#031029",
   navy: "#072057",
   paper: "#ffffff",

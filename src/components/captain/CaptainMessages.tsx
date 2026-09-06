@@ -15,7 +15,7 @@ const C = {
   tmut: "var(--tmut)",
   cyan: "#2DE2F2",
   cyansoft: "rgba(45,226,242,.12)",
-  serif: "var(--serif, 'Cormorant Garamond',Georgia,serif)",
+  serif: "var(--serif, 'Outfit',Georgia,serif)",
 };
 
 const initial = (s: string) => (s?.trim()?.[0] ?? "G").toUpperCase();

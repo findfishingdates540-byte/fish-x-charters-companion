@@ -47,7 +47,7 @@ export const Route = createFileRoute("/_authenticated/messages")({
   }),
   component: MessagesPage,
   errorComponent: ({ error }) => (
-    <div style={{ padding: 40, fontFamily: "'Hanken Grotesk',system-ui,sans-serif" }}>
+    <div style={{ padding: 40, fontFamily: "'Outfit',system-ui,sans-serif" }}>
       <h1>Couldn't load Messages</h1>
       <p>{error instanceof Error ? error.message : "Unknown error"}</p>
     </div>
@@ -69,7 +69,7 @@ function MessagesPage() {
   return (
     <div
       style={{
-        fontFamily: "'Hanken Grotesk',system-ui,sans-serif",
+        fontFamily: "'Outfit',system-ui,sans-serif",
         height: "100dvh",
         display: "flex",
         flexDirection: "column",
@@ -96,7 +96,7 @@ function MessagesPage() {
           </Link>
           <span
             style={{
-              fontFamily: "'Cormorant Garamond',Georgia,serif",
+              fontFamily: "'Outfit',Georgia,serif",
               fontSize: 21,
               fontWeight: 600,
             }}

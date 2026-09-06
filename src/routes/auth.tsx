@@ -31,8 +31,8 @@ const vBizPlaceholder: Record<Exclude<Vertical, "">, string> = {
 // -------- reusable style fragments --------
 const cssVars: CSSProperties = {
   // @ts-expect-error custom props
-  "--serif": "'Cormorant Garamond',Georgia,serif",
-  "--sans": "'Hanken Grotesk',system-ui,sans-serif",
+  "--serif": "'Outfit',Georgia,serif",
+  "--sans": "'Outfit',system-ui,sans-serif",
   "--ink": "#031029", "--navy": "#072057", "--deep": "#031029",
   "--paper": "#f4f6f8", "--paper2": "#e9edf1", "--card": "#ffffff",
   "--sand": "#2DE2F2", "--sand2": "#27C0E2", "--sandsoft": "#DFF6FA", "--goldtext": "#1F9FBE",

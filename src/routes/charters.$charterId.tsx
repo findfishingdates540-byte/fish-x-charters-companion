@@ -103,10 +103,10 @@ export const Route = createFileRoute("/charters/$charterId")({
 
 function CharterUnavailable() {
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Outfit', system-ui)", color: "#031029" }}>
       <PublicHeader />
       <div style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(48px,10vw,120px) 24px", textAlign: "center" }}>
-        <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: "clamp(30px,4vw,44px)", margin: "0 0 12px" }}>
+        <h1 style={{ fontFamily: "'Outfit',Georgia,serif", fontSize: "clamp(30px,4vw,44px)", margin: "0 0 12px" }}>
           This charter isn't available
         </h1>
         <p style={{ color: "#5c6b78", fontSize: 15, margin: "0 0 24px" }}>
@@ -131,7 +131,7 @@ function CharterDetail() {
   if (isLoading || !data) {
     return (
       <div style={{ padding: "3rem", textAlign: "center" }}>
-        <h2 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: "clamp(32px,4.4vw,52px)" }}>
+        <h2 style={{ fontFamily: "'Outfit',Georgia,serif", fontSize: "clamp(32px,4.4vw,52px)" }}>
           Loading…
         </h2>
       </div>
@@ -146,7 +146,7 @@ function CharterDetail() {
     .join(", ");
 
   return (
-    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Hanken Grotesk', system-ui)", color: "#031029" }}>
+    <div style={{ background: "#f4f6f8", minHeight: "100vh", fontFamily: "var(--sans, 'Outfit', system-ui)", color: "#031029" }}>
       <PublicHeader />
 
       <section
@@ -173,7 +173,7 @@ function CharterDetail() {
             <div style={{ flex: 1, minWidth: 0 }}>
               <h1
                 style={{
-                  fontFamily: "'Cormorant Garamond',Georgia,serif",
+                  fontFamily: "'Outfit',Georgia,serif",
                   fontSize: "clamp(36px,5vw,56px)",
                   fontWeight: 600,
                   letterSpacing: "-.02em",
@@ -201,7 +201,7 @@ function CharterDetail() {
                 fontSize: 15,
                 lineHeight: 1.7,
                 color: "#2a3f4f",
-                fontFamily: "'Cormorant Garamond',Georgia,serif",
+                fontFamily: "'Outfit',Georgia,serif",
               }}
             >
               {charter.description}

@@ -66,7 +66,7 @@ export function AvatarUpload({
           display: "grid",
           placeItems: "center",
           color: "#1F9FBE",
-          fontFamily: "'Cormorant Garamond',Georgia,serif",
+          fontFamily: "'Outfit',Georgia,serif",
           fontSize: size / 3,
           fontWeight: 600,
         }}

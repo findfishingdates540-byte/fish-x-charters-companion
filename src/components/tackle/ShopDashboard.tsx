@@ -658,7 +658,7 @@ function OrderList({
               </div>
             )}
           </div>
-          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#F0F2F5" }}>
+          <span style={{ fontFamily: "'Outfit', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#F0F2F5" }}>
             {money(o.total_cents)}
           </span>
           <StatusPill label={o.status} tone={toneFor(o.status) as any} />
@@ -851,7 +851,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 10,
   padding: "10px 12px",
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
   fontSize: 14,
   background: "#14202B",
   color: "#F0F2F5",
@@ -864,7 +864,7 @@ const btnPrimary: React.CSSProperties = {
   border: 0,
   borderRadius: 11,
   padding: "10px 16px",
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
   fontSize: 13,
   fontWeight: 700,
   cursor: "pointer",
@@ -876,7 +876,7 @@ const btnGhost: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,.09)",
   borderRadius: 11,
   padding: "10px 16px",
-  fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+  fontFamily: "'Outfit', system-ui, sans-serif",
   fontSize: 13,
   fontWeight: 600,
   cursor: "pointer",

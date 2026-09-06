@@ -148,7 +148,7 @@ export function RequestInbox({
               <div style={{ textAlign: "right", flex: "none" }}>
                 <div
                   style={{
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    fontFamily: "'Outfit', Georgia, serif",
                     fontSize: 20,
                     fontWeight: 600,
                     color: "#2DE2F2",

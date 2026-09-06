@@ -655,7 +655,7 @@ export function OperatorOnboarding() {
     <div
       className="fx-shell dc-body min-h-screen flex bg-[#0D161F] text-[#F0F2F5]"
       style={{
-        fontFamily: "'Hanken Grotesk',system-ui,sans-serif",
+        fontFamily: "'Outfit',system-ui,sans-serif",
       }}
     >
       {/* Sidebar */}
@@ -664,14 +664,14 @@ export function OperatorOnboarding() {
           <span className="inline-block w-[11px] h-[11px] bg-[#2DE2F2] rotate-45" />
           <span
             className="font-semibold text-[20px] tracking-[0.02em] whitespace-nowrap"
-            style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+            style={{ fontFamily: "'Outfit',Georgia,serif" }}
           >
             FISH-X.COM
           </span>
         </div>
         <div
           className="font-semibold text-[24px] leading-[1.1] text-white"
-          style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+          style={{ fontFamily: "'Outfit',Georgia,serif" }}
         >
           Set up your
           <br />
@@ -747,7 +747,7 @@ export function OperatorOnboarding() {
                 </div>
                 <h1
                   className="font-semibold text-[38px] leading-[1.05] my-[10px] text-[#F0F2F5]"
-                  style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+                  style={{ fontFamily: "'Outfit',Georgia,serif" }}
                 >
                   Your listing is published.
                 </h1>
@@ -924,7 +924,7 @@ function StepHeader({ step, heading, sub }: { step: number; heading: string; sub
       <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#2DE2F2]">Step {step + 1} of 5</div>
       <h1
         className="font-semibold text-[34px] leading-[1.05] mt-2 mb-1.5 text-[#F0F2F5]"
-        style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+        style={{ fontFamily: "'Outfit',Georgia,serif" }}
       >
         {heading}
       </h1>
@@ -1108,7 +1108,7 @@ function PayoutsStep({
           <div key={x.n} className="bg-[#14202B] border border-[#2DE2F2]/10 rounded-2xl p-[18px]">
             <div
               className="w-[34px] h-[34px] rounded-[9px] grid place-items-center mb-3 font-semibold"
-              style={{ background: x.c, color: x.ic, fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+              style={{ background: x.c, color: x.ic, fontFamily: "'Outfit',Georgia,serif" }}
             >
               {x.n}
             </div>
@@ -1123,7 +1123,7 @@ function PayoutsStep({
         <div className="flex items-center gap-4">
           <span
             className="w-11 h-11 rounded-xl grid place-items-center flex-none font-bold text-white"
-            style={{ background: "#635bff", fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+            style={{ background: "#635bff", fontFamily: "'Outfit',Georgia,serif" }}
           >
             S
           </span>
@@ -1209,7 +1209,7 @@ function ListingStep({
         </div>
         <div
           className="text-[20px] font-semibold text-[#F0F2F5] mt-1"
-          style={{ fontFamily: "'Cormorant Garamond',Georgia,serif" }}
+          style={{ fontFamily: "'Outfit',Georgia,serif" }}
         >
           {config.headline}
         </div>

@@ -12,7 +12,7 @@
  *
  * Palette/typography mirror the Stitch Material tokens (primary bronze #715b3b,
  * sandy-gold primary-container #e4c7a0, cyan tertiary-container #39def9,
- * Source Serif 4 headlines + Hanken Grotesk body). Icons use the Material
+ * Source Serif 4 headlines + Outfit body). Icons use the Material
  * Symbols Outlined webfont loaded by the route head.
  */
 import { useState } from "react";
@@ -21,7 +21,7 @@ export type PayoutState = "verifying" | "verified" | "action";
 
 const V = {
   serif: "'Source Serif 4',Georgia,serif",
-  sans: "'Hanken Grotesk',system-ui,sans-serif",
+  sans: "'Outfit',system-ui,sans-serif",
   bg: "#0D161F", // surface-bright
   white: "#F0F2F5",
   primary: "#2DE2F2",

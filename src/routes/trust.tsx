@@ -25,8 +25,8 @@ export const Route = createFileRoute("/trust")({
 });
 
 const TOKENS: React.CSSProperties = {
-  ["--serif" as never]: "'Cormorant Garamond',Georgia,serif",
-  ["--sans" as never]: "'Hanken Grotesk',system-ui,sans-serif",
+  ["--serif" as never]: "'Outfit',Georgia,serif",
+  ["--sans" as never]: "'Outfit',system-ui,sans-serif",
   ["--ink" as never]: "#031029",
   ["--navy" as never]: "#072057",
   ["--deep" as never]: "#031029",

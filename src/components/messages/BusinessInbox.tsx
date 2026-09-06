@@ -42,7 +42,7 @@ const palette = (theme: Theme) =>
         onAccent: "#04121B",
       };
 
-const serif = "'Cormorant Garamond',Georgia,serif";
+const serif = "'Outfit',Georgia,serif";
 
 const relativeTime = (iso?: string | null) => {
   if (!iso) return "";

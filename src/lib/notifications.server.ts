@@ -390,7 +390,7 @@ async function sendEmail(to: string, draft: NotificationDraft) {
 
 function emailHtml(draft: NotificationDraft) {
   const link = draft.link ? `${APP_URL}${draft.link}` : APP_URL;
-  return `<!doctype html><html><body style="margin:0;background:#ffffff;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#031029">
+  return `<!doctype html><html><body style="margin:0;background:#ffffff;font-family:'Outfit',system-ui,sans-serif;color:#031029">
   <div style="max-width:560px;margin:0 auto;padding:32px 24px">
     <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em">FISH-X.COM</div>
     <h1 style="font-family:Georgia,serif;font-size:26px;margin:24px 0 10px">${escapeHtml(draft.title)}</h1>
@@ -433,7 +433,7 @@ function receiptHtml(draft: NotificationDraft) {
 
   const when = `${r.dateLabel}${r.timeLabel ? ` · ${r.timeLabel}` : ""}`;
 
-  return `<!doctype html><html><body style="margin:0;background:#eef2f5;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#031029">
+  return `<!doctype html><html><body style="margin:0;background:#eef2f5;font-family:'Outfit',system-ui,sans-serif;color:#031029">
   <div style="max-width:600px;margin:0 auto;padding:30px 18px">
     <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.02em;margin-bottom:16px">FISH-X.COM</div>
     <div style="background:#031029;color:#ffffff;border-radius:18px 18px 0 0;padding:28px 26px">

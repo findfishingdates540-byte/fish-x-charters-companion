@@ -14,8 +14,8 @@ import { PublicAvailabilityCalendar, timeBlock, type PublicSlot } from "@/compon
 import { DEFAULT_HERO, galleryFor } from "@/lib/platform-photos";
 
 const V = {
-  serif: "'Cormorant Garamond',Georgia,serif",
-  sans: "'Hanken Grotesk',system-ui,sans-serif",
+  serif: "'Outfit',Georgia,serif",
+  sans: "'Outfit',system-ui,sans-serif",
   ink: "#031029", navy: "#072057", paper: "#ffffff", card: "#fff",
   sand: "#2DE2F2", sandsoft: "#E2F6FA", goldtext: "#1F9FBE",
   cyan: "#1f9fbe", cyansoft: "#e2eef2", green: "#1f8a5b", greensoft: "#e2f2ea",
