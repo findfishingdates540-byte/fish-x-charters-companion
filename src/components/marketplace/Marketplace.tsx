@@ -786,6 +786,9 @@ export function Marketplace() {
                       <span style={{ color: V.tmut }}>Shipping</span>
                       <span style={{ fontWeight: 600, color: freeShip ? V.green : V.ink }}>{freeShip ? "Free" : money(ship)}</span>
                     </div>
+                    <div style={{ fontSize: 11.5, color: V.tmut, paddingBottom: 6 }}>
+                      Set by each shop{shipQuote.data && shipQuote.data.byVendor.length > 1 ? ` · ${shipQuote.data.byVendor.length} shops shipping separately` : ""}. You'll enter your delivery address on the next screen.
+                    </div>
                     <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0 12px", borderTop: `1px solid ${V.line}`, marginTop: 6 }}>
                       <span style={{ fontSize: 13.5, fontWeight: 700, color: V.ink }}>Total · into escrow</span>
                       <span style={{ fontFamily: V.serif, fontSize: 19, fontWeight: 600, color: V.ink }}>{money(total)}</span>
