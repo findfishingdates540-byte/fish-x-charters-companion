@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
+  cancelMyOrder,
   listMyOrders,
   listMyWishlist,
   listFollowedSellers,
@@ -73,6 +74,14 @@ function Empty({ title, sub, to, cta }: { title: string; sub: string; to: string
 
 export function MyOrdersSection() {
   const fetchOrders = useServerFn(listMyOrders);
+  const qc = useQueryClient();
+  const cancelFn = useServerFn(cancelMyOrder);
+  const cancelM = useMutation({
+    mutationFn: (orderId: string) => cancelFn({ data: { orderId } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["my-orders"] }),
+    onError: (e: unknown) =>
+      window.alert(e instanceof Error ? e.message : "We couldn't cancel that order."),
+  });
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["my-orders"],
     queryFn: () => fetchOrders(),
@@ -143,6 +152,38 @@ export function MyOrdersSection() {
             </span>
             <b style={{ color: V.cyan, fontFamily: V.serif, fontSize: 19 }}>{money(o.totalCents)}</b>
           </div>
+
+          {["pending_payment", "paid"].includes(o.status) && (
+            <div style={{ marginTop: 10, display: "flex", justifyContent: "flex-end" }}>
+              <button
+                disabled={cancelM.isPending}
+                onClick={() => {
+                  if (
+                    !window.confirm(
+                      "Cancel this order? The money goes back to the card you paid with.",
+                    )
+                  )
+                    return;
+                  cancelM.mutate(o.id);
+                }}
+                style={{
+                  background: "transparent",
+                  border: "1px solid rgba(216,81,74,.35)",
+                  color: "#c0392b",
+                  borderRadius: 10,
+                  padding: "8px 14px",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  fontFamily: "inherit",
+                  cursor: "pointer",
+                }}
+              >
+                {cancelM.isPending && cancelM.variables === o.id
+                  ? "Refunding…"
+                  : "Cancel & refund"}
+              </button>
+            </div>
+          )}
         </Card>
       ))}
     </div>
