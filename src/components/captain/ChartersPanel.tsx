@@ -103,6 +103,8 @@ export function ChartersPanel({
 }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<CharterDraft | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const [openCharterId, setOpenCharterId] = useState<string | null>(null);
   const [addonsFor, setAddonsFor] = useState<string | null>(null);
   const [datesFor, setDatesFor] = useState<{
@@ -132,55 +134,93 @@ export function ChartersPanel({
 
   return (
     <div style={{ display: "grid", gap: 0 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
         <button
-          style={primaryBtn}
-          onClick={() => setEditing({ ...emptyCharterDraft })}
+          style={{ ...primaryBtn, opacity: boats.length === 0 ? 0.5 : 1, cursor: boats.length === 0 ? "not-allowed" : "pointer" }}
+          disabled={boats.length === 0}
+          title={boats.length === 0 ? "Add a boat in the Fleet tab first" : undefined}
+          onClick={() => {
+            setSaveError(null);
+            setEditing({ ...emptyCharterDraft });
+          }}
         >
           + Add new charter
         </button>
+        {boats.length === 0 && (
+          <span style={{ fontSize: 12.5, color: "var(--tmut)" }}>
+            Add a boat in the Fleet tab first — every charter trip runs on a boat.
+          </span>
+        )}
       </div>
+
+      {saveError && !editing && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: "10px 12px",
+            borderRadius: 10,
+            border: "1px solid rgba(248,113,113,.4)",
+            color: "#F87171",
+            fontSize: 12.5,
+          }}
+        >
+          {saveError}
+        </div>
+      )}
 
       {editing && (
         <CharterForm
           businessId={data.business?.id ?? null}
           draft={editing}
           boats={boats}
+          error={saveError}
           onChange={setEditing}
-          onCancel={() => setEditing(null)}
+          onCancel={() => {
+            setEditing(null);
+            setSaveError(null);
+          }}
           onSave={async () => {
-            const charter: any = await upsertCaptainCharter({
-              data: {
-                ...editing,
-                target_species: editing.target_species
-                  .split(",")
-                  .map((s) => s.trim())
-                  .filter(Boolean),
-                image_urls: editing.image_urls,
-                slug: editing.slug || null,
-              },
-            });
-            // On create, seed one default package so the charter is bookable
-            if (charter?.id && !editing.id) {
-              await upsertCaptainService({
+            setSaveError(null);
+            try {
+              const charter: any = await upsertCaptainCharter({
                 data: {
-                  title: "Half Day",
-                  charter_id: charter.id,
-                  base_price_cents: editing.base_price_cents,
-                  capacity: editing.capacity,
-                  duration_minutes: Math.round(4 * 60),
-                  water_type: editing.water_type || null,
-                  boat_id: editing.boat_id || null,
-                  is_published: false,
+                  ...editing,
+                  target_species: editing.target_species
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean),
+                  image_urls: editing.image_urls,
+                  slug: editing.slug || null,
                 },
               });
+              // On create, seed one default package so the charter is bookable
+              if (charter?.id && !editing.id) {
+                await upsertCaptainService({
+                  data: {
+                    title: "Half Day",
+                    charter_id: charter.id,
+                    base_price_cents: editing.base_price_cents,
+                    capacity: editing.capacity,
+                    duration_minutes: Math.round(4 * 60),
+                    water_type: editing.water_type || null,
+                    boat_id: editing.boat_id || null,
+                    is_published: false,
+                  },
+                });
+              }
+              await qc.invalidateQueries({ queryKey: ["captain-charters"] });
+              qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
+              setEditing(null);
+            } catch (err: any) {
+              setSaveError(
+                err?.message ||
+                  "We couldn't save that charter. Check the details and try again.",
+              );
             }
-            qc.invalidateQueries({ queryKey: ["captain-charters"] });
-            qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
-            setEditing(null);
           }}
         />
       )}
+
 
       {chartersLoading && (
         <div style={{ color: "var(--tmut)", padding: 16, fontSize: 13 }}>Loading charters…</div>
@@ -236,12 +276,18 @@ export function ChartersPanel({
             }
           }}
           onTogglePublish={async (published) => {
-            await upsertCaptainCharter({
-              data: { id: c.id, name: c.name, is_published: published },
-            });
-            qc.invalidateQueries({ queryKey: ["captain-charters"] });
-            qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
+            setSaveError(null);
+            try {
+              await upsertCaptainCharter({
+                data: { id: c.id, is_published: published },
+              });
+              await qc.invalidateQueries({ queryKey: ["captain-charters"] });
+              qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
+            } catch (err: any) {
+              setSaveError(err?.message || "We couldn't change that charter's status.");
+            }
           }}
+
           addonsFor={addonsFor}
           setAddonsFor={setAddonsFor}
           datesFor={datesFor}
@@ -296,6 +342,7 @@ function CharterForm({
   businessId,
   draft,
   boats,
+  error,
   onChange,
   onCancel,
   onSave,
@@ -303,10 +350,12 @@ function CharterForm({
   businessId: string | null;
   draft: CharterDraft;
   boats: { id: string; name: string; hero_image_url?: string | null; image_urls?: string[] | null }[];
+  error?: string | null;
   onChange: (d: CharterDraft) => void;
   onCancel: () => void;
   onSave: () => void;
 }) {
+
   const [saving, setSaving] = useState(false);
   const inputStyle: React.CSSProperties = {
     width: "100%",
@@ -334,6 +383,21 @@ function CharterForm({
       <div style={{ fontSize: 15, fontWeight: 700, color: "var(--ink)", marginBottom: 14 }}>
         {draft.id ? "Edit charter" : "New charter"}
       </div>
+
+      {error && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: "10px 12px",
+            borderRadius: 10,
+            border: "1px solid rgba(248,113,113,.4)",
+            color: "#F87171",
+            fontSize: 12.5,
+          }}
+        >
+          {error}
+        </div>
+      )}
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <label style={{ gridColumn: "1 / -1" }}>
@@ -577,10 +641,10 @@ function CharterForm({
         </label>
       </div>
 
-      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+      <div style={{ display: "flex", gap: 8, marginTop: 16, alignItems: "center", flexWrap: "wrap" }}>
         <button
           style={primaryBtn}
-          disabled={saving || draft.name.trim().length < 2}
+          disabled={saving || draft.name.trim().length < 2 || !draft.boat_id}
           onClick={async () => {
             setSaving(true);
             try {
@@ -592,6 +656,10 @@ function CharterForm({
         >
           {saving ? "Saving…" : draft.id ? "Save charter" : "Create charter"}
         </button>
+        {!draft.boat_id && (
+          <span style={{ fontSize: 12, color: "var(--tmut)" }}>Select a boat to continue.</span>
+        )}
+
         <button style={ghostBtn} onClick={onCancel}>
           Cancel
         </button>

@@ -69,3 +69,19 @@ export async function signRowMedia<T extends { hero_image_url?: string | null; i
     return { ...r, hero_image_url: hero, image_urls: gallery };
   });
 }
+
+/**
+ * Reverse of signMediaUrls: an operator form round-trips whatever URL it was
+ * shown, so a short-lived signed Storage URL must be turned back into the
+ * stable proxy path before it is written to the database.
+ */
+export function toStoredMediaPath(value: string | null | undefined): string | null {
+  if (typeof value !== "string" || !value.trim()) return null;
+  const m = value.match(/\/storage\/v1\/object\/(?:sign|public)\/business-media\/([^?]+)/);
+  if (m) return `${PREFIX}${decodeURIComponent(m[1])}`;
+  return value;
+}
+
+export function toStoredMediaPaths(values: (string | null | undefined)[]): string[] {
+  return values.map(toStoredMediaPath).filter((v): v is string => !!v);
+}
