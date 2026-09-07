@@ -132,55 +132,93 @@ export function ChartersPanel({
 
   return (
     <div style={{ display: "grid", gap: 0 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
         <button
-          style={primaryBtn}
-          onClick={() => setEditing({ ...emptyCharterDraft })}
+          style={{ ...primaryBtn, opacity: boats.length === 0 ? 0.5 : 1, cursor: boats.length === 0 ? "not-allowed" : "pointer" }}
+          disabled={boats.length === 0}
+          title={boats.length === 0 ? "Add a boat in the Fleet tab first" : undefined}
+          onClick={() => {
+            setSaveError(null);
+            setEditing({ ...emptyCharterDraft });
+          }}
         >
           + Add new charter
         </button>
+        {boats.length === 0 && (
+          <span style={{ fontSize: 12.5, color: "var(--tmut)" }}>
+            Add a boat in the Fleet tab first — every charter trip runs on a boat.
+          </span>
+        )}
       </div>
+
+      {saveError && !editing && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: "10px 12px",
+            borderRadius: 10,
+            border: "1px solid rgba(248,113,113,.4)",
+            color: "#F87171",
+            fontSize: 12.5,
+          }}
+        >
+          {saveError}
+        </div>
+      )}
 
       {editing && (
         <CharterForm
           businessId={data.business?.id ?? null}
           draft={editing}
           boats={boats}
+          error={saveError}
           onChange={setEditing}
-          onCancel={() => setEditing(null)}
+          onCancel={() => {
+            setEditing(null);
+            setSaveError(null);
+          }}
           onSave={async () => {
-            const charter: any = await upsertCaptainCharter({
-              data: {
-                ...editing,
-                target_species: editing.target_species
-                  .split(",")
-                  .map((s) => s.trim())
-                  .filter(Boolean),
-                image_urls: editing.image_urls,
-                slug: editing.slug || null,
-              },
-            });
-            // On create, seed one default package so the charter is bookable
-            if (charter?.id && !editing.id) {
-              await upsertCaptainService({
+            setSaveError(null);
+            try {
+              const charter: any = await upsertCaptainCharter({
                 data: {
-                  title: "Half Day",
-                  charter_id: charter.id,
-                  base_price_cents: editing.base_price_cents,
-                  capacity: editing.capacity,
-                  duration_minutes: Math.round(4 * 60),
-                  water_type: editing.water_type || null,
-                  boat_id: editing.boat_id || null,
-                  is_published: false,
+                  ...editing,
+                  target_species: editing.target_species
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean),
+                  image_urls: editing.image_urls,
+                  slug: editing.slug || null,
                 },
               });
+              // On create, seed one default package so the charter is bookable
+              if (charter?.id && !editing.id) {
+                await upsertCaptainService({
+                  data: {
+                    title: "Half Day",
+                    charter_id: charter.id,
+                    base_price_cents: editing.base_price_cents,
+                    capacity: editing.capacity,
+                    duration_minutes: Math.round(4 * 60),
+                    water_type: editing.water_type || null,
+                    boat_id: editing.boat_id || null,
+                    is_published: false,
+                  },
+                });
+              }
+              await qc.invalidateQueries({ queryKey: ["captain-charters"] });
+              qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
+              setEditing(null);
+            } catch (err: any) {
+              setSaveError(
+                err?.message ||
+                  "We couldn't save that charter. Check the details and try again.",
+              );
             }
-            qc.invalidateQueries({ queryKey: ["captain-charters"] });
-            qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
-            setEditing(null);
           }}
         />
       )}
+
 
       {chartersLoading && (
         <div style={{ color: "var(--tmut)", padding: 16, fontSize: 13 }}>Loading charters…</div>
