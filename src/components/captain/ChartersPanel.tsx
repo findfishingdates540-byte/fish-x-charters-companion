@@ -276,12 +276,18 @@ export function ChartersPanel({
             }
           }}
           onTogglePublish={async (published) => {
-            await upsertCaptainCharter({
-              data: { id: c.id, name: c.name, is_published: published },
-            });
-            qc.invalidateQueries({ queryKey: ["captain-charters"] });
-            qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
+            setSaveError(null);
+            try {
+              await upsertCaptainCharter({
+                data: { id: c.id, is_published: published },
+              });
+              await qc.invalidateQueries({ queryKey: ["captain-charters"] });
+              qc.invalidateQueries({ queryKey: ["captain-dashboard"] });
+            } catch (err: any) {
+              setSaveError(err?.message || "We couldn't change that charter's status.");
+            }
           }}
+
           addonsFor={addonsFor}
           setAddonsFor={setAddonsFor}
           datesFor={datesFor}
