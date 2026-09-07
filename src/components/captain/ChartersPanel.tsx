@@ -103,6 +103,8 @@ export function ChartersPanel({
 }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<CharterDraft | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const [openCharterId, setOpenCharterId] = useState<string | null>(null);
   const [addonsFor, setAddonsFor] = useState<string | null>(null);
   const [datesFor, setDatesFor] = useState<{
