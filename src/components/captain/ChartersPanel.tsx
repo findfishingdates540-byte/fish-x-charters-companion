@@ -342,6 +342,7 @@ function CharterForm({
   businessId,
   draft,
   boats,
+  error,
   onChange,
   onCancel,
   onSave,
@@ -349,10 +350,12 @@ function CharterForm({
   businessId: string | null;
   draft: CharterDraft;
   boats: { id: string; name: string; hero_image_url?: string | null; image_urls?: string[] | null }[];
+  error?: string | null;
   onChange: (d: CharterDraft) => void;
   onCancel: () => void;
   onSave: () => void;
 }) {
+
   const [saving, setSaving] = useState(false);
   const inputStyle: React.CSSProperties = {
     width: "100%",
