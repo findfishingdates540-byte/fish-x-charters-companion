@@ -641,10 +641,10 @@ function CharterForm({
         </label>
       </div>
 
-      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+      <div style={{ display: "flex", gap: 8, marginTop: 16, alignItems: "center", flexWrap: "wrap" }}>
         <button
           style={primaryBtn}
-          disabled={saving || draft.name.trim().length < 2}
+          disabled={saving || draft.name.trim().length < 2 || !draft.boat_id}
           onClick={async () => {
             setSaving(true);
             try {
@@ -656,6 +656,10 @@ function CharterForm({
         >
           {saving ? "Saving…" : draft.id ? "Save charter" : "Create charter"}
         </button>
+        {!draft.boat_id && (
+          <span style={{ fontSize: 12, color: "var(--tmut)" }}>Select a boat to continue.</span>
+        )}
+
         <button style={ghostBtn} onClick={onCancel}>
           Cancel
         </button>
