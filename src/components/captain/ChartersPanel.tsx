@@ -398,9 +398,6 @@ function CharterForm({
           {error}
         </div>
       )}
-      <div style={{ display: "none" }}>
-
-      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <label style={{ gridColumn: "1 / -1" }}>
