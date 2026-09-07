@@ -138,7 +138,7 @@ export const upsertCaptainCharter = createServerFn({ method: "POST" })
 
     const q = context.supabase.from("charters");
     const { data: row, error } = id
-      ? await q.update(payload).eq("id", id).eq("business_id", businessId).select().maybeSingle()
+      ? await q.update(payload as any).eq("id", id).eq("business_id", businessId).select().maybeSingle()
       : await q.insert(payload as any).select().single();
     if (error) throw new Error(error.message);
     if (id && !row)
