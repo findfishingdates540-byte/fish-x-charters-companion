@@ -25,24 +25,29 @@ async function pickBusinessId(supabase: any, userId: string): Promise<string | n
 const boatSelect =
   "boats(name,make,model,length_ft,capacity,home_port,description,hero_image_url,image_urls)";
 
+/** Operator forms submit empty strings for "not set"; treat those as null. */
+const blank = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? null : v), schema.nullable().optional());
+
 const charterInput = z.object({
   id: z.string().uuid().optional(),
-  slug: z.string().min(2).max(80).optional().nullable(),
-  name: z.string().min(2).max(120),
-  description: z.string().max(4000).optional().nullable(),
-  hero_url: z.string().max(2000).optional().nullable(),
-  image_urls: z.array(z.string()).default([]),
-  boat_id: z.string().uuid().optional().nullable(),
-  water_type: z.string().max(40).optional().nullable(),
-  target_species: z.array(z.string()).default([]),
-  departure_location: z.string().max(200).optional().nullable(),
-  duration_minutes: z.number().int().min(30).max(1440).optional().nullable(),
-  capacity: z.number().int().min(1).max(50).default(4),
-  base_price_cents: z.number().int().min(0),
-  deposit_rate: z.number().min(0).max(1).default(0.25),
-  commission_rate: z.number().min(0).max(1).default(0.15),
-  is_published: z.boolean().default(false),
+  slug: blank(z.string().min(2).max(80)),
+  name: z.string().min(2).max(120).optional(),
+  description: blank(z.string().max(4000)),
+  hero_url: blank(z.string().max(2000)),
+  image_urls: z.array(z.string()).optional(),
+  boat_id: blank(z.string().uuid()),
+  water_type: blank(z.string().max(40)),
+  target_species: z.array(z.string()).optional(),
+  departure_location: blank(z.string().max(200)),
+  duration_minutes: z.number().int().min(30).max(1440).nullable().optional(),
+  capacity: z.number().int().min(1).max(50).optional(),
+  base_price_cents: z.number().int().min(0).optional(),
+  deposit_rate: z.number().min(0).max(1).optional(),
+  commission_rate: z.number().min(0).max(1).optional(),
+  is_published: z.boolean().optional(),
 });
+
 
 export const listCaptainCharters = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
