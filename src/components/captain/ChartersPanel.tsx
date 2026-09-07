@@ -384,6 +384,24 @@ function CharterForm({
         {draft.id ? "Edit charter" : "New charter"}
       </div>
 
+      {error && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: "10px 12px",
+            borderRadius: 10,
+            border: "1px solid rgba(248,113,113,.4)",
+            color: "#F87171",
+            fontSize: 12.5,
+          }}
+        >
+          {error}
+        </div>
+      )}
+      <div style={{ display: "none" }}>
+
+      </div>
+
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <label style={{ gridColumn: "1 / -1" }}>
           <span style={labelStyle}>Charter name</span>
