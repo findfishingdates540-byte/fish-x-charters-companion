@@ -94,38 +94,56 @@ export const upsertCaptainCharter = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => charterInput.parse(i))
   .handler(async ({ data, context }) => {
     const businessId = await pickBusinessId(context.supabase, context.userId);
-    if (!businessId) throw new Error("No business found");
+    if (!businessId)
+      throw new Error("We couldn't find your business account — finish onboarding first.");
 
     const { id, ...rest } = data;
-    let heroUrl = rest.hero_url ?? null;
-    let imageUrls = rest.image_urls;
+    const { toStoredMediaPath, toStoredMediaPaths } = await import("./media-urls.server");
+
+    // Only write the fields this request actually sent, so a small change
+    // (e.g. the Live/Draft toggle) never blanks the rest of the listing.
+    const payload: Record<string, any> = { business_id: businessId };
+    for (const [k, v] of Object.entries(rest)) {
+      if (v !== undefined) payload[k] = v;
+    }
+
+    if ("hero_url" in payload) payload.hero_url = toStoredMediaPath(payload.hero_url);
+    if ("image_urls" in payload) payload.image_urls = toStoredMediaPaths(payload.image_urls ?? []);
+
+    if (!id) {
+      if (!payload.name) throw new Error("Give the charter a name before saving.");
+      if (!payload.boat_id)
+        throw new Error("Pick a boat for this charter — add one in the Fleet tab first.");
+      payload.capacity ??= 4;
+      payload.base_price_cents ??= 0;
+      payload.target_species ??= [];
+      payload.image_urls ??= [];
+      payload.is_published ??= false;
+    }
 
     // Fall back to the linked boat's photos so a charter never ships imageless.
-    if (rest.boat_id && (!heroUrl || imageUrls.length === 0)) {
+    if (payload.boat_id && (!payload.hero_url || (payload.image_urls ?? []).length === 0)) {
       const { data: boat } = await context.supabase
         .from("boats")
         .select("hero_image_url,image_urls")
-        .eq("id", rest.boat_id)
+        .eq("id", payload.boat_id)
         .eq("business_id", businessId)
         .maybeSingle();
       const boatGallery: string[] = Array.isArray(boat?.image_urls) ? boat!.image_urls : [];
-      if (!heroUrl) heroUrl = boat?.hero_image_url || boatGallery[0] || null;
-      if (imageUrls.length === 0 && boatGallery.length) imageUrls = boatGallery;
+      if (!payload.hero_url && (boat?.hero_image_url || boatGallery[0]))
+        payload.hero_url = boat?.hero_image_url || boatGallery[0];
+      if ((payload.image_urls ?? []).length === 0 && boatGallery.length)
+        payload.image_urls = boatGallery;
     }
-
-    const payload = {
-      ...rest,
-      hero_url: heroUrl,
-      image_urls: imageUrls,
-      business_id: businessId,
-    };
-
 
     const q = context.supabase.from("charters");
     const { data: row, error } = id
-      ? await q.update(payload).eq("id", id).eq("business_id", businessId).select().single()
-      : await q.insert(payload).select().single();
+      ? await q.update(payload).eq("id", id).eq("business_id", businessId).select().maybeSingle()
+      : await q.insert(payload as any).select().single();
     if (error) throw new Error(error.message);
+    if (id && !row)
+      throw new Error("That charter couldn't be updated — you may not have permission to edit it.");
+
 
     // If the charter was just published, seed default availability from its packages'
     // departure times via the pattern-aware generator.
